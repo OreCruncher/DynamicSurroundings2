@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+issueTrackerURL="https://github.com/OreCruncher/SoundControl/issues"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/sound-control"
+logoFile="logo.png"
+
+[[mods]]
+	modId="sndctrl"
+	version="${version}"
+	displayName="§3Dynamic Surroundings: Sound Control"
+	updateJSONURL="https://raw.githubusercontent.com/OreCruncher/SoundControl/master/version.json"
+	credits="§6All the Players§r that installed and enjoyed §2Dynamic Surroundings§r"
+	authors="§6OreCruncher§r"
+	description="Gives the player §6control§r over §6sounds§r to improve the §6Minecraft§r experience."
+	
+[[dependencies.sndctrl]]
+    modId="forge"
+    mandatory=true
+    versionRange="[28,)"
+    ordering="NONE"
+    side="CLIENT"

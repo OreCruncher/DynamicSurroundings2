@@ -1,0 +1,59 @@
+{
+  "occlusions": {
+    "#minecraft:wool": 0.2
+  },
+  "reflectivity": {
+    "+PORTAL": 1,
+    "+CARPET": 0,
+    "+PLANTS": 0,
+    "+OCEAN_PLANT": 0,
+    "+TALL_PLANTS": 0,
+    "+SEA_GRASS": 0,
+    "+WATER": 1,
+    "+BUBBLE_COLUMN": 1,
+    "+LAVA": 0,
+    "+SNOW": 0,
+    "+FIRE": 0,
+    "+MISCELLANEOUS": 0,
+    "+WEB": 0,
+    "+REDSTONE_LIGHT": 0,
+    "+CLAY": 0,
+    "+EARTH": 0,
+    "+ORGANIC": 0,
+    "+PACKED_ICE": 2,
+    "+SAND": 0,
+    "+SPONGE": 0,
+    "+SHULKER": 0,
+    "+WOOD": 0.25,
+    "+BAMBOO": 0.5,
+    "+BAMBOO_SAPLING": 0,
+    "+WOOL": 0,
+    "+TNT": 0,
+    "+LEAVES": 0,
+    "+GLASS": 2,
+    "+ICE": 2,
+    "+CACTUS": 0,
+    "+ROCK": 2,
+    "+IRON": 2,
+    "+SNOW_BLOCK": 0,
+    "+ANVIL": 0.4,
+    "+BARRIER": 0,
+    "+PISTON": 1.5,
+    "+CORAL": 0,
+    "+GOURD": 0,
+    "+DRAGON_EGG": 1,
+    "+CAKE": 0,
+    "#minecraft:logs": 0.5,
+    "#minecraft:planks": 1
+  },
+  "lowpass": {
+    "minecraft:water": {
+      "gain": 1,
+      "gainHF": 0.4
+    },
+    "minecraft:lava": {
+      "gain": 0.6,
+      "gainHF": 0.1
+    }
+  }
+}

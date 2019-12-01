@@ -1,6 +1,8 @@
 /*
  * Dynamic Surroundings: Sound Control
+ * Sound Physics
  * Copyright (C) 2019  OreCruncher
+ * Copyright SonicEther
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +16,11 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
+ *
+ * Summary of changes:
+ *
+ * - Encapsulate EXTFx calls into separate classes
+ * - Initialization of data
  */
 
 package org.orecruncher.sndctrl.audio.handlers;
@@ -29,14 +36,11 @@ import org.orecruncher.sndctrl.audio.handlers.effects.ReverbEffectSlot;
 public final class Effects {
     // General config settings that need to make their way somewhere
     public static final float rolloffFactor = 1F;
-    public static final float globalVolumeMultiplier = 4.0f;
     public static final float globalReverbMultiplier = 0.7f;
-    public static final double soundDistanceAllowance = 4F;
     public static final float globalReverbBrightness = 1F;
     public static final float globalBlockAbsorption = 1F;
     public static final float SNOW_AIR_ABSORPTION_FACTOR = 5F;
     public static final float RAIN_AIR_ABSORPTION_FACTOR = 2F;
-    public static final float underwaterFilter = 0.8F;
     public static final boolean simplerSharedAirspaceSimulation = false;
 
     public static final ReverbData reverbData0;

@@ -1,6 +1,8 @@
 /*
  * Dynamic Surroundings: Sound Control
+ * Sound Physics
  * Copyright (C) 2019  OreCruncher
+ * Copyright SonicEther
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +16,15 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
+ *
+ * Summary of changes:
+ *
+ * - Rework to incorporate into Sound Control's framework.
+ * - Precalculate ray cast vectors
+ * - Rework for parallel stream operation
+ * - Added effect of rain on sound dampening
+ * - Listener head in various fluids support
+ * - Precache frequently used world information
  */
 
 package org.orecruncher.sndctrl.audio.handlers;
@@ -41,12 +52,14 @@ import java.util.Set;
 @OnlyIn(Dist.CLIENT)
 public final class SoundFXUtils {
 
-    private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
-
     /**
-     * Maximum number of segements to check when ray tracing.
+     * Sound categories that are ignored when determing special effects.
      */
-    private static final int MAX_SEGMENTS = 10;
+    private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
+    /**
+     * Maximum number of segements to check when ray tracing for occlusion.
+     */
+    private static final int OCCLUSION_RAYS = 10;
     /**
      * Number of rays to project when doing reverb calculations.
      */
@@ -59,6 +72,14 @@ public final class SoundFXUtils {
      * Maximum distance to trace a reverb ray segment before stopping.
      */
     private static final float MAX_REVERB_DISTANCE = 256;
+    /**
+     * Reciprical of the total number of rays cast.
+     */
+    private static final float RECIP_TOTAL_RAYS = 1F / (REVERB_RAYS * REVERB_RAY_BOUNCES);
+    /**
+     * Reciprical of the total primary rays.
+     */
+    private static final float RECIP_PRIMARY_RAYS = 1F / REVERB_RAYS;
     /**
      * Normals for the direction of each of the rays to be cast.
      */
@@ -76,7 +97,6 @@ public final class SoundFXUtils {
 
         // Pre-calculate the known vectors that will be projected off a sound source when casting about to establish
         // reverb effects.
-        int reverbSkyTotal = 0;
         for (int i = 0; i < REVERB_RAYS; i++) {
             final float longitude = MathStuff.ANGLE * (float) i;
             final float latitude = (float) Math.asin(((float) i / REVERB_RAYS) * 2.0F - 1.0F);
@@ -117,23 +137,20 @@ public final class SoundFXUtils {
         directCutoff *= 1F - ctx.auralDampening;
 
         // Calculate reverb parameters for this sound
-        float sendGain0 = 0.0f;
-        float sendGain1 = 0.0f;
-        float sendGain2 = 0.0f;
-        float sendGain3 = 0.0f;
+        float sendGain0 = 0F;
+        float sendGain1 = 0F;
+        float sendGain2 = 0F;
+        float sendGain3 = 0F;
 
-        float sendCutoff0 = 1.0f;
-        float sendCutoff1 = 1.0f;
-        float sendCutoff2 = 1.0f;
-        float sendCutoff3 = 1.0f;
+        float sendCutoff0 = 1F;
+        float sendCutoff1 = 1F;
+        float sendCutoff2 = 1F;
+        float sendCutoff3 = 1F;
 
         // Shoot rays around sound
-        final float[] bounceReflectivityRatio = new float[REVERB_RAY_BOUNCES];
+        final float[] bounceRatio = new float[REVERB_RAY_BOUNCES];
 
-        float sharedAirspace = 0.0f;
-
-        final float rcpTotalRays = 1.0f / (REVERB_RAYS * REVERB_RAY_BOUNCES);
-        final float rcpPrimaryRays = 1.0f / REVERB_RAYS;
+        float sharedAirspace = 0F;
 
         for (int i = 0; i < REVERB_RAYS; i++) {
 
@@ -142,89 +159,82 @@ public final class SoundFXUtils {
 
             final BlockRayTraceResult rayHit = ctx.rayTraceBlocks(origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
 
-            if (!isMiss(rayHit)) {
-                final double rayLength = origin.distanceTo(rayHit.getHitVec());
+            if (isMiss(rayHit))
+                continue;
 
-                // Additional bounces
-                BlockPos lastHitBlock = rayHit.getPos();
-                Vec3d lastHitPos = rayHit.getHitVec();
-                Vec3d lastHitNormal = new Vec3d(rayHit.getFace().getDirectionVec());
-                Vec3d lastRayDir = REVERB_RAY_NORMALS[i];
+            // Additional bounces
+            BlockPos lastHitBlock = rayHit.getPos();
+            Vec3d lastHitPos = rayHit.getHitVec();
+            Vec3d lastHitNormal = new Vec3d(rayHit.getFace().getDirectionVec());
+            Vec3d lastRayDir = REVERB_RAY_NORMALS[i];
 
-                float totalRayDistance = (float) rayLength;
+            double totalRayDistance = origin.distanceTo(rayHit.getHitVec());
 
-                // Secondary ray bounces
-                for (int j = 0; j < REVERB_RAY_BOUNCES; j++) {
-                    final Vec3d newRayDir = MathStuff.reflection(lastRayDir, lastHitNormal);
-                    origin = lastHitPos.add(newRayDir.scale(0.01F));
-                    target = origin.add(newRayDir.scale(MAX_REVERB_DISTANCE));
+            // Secondary ray bounces
+            for (int j = 0; j < REVERB_RAY_BOUNCES; j++) {
 
-                    final float blockReflectivity = ((IBlockStateEffects) ctx.world.getBlockState(lastHitBlock)).getReflectivity();
-                    float energyTowardsPlayer = (blockReflectivity * 0.75f + 0.25f) * 0.25F;
+                final float blockReflectivity = ((IBlockStateEffects) ctx.world.getBlockState(lastHitBlock)).getReflectivity();
+                final float energyTowardsPlayer = (blockReflectivity * 0.75f + 0.25f) * 0.25F * RECIP_TOTAL_RAYS;
 
-                    final BlockRayTraceResult newRayHit = ctx.rayTraceBlocks(origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+                final Vec3d newRayDir = MathStuff.reflection(lastRayDir, lastHitNormal);
+                origin = lastHitPos.add(newRayDir.scale(0.01F));
+                target = origin.add(newRayDir.scale(MAX_REVERB_DISTANCE));
 
-                    if (isMiss(newRayHit)) {
-                        totalRayDistance += lastHitPos.distanceTo(ctx.playerEyePosition);
-                    } else {
-                        final double newRayLength = lastHitPos.distanceTo(newRayHit.getHitVec());
+                final BlockRayTraceResult newRayHit = ctx.rayTraceBlocks(origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
 
-                        bounceReflectivityRatio[j] += blockReflectivity;
+                if (isMiss(newRayHit)) {
+                    totalRayDistance += lastHitPos.distanceTo(ctx.playerEyePosition);
+                } else {
 
-                        totalRayDistance += newRayLength;
+                    bounceRatio[j] += blockReflectivity;
+                    totalRayDistance += lastHitPos.distanceTo(newRayHit.getHitVec());
 
-                        lastHitPos = newRayHit.getHitVec();
-                        lastHitNormal = new Vec3d(newRayHit.getFace().getDirectionVec());
-                        lastRayDir = newRayDir;
-                        lastHitBlock = newRayHit.getPos();
+                    lastHitPos = newRayHit.getHitVec();
+                    lastHitNormal = new Vec3d(newRayHit.getFace().getDirectionVec());
+                    lastRayDir = newRayDir;
+                    lastHitBlock = newRayHit.getPos();
 
-                        // Cast one final ray towards the player. If it's
-                        // unobstructed, then the sound source and the player
-                        // share airspace.
-                        if (!Effects.simplerSharedAirspaceSimulation || j == REVERB_RAY_BOUNCES - 1) {
-                            final Vec3d finalRayStart = new Vec3d(lastHitPos.x + lastHitNormal.x * 0.01,
-                                    lastHitPos.y + lastHitNormal.y * 0.01, lastHitPos.z + lastHitNormal.z * 0.01);
-
-                            final BlockRayTraceResult finalRayHit = ctx.rayTraceBlocks(finalRayStart, ctx.playerEyePosition, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
-
-                            if (isMiss(finalRayHit)) {
-                                // log("Secondary ray hit the player!");
-                                sharedAirspace += 1.0f;
-                            }
+                    // Cast one final ray towards the player. If it's unobstructed, then the sound source and the
+                    // player share airspace.
+                    if (!Effects.simplerSharedAirspaceSimulation || j == REVERB_RAY_BOUNCES - 1) {
+                        final Vec3d finalRayStart = lastHitPos.add(lastHitNormal.scale(0.01F));
+                        final BlockRayTraceResult finalRayHit = ctx.rayTraceBlocks(finalRayStart, ctx.playerEyePosition, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+                        if (isMiss(finalRayHit)) {
+                            sharedAirspace += 1.0f;
                         }
                     }
+                }
 
-                    final float reflectionDelay = (float) Math.max(totalRayDistance, 0.0) * 0.12f * blockReflectivity;
+                final float reflectionDelay = (float) Math.max(totalRayDistance, 0.0) * 0.12f * blockReflectivity;
 
-                    final float cross0 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 0.0f), 0.0f, 1.0f);
-                    final float cross1 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 1.0f), 0.0f, 1.0f);
-                    final float cross2 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 2.0f), 0.0f, 1.0f);
-                    final float cross3 = MathHelper.clamp(reflectionDelay - 2.0f, 0.0f, 1.0f);
+                final float cross0 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 0.0f), 0.0f, 1.0f);
+                final float cross1 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 1.0f), 0.0f, 1.0f);
+                final float cross2 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 2.0f), 0.0f, 1.0f);
+                final float cross3 = MathHelper.clamp(reflectionDelay - 2.0f, 0.0f, 1.0f);
 
-                    sendGain0 += cross0 * energyTowardsPlayer * 6.4f * rcpTotalRays;
-                    sendGain1 += cross1 * energyTowardsPlayer * 12.8f * rcpTotalRays;
-                    sendGain2 += cross2 * energyTowardsPlayer * 12.8f * rcpTotalRays;
-                    sendGain3 += cross3 * energyTowardsPlayer * 12.8f * rcpTotalRays;
+                sendGain0 += cross0 * energyTowardsPlayer * 6.4f;
+                sendGain1 += cross1 * energyTowardsPlayer * 12.8f;
+                sendGain2 += cross2 * energyTowardsPlayer * 12.8f;
+                sendGain3 += cross3 * energyTowardsPlayer * 12.8f;
 
-                    // Nowhere to bounce off of, stop bouncing!
-                    if (isMiss(newRayHit)) {
-                        break;
-                    }
+                // Nowhere to bounce off of, stop bouncing!
+                if (isMiss(newRayHit)) {
+                    break;
                 }
             }
         }
 
-        bounceReflectivityRatio[0] = bounceReflectivityRatio[0] / REVERB_RAYS;
-        bounceReflectivityRatio[1] = bounceReflectivityRatio[1] / REVERB_RAYS;
-        bounceReflectivityRatio[2] = bounceReflectivityRatio[2] / REVERB_RAYS;
-        bounceReflectivityRatio[3] = bounceReflectivityRatio[3] / REVERB_RAYS;
+        bounceRatio[0] = bounceRatio[0] / REVERB_RAYS;
+        bounceRatio[1] = bounceRatio[1] / REVERB_RAYS;
+        bounceRatio[2] = bounceRatio[2] / REVERB_RAYS;
+        bounceRatio[3] = bounceRatio[3] / REVERB_RAYS;
 
         sharedAirspace *= 64.0f;
 
         if (Effects.simplerSharedAirspaceSimulation) {
-            sharedAirspace *= rcpPrimaryRays;
+            sharedAirspace *= RECIP_PRIMARY_RAYS;
         } else {
-            sharedAirspace *= rcpTotalRays;
+            sharedAirspace *= RECIP_TOTAL_RAYS;
         }
 
         final float sharedAirspaceWeight0 = MathHelper.clamp(sharedAirspace / 20.0f, 0.0f, 1.0f);
@@ -249,9 +259,9 @@ public final class SoundFXUtils {
 
         float directGain = (float) Math.pow(directCutoff, 0.1);
 
-        sendGain1 *= bounceReflectivityRatio[1];
-        sendGain2 *= (float) Math.pow(bounceReflectivityRatio[2], 3.0);
-        sendGain3 *= (float) Math.pow(bounceReflectivityRatio[3], 4.0);
+        sendGain1 *= bounceRatio[1];
+        sendGain2 *= (float) Math.pow(bounceRatio[2], 3.0);
+        sendGain3 *= (float) Math.pow(bounceRatio[3], 4.0);
 
         sendGain0 = MathHelper.clamp(sendGain0, 0.0f, 1.0f);
         sendGain1 = MathHelper.clamp(sendGain1, 0.0f, 1.0f);
@@ -314,23 +324,25 @@ public final class SoundFXUtils {
     }
 
     private static void clearSettings(@Nonnull final SourceContext source) {
+        source.getLowPass0().setProcess(false);
+        source.getLowPass1().setProcess(false);
+        source.getLowPass2().setProcess(false);
+        source.getLowPass3().setProcess(false);
+        source.getDirect().setProcess(false);
+        source.getAirAbsorb().setProcess(false);
+        /*
         source.getLowPass0().gain = 0F;
         source.getLowPass0().gainHF = 1F;
-        source.getLowPass0().setProcess(false);
         source.getLowPass1().gain = 0F;
         source.getLowPass1().gainHF = 1F;
-        source.getLowPass1().setProcess(false);
         source.getLowPass2().gain = 0F;
         source.getLowPass2().gainHF = 1F;
-        source.getLowPass2().setProcess(false);
         source.getLowPass3().gain = 0F;
         source.getLowPass3().gain = 1F;
-        source.getLowPass3().setProcess(false);
         source.getDirect().gain = 1F;
         source.getDirect().gainHF = 1F;
-        source.getDirect().setProcess(false);
         source.getAirAbsorb().setValue(1F);
-        source.getAirAbsorb().setProcess(false);
+         */
     }
 
     private static float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vec3d source, @Nonnull final Vec3d listener) {
@@ -350,7 +362,7 @@ public final class SoundFXUtils {
         float accum = 0F;
 
         final Iterator<Pair<BlockPos, BlockState>> itr = new RayTraceIterator(ctx.world, origin, listener, ctx.player);
-        for (int i = 0; i < MAX_SEGMENTS; i++) {
+        for (int i = 0; i < OCCLUSION_RAYS; i++) {
             if (itr.hasNext()) {
                 accum += ((IBlockStateEffects) itr.next().getValue()).getOcclusion();
             } else {

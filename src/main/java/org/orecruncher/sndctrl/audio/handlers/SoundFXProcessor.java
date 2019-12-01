@@ -18,7 +18,9 @@
 
 package org.orecruncher.sndctrl.audio.handlers;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
@@ -43,10 +45,18 @@ import org.orecruncher.sndctrl.xface.ISoundSource;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoundFXProcessor {
+
+    /**
+     * Sound categories that are ignored when determing special effects.  Things like MASTER, RECORDS, and MUSIC.
+     */
+    private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
 
     // Settings used by the system
     private static final int SOUND_PROCESS_ITERATION = 1000 / 30;
@@ -55,13 +65,24 @@ public final class SoundFXProcessor {
     static boolean isAvailable;
     @Nullable
     private static Worker soundProcessor;
+    @Nullable
+    private static ForkJoinPool threadPool;
     private static WorldContext worldContext = new WorldContext();
 
     static {
+        IGNORE_CATEGORIES.add(SoundCategory.WEATHER);   // Thunder and the like
+        IGNORE_CATEGORIES.add(SoundCategory.RECORDS);   // Jukebox
+        IGNORE_CATEGORIES.add(SoundCategory.MUSIC);     // Background music
+        IGNORE_CATEGORIES.add(SoundCategory.MASTER);    // Anything slotted to master, like menu buttons
+
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);
     }
 
     private SoundFXProcessor() {
+    }
+
+    public static boolean isCategoryIgnored(@Nonnull final SoundCategory cat) {
+        return IGNORE_CATEGORIES.contains(cat);
     }
 
     @Nullable
@@ -110,6 +131,10 @@ public final class SoundFXProcessor {
 
             Effects.initialize();
 
+            // Default the pool would want 1 thread per core.  Shouldn't need that many so scale down.  Also,
+            // the handling thread will also help reduce the workload if needed, so there is a +1 hidden in this
+            // math.
+            threadPool = new ForkJoinPool(Math.max(Runtime.getRuntime().availableProcessors() / 3, 1));
             soundProcessor = new Worker(
                     "SoundControl Sound Processor",
                     SoundFXProcessor::processSounds,
@@ -134,19 +159,18 @@ public final class SoundFXProcessor {
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onSoundPlay(@Nonnull final SoundEvent.SoundSourceEvent event) {
-        if (!isAvailable())
-            return;
-
-        Utilities.safeCast(event.getSource(), ISoundSource.class).ifPresent(src -> {
-            final SourceContext ctx = src.getSourceContext();
-            ctx.attachSound(event.getSound());
-            final SoundCategory cat = event.getSound().getCategory();
-            if (cat == SoundCategory.MUSIC || cat == SoundCategory.MASTER) {
-                ctx.disable();
-            } else {
-                sources.put(src.getSourceId(), ctx);
-            }
-        });
+        if (isAvailable()) {
+            Utilities.safeCast(event.getSource(), ISoundSource.class).ifPresent(src -> {
+                final ISound sound = event.getSound();
+                final SourceContext ctx = src.getSourceContext();
+                ctx.attachSound(sound);
+                if (isCategoryIgnored(sound.getCategory())) {
+                    ctx.disable();
+                } else {
+                    sources.put(src.getSourceId(), ctx);
+                }
+            });
+        }
     }
 
     /**
@@ -177,7 +201,12 @@ public final class SoundFXProcessor {
      */
     private static void processSounds() {
         final Collection<SourceContext> srcs = sources.values();
-        srcs.parallelStream().forEach(SourceContext::update);
+        if (srcs.size() > 0) {
+            for (final SourceContext ctx : srcs) {
+                threadPool.submit(ctx::update);
+            }
+            threadPool.awaitQuiescence(5, TimeUnit.MINUTES);
+        }
     }
 
     /**

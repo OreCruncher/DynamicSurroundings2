@@ -53,10 +53,6 @@ import java.util.Set;
 public final class SoundFXUtils {
 
     /**
-     * Sound categories that are ignored when determing special effects.
-     */
-    private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
-    /**
      * Maximum number of segements to check when ray tracing for occlusion.
      */
     private static final int OCCLUSION_RAYS = 10;
@@ -90,10 +86,6 @@ public final class SoundFXUtils {
     private static final Vec3d[] REVERB_RAY_PROJECTED = new Vec3d[REVERB_RAYS];
 
     static {
-        IGNORE_CATEGORIES.add(SoundCategory.WEATHER);
-        IGNORE_CATEGORIES.add(SoundCategory.RECORDS);
-        IGNORE_CATEGORIES.add(SoundCategory.MUSIC);
-        IGNORE_CATEGORIES.add(SoundCategory.MASTER);
 
         // Pre-calculate the known vectors that will be projected off a sound source when casting about to establish
         // reverb effects.
@@ -116,7 +108,7 @@ public final class SoundFXUtils {
         assert ctx.world != null;
         assert ctx.player != null;
 
-        if (ctx.isNotValid() || source.isDisabled() || IGNORE_CATEGORIES.contains(source.getCategory()) || source.getPosition().equals(Vec3d.ZERO)) {
+        if (ctx.isNotValid() || source.isDisabled() || SoundFXProcessor.isCategoryIgnored(source.getCategory()) || source.getPosition().equals(Vec3d.ZERO)) {
             clearSettings(source);
             return;
         }

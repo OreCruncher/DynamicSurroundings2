@@ -46,14 +46,8 @@
     "#minecraft:logs": 0.7,
     "#minecraft:planks": 0.7
   },
-  "lowpass": {
-    "minecraft:water": {
-      "gain": 1,
-      "gainHF": 0.4
-    },
-    "minecraft:lava": {
-      "gain": 0.6,
-      "gainHF": 0.1
-    }
+  "fluid": {
+    "minecraft:water": 0.6,
+    "minecraft:lava": 0.9
   }
 }

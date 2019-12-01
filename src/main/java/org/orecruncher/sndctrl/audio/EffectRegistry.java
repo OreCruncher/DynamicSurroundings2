@@ -21,7 +21,6 @@ package org.orecruncher.sndctrl.audio;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.SerializedName;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -44,10 +43,6 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public final class EffectRegistry {
 
-    public static final int REFLECTIVITY_LOW = 0;
-    public static final int REFLECTIVITY_MEDIUM = 1;
-    public static final int REFLECTIVITY_HIGH = 2;
-
     private static final String MATERIAL_PREFIX = "+";
     private static final String SOUNDTYPE_PREFIX = "^";
     private static final String TAG_PREFIX = "#";
@@ -63,7 +58,7 @@ public final class EffectRegistry {
     private static final BlockStateMatcherMap<Float> blockStateReflectMap = new BlockStateMatcherMap<>();
 
     // Lowpass Data
-    private static final Object2ObjectOpenHashMap<ResourceLocation, LowPassEffect> lowPassEffects = new Object2ObjectOpenHashMap<>();
+    private static final Object2FloatOpenHashMap<ResourceLocation> fluidCoefficient = new Object2FloatOpenHashMap<>();
 
     static {
         // Occlusion setup
@@ -77,8 +72,8 @@ public final class EffectRegistry {
         blockStateReflectMap.setDefaultValue(() -> -1F);
 
         // Default lowpass state is essentially normal air
-        lowPassEffects.defaultReturnValue(LowPassEffect.DEFAULT);
-        lowPassEffects.put(new ResourceLocation("sndctrl:default"), LowPassEffect.DEFAULT);
+        fluidCoefficient.defaultReturnValue(0);
+        fluidCoefficient.put(new ResourceLocation("sndctrl:default"), 0);
 
         final ResourceLocation res = new ResourceLocation(SoundControl.MOD_ID, "effects.json");
         try {
@@ -123,8 +118,8 @@ public final class EffectRegistry {
      * @return Lowpass filter effect parameters for the specified resource
      */
     @Nonnull
-    public static LowPassEffect getLowPassEffect(@Nonnull final ResourceLocation res) {
-        return lowPassEffects.get(res);
+    public static float getFluidCoeffcient(@Nonnull final ResourceLocation res) {
+        return fluidCoefficient.getFloat(res);
     }
 
     private static void processOcclusions(@Nonnull final EffectOptions options) {
@@ -205,8 +200,8 @@ public final class EffectRegistry {
     }
 
     private static void processLowpass(@Nonnull final EffectOptions options) {
-        for (final Map.Entry<String, LowPassEffect> kvp : options.lowPass.entrySet()) {
-            lowPassEffects.put(new ResourceLocation(kvp.getKey()), kvp.getValue());
+        for (final Map.Entry<String, Float> kvp : options.fluid.entrySet()) {
+            fluidCoefficient.put(new ResourceLocation(kvp.getKey()), kvp.getValue());
         }
     }
 
@@ -235,8 +230,8 @@ public final class EffectRegistry {
         public Map<String, Float> occlusions = ImmutableMap.of();
         @SerializedName("reflectivity")
         public Map<String, Float> refectitivity = ImmutableMap.of();
-        @SerializedName("lowpass")
-        public Map<String, LowPassEffect> lowPass = ImmutableMap.of();
+        @SerializedName("fluid")
+        public Map<String, Float> fluid = ImmutableMap.of();
     }
 
 }

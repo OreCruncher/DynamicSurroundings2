@@ -21,8 +21,6 @@ package org.orecruncher.lib.reflection;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.lib.Lib;
-import org.orecruncher.lib.logging.IModLog;
-import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

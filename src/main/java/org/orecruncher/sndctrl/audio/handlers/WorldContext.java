@@ -84,11 +84,10 @@ public final class WorldContext {
      */
     public final float precipitationStrength;
     /**
-     * Lowpass Filter information based on the player's head position.  For example, the player head can be inside
-     * a block of water.
+     * Coefficient used for dampening sound.  Usually caused by the player's head being in lava or water.
      */
     @Nonnull
-    public final EffectRegistry.LowPassEffect lowPassData;
+    public final float auralDampening;
 
     public WorldContext() {
         if (WorldUtils.isInGame()) {
@@ -103,9 +102,9 @@ public final class WorldContext {
             final Fluid fs = this.player.world.getFluidState(this.playerEyePos).getFluid();
             final ResourceLocation name = fs.getRegistryName();
             if (name != null)
-                this.lowPassData = EffectRegistry.getLowPassEffect(name);
+                this.auralDampening = EffectRegistry.getFluidCoeffcient(name);
             else
-                this.lowPassData = EffectRegistry.LowPassEffect.DEFAULT;
+                this.auralDampening = 0;
 
             // Get our current rain strength.
             final AudioEvent.PrecipitationStrengthEvent evt = new AudioEvent.PrecipitationStrengthEvent(this.world);
@@ -121,7 +120,7 @@ public final class WorldContext {
             this.playerEyePosition = Vec3d.ZERO;
             this.playerPos = BlockPos.ZERO;
             this.playerEyePos = BlockPos.ZERO;
-            this.lowPassData = EffectRegistry.LowPassEffect.DEFAULT;
+            this.auralDampening = 0;
             this.precipitationStrength = 0F;
         }
     }
@@ -132,6 +131,8 @@ public final class WorldContext {
 
     @Nullable
     public BlockRayTraceResult rayTraceBlocks(@Nonnull final Vec3d src, @Nonnull final Vec3d dest, @Nonnull final RayTraceContext.BlockMode bm, @Nonnull final RayTraceContext.FluidMode fm) {
+        assert this.world != null;
+        assert this.player != null;
         return WorldUtils.rayTraceBlock(this.world, src, dest, bm, fm, this.player);
     }
 

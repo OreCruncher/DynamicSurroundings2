@@ -20,7 +20,6 @@ package org.orecruncher.sndctrl.audio.handlers;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
 import net.minecraft.world.biome.Biome;
@@ -114,12 +113,8 @@ public final class SoundFXUtils {
 
         float directCutoff = (float) Math.exp(-occlusionAccumulation * absorptionCoeff);
 
-        // TODO: Need to clean this up
-        /*
-        if (mc.player.isInsideOfMaterial(Material.WATER)) {
-            directCutoff *= 1.0f - Effects.underwaterFilter;
-        }
-        */
+        // Handle any dampening effects from the player - like head in water
+        directCutoff *= 1F - ctx.auralDampening;
 
         // Calculate reverb parameters for this sound
         float sendGain0 = 0.0f;
@@ -164,7 +159,7 @@ public final class SoundFXUtils {
                     origin = lastHitPos.add(newRayDir.scale(0.01F));
                     target = origin.add(newRayDir.scale(MAX_REVERB_DISTANCE));
 
-                    final float blockReflectivity = ((IBlockStateEffects)ctx.world.getBlockState(lastHitBlock)).getReflectivity();
+                    final float blockReflectivity = ((IBlockStateEffects) ctx.world.getBlockState(lastHitBlock)).getReflectivity();
                     float energyTowardsPlayer = (blockReflectivity * 0.75f + 0.25f) * 0.25F;
 
                     final BlockRayTraceResult newRayHit = ctx.rayTraceBlocks(origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
@@ -179,15 +174,14 @@ public final class SoundFXUtils {
                         totalRayDistance += newRayLength;
 
                         lastHitPos = newRayHit.getHitVec();
-                        lastHitNormal = new Vec3d(newRayHit.getFace().getDirectionVec());;
+                        lastHitNormal = new Vec3d(newRayHit.getFace().getDirectionVec());
                         lastRayDir = newRayDir;
                         lastHitBlock = newRayHit.getPos();
 
                         // Cast one final ray towards the player. If it's
                         // unobstructed, then the sound source and the player
                         // share airspace.
-                        if (Effects.simplerSharedAirspaceSimulation && j == REVERB_RAY_BOUNCES - 1
-                                || !Effects.simplerSharedAirspaceSimulation) {
+                        if (!Effects.simplerSharedAirspaceSimulation || j == REVERB_RAY_BOUNCES - 1) {
                             final Vec3d finalRayStart = new Vec3d(lastHitPos.x + lastHitNormal.x * 0.01,
                                     lastHitPos.y + lastHitNormal.y * 0.01, lastHitPos.z + lastHitNormal.z * 0.01);
 

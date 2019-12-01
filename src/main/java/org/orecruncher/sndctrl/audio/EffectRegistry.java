@@ -69,7 +69,7 @@ public final class EffectRegistry {
         // Occlusion setup
         materialOcclusion.defaultReturnValue(-1F);
         for (final Material mat : MaterialUtils.getMaterials())
-            materialOcclusion.put(mat, mat.isOpaque() ? 0.1F : 0.05F);
+            materialOcclusion.put(mat, mat.isOpaque() ? 1F : 0.15F);
         blockStateOcclusionMap.setDefaultValue(() -> -1F);
 
         // Reflection setup
@@ -100,7 +100,7 @@ public final class EffectRegistry {
         if (result < 0) {
             result = materialOcclusion.getFloat(state.getMaterial());
             if (result < 0) {
-                result = state.getMaterial().isOpaque() ? 0.1F : 0.05F;
+                result = state.getMaterial().isOpaque() ? 1F : 0.15F;
             }
         }
 
@@ -111,7 +111,7 @@ public final class EffectRegistry {
         float result = blockStateReflectMap.get(state);
         if (result < 0)
             result = materialReflect.getFloat(state.getMaterial());
-        return Math.max(result, 0);
+        return result < 0 ? 0.5F : result;
     }
 
     /**

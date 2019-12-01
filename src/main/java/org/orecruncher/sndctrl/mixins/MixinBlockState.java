@@ -28,9 +28,6 @@ public class MixinBlockState implements IBlockStateEffects {
 
     private float occlusion = -1;
     private float reflectivity = -1F;
-    private float lowFreq = -1F;
-    private float midFreq = -1F;
-    private float highFreq = -1;
 
     @Override
     public float getOcclusion() {
@@ -44,32 +41,5 @@ public class MixinBlockState implements IBlockStateEffects {
         if (this.reflectivity < 0)
             this.reflectivity = EffectRegistry.getReflectivity((BlockState) ((Object) this));
         return this.reflectivity;
-    }
-
-    @Override
-    public float getLowFrequencyReflect() {
-        if (this.lowFreq < 0) {
-            final float r = getReflectivity();
-            this.lowFreq = r >= 1F ? 0 : (1F - r);
-        }
-        return lowFreq;
-    }
-
-    @Override
-    public float getMidFrequencyReflect() {
-        if (this.midFreq < 0) {
-            final float r = getReflectivity();
-            this.midFreq = r >= 2F ? 0 : (1F - Math.abs(r - 1F));
-        }
-        return this.midFreq;
-    }
-
-    @Override
-    public float getHighFrequencyReflect() {
-        if (this.highFreq < 0) {
-            final float r = getReflectivity();
-            this.highFreq = r <= 1F ? 0 : r - 1F;
-        }
-        return this.highFreq;
     }
 }

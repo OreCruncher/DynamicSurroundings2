@@ -24,7 +24,4 @@ public interface IBlockStateEffects {
 
     float getReflectivity();
 
-    float getLowFrequencyReflect();
-    float getMidFrequencyReflect();
-    float getHighFrequencyReflect();
 }

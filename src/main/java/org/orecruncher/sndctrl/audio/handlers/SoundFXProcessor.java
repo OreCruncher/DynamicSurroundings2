@@ -31,17 +31,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.openal.AL10;
-import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.*;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.threading.Worker;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.audio.handlers.effects.LowPassFilter;
-import org.orecruncher.sndctrl.audio.handlers.effects.ReverbData;
-import org.orecruncher.sndctrl.audio.handlers.effects.ReverbEffect;
 import org.orecruncher.sndctrl.events.AudioEvent;
 import org.orecruncher.sndctrl.xface.ISoundSource;
 
@@ -54,18 +49,12 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public final class SoundFXProcessor {
 
     // Settings used by the system
-    static final ReverbEffect reverb = new ReverbEffect();
-    static final LowPassFilter lowPass = new LowPassFilter();
-    static final ReverbData roomReverb = new ReverbData();
     private static final int SOUND_PROCESS_ITERATION = 1000 / 30;
-    private static final int ROOM_PROCESS_ITERATION = 1000 / 20;
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundFXProcessor.class);
     private static final ConcurrentSkipListMap<Integer, SourceContext> sources = new ConcurrentSkipListMap<>();
     static boolean isAvailable;
     @Nullable
     private static Worker soundProcessor;
-    @Nonnull
-    private static Worker roomProcessor;
     private static WorldContext worldContext = new WorldContext();
 
     static {
@@ -108,8 +97,19 @@ public final class SoundFXProcessor {
         }
 
         try {
-            reverb.initialize();
-            lowPass.initialize();
+
+            // Using 4 aux slots instead of the default 2
+            final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
+            final long ctx = ALC10.alcCreateContext(device, attribs);
+            final boolean result = ALC10.alcMakeContextCurrent(ctx);
+
+            if (!result) {
+                LOGGER.warn("Unable to configure additional auxillary slots for sound sources!");
+                return;
+            }
+
+            Effects.initialize();
+
             soundProcessor = new Worker(
                     "SoundControl Sound Processor",
                     SoundFXProcessor::processSounds,
@@ -117,14 +117,6 @@ public final class SoundFXProcessor {
                     LOGGER
             );
             soundProcessor.start();
-
-            roomProcessor = new Worker(
-                    "SoundControl Room Processor",
-                    SoundFXProcessor::processRoom,
-                    ROOM_PROCESS_ITERATION,
-                    LOGGER
-            );
-            roomProcessor.start();
 
             isAvailable = true;
         } catch (@Nonnull final Throwable t) {
@@ -150,7 +142,7 @@ public final class SoundFXProcessor {
             ctx.attachSound(event.getSound());
             final SoundCategory cat = event.getSound().getCategory();
             if (cat == SoundCategory.MUSIC || cat == SoundCategory.MASTER) {
-                ctx.disableEffects();
+                ctx.disable();
             } else {
                 sources.put(src.getSourceId(), ctx);
             }
@@ -174,7 +166,6 @@ public final class SoundFXProcessor {
      */
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onClientTick(@Nonnull final TickEvent.ClientTickEvent event) {
-
         if (isAvailable() && event.side == LogicalSide.CLIENT && event.phase == TickEvent.Phase.START) {
             worldContext = new WorldContext();
         }
@@ -186,15 +177,7 @@ public final class SoundFXProcessor {
      */
     private static void processSounds() {
         final Collection<SourceContext> srcs = sources.values();
-        srcs.forEach(SourceContext::update);
-    }
-
-    /**
-     * Separate thread for processing the room around the player to get an accoustic layout.  The goal is to establish
-     * area geometry and have that affect reverb of a sound that is playing.
-     */
-    private static void processRoom() {
-        SoundFXUtils.calculateReverb(roomReverb, worldContext);
+        srcs.parallelStream().forEach(SourceContext::update);
     }
 
     /**
@@ -212,9 +195,6 @@ public final class SoundFXProcessor {
     public static void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
         if (isAvailable() && Minecraft.getInstance().gameSettings.showDebugInfo) {
             String msg = soundProcessor.getDiagnosticString();
-            if (!StringUtils.isEmpty(msg))
-                event.getLeft().add(TextFormatting.GREEN + msg);
-            msg = roomProcessor.getDiagnosticString();
             if (!StringUtils.isEmpty(msg))
                 event.getLeft().add(TextFormatting.GREEN + msg);
         }

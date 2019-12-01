@@ -79,6 +79,6 @@ public class RayTraceIterator implements Iterator<Pair<BlockPos, BlockState>> {
         final BlockState state = this.world.getBlockState(pos);
         this.origin = this.result.getHitVec().add(this.normal);
         doTrace();
-        return Pair.of(this.result.getPos(), state);
+        return Pair.of(pos, state);
     }
 }

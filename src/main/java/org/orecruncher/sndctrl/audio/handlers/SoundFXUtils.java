@@ -18,9 +18,9 @@
 
 package org.orecruncher.sndctrl.audio.handlers;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.block.Block;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
 import net.minecraft.world.biome.Biome;
@@ -31,66 +31,50 @@ import org.orecruncher.lib.RayTraceIterator;
 import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
-import org.orecruncher.sndctrl.audio.handlers.effects.ReverbData;
 import org.orecruncher.sndctrl.audio.handlers.effects.SourceProperty;
 import org.orecruncher.sndctrl.xface.IBlockStateEffects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public final class SoundFXUtils {
 
+    private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
+
     /**
      * Maximum number of segements to check when ray tracing.
      */
     private static final int MAX_SEGMENTS = 10;
     /**
-     * Dampening effect of snow fall
-     */
-    private static final float SNOW_FACTOR = 5F;
-    /**
-     * Dampening effect of rainfall
-     */
-    private static final float RAIN_FACTOR = 2F;
-
-    /**
      * Number of rays to project when doing reverb calculations.
      */
-    private static final int REVERB_RAYS = 256;
-
+    private static final int REVERB_RAYS = 32;
+    /**
+     * Number of bounces a sound wave will make when projecting.
+     */
+    private static final int REVERB_RAY_BOUNCES = 4;
     /**
      * Maximum distance to trace a reverb ray segment before stopping.
      */
-    private static final float MAX_REVERB_DISTANCE = 16;
-
-    /**
-     * dY value that is considered to be a sky projecting ray
-     */
-    private static final double REVERB_RAY_SKY_ELEVATION = 0.5D;
-
+    private static final float MAX_REVERB_DISTANCE = 256;
     /**
      * Normals for the direction of each of the rays to be cast.
      */
     private static final Vec3d[] REVERB_RAY_NORMALS = new Vec3d[REVERB_RAYS];
-
     /**
      * Precalculated vectors to determine end targets relative to an origin.
      */
     private static final Vec3d[] REVERB_RAY_PROJECTED = new Vec3d[REVERB_RAYS];
 
-    /**
-     * Whether a given reverb ray is projected skyward
-     */
-    private static final boolean[] REVERB_RAY_SKY = new boolean[REVERB_RAYS];
-
-    /**
-     * Maxium possible vectors that are considered sky facing.
-     */
-    private static final int REVERB_RAY_SKY_MAX;
-
     static {
+        IGNORE_CATEGORIES.add(SoundCategory.WEATHER);
+        IGNORE_CATEGORIES.add(SoundCategory.RECORDS);
+        IGNORE_CATEGORIES.add(SoundCategory.MUSIC);
+        IGNORE_CATEGORIES.add(SoundCategory.MASTER);
+
         // Pre-calculate the known vectors that will be projected off a sound source when casting about to establish
         // reverb effects.
         int reverbSkyTotal = 0;
@@ -104,39 +88,261 @@ public final class SoundFXUtils {
                     Math.sin(latitude)
             ).normalize();
 
-            REVERB_RAY_SKY[i] = Double.compare(REVERB_RAY_NORMALS[i].getY(), REVERB_RAY_SKY_ELEVATION) >= 0;
-            if (REVERB_RAY_SKY[i])
-                reverbSkyTotal++;
-
             REVERB_RAY_PROJECTED[i] = REVERB_RAY_NORMALS[i].scale(MAX_REVERB_DISTANCE);
         }
-
-        REVERB_RAY_SKY_MAX = reverbSkyTotal;
     }
 
-    /**
-     * Calculates the occlusion for a sound source for the WorldContext listener (player).  Takes into account the
-     * blocks between the player and the sound source, as well as any other effects related to the player head being
-     * in a liquid of some sort.
-     *
-     * @param effectData Effect data reference to receive the calculations
-     * @param ctx        WorldContext containing data about the world
-     * @param handler    Sound handler that maintains sound state
-     */
-    public static void calculateOcclusion(@Nonnull final LowPassData effectData, @Nonnull final WorldContext ctx, @Nonnull final SourceContext handler) {
-
-        if (ctx.isNotValid() || handler.getPosition().equals(Vec3d.ZERO)) {
-            synchronized (effectData.sync()) {
-                effectData.setProcess(false);
-            }
-            return;
-        }
+    public static void calculate(@Nonnull final WorldContext ctx, @Nonnull final SourceContext source) {
 
         assert ctx.world != null;
         assert ctx.player != null;
 
-        final Vec3d listener = ctx.playerEyePosition;
-        final Vec3d source = handler.getPosition();
+        if (ctx.isNotValid() || source.isDisabled() || IGNORE_CATEGORIES.contains(source.getCategory()) || source.getPosition().equals(Vec3d.ZERO)) {
+            clearSettings(source);
+            return;
+        }
+
+        final float absorptionCoeff = Effects.globalBlockAbsorption * 3.0f;
+
+        float airAbsorptionFactor = 1.0f;
+
+        if (ctx.isPrecipitating) {
+            airAbsorptionFactor = calculateWeatherAbsorption(ctx, ctx.playerEyePosition, source.getPosition());
+        }
+
+        final float occlusionAccumulation = calculateOcclusion(ctx, ctx.playerEyePosition, source.getPosition());
+
+        float directCutoff = (float) Math.exp(-occlusionAccumulation * absorptionCoeff);
+
+        // TODO: Need to clean this up
+        /*
+        if (mc.player.isInsideOfMaterial(Material.WATER)) {
+            directCutoff *= 1.0f - Effects.underwaterFilter;
+        }
+        */
+
+        // Calculate reverb parameters for this sound
+        float sendGain0 = 0.0f;
+        float sendGain1 = 0.0f;
+        float sendGain2 = 0.0f;
+        float sendGain3 = 0.0f;
+
+        float sendCutoff0 = 1.0f;
+        float sendCutoff1 = 1.0f;
+        float sendCutoff2 = 1.0f;
+        float sendCutoff3 = 1.0f;
+
+        // Shoot rays around sound
+        final float[] bounceReflectivityRatio = new float[REVERB_RAY_BOUNCES];
+
+        float sharedAirspace = 0.0f;
+
+        final float rcpTotalRays = 1.0f / (REVERB_RAYS * REVERB_RAY_BOUNCES);
+        final float rcpPrimaryRays = 1.0f / REVERB_RAYS;
+
+        for (int i = 0; i < REVERB_RAYS; i++) {
+
+            Vec3d origin = source.getPosition();
+            Vec3d target = origin.add(REVERB_RAY_PROJECTED[i]);
+
+            final BlockRayTraceResult rayHit = ctx.rayTraceBlocks(origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+
+            if (!isMiss(rayHit)) {
+                final double rayLength = origin.distanceTo(rayHit.getHitVec());
+
+                // Additional bounces
+                BlockPos lastHitBlock = rayHit.getPos();
+                Vec3d lastHitPos = rayHit.getHitVec();
+                Vec3d lastHitNormal = new Vec3d(rayHit.getFace().getDirectionVec());
+                Vec3d lastRayDir = REVERB_RAY_NORMALS[i];
+
+                float totalRayDistance = (float) rayLength;
+
+                // Secondary ray bounces
+                for (int j = 0; j < REVERB_RAY_BOUNCES; j++) {
+                    final Vec3d newRayDir = MathStuff.reflection(lastRayDir, lastHitNormal);
+                    origin = lastHitPos.add(newRayDir.scale(0.01F));
+                    target = origin.add(newRayDir.scale(MAX_REVERB_DISTANCE));
+
+                    final float blockReflectivity = ((IBlockStateEffects)ctx.world.getBlockState(lastHitBlock)).getReflectivity();
+                    float energyTowardsPlayer = (blockReflectivity * 0.75f + 0.25f) * 0.25F;
+
+                    final BlockRayTraceResult newRayHit = ctx.rayTraceBlocks(origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+
+                    if (isMiss(newRayHit)) {
+                        totalRayDistance += lastHitPos.distanceTo(ctx.playerEyePosition);
+                    } else {
+                        final double newRayLength = lastHitPos.distanceTo(newRayHit.getHitVec());
+
+                        bounceReflectivityRatio[j] += blockReflectivity;
+
+                        totalRayDistance += newRayLength;
+
+                        lastHitPos = newRayHit.getHitVec();
+                        lastHitNormal = new Vec3d(newRayHit.getFace().getDirectionVec());;
+                        lastRayDir = newRayDir;
+                        lastHitBlock = newRayHit.getPos();
+
+                        // Cast one final ray towards the player. If it's
+                        // unobstructed, then the sound source and the player
+                        // share airspace.
+                        if (Effects.simplerSharedAirspaceSimulation && j == REVERB_RAY_BOUNCES - 1
+                                || !Effects.simplerSharedAirspaceSimulation) {
+                            final Vec3d finalRayStart = new Vec3d(lastHitPos.x + lastHitNormal.x * 0.01,
+                                    lastHitPos.y + lastHitNormal.y * 0.01, lastHitPos.z + lastHitNormal.z * 0.01);
+
+                            final BlockRayTraceResult finalRayHit = ctx.rayTraceBlocks(finalRayStart, ctx.playerEyePosition, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+
+                            if (isMiss(finalRayHit)) {
+                                // log("Secondary ray hit the player!");
+                                sharedAirspace += 1.0f;
+                            }
+                        }
+                    }
+
+                    final float reflectionDelay = (float) Math.max(totalRayDistance, 0.0) * 0.12f * blockReflectivity;
+
+                    final float cross0 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 0.0f), 0.0f, 1.0f);
+                    final float cross1 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 1.0f), 0.0f, 1.0f);
+                    final float cross2 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 2.0f), 0.0f, 1.0f);
+                    final float cross3 = MathHelper.clamp(reflectionDelay - 2.0f, 0.0f, 1.0f);
+
+                    sendGain0 += cross0 * energyTowardsPlayer * 6.4f * rcpTotalRays;
+                    sendGain1 += cross1 * energyTowardsPlayer * 12.8f * rcpTotalRays;
+                    sendGain2 += cross2 * energyTowardsPlayer * 12.8f * rcpTotalRays;
+                    sendGain3 += cross3 * energyTowardsPlayer * 12.8f * rcpTotalRays;
+
+                    // Nowhere to bounce off of, stop bouncing!
+                    if (isMiss(newRayHit)) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        bounceReflectivityRatio[0] = bounceReflectivityRatio[0] / REVERB_RAYS;
+        bounceReflectivityRatio[1] = bounceReflectivityRatio[1] / REVERB_RAYS;
+        bounceReflectivityRatio[2] = bounceReflectivityRatio[2] / REVERB_RAYS;
+        bounceReflectivityRatio[3] = bounceReflectivityRatio[3] / REVERB_RAYS;
+
+        sharedAirspace *= 64.0f;
+
+        if (Effects.simplerSharedAirspaceSimulation) {
+            sharedAirspace *= rcpPrimaryRays;
+        } else {
+            sharedAirspace *= rcpTotalRays;
+        }
+
+        final float sharedAirspaceWeight0 = MathHelper.clamp(sharedAirspace / 20.0f, 0.0f, 1.0f);
+        final float sharedAirspaceWeight1 = MathHelper.clamp(sharedAirspace / 15.0f, 0.0f, 1.0f);
+        final float sharedAirspaceWeight2 = MathHelper.clamp(sharedAirspace / 10.0f, 0.0f, 1.0f);
+        final float sharedAirspaceWeight3 = MathHelper.clamp(sharedAirspace / 10.0f, 0.0f, 1.0f);
+
+        sendCutoff0 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1.0f) * (1.0f - sharedAirspaceWeight0)
+                + sharedAirspaceWeight0;
+        sendCutoff1 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1.0f) * (1.0f - sharedAirspaceWeight1)
+                + sharedAirspaceWeight1;
+        sendCutoff2 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1.5f) * (1.0f - sharedAirspaceWeight2)
+                + sharedAirspaceWeight2;
+        sendCutoff3 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1.5f) * (1.0f - sharedAirspaceWeight3)
+                + sharedAirspaceWeight3;
+
+        // attempt to preserve directionality when airspace is shared by
+        // allowing some of the dry signal through but filtered
+        final float averageSharedAirspace = (sharedAirspaceWeight0 + sharedAirspaceWeight1 + sharedAirspaceWeight2
+                + sharedAirspaceWeight3) * 0.25f;
+        directCutoff = Math.max((float) Math.pow(averageSharedAirspace, 0.5) * 0.2f, directCutoff);
+
+        float directGain = (float) Math.pow(directCutoff, 0.1);
+
+        sendGain1 *= bounceReflectivityRatio[1];
+        sendGain2 *= (float) Math.pow(bounceReflectivityRatio[2], 3.0);
+        sendGain3 *= (float) Math.pow(bounceReflectivityRatio[3], 4.0);
+
+        sendGain0 = MathHelper.clamp(sendGain0, 0.0f, 1.0f);
+        sendGain1 = MathHelper.clamp(sendGain1, 0.0f, 1.0f);
+        sendGain2 = MathHelper.clamp(sendGain2 * 1.05f - 0.05f, 0.0f, 1.0f);
+        sendGain3 = MathHelper.clamp(sendGain3 * 1.05f - 0.05f, 0.0f, 1.0f);
+
+        sendGain0 *= (float) Math.pow(sendCutoff0, 0.1);
+        sendGain1 *= (float) Math.pow(sendCutoff1, 0.1);
+        sendGain2 *= (float) Math.pow(sendCutoff2, 0.1);
+        sendGain3 *= (float) Math.pow(sendCutoff3, 0.1);
+
+        if (ctx.player.isInWater()) {
+            sendCutoff0 *= 0.4f;
+            sendCutoff1 *= 0.4f;
+            sendCutoff2 *= 0.4f;
+            sendCutoff3 *= 0.4f;
+        }
+
+        final LowPassData lp0 = source.getLowPass0();
+        final LowPassData lp1 = source.getLowPass1();
+        final LowPassData lp2 = source.getLowPass2();
+        final LowPassData lp3 = source.getLowPass3();
+        final LowPassData direct = source.getDirect();
+        final SourceProperty prop = source.getAirAbsorb();
+
+        synchronized (lp0.sync()) {
+            lp0.gain = sendGain0;
+            lp0.gainHF = sendCutoff0;
+            lp0.setProcess(true);
+        }
+
+        synchronized (lp1.sync()) {
+            lp1.gain = sendGain1;
+            lp1.gainHF = sendCutoff1;
+            lp1.setProcess(true);
+        }
+
+        synchronized (lp2.sync()) {
+            lp2.gain = sendGain2;
+            lp2.gainHF = sendCutoff2;
+            lp2.setProcess(true);
+        }
+
+        synchronized (lp3.sync()) {
+            lp3.gain = sendGain3;
+            lp3.gainHF = sendCutoff3;
+            lp3.setProcess(true);
+        }
+
+        synchronized (direct.sync()) {
+            direct.gain = directGain;
+            direct.gainHF = directCutoff;
+            direct.setProcess(true);
+        }
+
+        synchronized (prop.sync()) {
+            prop.setValue(airAbsorptionFactor);
+            prop.setProcess(true);
+        }
+    }
+
+    private static void clearSettings(@Nonnull final SourceContext source) {
+        source.getLowPass0().gain = 0F;
+        source.getLowPass0().gainHF = 1F;
+        source.getLowPass0().setProcess(false);
+        source.getLowPass1().gain = 0F;
+        source.getLowPass1().gainHF = 1F;
+        source.getLowPass1().setProcess(false);
+        source.getLowPass2().gain = 0F;
+        source.getLowPass2().gainHF = 1F;
+        source.getLowPass2().setProcess(false);
+        source.getLowPass3().gain = 0F;
+        source.getLowPass3().gain = 1F;
+        source.getLowPass3().setProcess(false);
+        source.getDirect().gain = 1F;
+        source.getDirect().gainHF = 1F;
+        source.getDirect().setProcess(false);
+        source.getAirAbsorb().setValue(1F);
+        source.getAirAbsorb().setProcess(false);
+    }
+
+    private static float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vec3d source, @Nonnull final Vec3d listener) {
+
+        assert ctx.world != null;
+        assert ctx.player != null;
 
         Vec3d origin = source;
 
@@ -152,158 +358,26 @@ public final class SoundFXUtils {
         final Iterator<Pair<BlockPos, BlockState>> itr = new RayTraceIterator(ctx.world, origin, listener, ctx.player);
         for (int i = 0; i < MAX_SEGMENTS; i++) {
             if (itr.hasNext()) {
-                accum += ((IBlockStateEffects) itr.next()).getOcclusion();
-                if (accum > 0.98) {
-                    accum = 0.98F;
-                    break;
-                }
+                accum += ((IBlockStateEffects) itr.next().getValue()).getOcclusion();
             } else {
                 break;
             }
         }
 
-        synchronized (effectData.sync()) {
-            // Make the final calculations based on our factors
-            effectData.gain = (1F - accum) * ctx.lowPassData.gain;
-            effectData.gainHF = (1F - MathHelper.sqrt(accum)) * ctx.lowPassData.gainHF;
-            effectData.setProcess(true);
-        }
+        return accum;
     }
 
-    /**
-     * Calculates the reverb properties of the location around the listener.
-     *
-     * @param effectData Effect data reference to recieve the calculations
-     * @param ctx        WorldContext containing data about the world
-     */
-    public static void calculateReverb(@Nonnull final ReverbData effectData, @Nonnull final WorldContext ctx) {
-        if (ctx.isNotValid()) {
-            synchronized (effectData.sync()) {
-                effectData.setProcess(false);
-            }
-            return;
-        }
-
-        assert ctx.world != null;
-        assert ctx.player != null;
-
-        final Vec3d origin = ctx.playerEyePosition;
-
-        int hits = 0;
-        int misses = 0;
-        int sky = 0;
-        float lf = 0;
-        float mf = 0;
-        float hf = 0;
-
-        Set<BlockPos> visited = new ObjectOpenHashSet<>();
-
-        // Going to cast out rays around the source looking for relfected surfaces and the like.  The rays should be
-        // evenly distributed around the source.
-        for (int i = 0; i < REVERB_RAYS; i++) {
-
-            // Establish the initial vectors for doing a ray trace
-            final Vec3d target = REVERB_RAY_PROJECTED[i].add(origin);
-
-            // Loop through the blocks along the ray until a block that is solid is encountered.
-            boolean blocked = false;
-            final Iterator<Pair<BlockPos, BlockState>> itr = new RayTraceIterator(ctx.world, origin, target, ctx.player);
-            while (itr.hasNext()) {
-                final Pair<BlockPos, BlockState> hit = itr.next();
-                if (visited.contains(hit.getKey())) {
-                    // Already processes this block - skip it
-                    break;
-                }
-                visited.add(hit.getKey());
-                final IBlockStateEffects effects = (IBlockStateEffects) hit.getValue();
-                lf += effects.getLowFrequencyReflect();
-                mf += effects.getMidFrequencyReflect();
-                hf += effects.getHighFrequencyReflect();
-                if (hit.getValue().getMaterial().blocksMovement()) {
-                    break;
-                }
-            }
-
-            if (blocked) {
-                hits++;
-            } else {
-                misses++;
-                if (REVERB_RAY_SKY[i])
-                    sky++;
-            }
-        }
-
-        final float den = lf + mf + hf;
-        final float decayFactor = den > 0 ? MathStuff.clamp((hf - lf) / den, 0F, 1F) : 0;
-
-        // A sense of how enclosed the room is around the listener.  0 is surround by air blocks, 1 means enclosed
-        // with surfaces.  For example, standing on a super flat world non-sneaking would have a ratio of 0.453,
-        // whereas if the player were sneaking it would be 0.456 (assuming 128 rays were cast).
-        final float enclosureRatio = (float) (REVERB_RAYS - misses) / REVERB_RAYS;
-
-        // skyRatio gives an indication of whether the listener is in a place where there is open sky.  The higher
-        // the ration the more open the sky.  For example, standing on a super flat world without any structures
-        // nearby this value would be 1.  If there is a roof above the players head it would be near 0.
-        final float skyRatio = (float) sky / REVERB_RAY_SKY_MAX;
-
-        // Scaling factor to apply to reverb strength calculations.  Idea here is that in open areas reverb would
-        // be lessened.
-        final float skyScale = 1F - skyRatio;
-
-        // Ratio of the number of blocks involved vs the number of rays cast.  Multiple rays could have hit a single
-        // block.  This can happen if the listener is closer to blocks, like a wall or to the ground.
-        final float blockRatio = (float) hits / REVERB_RAYS;
-
-        // roomSize gives a sense of the volume of the area the listener is in.  Values toward 0 suggest a small
-        // room, whereas values toward 1 suggest a larger room.
-        final float roomSize = blockRatio * enclosureRatio;
-
-        // Calculate the base impact on gain.  It is derived from the reverb strength and the number of blocks
-        // involved in creating that strength.
-        final float gainFactor = roomSize * skyScale;
-
-        final float decayTime = 8F * decayFactor * skyScale;
-        final float reflectionsGain = gainFactor * 0.05F; //3.16F;
-        final float reflectionsDelay = roomSize * 0.03F;
-        final float lateReverbGain = gainFactor * 0.01F; // 10F;
-        final float lateReverbDelay = roomSize * 0.1F;
-
-        synchronized (effectData.sync()) {
-            effectData.decayTime = decayTime;
-            effectData.reflectionsGain = reflectionsGain;
-            effectData.reflectionsDelay = reflectionsDelay;
-            effectData.lateReverbGain = lateReverbGain;
-            effectData.lateReverbDelay = lateReverbDelay;
-            effectData.setProcess(decayFactor > 0 && (reflectionsGain > 0 || lateReverbGain > 0));
-        }
-    }
-
-    /**
-     * Calculates the impact of weather as it relates to sound absorption.
-     *
-     * @param prop    Property to receive the calculated value
-     * @param ctx     WorldContext containing data about the world
-     * @param handler Sound handler that maintains sound state
-     */
-    public static void calculateWeatherFactor(@Nonnull final SourceProperty prop, @Nonnull final WorldContext ctx, @Nonnull final SourceContext handler) {
-        if (ctx.isNotValid() || !ctx.isPrecipitating || handler.getCategory() == SoundCategory.WEATHER || handler.getPosition().equals(Vec3d.ZERO)) {
-            synchronized (prop.sync()) {
-                prop.setProcess(false);
-            }
-            return;
-        }
-
+    private static float calculateWeatherAbsorption(@Nonnull final WorldContext ctx, @Nonnull final Vec3d pt1, @Nonnull final Vec3d pt2) {
         assert ctx.world != null;
 
-        // Pick 3 points to evaluate along the line between player and source
-        final BlockPos pos1 = ctx.playerPos;
-        final BlockPos pos2 = new BlockPos(ctx.playerEyePosition.add(handler.getPosition()).scale(0.5F));
-        final BlockPos pos3 = new BlockPos(handler.getPosition());
+        final BlockPos low = new BlockPos(pt1);
+        final BlockPos mid = new BlockPos(pt1.add(pt2).scale(0.5F));
+        final BlockPos high = new BlockPos(pt2);
 
         // Determine the precipitation type at each point
-        final Biome.RainType rt1 = WorldUtils.getCurrentPrecipitationAt(ctx.world, pos1);
-        final Biome.RainType rt2 = WorldUtils.getCurrentPrecipitationAt(ctx.world, pos2);
-        final Biome.RainType rt3 = WorldUtils.getCurrentPrecipitationAt(ctx.world, pos3);
+        final Biome.RainType rt1 = WorldUtils.getCurrentPrecipitationAt(ctx.world, low);
+        final Biome.RainType rt2 = WorldUtils.getCurrentPrecipitationAt(ctx.world, mid);
+        final Biome.RainType rt3 = WorldUtils.getCurrentPrecipitationAt(ctx.world, high);
 
         // Calculate the impact of weather on dampening
         float factor = calcFactor(rt1, 0.25F);
@@ -311,15 +385,14 @@ public final class SoundFXUtils {
         factor += calcFactor(rt3, 0.25F);
         factor *= ctx.precipitationStrength;
 
-        // Set and go!
-        synchronized (prop.sync()) {
-            prop.setValue(Math.max(factor, 1F));
-            prop.setProcess(true);
-        }
+        return factor;
     }
 
     private static float calcFactor(@Nonnull Biome.RainType type, final float base) {
-        return type == Biome.RainType.NONE ? base : base * (type == Biome.RainType.SNOW ? SNOW_FACTOR : RAIN_FACTOR);
+        return type == Biome.RainType.NONE ? base : base * (type == Biome.RainType.SNOW ? Effects.SNOW_AIR_ABSORPTION_FACTOR : Effects.RAIN_AIR_ABSORPTION_FACTOR);
     }
 
+    private static boolean isMiss(@Nullable final BlockRayTraceResult result) {
+        return result == null || result.getType() == RayTraceResult.Type.MISS;
+    }
 }

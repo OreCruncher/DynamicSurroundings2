@@ -26,7 +26,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
-import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
 import org.orecruncher.sndctrl.audio.handlers.effects.SourceProperty;
@@ -41,9 +40,17 @@ public final class SourceContext {
     private static final int UPDATE_FEQUENCY = 4;
 
     @Nonnull
-    private final LowPassData lowPass;
+    private final LowPassData lowPass0;
     @Nonnull
-    private final SourceProperty airAbsorption;
+    private final LowPassData lowPass1;
+    @Nonnull
+    private final LowPassData lowPass2;
+    @Nonnull
+    private final LowPassData lowPass3;
+    @Nonnull
+    private final LowPassData direct;
+    @Nonnull
+    private final SourceProperty airAbsorb;
 
     @Nullable
     private ISound sound;
@@ -51,13 +58,55 @@ public final class SourceContext {
     private Vec3d pos;
 
     private boolean isNew = true;
-
+    private boolean isDisabled;
     private int updateCount = 0;
 
     public SourceContext() {
-        this.lowPass = new LowPassData();
-        this.airAbsorption = new SourceProperty(EXTEfx.AL_AIR_ABSORPTION_FACTOR, 1F, 0F, 10F);
+        this.lowPass0 = new LowPassData();
+        this.lowPass1 = new LowPassData();
+        this.lowPass2 = new LowPassData();
+        this.lowPass3 = new LowPassData();
+        this.direct = new LowPassData();
+        this.airAbsorb = new SourceProperty(EXTEfx.AL_AIR_ABSORPTION_FACTOR, 1F, 0F, 10F);
         this.pos = Vec3d.ZERO;
+    }
+
+    public boolean isDisabled() {
+        return this.isDisabled;
+    }
+
+    public void disable() {
+        this.isDisabled = true;
+    }
+
+    @Nonnull
+    public LowPassData getLowPass0() {
+        return this.lowPass0;
+    }
+
+    @Nonnull
+    public LowPassData getLowPass1() {
+        return this.lowPass1;
+    }
+
+    @Nonnull
+    public LowPassData getLowPass2() {
+        return this.lowPass2;
+    }
+
+    @Nonnull
+    public LowPassData getLowPass3() {
+        return this.lowPass3;
+    }
+
+    @Nonnull
+    public LowPassData getDirect() {
+        return this.direct;
+    }
+
+    @Nonnull
+    public SourceProperty getAirAbsorb() {
+        return this.airAbsorb;
     }
 
     @Nonnull
@@ -80,11 +129,6 @@ public final class SourceContext {
         return this.sound;
     }
 
-    public void disableEffects() {
-        this.lowPass.setProcess(false);
-        this.airAbsorption.setProcess(false);
-    }
-
     /**
      * Called on the SoundSource update thread when updating status.  Do not call from the client thread or bad things
      * can happen.
@@ -93,26 +137,16 @@ public final class SourceContext {
         if (!SoundFXProcessor.isAvailable())
             return;
 
-        // Upload the data to the for the effects
-        if (this.airAbsorption.doProcess()) {
-            this.airAbsorption.apply(sourceId);
-        }
+        // Upload the data
+        Effects.filter0.apply(sourceId, this.lowPass0, 0, Effects.auxSlot0);
+        Effects.filter1.apply(sourceId, this.lowPass1, 1, Effects.auxSlot1);
+        Effects.filter2.apply(sourceId, this.lowPass2, 2, Effects.auxSlot2);
+        Effects.filter3.apply(sourceId, this.lowPass3, 3, Effects.auxSlot3);
+        Effects.direct.apply(sourceId, this.direct);
 
-        if (this.lowPass.doProcess()) {
-            SoundFXProcessor.lowPass.apply(this.lowPass);
-            AL10.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, SoundFXProcessor.lowPass.getSlot());
-        } else {
-            AL10.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_EFFECTSLOT_NULL);
-        }
-        SoundFXProcessor.validate("SourceHandler::tick AL_DIRECT_FILTER");
+        this.airAbsorb.apply(sourceId);
 
-        if (SoundFXProcessor.roomReverb.doProcess()) {
-            SoundFXProcessor.reverb.apply(SoundFXProcessor.roomReverb);
-            AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, SoundFXProcessor.reverb.getSlot(), EXTEfx.AL_EFFECTSLOT_NULL, SoundFXProcessor.lowPass.getSlot());
-        } else {
-            AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_EFFECTSLOT_NULL, EXTEfx.AL_EFFECTSLOT_NULL, EXTEfx.AL_EFFECTSLOT_NULL);
-        }
-        SoundFXProcessor.validate("SourceHandler::tick AL_AUXILIARY_SEND_FILTER");
+        SoundFXProcessor.validate("SourceHandler::tick");
     }
 
     /**
@@ -146,9 +180,7 @@ public final class SourceContext {
     }
 
     private void updateImpl() {
-        final WorldContext ctx = SoundFXProcessor.getWorldContext();
-        SoundFXUtils.calculateOcclusion(this.lowPass, ctx, this);
-        SoundFXUtils.calculateWeatherFactor(this.airAbsorption, ctx, this);
+        SoundFXUtils.calculate(SoundFXProcessor.getWorldContext(), this);
     }
 
     private void captureState() {

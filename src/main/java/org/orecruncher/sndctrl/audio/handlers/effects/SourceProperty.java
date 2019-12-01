@@ -42,8 +42,10 @@ public final class SourceProperty {
         this.property = property;
         this.min = min;
         this.max = max;
+        this.process = false;
     }
 
+    @Nonnull
     public final Object sync() {
         return this.sync;
     }

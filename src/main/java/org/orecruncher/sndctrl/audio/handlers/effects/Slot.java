@@ -24,26 +24,39 @@ import org.lwjgl.openal.EXTEfx;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 
 import javax.annotation.Nonnull;
+import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
-public final class LowPassFilter extends FilterEffect<LowPassData> {
+public abstract class Slot {
 
-    @Override
-    protected void init0() {
-        super.init0();
-        EXTEfx.alFilteri(getId(), EXTEfx.AL_FILTER_TYPE, EXTEfx.AL_FILTER_LOWPASS);
+    @Nonnull
+    private final Supplier<Integer> factory;
+    private int slot = EXTEfx.AL_EFFECTSLOT_NULL;
+
+    public Slot(@Nonnull final Supplier<Integer> slotFactory) {
+        this.factory = slotFactory;
     }
 
-    @Override
-    public void apply(@Nonnull final LowPassData data) {
-        if (isInitialized()) {
-            synchronized (data.sync) {
-                data.clamp();
-                EXTEfx.alFilterf(getId(), EXTEfx.AL_LOWPASS_GAIN, data.gain);
-                EXTEfx.alFilterf(getId(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF);
-                SoundFXProcessor.validate("LowPassFilter::apply");
-            }
+    public boolean isInitialized() {
+        return this.slot != EXTEfx.AL_EFFECTSLOT_NULL;
+    }
+
+    public final void initialize() {
+        if (this.slot == EXTEfx.AL_EFFECTSLOT_NULL) {
+            this.slot = this.factory.get();
+            check();
+            this.init0();
+            check();
         }
     }
 
+    protected abstract void init0();
+
+    public int getSlot() {
+        return this.slot;
+    }
+
+    protected void check() {
+        SoundFXProcessor.validate();
+    }
 }

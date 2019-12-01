@@ -8,6 +8,7 @@ Forge mod that gives the player control over the sounds that play.
 
 ### License
  Dynamic Surroundings: Sound Control
+ 
  Copyright (C) 2019  OreCruncher
  
  This program is free software: you can redistribute it and/or modify

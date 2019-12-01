@@ -20,17 +20,19 @@ package org.orecruncher.sndctrl.audio.handlers.effects;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.EXTEfx;
-import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class SpecialEffect<T extends EffectData> extends EffectBase<T> {
+public class AuxSlot extends Slot {
+
+    public AuxSlot() {
+        super(EXTEfx::alGenAuxiliaryEffectSlots);
+    }
 
     @Override
     protected void init0() {
-        this.id = EXTEfx.alGenEffects();
-        SoundFXProcessor.validate();
-        this.slot = EXTEfx.alGenAuxiliaryEffectSlots();
-        SoundFXProcessor.validate();
+        EXTEfx.alAuxiliaryEffectSloti(getSlot(), EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL10.AL_TRUE);
+        check();
     }
 }

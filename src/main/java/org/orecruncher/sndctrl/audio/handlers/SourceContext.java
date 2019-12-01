@@ -134,9 +134,6 @@ public final class SourceContext {
      * can happen.
      */
     public void tick(final int sourceId) {
-        if (!SoundFXProcessor.isAvailable())
-            return;
-
         // Upload the data
         Effects.filter0.apply(sourceId, this.lowPass0, 0, Effects.auxSlot0);
         Effects.filter1.apply(sourceId, this.lowPass1, 1, Effects.auxSlot1);
@@ -163,9 +160,10 @@ public final class SourceContext {
 
     /**
      * Called from the sound source when a play is triggered.  We need to a do a series of calculations prior to
-     * playing the sound to establish an initial set of filters.
+     * playing the sound to establish an initial set of filters.  This routine will be triggered *before* the event
+     * handler in SoundFXProcessor gets invoked.
      *
-     * @param sourceId
+     * @param sourceId Id of the source that is playing
      */
     public void updateFromSource(final int sourceId) {
         if (this.isNew) {

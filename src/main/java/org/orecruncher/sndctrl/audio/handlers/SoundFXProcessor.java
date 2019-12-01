@@ -67,6 +67,7 @@ public final class SoundFXProcessor {
     private static Worker soundProcessor;
     @Nullable
     private static ForkJoinPool threadPool;
+    @Nonnull
     private static WorldContext worldContext = new WorldContext();
 
     static {
@@ -85,7 +86,7 @@ public final class SoundFXProcessor {
         return IGNORE_CATEGORIES.contains(cat);
     }
 
-    @Nullable
+    @Nonnull
     public static WorldContext getWorldContext() {
         return worldContext;
     }
@@ -179,8 +180,7 @@ public final class SoundFXProcessor {
      * @param soundId The ID of the sound source that is being removed.
      */
     public static void stopSoundPlay(final int soundId) {
-        if (isAvailable())
-            sources.remove(soundId);
+        sources.remove(soundId);
     }
 
     /**

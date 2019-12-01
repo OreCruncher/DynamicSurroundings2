@@ -62,7 +62,8 @@ public abstract class MixinSoundSource implements ISoundSource {
      */
     @Inject(method = "func_216438_c()V", at = @At("HEAD"))
     public void playTrigger(@Nonnull final CallbackInfo ignored) {
-        this.ctx.updateFromSource(this.field_216441_b);
+        if (SoundFXProcessor.isAvailable())
+            this.ctx.updateFromSource(this.field_216441_b);
     }
 
     /**
@@ -73,7 +74,8 @@ public abstract class MixinSoundSource implements ISoundSource {
      */
     @Inject(method = "func_216434_i()V", at = @At("TAIL"))
     public void tick(@Nonnull final CallbackInfo ignored) {
-        this.ctx.tick(this.field_216441_b);
+        if (SoundFXProcessor.isAvailable())
+            this.ctx.tick(this.field_216441_b);
     }
 
     /**
@@ -83,6 +85,7 @@ public abstract class MixinSoundSource implements ISoundSource {
      */
     @Inject(method = "func_216436_b()V", at = @At(value = "RETURN"))
     public void stop(@Nonnull final CallbackInfo ignored) {
-        SoundFXProcessor.stopSoundPlay(this.field_216441_b);
+        if (SoundFXProcessor.isAvailable())
+            SoundFXProcessor.stopSoundPlay(this.field_216441_b);
     }
 }

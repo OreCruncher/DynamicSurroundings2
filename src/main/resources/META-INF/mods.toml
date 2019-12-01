@@ -7,15 +7,15 @@ logoFile="logo.png"
 [[mods]]
 	modId="sndctrl"
 	version="${version}"
-	displayName="§3Dynamic Surroundings: Sound Control"
+	displayName="§3Dynamic Surroundings\n§eSound Control"
 	updateJSONURL="https://raw.githubusercontent.com/OreCruncher/SoundControl/master/version.json"
-	credits="§6All the Players§r that installed and enjoyed §2Dynamic Surroundings§r"
-	authors="§6OreCruncher§r"
-	description="Gives the player §6control§r over §6sounds§r to improve the §6Minecraft§r experience."
+	credits="\n\n§6All the Players§r that installed and enjoyed §2Dynamic Surroundings§r\n§6SonicEther§r for making §2SoundPhysics§r GPL3\n"
+	authors="§6OreCruncher§r\n"
+	description="\nGiving the player §6control§r over their §2Minecraft§r §6sound experience§r."
 	
 [[dependencies.sndctrl]]
     modId="forge"
     mandatory=true
-    versionRange="[28,)"
+    versionRange="[28.1.96,)"
     ordering="NONE"
     side="CLIENT"

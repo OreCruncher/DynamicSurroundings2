@@ -29,10 +29,9 @@
 
 package org.orecruncher.sndctrl.audio.handlers;
 
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -41,13 +40,12 @@ import org.orecruncher.lib.RayTraceIterator;
 import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
-import org.orecruncher.sndctrl.audio.handlers.effects.SourceProperty;
+import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
 import org.orecruncher.sndctrl.xface.IBlockStateEffects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
-import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public final class SoundFXUtils {
@@ -108,20 +106,26 @@ public final class SoundFXUtils {
         assert ctx.world != null;
         assert ctx.player != null;
 
-        if (ctx.isNotValid() || source.isDisabled() || SoundFXProcessor.isCategoryIgnored(source.getCategory()) || source.getPosition().equals(Vec3d.ZERO)) {
+        if (ctx.isNotValid()
+                || source.isDisabled()
+                || SoundFXProcessor.isCategoryIgnored(source.getCategory())
+                || source.getPosition().equals(Vec3d.ZERO)) {
             clearSettings(source);
             return;
         }
+
+        // Need to offset sound toward player if it is in a solid block
+        final Vec3d soundPos = offsetPositionIfSolid(ctx.world, source.getPosition(), ctx.playerEyePosition);
 
         final float absorptionCoeff = Effects.globalBlockAbsorption * 3.0f;
 
         float airAbsorptionFactor = 1.0f;
 
         if (ctx.isPrecipitating) {
-            airAbsorptionFactor = calculateWeatherAbsorption(ctx, ctx.playerEyePosition, source.getPosition());
+            airAbsorptionFactor = calculateWeatherAbsorption(ctx, soundPos, ctx.playerEyePosition);
         }
 
-        final float occlusionAccumulation = calculateOcclusion(ctx, ctx.playerEyePosition, source.getPosition());
+        final float occlusionAccumulation = calculateOcclusion(ctx, soundPos, ctx.playerEyePosition);
 
         float directCutoff = (float) Math.exp(-occlusionAccumulation * absorptionCoeff);
 
@@ -146,7 +150,7 @@ public final class SoundFXUtils {
 
         for (int i = 0; i < REVERB_RAYS; i++) {
 
-            Vec3d origin = source.getPosition();
+            Vec3d origin = soundPos;
             Vec3d target = origin.add(REVERB_RAY_PROJECTED[i]);
 
             final BlockRayTraceResult rayHit = ctx.rayTraceBlocks(origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
@@ -277,7 +281,7 @@ public final class SoundFXUtils {
         final LowPassData lp2 = source.getLowPass2();
         final LowPassData lp3 = source.getLowPass3();
         final LowPassData direct = source.getDirect();
-        final SourceProperty prop = source.getAirAbsorb();
+        final SourcePropertyFloat prop = source.getAirAbsorb();
 
         synchronized (lp0.sync()) {
             lp0.gain = sendGain0;
@@ -322,38 +326,16 @@ public final class SoundFXUtils {
         source.getLowPass3().setProcess(false);
         source.getDirect().setProcess(false);
         source.getAirAbsorb().setProcess(false);
-        /*
-        source.getLowPass0().gain = 0F;
-        source.getLowPass0().gainHF = 1F;
-        source.getLowPass1().gain = 0F;
-        source.getLowPass1().gainHF = 1F;
-        source.getLowPass2().gain = 0F;
-        source.getLowPass2().gainHF = 1F;
-        source.getLowPass3().gain = 0F;
-        source.getLowPass3().gain = 1F;
-        source.getDirect().gain = 1F;
-        source.getDirect().gainHF = 1F;
-        source.getAirAbsorb().setValue(1F);
-         */
     }
 
-    private static float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vec3d source, @Nonnull final Vec3d listener) {
+    private static float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
 
         assert ctx.world != null;
         assert ctx.player != null;
 
-        Vec3d origin = source;
-
-        // The origin may be inside a normal block throwing off the ray cast a bit.  If the source is in a non-air
-        // block offset toward the listener by half a block.
-        if (!ctx.world.isAirBlock(new BlockPos(origin))) {
-            final Vec3d normal = listener.subtract(source).normalize();
-            origin = origin.add(normal.scale(0.5F));
-        }
-
         float accum = 0F;
 
-        final Iterator<Pair<BlockPos, BlockState>> itr = new RayTraceIterator(ctx.world, origin, listener, ctx.player);
+        final Iterator<Pair<BlockPos, BlockState>> itr = new RayTraceIterator(ctx.world, origin, target, ctx.player);
         for (int i = 0; i < OCCLUSION_RAYS; i++) {
             if (itr.hasNext()) {
                 accum += ((IBlockStateEffects) itr.next().getValue()).getOcclusion();
@@ -384,6 +366,14 @@ public final class SoundFXUtils {
         factor *= ctx.precipitationStrength;
 
         return factor;
+    }
+
+    private static Vec3d offsetPositionIfSolid(@Nonnull final World world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
+        if (!world.isAirBlock(new BlockPos(origin))) {
+            final Vec3d normal = target.subtract(origin).normalize();
+            return origin.add(normal.scale(0.876F));
+        }
+        return origin;
     }
 
     private static float calcFactor(@Nonnull Biome.RainType type, final float base) {

@@ -27,7 +27,7 @@ import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public final class SourceProperty {
+public final class SourcePropertyFloat {
 
     @Nonnull
     private final Object sync = new Object();
@@ -38,7 +38,7 @@ public final class SourceProperty {
     private float value;
     private boolean process;
 
-    public SourceProperty(@Nonnull final int property, final float val, final float min, final float max) {
+    public SourcePropertyFloat(@Nonnull final int property, final float val, final float min, final float max) {
         this.property = property;
         this.min = min;
         this.max = max;

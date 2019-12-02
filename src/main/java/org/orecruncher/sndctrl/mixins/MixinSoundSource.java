@@ -21,6 +21,7 @@ package org.orecruncher.sndctrl.mixins;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 import org.orecruncher.sndctrl.audio.handlers.SourceContext;
 import org.orecruncher.sndctrl.xface.ISoundSource;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,6 +37,7 @@ public abstract class MixinSoundSource implements ISoundSource {
     private final SourceContext ctx = new SourceContext();
     // ID of the playing source
     @Shadow
+    @Final
     private int field_216441_b;
 
     /**
@@ -63,7 +65,7 @@ public abstract class MixinSoundSource implements ISoundSource {
     @Inject(method = "func_216438_c()V", at = @At("HEAD"))
     public void playTrigger(@Nonnull final CallbackInfo ignored) {
         if (SoundFXProcessor.isAvailable())
-            this.ctx.updateFromSource(this.field_216441_b);
+            this.ctx.tick(this.field_216441_b);
     }
 
     /**

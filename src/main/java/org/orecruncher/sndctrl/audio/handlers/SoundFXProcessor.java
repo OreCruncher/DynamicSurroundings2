@@ -20,12 +20,13 @@ package org.orecruncher.sndctrl.audio.handlers;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ChannelManager;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -40,6 +41,7 @@ import org.orecruncher.lib.threading.Worker;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.events.AudioEvent;
+import org.orecruncher.sndctrl.mixins.IChannelManagerEntry;
 import org.orecruncher.sndctrl.xface.ISoundSource;
 
 import javax.annotation.Nonnull;
@@ -75,6 +77,7 @@ public final class SoundFXProcessor {
         IGNORE_CATEGORIES.add(SoundCategory.RECORDS);   // Jukebox
         IGNORE_CATEGORIES.add(SoundCategory.MUSIC);     // Background music
         IGNORE_CATEGORIES.add(SoundCategory.MASTER);    // Anything slotted to master, like menu buttons
+        IGNORE_CATEGORIES.add(SoundCategory.BLOCKS);    // TESTING
 
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);
     }
@@ -135,7 +138,9 @@ public final class SoundFXProcessor {
             // Default the pool would want 1 thread per core.  Shouldn't need that many so scale down.  Also,
             // the handling thread will also help reduce the workload if needed, so there is a +1 hidden in this
             // math.
-            threadPool = new ForkJoinPool(Math.max(Runtime.getRuntime().availableProcessors() / 3, 1));
+            final int threads = Math.max(Runtime.getRuntime().availableProcessors() / 3, 1);
+            LOGGER.info("Threads allocated to SoundControl sound processor: %d", threads);
+            threadPool = new ForkJoinPool(threads);
             soundProcessor = new Worker(
                     "SoundControl Sound Processor",
                     SoundFXProcessor::processSounds,
@@ -153,25 +158,37 @@ public final class SoundFXProcessor {
     }
 
     /**
-     * Event raised by the sound system when a sound source is created.  The event handler will initialize the
-     * SourceHandler for the sound source if the sound matches the right criteria.
+     * Callback hook from a mixin injection.  This callback is made on the client thread after the sound source
+     * is created, but before it is configured.
      *
-     * @param event Event that was raised.
+     * @param sound The sound that is going to play
+     * @param entry The ChannelManager.Entry instance for the sound play
      */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onSoundPlay(@Nonnull final SoundEvent.SoundSourceEvent event) {
-        if (isAvailable()) {
-            Utilities.safeCast(event.getSource(), ISoundSource.class).ifPresent(src -> {
-                final ISound sound = event.getSound();
-                final SourceContext ctx = src.getSourceContext();
-                ctx.attachSound(sound);
-                if (isCategoryIgnored(sound.getCategory())) {
-                    ctx.disable();
-                } else {
-                    sources.put(src.getSourceId(), ctx);
-                }
-            });
+    public static void onSoundPlay(@Nonnull final ISound sound, @Nonnull final ChannelManager.Entry entry) {
+
+        if (!isAvailable())
+            return;
+
+        final IChannelManagerEntry cme = Utilities.safeCast(entry, IChannelManagerEntry.class).get();
+        try {
+            // Because of where this is hooked SoundSource may not have been created.  Have to wait for creation.
+            SoundSource src = null;
+            while ((src = cme.getSource()) == null)
+                Thread.yield();
+
+            final ISoundSource ss = Utilities.safeCast(src, ISoundSource.class).get();
+            final SourceContext ctx = ss.getSourceContext();
+            ctx.attachSound(sound);
+            if (isCategoryIgnored(sound.getCategory())) {
+                ctx.disable();
+            } else {
+                ctx.update();
+                sources.put(ss.getSourceId(), ctx);
+            }
+        } catch(@Nonnull final Throwable t) {
+            LOGGER.error(t, "Error obtaining SoundSource information in callback");
         }
+
     }
 
     /**
@@ -222,7 +239,7 @@ public final class SoundFXProcessor {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
-        if (isAvailable() && Minecraft.getInstance().gameSettings.showDebugInfo) {
+        if (isAvailable() && Minecraft.getInstance().gameSettings.showDebugInfo && soundProcessor != null) {
             String msg = soundProcessor.getDiagnosticString();
             if (!StringUtils.isEmpty(msg))
                 event.getLeft().add(TextFormatting.GREEN + msg);

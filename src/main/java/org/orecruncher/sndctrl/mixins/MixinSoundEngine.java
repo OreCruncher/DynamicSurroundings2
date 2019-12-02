@@ -18,13 +18,18 @@
 
 package org.orecruncher.sndctrl.mixins;
 
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundEngine;
+import net.minecraft.client.audio.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.Vec3d;
+import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 import org.orecruncher.sndctrl.audio.handlers.SoundVolumeEvaluator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(SoundEngine.class)
 public abstract class MixinSoundEngine {
@@ -42,5 +47,38 @@ public abstract class MixinSoundEngine {
             ci.setReturnValue(SoundVolumeEvaluator.getClampedVolume(sound));
         } catch (final Throwable ignored) {
         }
+    }
+
+    /**
+     * Hook into the process of making a sound.
+     */
+    @Inject(
+            method = "play(Lnet/minecraft/client/audio/ISound;)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/audio/ChannelManager$Entry;runOnSoundExecutor(Ljava/util/function/Consumer;)V",
+                    ordinal = 0
+            ),
+            locals = LocalCapture.CAPTURE_FAILEXCEPTION,
+            require = 1
+    )
+    private void playSoundHook(
+            ISound p_sound,
+            CallbackInfo ci,
+            SoundEventAccessor soundeventaccessor,
+            ResourceLocation resourcelocation,
+            Sound sound,
+            float f3,
+            float f,
+            SoundCategory soundcategory,
+            float f1,
+            float f2,
+            ISound.AttenuationType isound_attenuationtype,
+            boolean flag,
+            boolean flag1,
+            Vec3d vec3d,
+            ChannelManager.Entry channelmanager_entry
+    ) {
+        SoundFXProcessor.onSoundPlay(p_sound, channelmanager_entry);
     }
 }

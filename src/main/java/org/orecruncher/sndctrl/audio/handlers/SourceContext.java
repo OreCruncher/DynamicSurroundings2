@@ -24,15 +24,12 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.EXTEfx;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
-import org.orecruncher.sndctrl.audio.handlers.effects.SourceProperty;
+import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.nio.FloatBuffer;
 
 @OnlyIn(Dist.CLIENT)
 public final class SourceContext {
@@ -50,16 +47,15 @@ public final class SourceContext {
     @Nonnull
     private final LowPassData direct;
     @Nonnull
-    private final SourceProperty airAbsorb;
+    private final SourcePropertyFloat airAbsorb;
 
     @Nullable
     private ISound sound;
     @Nonnull
     private Vec3d pos;
 
-    private boolean isNew = true;
     private boolean isDisabled;
-    private int updateCount = 0;
+    private int updateCount = 4;
 
     public SourceContext() {
         this.lowPass0 = new LowPassData();
@@ -67,7 +63,7 @@ public final class SourceContext {
         this.lowPass2 = new LowPassData();
         this.lowPass3 = new LowPassData();
         this.direct = new LowPassData();
-        this.airAbsorb = new SourceProperty(EXTEfx.AL_AIR_ABSORPTION_FACTOR, 1F, 0F, 10F);
+        this.airAbsorb = new SourcePropertyFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, 1F, 0F, 10F);
         this.pos = Vec3d.ZERO;
     }
 
@@ -105,7 +101,7 @@ public final class SourceContext {
     }
 
     @Nonnull
-    public SourceProperty getAirAbsorb() {
+    public SourcePropertyFloat getAirAbsorb() {
         return this.airAbsorb;
     }
 
@@ -134,16 +130,18 @@ public final class SourceContext {
      * can happen.
      */
     public void tick(final int sourceId) {
-        // Upload the data
-        Effects.filter0.apply(sourceId, this.lowPass0, 0, Effects.auxSlot0);
-        Effects.filter1.apply(sourceId, this.lowPass1, 1, Effects.auxSlot1);
-        Effects.filter2.apply(sourceId, this.lowPass2, 2, Effects.auxSlot2);
-        Effects.filter3.apply(sourceId, this.lowPass3, 3, Effects.auxSlot3);
-        Effects.direct.apply(sourceId, this.direct);
+        if(!isDisabled()) {
+            // Upload the data
+            Effects.filter0.apply(sourceId, this.lowPass0, 0, Effects.auxSlot0);
+            Effects.filter1.apply(sourceId, this.lowPass1, 1, Effects.auxSlot1);
+            Effects.filter2.apply(sourceId, this.lowPass2, 2, Effects.auxSlot2);
+            Effects.filter3.apply(sourceId, this.lowPass3, 3, Effects.auxSlot3);
+            Effects.direct.apply(sourceId, this.direct);
 
-        this.airAbsorb.apply(sourceId);
+            this.airAbsorb.apply(sourceId);
 
-        SoundFXProcessor.validate("SourceHandler::tick");
+            SoundFXProcessor.validate("SourceHandler::tick");
+        }
     }
 
     /**
@@ -152,29 +150,10 @@ public final class SourceContext {
      */
     public void update() {
         if ((this.updateCount % UPDATE_FEQUENCY) == 0) {
-            this.updateCount++;
             captureState();
             updateImpl();
         }
-    }
-
-    /**
-     * Called from the sound source when a play is triggered.  We need to a do a series of calculations prior to
-     * playing the sound to establish an initial set of filters.  This routine will be triggered *before* the event
-     * handler in SoundFXProcessor gets invoked.
-     *
-     * @param sourceId Id of the source that is playing
-     */
-    public void updateFromSource(final int sourceId) {
-        if (this.isNew) {
-            this.isNew = false;
-            final FloatBuffer pos = BufferUtils.createFloatBuffer(3);
-            AL10.alGetSourcefv(sourceId, AL10.AL_POSITION, pos);
-            SoundFXProcessor.validate();
-            this.pos = new Vec3d(pos.get(0), pos.get(1), pos.get(2));
-            updateImpl();
-            tick(sourceId);
-        }
+        this.updateCount++;
     }
 
     private void updateImpl() {

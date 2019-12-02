@@ -1,6 +1,6 @@
 {
   "occlusions": {
-    "#minecraft:wool": 2
+    "#minecraft:wool": 4
   },
   "reflectivity": {
     "+PORTAL": 0.95,

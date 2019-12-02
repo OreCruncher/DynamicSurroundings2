@@ -77,7 +77,6 @@ public final class SoundFXProcessor {
         IGNORE_CATEGORIES.add(SoundCategory.RECORDS);   // Jukebox
         IGNORE_CATEGORIES.add(SoundCategory.MUSIC);     // Background music
         IGNORE_CATEGORIES.add(SoundCategory.MASTER);    // Anything slotted to master, like menu buttons
-        IGNORE_CATEGORIES.add(SoundCategory.BLOCKS);    // TESTING
 
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);
     }
@@ -127,6 +126,7 @@ public final class SoundFXProcessor {
             final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
             final long ctx = ALC10.alcCreateContext(device, attribs);
             final boolean result = ALC10.alcMakeContextCurrent(ctx);
+            AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
 
             if (!result) {
                 LOGGER.warn("Unable to configure additional auxillary slots for sound sources!");

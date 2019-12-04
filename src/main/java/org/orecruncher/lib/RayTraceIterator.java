@@ -72,8 +72,7 @@ public class RayTraceIterator implements Iterator<Pair<BlockPos, BlockState>> {
     @Override
     @Nonnull
     public Pair<BlockPos, BlockState> next() {
-        assert this.result != null;
-        if (this.result.getType() == RayTraceResult.Type.MISS)
+        if (this.result == null || this.result.getType() == RayTraceResult.Type.MISS)
             throw new IllegalStateException("No more blocks in trace");
         final BlockPos pos = this.result.getPos();
         final BlockState state = this.world.getBlockState(pos);

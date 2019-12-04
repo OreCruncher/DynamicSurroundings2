@@ -39,6 +39,7 @@ import java.util.function.Supplier;
 public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> {
 
     private final Object2ObjectOpenHashMap<BlockStateMatcher, T> map = new Object2ObjectOpenHashMap<>();
+    @Nullable
     private Supplier<T> defaultValue;
 
     @Nullable
@@ -49,7 +50,7 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
         return result != null ? result : this.defaultValue != null ? this.defaultValue.get() : null;
     }
 
-    public void setDefaultValue(final Supplier<T> s) {
+    public void setDefaultValue(@Nullable final Supplier<T> s) {
         this.defaultValue = s;
     }
 
@@ -74,22 +75,26 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
     }
 
     @Override
+    @Nullable
     public T get(Object key) {
         return get((BlockState) key);
     }
 
+    @Nullable
     public T put(@Nonnull final String block, @Nonnull final T val) {
         final BlockStateMatcher matcher = BlockStateMatcher.create(block);
         Objects.requireNonNull(matcher, String.format("Invalid block name '%s'", block));
         return put(matcher, val);
     }
 
+    @Nullable
     public T put(@Nonnull final BlockState state, @Nonnull final T val) {
         final BlockStateMatcher matcher = BlockStateMatcher.create(state);
         Objects.requireNonNull(matcher, String.format("Invalid block state '%s'", state.toString()));
         return put(matcher, val);
     }
 
+    @Nullable
     public T put(@Nonnull final Block block, @Nonnull final T val) {
         final BlockStateMatcher matcher = BlockStateMatcher.create(block);
         Objects.requireNonNull(matcher, String.format("Invalid block '%s'", block.toString()));
@@ -97,11 +102,13 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
     }
 
     @Override
+    @Nullable
     public T put(@Nonnull final BlockStateMatcher matcher, @Nonnull final T val) {
         return this.map.put(matcher, val);
     }
 
     @Override
+    @Nullable
     public T remove(Object key) {
         return this.map.remove(key);
     }
@@ -117,16 +124,19 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
     }
 
     @Override
+    @Nonnull
     public Set<BlockStateMatcher> keySet() {
         return this.map.keySet();
     }
 
     @Override
+    @Nonnull
     public Collection<T> values() {
         return this.map.values();
     }
 
     @Override
+    @Nonnull
     public Set<Entry<BlockStateMatcher, T>> entrySet() {
         return this.map.entrySet();
     }

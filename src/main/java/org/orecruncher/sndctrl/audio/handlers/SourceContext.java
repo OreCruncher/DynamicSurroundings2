@@ -25,6 +25,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.EXTEfx;
+import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
 import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
 
@@ -33,6 +36,8 @@ import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public final class SourceContext {
+
+    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SourceContext.class);
 
     private static final int UPDATE_FEQUENCY = 4;
 
@@ -55,7 +60,7 @@ public final class SourceContext {
     private Vec3d pos;
 
     private boolean isDisabled;
-    private int updateCount = 4;
+    private int updateCount = UPDATE_FEQUENCY;
 
     public SourceContext() {
         this.lowPass0 = new LowPassData();
@@ -63,7 +68,7 @@ public final class SourceContext {
         this.lowPass2 = new LowPassData();
         this.lowPass3 = new LowPassData();
         this.direct = new LowPassData();
-        this.airAbsorb = new SourcePropertyFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, 1F, 0F, 10F);
+        this.airAbsorb = new SourcePropertyFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, EXTEfx.AL_DEFAULT_AIR_ABSORPTION_FACTOR, EXTEfx.AL_MIN_AIR_ABSORPTION_FACTOR, EXTEfx.AL_MAX_AIR_ABSORPTION_FACTOR);
         this.pos = Vec3d.ZERO;
     }
 
@@ -106,7 +111,7 @@ public final class SourceContext {
     }
 
     @Nonnull
-    public SoundCategory getCategory() {
+    public SoundCategory getSoundCategory() {
         return this.sound != null ? this.sound.getCategory() : SoundCategory.AMBIENT;
     }
 
@@ -144,20 +149,27 @@ public final class SourceContext {
         }
     }
 
+    public boolean shouldExecute() {
+        final boolean result = (this.updateCount % UPDATE_FEQUENCY) == 0;
+        this.updateCount++;
+        return result;
+    }
+
     /**
      * Called during the client tick to perform the various calculations that need to be made to make the sound do
      * special things.  Do not call from the SoundSource processing thread or bad things will happen!
      */
     public void update() {
-        if ((this.updateCount % UPDATE_FEQUENCY) == 0) {
-            captureState();
-            updateImpl();
-        }
-        this.updateCount++;
+        captureState();
+        updateImpl();
     }
 
     private void updateImpl() {
-        SoundFXUtils.calculate(SoundFXProcessor.getWorldContext(), this);
+        try {
+            SoundFXUtils.calculate(SoundFXProcessor.getWorldContext(), this);
+        } catch(@Nonnull final Throwable t) {
+            LOGGER.error(t, "Error processing SoundContext %s", toString());
+        }
     }
 
     private void captureState() {
@@ -169,7 +181,7 @@ public final class SourceContext {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .addValue(this.sound)
+                .addValue(SoundUtils.debugString(this.sound))
                 .toString();
     }
 }

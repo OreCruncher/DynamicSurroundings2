@@ -30,6 +30,8 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.audio.Sound;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -108,7 +110,7 @@ public final class SoundFXUtils {
 
         if (ctx.isNotValid()
                 || source.isDisabled()
-                || SoundFXProcessor.isCategoryIgnored(source.getCategory())
+                || !inRange(source.getPosition(), ctx.playerEyePosition, source.getSound().getSound())
                 || source.getPosition().equals(Vec3d.ZERO)) {
             clearSettings(source);
             return;
@@ -118,13 +120,7 @@ public final class SoundFXUtils {
         final Vec3d soundPos = offsetPositionIfSolid(ctx.world, source.getPosition(), ctx.playerEyePosition);
 
         final float absorptionCoeff = Effects.globalBlockAbsorption * 3.0f;
-
-        float airAbsorptionFactor = 1.0f;
-
-        if (ctx.isPrecipitating) {
-            airAbsorptionFactor = calculateWeatherAbsorption(ctx, soundPos, ctx.playerEyePosition);
-        }
-
+        final float airAbsorptionFactor = calculateWeatherAbsorption(ctx, soundPos, ctx.playerEyePosition);
         final float occlusionAccumulation = calculateOcclusion(ctx, soundPos, ctx.playerEyePosition);
 
         float directCutoff = (float) Math.exp(-occlusionAccumulation * absorptionCoeff);
@@ -350,6 +346,9 @@ public final class SoundFXUtils {
     private static float calculateWeatherAbsorption(@Nonnull final WorldContext ctx, @Nonnull final Vec3d pt1, @Nonnull final Vec3d pt2) {
         assert ctx.world != null;
 
+        if (!ctx.isPrecipitating)
+            return 1F;
+
         final BlockPos low = new BlockPos(pt1);
         final BlockPos mid = new BlockPos(pt1.add(pt2).scale(0.5F));
         final BlockPos high = new BlockPos(pt2);
@@ -382,5 +381,10 @@ public final class SoundFXUtils {
 
     private static boolean isMiss(@Nullable final BlockRayTraceResult result) {
         return result == null || result.getType() == RayTraceResult.Type.MISS;
+    }
+
+    private static boolean inRange(@Nonnull final Vec3d origin, @Nonnull final Vec3d target, @Nonnull final Sound sound) {
+        final int rangeSq = sound.getAttenuationDistance() * sound.getAttenuationDistance();
+        return Double.compare(origin.squareDistanceTo(target), rangeSq) <= 0;
     }
 }

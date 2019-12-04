@@ -90,9 +90,16 @@ public final class EffectRegistry {
 
     }
 
+    /**
+     * Gets the occlusion value for the given BlockState.  This value determines how effective sound is transmitted
+     * through the block.  Low values indicate more efficient transmission, and higher values indicate more absorption.
+     *
+     * @param state BlockState to obtain the occlusion coefficient.
+     * @return The coeeficient that has been configured, or default of 1 for opaque blocks, and 0.15F for non-solid.
+     */
     public static float getOcclusion(@Nonnull final BlockState state) {
-        float result = blockStateOcclusionMap.get(state);
-        if (result < 0) {
+        Float result = blockStateOcclusionMap.get(state);
+        if (result == null || result < 0) {
             result = materialOcclusion.getFloat(state.getMaterial());
             if (result < 0) {
                 result = state.getMaterial().isOpaque() ? 1F : 0.15F;
@@ -102,9 +109,16 @@ public final class EffectRegistry {
         return result;
     }
 
+    /**
+     * Gets the reflectivity value for the given BlockState.  Low values indicates sounds are absorbed by the block,
+     * whereas high values indicate the sounds bounce off the block.
+     *
+     * @param state BlockState to obtain the reflectivity coefficient.
+     * @return The coefficient that has been configured, or the default value of 0.5 if it hasn't
+     */
     public static float getReflectivity(@Nonnull final BlockState state) {
-        float result = blockStateReflectMap.get(state);
-        if (result < 0)
+        Float result = blockStateReflectMap.get(state);
+        if (result == null || result < 0)
             result = materialReflect.getFloat(state.getMaterial());
         return result < 0 ? 0.5F : result;
     }
@@ -115,9 +129,8 @@ public final class EffectRegistry {
      * "minecraft:water", and "minecraft:lava".
      *
      * @param res Resource to lookup
-     * @return Lowpass filter effect parameters for the specified resource
+     * @return Coefficient for dampening sounds for the specified resource
      */
-    @Nonnull
     public static float getFluidCoeffcient(@Nonnull final ResourceLocation res) {
         return fluidCoefficient.getFloat(res);
     }
@@ -201,27 +214,7 @@ public final class EffectRegistry {
 
     private static void processLowpass(@Nonnull final EffectOptions options) {
         for (final Map.Entry<String, Float> kvp : options.fluid.entrySet()) {
-            fluidCoefficient.put(new ResourceLocation(kvp.getKey()), kvp.getValue());
-        }
-    }
-
-    public static class LowPassEffect {
-
-        public static final LowPassEffect DEFAULT = new LowPassEffect();
-
-        @SerializedName("gain")
-        public final float gain;
-        @SerializedName("gainHF")
-        public final float gainHF;
-
-        public LowPassEffect() {
-            this.gain = 1F;
-            this.gainHF = 1F;
-        }
-
-        public LowPassEffect(final float gain, final float gainHF) {
-            this.gain = gain;
-            this.gainHF = gainHF;
+            fluidCoefficient.put(new ResourceLocation(kvp.getKey()), kvp.getValue().floatValue());
         }
     }
 

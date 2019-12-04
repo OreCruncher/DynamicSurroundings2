@@ -127,26 +127,26 @@ public final class SoundUtils {
      * @return Debug string
      */
     @Nonnull
-    public static String debugString(@Nonnull ISound sound) {
-        Objects.requireNonNull(sound);
+    public static String debugString(@Nullable final ISound sound) {
+
+        if (sound == null)
+            return "null";
 
         if (sound instanceof ISoundInstance)
             return sound.toString();
 
         //@formatter:off
-        MoreObjects.ToStringHelper t = MoreObjects.toStringHelper(sound)
+        return MoreObjects.toStringHelper(sound)
                 .addValue(sound.getSoundLocation().toString())
                 .addValue(sound.getCategory().toString())
-                .addValue(sound.getAttenuationType().toString());
-
-        if (sound.getSound() != null) {
-            t.add("v", sound.getVolume())
-                    .add("p", sound.getPitch());
-        }
-
-        return t.add("x", sound.getX())
+                .addValue(sound.getAttenuationType().toString())
+                .add("v", sound.getVolume())
+                .add("p", sound.getPitch())
+                .add("x", sound.getX())
                 .add("y", sound.getY())
                 .add("z", sound.getZ())
+                .add("d", sound.getSound().getAttenuationDistance())
+                .add("s", sound.getSound().isStreaming())
                 .toString();
         //@formatter:on
     }

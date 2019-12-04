@@ -24,6 +24,7 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.TimerEMA;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.TimeUnit;
 
 public class Worker {
 
@@ -57,11 +58,10 @@ public class Worker {
             } catch (@Nonnull final Throwable t) {
                 logger.error(t, "Error processing %s!", this.thread.getName());
             }
-            timeTrack.update(sw.getNanoTime());
-            this.diagnosticString = timeTrack.toString();
             sw.stop();
-            long duration = (sw.getNanoTime() / 1000000L);
-            long sleepTime = this.frequency - duration;
+            timeTrack.update(sw.getNanoTime());
+            this.diagnosticString = String.format("%s (deadline %d)", timeTrack.toString(), this.frequency);
+            long sleepTime = this.frequency - sw.getTime(TimeUnit.MILLISECONDS);
             sw.reset();
             if (sleepTime > 0) {
                 try {

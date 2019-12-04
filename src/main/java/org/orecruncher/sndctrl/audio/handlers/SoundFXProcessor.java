@@ -34,6 +34,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.concurrent.ConcurrentException;
+import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.lwjgl.openal.*;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
@@ -46,9 +48,7 @@ import org.orecruncher.sndctrl.xface.ISoundSource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
@@ -60,15 +60,29 @@ public final class SoundFXProcessor {
      */
     private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
 
-    // Settings used by the system
-    private static final int SOUND_PROCESS_ITERATION = 1000 / 30;
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundFXProcessor.class);
-    private static final ConcurrentSkipListMap<Integer, SourceContext> sources = new ConcurrentSkipListMap<>();
     static boolean isAvailable;
+    private static final int SOUND_PROCESS_ITERATION = 1000 / 30;
+    // Default the pool would want 1 thread per core.  Shouldn't need that many so scale down.  Also,
+    // the handling thread will also help reduce the workload if needed, so there is a +1 hidden in this
+    // math.
+    private static final int SOUND_PROCESS_THREADS = Math.max(Runtime.getRuntime().availableProcessors() / 3, 1);
+    private static int MAX_SOUNDS;
+    // Sparse array to hold references to the SoundContexts of playing sounds
+    private static SourceContext[] sources;
     @Nullable
     private static Worker soundProcessor;
-    @Nullable
-    private static ForkJoinPool threadPool;
+    // Use our own ForkJoinPool avoiding the common pool.  Thread allocation is better controlled, and we won't run
+    // into/cause any problems with other tasks in the common pool.
+    @Nonnull
+    private static final LazyInitializer<ForkJoinPool> threadPool = new LazyInitializer<ForkJoinPool>() {
+        @Override
+        protected ForkJoinPool initialize() throws ConcurrentException {
+            LOGGER.info("Threads allocated to SoundControl sound processor: %d", SOUND_PROCESS_THREADS);
+            return new ForkJoinPool(SOUND_PROCESS_THREADS);
+        }
+    };
+
     @Nonnull
     private static WorldContext worldContext = new WorldContext();
 
@@ -126,21 +140,18 @@ public final class SoundFXProcessor {
             final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
             final long ctx = ALC10.alcCreateContext(device, attribs);
             final boolean result = ALC10.alcMakeContextCurrent(ctx);
+
+            // Have to renable since we reset the context
             AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
 
-            if (!result) {
-                LOGGER.warn("Unable to configure additional auxillary slots for sound sources!");
-                return;
-            }
+            // Calculate the number of sources available and allocate an array to match
+            final int mono = ALC11.alcGetInteger(device, ALC11.ALC_MONO_SOURCES);
+            final int stereo = ALC11.alcGetInteger(device, ALC11.ALC_STEREO_SOURCES);
+            MAX_SOUNDS = mono + stereo;
+            sources = new SourceContext[MAX_SOUNDS];
 
             Effects.initialize();
 
-            // Default the pool would want 1 thread per core.  Shouldn't need that many so scale down.  Also,
-            // the handling thread will also help reduce the workload if needed, so there is a +1 hidden in this
-            // math.
-            final int threads = Math.max(Runtime.getRuntime().availableProcessors() / 3, 1);
-            LOGGER.info("Threads allocated to SoundControl sound processor: %d", threads);
-            threadPool = new ForkJoinPool(threads);
             soundProcessor = new Worker(
                     "SoundControl Sound Processor",
                     SoundFXProcessor::processSounds,
@@ -176,16 +187,18 @@ public final class SoundFXProcessor {
             while ((src = cme.getSource()) == null)
                 Thread.yield();
 
-            final ISoundSource ss = Utilities.safeCast(src, ISoundSource.class).get();
-            final SourceContext ctx = ss.getSourceContext();
-            ctx.attachSound(sound);
-            if (isCategoryIgnored(sound.getCategory())) {
-                ctx.disable();
-            } else {
-                ctx.update();
-                sources.put(ss.getSourceId(), ctx);
-            }
-        } catch(@Nonnull final Throwable t) {
+            Utilities.safeCast(src, ISoundSource.class).ifPresent(ss -> {
+                final SourceContext ctx = ss.getSourceContext();
+                ctx.attachSound(sound);
+                if (isCategoryIgnored(sound.getCategory())) {
+                    ctx.disable();
+                } else {
+                    final int idx = sourceIdToIdx(ss.getSourceId());
+                    ctx.update();
+                    sources[idx] = ctx;
+                }
+            });
+        } catch (@Nonnull final Throwable t) {
             LOGGER.error(t, "Error obtaining SoundSource information in callback");
         }
 
@@ -197,15 +210,15 @@ public final class SoundFXProcessor {
      * @param soundId The ID of the sound source that is being removed.
      */
     public static void stopSoundPlay(final int soundId) {
-        sources.remove(soundId);
+        sources[sourceIdToIdx(soundId)] = null;
     }
 
     /**
-     * Invoked on a client tick.  Precalculate overall environmental impacts for effects.
+     * Invoked on a client tick. Establishes the current world context for further computation..
      *
      * @param event Event trigger in question.
      */
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onClientTick(@Nonnull final TickEvent.ClientTickEvent event) {
         if (isAvailable() && event.side == LogicalSide.CLIENT && event.phase == TickEvent.Phase.START) {
             worldContext = new WorldContext();
@@ -217,12 +230,16 @@ public final class SoundFXProcessor {
      * so offloading to a separate thread to keep it out of either the client tick or sound engine makes sense.
      */
     private static void processSounds() {
-        final Collection<SourceContext> srcs = sources.values();
-        if (srcs.size() > 0) {
-            for (final SourceContext ctx : srcs) {
-                threadPool.submit(ctx::update);
+        try {
+            final ForkJoinPool pool = threadPool.get();
+            for (int i = 0; i < MAX_SOUNDS; i++) {
+                final SourceContext ctx = sources[i];
+                if (ctx != null && ctx.shouldExecute())
+                    pool.execute(ctx::update);
             }
-            threadPool.awaitQuiescence(5, TimeUnit.MINUTES);
+            pool.awaitQuiescence(5, TimeUnit.MINUTES);
+        } catch (@Nonnull final Throwable t) {
+            LOGGER.error(t, "Error in SoundContext ForkJoinPool");
         }
     }
 
@@ -240,10 +257,18 @@ public final class SoundFXProcessor {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
         if (isAvailable() && Minecraft.getInstance().gameSettings.showDebugInfo && soundProcessor != null) {
-            String msg = soundProcessor.getDiagnosticString();
+            final String msg = soundProcessor.getDiagnosticString();
             if (!StringUtils.isEmpty(msg))
                 event.getLeft().add(TextFormatting.GREEN + msg);
         }
+    }
+
+    private static int sourceIdToIdx(final int soundId) {
+        final int idx = soundId - 1;
+        if (idx < 0 || idx >= MAX_SOUNDS) {
+            throw new IllegalStateException("Invalid source ID: " + idx);
+        }
+        return idx;
     }
 
     /**

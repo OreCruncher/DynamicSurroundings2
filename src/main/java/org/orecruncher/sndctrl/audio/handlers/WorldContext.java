@@ -130,10 +130,15 @@ public final class WorldContext {
     }
 
     @Nullable
+    public BlockRayTraceResult rayTraceBlocks(@Nonnull final Vec3d src, @Nonnull final Vec3d dest) {
+        return rayTraceBlocks(src, dest, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+    }
+
+    @Nullable
     public BlockRayTraceResult rayTraceBlocks(@Nonnull final Vec3d src, @Nonnull final Vec3d dest, @Nonnull final RayTraceContext.BlockMode bm, @Nonnull final RayTraceContext.FluidMode fm) {
         assert this.world != null;
         assert this.player != null;
-        return WorldUtils.rayTraceBlock(this.world, src, dest, bm, fm, this.player);
+        return WorldUtils.rayTraceBlock(this.world, src, dest, bm, fm);
     }
 
 }

@@ -39,22 +39,20 @@ public class ReverbEffectSlot extends Slot {
     public void apply(@Nonnull final ReverbData data, @Nonnull final AuxSlot aux) {
         if (isInitialized()) {
             if (data.doProcess()) {
-                synchronized (data.sync()) {
-                    data.clamp();
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DENSITY, data.density);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DIFFUSION, data.diffusion);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_GAIN, data.gain);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_GAINHF, data.gainHF);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_TIME, data.decayTime);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, data.decayHFRatio);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, data.reflectionsGain);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_REFLECTIONS_DELAY, data.reflectionsDelay);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, data.lateReverbGain);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, data.lateReverbDelay);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, data.airAbsorptionGainHF);
-                    EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, data.roomRolloffFactor);
-                    EXTEfx.alEffecti(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_HFLIMIT, data.decayHFLimit);
-                }
+                data.clamp();
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DENSITY, data.density);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DIFFUSION, data.diffusion);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_GAIN, data.gain);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_GAINHF, data.gainHF);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_TIME, data.decayTime);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, data.decayHFRatio);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, data.reflectionsGain);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_REFLECTIONS_DELAY, data.reflectionsDelay);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, data.lateReverbGain);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, data.lateReverbDelay);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, data.airAbsorptionGainHF);
+                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, data.roomRolloffFactor);
+                EXTEfx.alEffecti(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_HFLIMIT, data.decayHFLimit);
                 EXTEfx.alAuxiliaryEffectSloti(aux.getSlot(), EXTEfx.AL_EFFECTSLOT_EFFECT, getSlot());
             } else {
                 EXTEfx.alAuxiliaryEffectSloti(aux.getSlot(), EXTEfx.AL_EFFECTSLOT_EFFECT, EXTEfx.AL_EFFECTSLOT_NULL);

@@ -42,6 +42,8 @@ public final class SourceContext {
     private static final int UPDATE_FEQUENCY = 4;
 
     @Nonnull
+    private final Object sync = new Object();
+    @Nonnull
     private final LowPassData lowPass0;
     @Nonnull
     private final LowPassData lowPass1;
@@ -70,6 +72,10 @@ public final class SourceContext {
         this.direct = new LowPassData();
         this.airAbsorb = new SourcePropertyFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, EXTEfx.AL_DEFAULT_AIR_ABSORPTION_FACTOR, EXTEfx.AL_MIN_AIR_ABSORPTION_FACTOR, EXTEfx.AL_MAX_AIR_ABSORPTION_FACTOR);
         this.pos = Vec3d.ZERO;
+    }
+
+    public Object sync() {
+        return this.sync;
     }
 
     public boolean isDisabled() {
@@ -136,16 +142,18 @@ public final class SourceContext {
      */
     public void tick(final int sourceId) {
         if(!isDisabled()) {
-            // Upload the data
-            Effects.filter0.apply(sourceId, this.lowPass0, 0, Effects.auxSlot0);
-            Effects.filter1.apply(sourceId, this.lowPass1, 1, Effects.auxSlot1);
-            Effects.filter2.apply(sourceId, this.lowPass2, 2, Effects.auxSlot2);
-            Effects.filter3.apply(sourceId, this.lowPass3, 3, Effects.auxSlot3);
-            Effects.direct.apply(sourceId, this.direct);
+            synchronized (this.sync()) {
+                // Upload the data
+                Effects.filter0.apply(sourceId, this.lowPass0, 0, Effects.auxSlot0);
+                Effects.filter1.apply(sourceId, this.lowPass1, 1, Effects.auxSlot1);
+                Effects.filter2.apply(sourceId, this.lowPass2, 2, Effects.auxSlot2);
+                Effects.filter3.apply(sourceId, this.lowPass3, 3, Effects.auxSlot3);
+                Effects.direct.apply(sourceId, this.direct);
 
-            this.airAbsorb.apply(sourceId);
+                this.airAbsorb.apply(sourceId);
 
-            SoundFXProcessor.validate("SourceHandler::tick");
+                SoundFXProcessor.validate("SourceHandler::tick");
+            }
         }
     }
 

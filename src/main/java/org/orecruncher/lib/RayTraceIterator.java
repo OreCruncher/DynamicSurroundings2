@@ -18,22 +18,17 @@
 
 package org.orecruncher.lib;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockReader;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 
-public class RayTraceIterator implements Iterator<Pair<BlockPos, BlockState>> {
+public class RayTraceIterator implements Iterator<BlockRayTraceResult> {
 
     @Nonnull
     private final IBlockReader world;
-    @Nonnull
-    private final PlayerEntity player;
     @Nonnull
     private final BlockPos targetBlock;
     @Nonnull
@@ -44,11 +39,10 @@ public class RayTraceIterator implements Iterator<Pair<BlockPos, BlockState>> {
     private Vec3d target;
 
     @Nullable
-    private BlockRayTraceResult result;
+    private BlockRayTraceResult hitResult;
 
-    public RayTraceIterator(@Nonnull final IBlockReader world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target, @Nonnull final PlayerEntity player) {
+    public RayTraceIterator(@Nonnull final IBlockReader world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
         this.world = world;
-        this.player = player;
         this.targetBlock = new BlockPos(target);
         this.normal = target.subtract(origin).normalize();
         this.origin = origin;
@@ -57,27 +51,26 @@ public class RayTraceIterator implements Iterator<Pair<BlockPos, BlockState>> {
     }
 
     private void doTrace() {
-        if (this.result != null && this.result.getPos().equals(this.targetBlock)) {
-            this.result = null;
+        if (this.hitResult != null && this.hitResult.getPos().equals(this.targetBlock)) {
+            this.hitResult = null;
         } else {
-            this.result = WorldUtils.rayTraceBlock(this.world, this.origin, this.target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY, this.player);
+            this.hitResult = WorldUtils.rayTraceBlock(this.world, this.origin, this.target);
         }
     }
 
     @Override
     public boolean hasNext() {
-        return this.result != null && this.result.getType() != RayTraceResult.Type.MISS;
+        return this.hitResult != null && this.hitResult.getType() != RayTraceResult.Type.MISS;
     }
 
     @Override
     @Nonnull
-    public Pair<BlockPos, BlockState> next() {
-        if (this.result == null || this.result.getType() == RayTraceResult.Type.MISS)
+    public BlockRayTraceResult next() {
+        if (this.hitResult == null || this.hitResult.getType() == RayTraceResult.Type.MISS)
             throw new IllegalStateException("No more blocks in trace");
-        final BlockPos pos = this.result.getPos();
-        final BlockState state = this.world.getBlockState(pos);
-        this.origin = this.result.getHitVec().add(this.normal);
+        final BlockRayTraceResult result = this.hitResult;
+        this.origin = this.hitResult.getHitVec().add(this.normal);
         doTrace();
-        return Pair.of(pos, state);
+        return result;
     }
 }

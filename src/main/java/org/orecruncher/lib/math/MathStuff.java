@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.math;
 
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
@@ -131,7 +132,7 @@ public final class MathStuff {
             add = 0.0f;
         }
 
-        final float invDiv = ATAN2_DIM_MINUS_1 / ((x < y) ? y : x);
+        final float invDiv = ATAN2_DIM_MINUS_1 / (Math.max(x, y));
         final int xi = (int) (x * invDiv);
         final int yi = (int) (y * invDiv);
 
@@ -155,47 +156,27 @@ public final class MathStuff {
     }
 
     public static float wrapDegrees(float value) {
-        value = value % 360.0F;
-
-        if (value >= 180.0F) {
-            value -= 360.0F;
-        }
-
-        if (value < -180.0F) {
-            value += 360.0F;
-        }
-
-        return value;
+        return MathHelper.wrapDegrees(value);
     }
 
     public static double wrapDegrees(double value) {
-        value = value % 360.0D;
-
-        if (value >= 180.0D) {
-            value -= 360.0D;
-        }
-
-        if (value < -180.0D) {
-            value += 360.0D;
-        }
-
-        return value;
+        return MathHelper.wrapDegrees(value);
     }
 
     public static float abs(final float val) {
-        return val < 0.0F ? -val : val;
+        return Math.abs(val);
     }
 
     public static double abs(final double val) {
-        return val < 0.0F ? -val : val;
+        return Math.abs(val);
     }
 
     public static long abs(final long val) {
-        return val < 1L ? -val : val;
+        return Math.abs(val);
     }
 
     public static int abs(final int val) {
-        return val < 1 ? -val : val;
+        return Math.abs(val);
     }
 
     public static float sqrt(final float value) {
@@ -203,7 +184,7 @@ public final class MathStuff {
     }
 
     public static double sqrt(final double value) {
-        return (float) Math.sqrt(value);
+        return Math.sqrt(value);
     }
 
     public static int floor(final double value) {
@@ -220,16 +201,47 @@ public final class MathStuff {
         return value < 0.03D ? Math.log(value) : 6 * (value - 1) / (value + 1 + 4 * (Math.sqrt(value)));
     }
 
+    public static double pow(final double a, final double b) {
+        final long tmp = Double.doubleToLongBits(a);
+        final long tmp2 = (long) (b * (tmp - 4606921280493453312L)) + 4606921280493453312L;
+        return Double.longBitsToDouble(tmp2);
+    }
+
+    public static double exp(double val) {
+        final long tmp = (long) (1512775 * val + (1072693248 - 60801));
+        return Double.longBitsToDouble(tmp << 32);
+    }
+
     public static float clamp(final float num, final float min, final float max) {
-        return num < min ? min : (num > max ? max : num);
+        return Math.min(max, Math.max(num, min));
     }
 
     public static double clamp(final double num, final double min, final double max) {
-        return num < min ? min : (num > max ? max : num);
+        return Math.min(max, Math.max(num, min));
     }
 
     public static int clamp(final int num, final int min, final int max) {
-        return num < min ? min : (num > max ? max : num);
+        return Math.min(max, Math.max(num, min));
+    }
+
+    /**
+     * Clamps the value between 0 and 1.
+     *
+     * @param num Number to clamp
+     * @return Number clamped between 0 and 1
+     */
+    public static float clamp1(final float num) {
+        return Math.min(1, Math.max(num, 0));
+    }
+
+    /**
+     * Clamps the value between 0 and 1.
+     *
+     * @param num Number to clamp
+     * @return Number clamped between 0 and 1
+     */
+    public static double clamp1(final double num) {
+        return Math.min(1, Math.max(num, 0));
     }
 
     // Assumes center at origin.
@@ -266,5 +278,9 @@ public final class MathStuff {
         final double y = vector.y - dot2 * surfaceNormal.y;
         final double z = vector.z - dot2 * surfaceNormal.z;
         return new Vec3d(x, y, z);
+    }
+
+    public static boolean isValid(@Nonnull final Vec3d vec) {
+        return !(Double.isNaN(vec.x) || Double.isNaN(vec.y) || Double.isNaN(vec.z));
     }
 }

@@ -20,10 +20,7 @@ package org.orecruncher.lib;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -32,9 +29,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public final class WorldUtils {
+
     private WorldUtils() {
 
     }
@@ -60,9 +57,14 @@ public final class WorldUtils {
         return biome.doesWaterFreeze(world, pos) ? Biome.RainType.SNOW : Biome.RainType.RAIN;
     }
 
-    @Nullable
-    public static BlockRayTraceResult rayTraceBlock(@Nonnull final IBlockReader world, @Nonnull final Vec3d source, @Nonnull final Vec3d dest, RayTraceContext.BlockMode bm, RayTraceContext.FluidMode fm, @Nonnull final PlayerEntity player) {
-        final RayTraceContext ctx = new RayTraceContext(source, dest, bm, fm, player);
+    @Nonnull
+    public static BlockRayTraceResult rayTraceBlock(@Nonnull final IBlockReader world, @Nonnull final Vec3d source, @Nonnull final Vec3d dest) {
+        return rayTraceBlock(world, source, dest, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+    }
+
+    @Nonnull
+    public static BlockRayTraceResult rayTraceBlock(@Nonnull final IBlockReader world, @Nonnull final Vec3d source, @Nonnull final Vec3d dest, RayTraceContext.BlockMode bm, RayTraceContext.FluidMode fm) {
+        final RayTraceContext ctx = new RayTraceContext(source, dest, bm, fm, DummyEntity.INSTANCE);
         return world.rayTraceBlocks(ctx);
     }
 

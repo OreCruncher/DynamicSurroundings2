@@ -29,9 +29,6 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public final class SourcePropertyInt {
 
-    @Nonnull
-    private final Object sync = new Object();
-
     private final int property;
     private final int min;
     private final int max;
@@ -43,11 +40,6 @@ public final class SourcePropertyInt {
         this.min = min;
         this.max = max;
         this.process = false;
-    }
-
-    @Nonnull
-    public final Object sync() {
-        return this.sync;
     }
 
     public boolean doProcess() {
@@ -68,10 +60,8 @@ public final class SourcePropertyInt {
 
     public void apply(final int sourceId) {
         if (doProcess()) {
-            synchronized (this.sync) {
-                AL11.alSourcei(sourceId, this.property, getValue());
-                SoundFXProcessor.validate();
-            }
+            AL11.alSourcei(sourceId, this.property, getValue());
+            SoundFXProcessor.validate();
         }
     }
 }

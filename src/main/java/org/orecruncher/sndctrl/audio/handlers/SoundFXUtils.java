@@ -31,7 +31,7 @@ package org.orecruncher.sndctrl.audio.handlers;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.audio.Sound;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -77,6 +77,14 @@ public final class SoundFXUtils {
      */
     private static final float RECIP_PRIMARY_RAYS = 1F / REVERB_RAYS;
     /**
+     * Sound reflection energy coefficient
+     */
+    private static final float ENERGY_COEFF = 0.75F * 0.25F * RECIP_TOTAL_RAYS;
+    /**
+     * Sound reflection energy constant
+     */
+    private static final float ENERGY_CONST = 0.25F * 0.25F * RECIP_TOTAL_RAYS;
+    /**
      * Normals for the direction of each of the rays to be cast.
      */
     private static final Vec3d[] REVERB_RAY_NORMALS = new Vec3d[REVERB_RAYS];
@@ -84,8 +92,16 @@ public final class SoundFXUtils {
      * Precalculated vectors to determine end targets relative to an origin.
      */
     private static final Vec3d[] REVERB_RAY_PROJECTED = new Vec3d[REVERB_RAYS];
+    /**
+     * Precaluclated direction surface normals as Vec3d instead of Vec3i
+     */
+    private static final Vec3d[] SURFACE_DIRECTION_NORMALS = new Vec3d[Direction.values().length];
 
     static {
+
+        // Would have been cool to have a direction vec as a 3d as well as 3i.
+        for (final Direction d : Direction.values())
+            SURFACE_DIRECTION_NORMALS[d.ordinal()] = new Vec3d(d.getDirectionVec());
 
         // Pre-calculate the known vectors that will be projected off a sound source when casting about to establish
         // reverb effects.
@@ -101,6 +117,7 @@ public final class SoundFXUtils {
 
             REVERB_RAY_PROJECTED[i] = REVERB_RAY_NORMALS[i].scale(MAX_REVERB_DISTANCE);
         }
+
     }
 
     public static void calculate(@Nonnull final WorldContext ctx, @Nonnull final SourceContext source) {
@@ -123,7 +140,7 @@ public final class SoundFXUtils {
         final float airAbsorptionFactor = calculateWeatherAbsorption(ctx, soundPos, ctx.playerEyePosition);
         final float occlusionAccumulation = calculateOcclusion(ctx, soundPos, ctx.playerEyePosition);
 
-        float directCutoff = (float) Math.exp(-occlusionAccumulation * absorptionCoeff);
+        float directCutoff = (float) MathStuff.exp(-occlusionAccumulation * absorptionCoeff);
 
         // Handle any dampening effects from the player - like head in water
         directCutoff *= 1F - ctx.auralDampening;
@@ -157,7 +174,7 @@ public final class SoundFXUtils {
             // Additional bounces
             BlockPos lastHitBlock = rayHit.getPos();
             Vec3d lastHitPos = rayHit.getHitVec();
-            Vec3d lastHitNormal = new Vec3d(rayHit.getFace().getDirectionVec());
+            Vec3d lastHitNormal = surfaceNormal(rayHit.getFace());
             Vec3d lastRayDir = REVERB_RAY_NORMALS[i];
 
             double totalRayDistance = origin.distanceTo(rayHit.getHitVec());
@@ -166,13 +183,13 @@ public final class SoundFXUtils {
             for (int j = 0; j < REVERB_RAY_BOUNCES; j++) {
 
                 final float blockReflectivity = ((IBlockStateEffects) ctx.world.getBlockState(lastHitBlock)).getReflectivity();
-                final float energyTowardsPlayer = (blockReflectivity * 0.75f + 0.25f) * 0.25F * RECIP_TOTAL_RAYS;
+                final float energyTowardsPlayer = blockReflectivity * ENERGY_COEFF + ENERGY_CONST;
 
                 final Vec3d newRayDir = MathStuff.reflection(lastRayDir, lastHitNormal);
                 origin = lastHitPos.add(newRayDir.scale(0.01F));
                 target = origin.add(newRayDir.scale(MAX_REVERB_DISTANCE));
 
-                final BlockRayTraceResult newRayHit = ctx.rayTraceBlocks(origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+                final BlockRayTraceResult newRayHit = ctx.rayTraceBlocks(origin, target);
 
                 if (isMiss(newRayHit)) {
                     totalRayDistance += lastHitPos.distanceTo(ctx.playerEyePosition);
@@ -182,7 +199,7 @@ public final class SoundFXUtils {
                     totalRayDistance += lastHitPos.distanceTo(newRayHit.getHitVec());
 
                     lastHitPos = newRayHit.getHitVec();
-                    lastHitNormal = new Vec3d(newRayHit.getFace().getDirectionVec());
+                    lastHitNormal = surfaceNormal(newRayHit.getFace());
                     lastRayDir = newRayDir;
                     lastHitBlock = newRayHit.getPos();
 
@@ -190,19 +207,20 @@ public final class SoundFXUtils {
                     // player share airspace.
                     if (!Effects.simplerSharedAirspaceSimulation || j == REVERB_RAY_BOUNCES - 1) {
                         final Vec3d finalRayStart = lastHitPos.add(lastHitNormal.scale(0.01F));
-                        final BlockRayTraceResult finalRayHit = ctx.rayTraceBlocks(finalRayStart, ctx.playerEyePosition, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+                        final BlockRayTraceResult finalRayHit = ctx.rayTraceBlocks(finalRayStart, ctx.playerEyePosition);
                         if (isMiss(finalRayHit)) {
                             sharedAirspace += 1.0f;
                         }
                     }
                 }
 
-                final float reflectionDelay = (float) Math.max(totalRayDistance, 0.0) * 0.12f * blockReflectivity;
+                assert totalRayDistance >= 0;
+                final float reflectionDelay = (float) totalRayDistance * 0.12f * blockReflectivity;
 
-                final float cross0 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 0.0f), 0.0f, 1.0f);
-                final float cross1 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 1.0f), 0.0f, 1.0f);
-                final float cross2 = 1.0f - MathHelper.clamp(Math.abs(reflectionDelay - 2.0f), 0.0f, 1.0f);
-                final float cross3 = MathHelper.clamp(reflectionDelay - 2.0f, 0.0f, 1.0f);
+                final float cross0 = 1.0f - MathStuff.clamp1(Math.abs(reflectionDelay - 0.0f));
+                final float cross1 = 1.0f - MathStuff.clamp1(Math.abs(reflectionDelay - 1.0f));
+                final float cross2 = 1.0f - MathStuff.clamp1(Math.abs(reflectionDelay - 2.0f));
+                final float cross3 = MathStuff.clamp1(reflectionDelay - 2.0f);
 
                 sendGain0 += cross0 * energyTowardsPlayer * 6.4f;
                 sendGain1 += cross1 * energyTowardsPlayer * 12.8f;
@@ -221,49 +239,48 @@ public final class SoundFXUtils {
         bounceRatio[2] = bounceRatio[2] / REVERB_RAYS;
         bounceRatio[3] = bounceRatio[3] / REVERB_RAYS;
 
-        sharedAirspace *= 64.0f;
-
         if (Effects.simplerSharedAirspaceSimulation) {
-            sharedAirspace *= RECIP_PRIMARY_RAYS;
+            sharedAirspace *= RECIP_PRIMARY_RAYS * 64F;
         } else {
-            sharedAirspace *= RECIP_TOTAL_RAYS;
+            sharedAirspace *= RECIP_TOTAL_RAYS * 64F;
         }
 
-        final float sharedAirspaceWeight0 = MathHelper.clamp(sharedAirspace / 20.0f, 0.0f, 1.0f);
-        final float sharedAirspaceWeight1 = MathHelper.clamp(sharedAirspace / 15.0f, 0.0f, 1.0f);
-        final float sharedAirspaceWeight2 = MathHelper.clamp(sharedAirspace / 10.0f, 0.0f, 1.0f);
-        final float sharedAirspaceWeight3 = MathHelper.clamp(sharedAirspace / 10.0f, 0.0f, 1.0f);
+        final float sharedAirspaceWeight0 = MathStuff.clamp1(sharedAirspace / 20.0f);
+        final float sharedAirspaceWeight1 = MathStuff.clamp1(sharedAirspace / 15.0f);
+        final float sharedAirspaceWeight2 = MathStuff.clamp1(sharedAirspace / 10.0f);
+        final float sharedAirspaceWeight3 = MathStuff.clamp1(sharedAirspace / 10.0f);
 
-        sendCutoff0 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1.0f) * (1.0f - sharedAirspaceWeight0)
+        sendCutoff0 = (float) MathStuff.exp(-occlusionAccumulation * absorptionCoeff * 1.0f) * (1.0f - sharedAirspaceWeight0)
                 + sharedAirspaceWeight0;
-        sendCutoff1 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1.0f) * (1.0f - sharedAirspaceWeight1)
+        sendCutoff1 = (float) MathStuff.exp(-occlusionAccumulation * absorptionCoeff * 1.0f) * (1.0f - sharedAirspaceWeight1)
                 + sharedAirspaceWeight1;
-        sendCutoff2 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1.5f) * (1.0f - sharedAirspaceWeight2)
+        sendCutoff2 = (float) MathStuff.exp(-occlusionAccumulation * absorptionCoeff * 1.5f) * (1.0f - sharedAirspaceWeight2)
                 + sharedAirspaceWeight2;
-        sendCutoff3 = (float) Math.exp(-occlusionAccumulation * absorptionCoeff * 1.5f) * (1.0f - sharedAirspaceWeight3)
+        sendCutoff3 = (float) MathStuff.exp(-occlusionAccumulation * absorptionCoeff * 1.5f) * (1.0f - sharedAirspaceWeight3)
                 + sharedAirspaceWeight3;
 
         // attempt to preserve directionality when airspace is shared by
         // allowing some of the dry signal through but filtered
         final float averageSharedAirspace = (sharedAirspaceWeight0 + sharedAirspaceWeight1 + sharedAirspaceWeight2
                 + sharedAirspaceWeight3) * 0.25f;
-        directCutoff = Math.max((float) Math.pow(averageSharedAirspace, 0.5) * 0.2f, directCutoff);
+        //directCutoff = Math.max((float) Math.pow(averageSharedAirspace, 0.5) * 0.2f, directCutoff);
+        directCutoff = Math.max((float) Math.sqrt(averageSharedAirspace) * 0.2f, directCutoff);
 
-        float directGain = (float) Math.pow(directCutoff, 0.1);
+        float directGain = (float) MathStuff.pow(directCutoff, 0.1);
 
         sendGain1 *= bounceRatio[1];
-        sendGain2 *= (float) Math.pow(bounceRatio[2], 3.0);
-        sendGain3 *= (float) Math.pow(bounceRatio[3], 4.0);
+        sendGain2 *= (float) MathStuff.pow(bounceRatio[2], 3.0);
+        sendGain3 *= (float) MathStuff.pow(bounceRatio[3], 4.0);
 
-        sendGain0 = MathHelper.clamp(sendGain0, 0.0f, 1.0f);
-        sendGain1 = MathHelper.clamp(sendGain1, 0.0f, 1.0f);
-        sendGain2 = MathHelper.clamp(sendGain2 * 1.05f - 0.05f, 0.0f, 1.0f);
-        sendGain3 = MathHelper.clamp(sendGain3 * 1.05f - 0.05f, 0.0f, 1.0f);
+        sendGain0 = MathStuff.clamp1(sendGain0);
+        sendGain1 = MathStuff.clamp1(sendGain1);
+        sendGain2 = MathStuff.clamp1(sendGain2 * 1.05f - 0.05f);
+        sendGain3 = MathStuff.clamp1(sendGain3 * 1.05f - 0.05f);
 
-        sendGain0 *= (float) Math.pow(sendCutoff0, 0.1);
-        sendGain1 *= (float) Math.pow(sendCutoff1, 0.1);
-        sendGain2 *= (float) Math.pow(sendCutoff2, 0.1);
-        sendGain3 *= (float) Math.pow(sendCutoff3, 0.1);
+        sendGain0 *= (float) MathStuff.pow(sendCutoff0, 0.1);
+        sendGain1 *= (float) MathStuff.pow(sendCutoff1, 0.1);
+        sendGain2 *= (float) MathStuff.pow(sendCutoff2, 0.1);
+        sendGain3 *= (float) MathStuff.pow(sendCutoff3, 0.1);
 
         if (ctx.player.isInWater()) {
             sendCutoff0 *= 0.4f;
@@ -279,49 +296,41 @@ public final class SoundFXUtils {
         final LowPassData direct = source.getDirect();
         final SourcePropertyFloat prop = source.getAirAbsorb();
 
-        synchronized (lp0.sync()) {
+        synchronized (source.sync()) {
             lp0.gain = sendGain0;
             lp0.gainHF = sendCutoff0;
             lp0.setProcess(true);
-        }
 
-        synchronized (lp1.sync()) {
             lp1.gain = sendGain1;
             lp1.gainHF = sendCutoff1;
             lp1.setProcess(true);
-        }
 
-        synchronized (lp2.sync()) {
             lp2.gain = sendGain2;
             lp2.gainHF = sendCutoff2;
             lp2.setProcess(true);
-        }
 
-        synchronized (lp3.sync()) {
             lp3.gain = sendGain3;
             lp3.gainHF = sendCutoff3;
             lp3.setProcess(true);
-        }
 
-        synchronized (direct.sync()) {
             direct.gain = directGain;
             direct.gainHF = directCutoff;
             direct.setProcess(true);
-        }
 
-        synchronized (prop.sync()) {
             prop.setValue(airAbsorptionFactor);
             prop.setProcess(true);
         }
     }
 
     private static void clearSettings(@Nonnull final SourceContext source) {
-        source.getLowPass0().setProcess(false);
-        source.getLowPass1().setProcess(false);
-        source.getLowPass2().setProcess(false);
-        source.getLowPass3().setProcess(false);
-        source.getDirect().setProcess(false);
-        source.getAirAbsorb().setProcess(false);
+        synchronized (source.sync()) {
+            source.getLowPass0().setProcess(false);
+            source.getLowPass1().setProcess(false);
+            source.getLowPass2().setProcess(false);
+            source.getLowPass3().setProcess(false);
+            source.getDirect().setProcess(false);
+            source.getAirAbsorb().setProcess(false);
+        }
     }
 
     private static float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
@@ -331,10 +340,11 @@ public final class SoundFXUtils {
 
         float accum = 0F;
 
-        final Iterator<Pair<BlockPos, BlockState>> itr = new RayTraceIterator(ctx.world, origin, target, ctx.player);
+        final Iterator<BlockRayTraceResult> itr = new RayTraceIterator(ctx.world, origin, target);
         for (int i = 0; i < OCCLUSION_RAYS; i++) {
             if (itr.hasNext()) {
-                accum += ((IBlockStateEffects) itr.next().getValue()).getOcclusion();
+                final BlockState state = ctx.world.getBlockState(itr.next().getPos());
+                accum += ((IBlockStateEffects) state).getOcclusion();
             } else {
                 break;
             }
@@ -365,6 +375,11 @@ public final class SoundFXUtils {
         factor *= ctx.precipitationStrength;
 
         return factor;
+    }
+
+    @Nonnull
+    private static Vec3d surfaceNormal(@Nonnull final Direction d) {
+        return SURFACE_DIRECTION_NORMALS[d.ordinal()];
     }
 
     private static Vec3d offsetPositionIfSolid(@Nonnull final World world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {

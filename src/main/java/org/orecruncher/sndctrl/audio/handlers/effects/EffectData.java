@@ -29,17 +29,10 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public abstract class EffectData {
 
-    @Nonnull
-    protected final Object sync = new Object();
-
     protected boolean process;
 
     protected EffectData() {
         this.process = false;
-    }
-
-    public final Object sync() {
-        return this.sync;
     }
 
     /**

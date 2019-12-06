@@ -40,11 +40,9 @@ public class LowPassFilterSlot extends Slot {
     public void apply(final int sourceId, @Nonnull final LowPassData data) {
         if (isInitialized()) {
             if (data.doProcess()) {
-                synchronized (data.sync()) {
-                    data.clamp();
-                    EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAIN, data.gain);
-                    EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF);
-                }
+                data.clamp();
+                EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAIN, data.gain);
+                EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF);
                 AL11.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, getSlot());
             } else {
                 AL11.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_EFFECTSLOT_NULL);
@@ -56,11 +54,9 @@ public class LowPassFilterSlot extends Slot {
     public void apply(final int sourceId, @Nonnull final LowPassData data, final int auxSend, @Nonnull final AuxSlot aux) {
         if (isInitialized()) {
             if (data.doProcess()) {
-                synchronized (data.sync()) {
-                    data.clamp();
-                    EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAIN, data.gain);
-                    EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF);
-                }
+                data.clamp();
+                EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAIN, data.gain);
+                EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF);
                 AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, aux.getSlot(), auxSend, getSlot());
             } else {
                 AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_EFFECTSLOT_NULL, auxSend, EXTEfx.AL_FILTER_NULL);

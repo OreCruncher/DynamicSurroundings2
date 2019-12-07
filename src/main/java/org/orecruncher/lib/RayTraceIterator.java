@@ -20,6 +20,7 @@ package org.orecruncher.lib;
 
 import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockReader;
+import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,7 +45,7 @@ public class RayTraceIterator implements Iterator<BlockRayTraceResult> {
     public RayTraceIterator(@Nonnull final IBlockReader world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
         this.world = world;
         this.targetBlock = new BlockPos(target);
-        this.normal = target.subtract(origin).normalize();
+        this.normal = MathStuff.normalize(origin, target);
         this.origin = origin;
         this.target = target;
         doTrace();
@@ -73,4 +74,5 @@ public class RayTraceIterator implements Iterator<BlockRayTraceResult> {
         doTrace();
         return result;
     }
+
 }

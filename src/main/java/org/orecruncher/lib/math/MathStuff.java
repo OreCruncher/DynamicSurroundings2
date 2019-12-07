@@ -32,12 +32,14 @@ import javax.annotation.Nonnull;
  * http://riven8192.blogspot.com/2009/08/fastmath-atan2-lookup-table.html
  */
 public final class MathStuff {
-    public static final float PHI = 1.61803399F; // Golden ratio
-    public static final float ANGLE = (float) (PHI * Math.PI * 2D);
+    public static final double PHI = 0.5D + Math.sqrt(5) / 2D;  // Golden ratio
+    public static final float PHI_F = (float) PHI;
+    public static final double ANGLE = PHI * Math.PI * 2D;
+    public static final float ANGLE_F = (float) ANGLE;
     public static final float PI_F = (float) Math.PI;
     public static final float E_F = (float) Math.E;
 
-    private static final int SIN_BITS = 12;
+    private static final int SIN_BITS = 16;
     private static final int SIN_MASK = ~(-1 << SIN_BITS);
     private static final int SIN_COUNT = SIN_MASK + 1;
     private static final float RAD_FULL = (float) (Math.PI * 2.0);
@@ -58,8 +60,9 @@ public final class MathStuff {
 
     static {
 
+        final double twoPi = Math.PI * 2;
         for (int i = 0; i < SIN_COUNT; i++) {
-            SIN_TABLE[i] = (float) Math.sin((i + 0.5f) / SIN_COUNT * RAD_FULL);
+            SIN_TABLE[i] = (float) Math.sin((i + 0.5D) / SIN_COUNT * twoPi);
         }
 
         // Fix-up cardinals
@@ -199,29 +202,53 @@ public final class MathStuff {
 
     public static double log(final double value) {
         return value < 0.03D ? Math.log(value) : 6 * (value - 1) / (value + 1 + 4 * (Math.sqrt(value)));
-    }
+}
 
     public static double pow(final double a, final double b) {
-        final long tmp = Double.doubleToLongBits(a);
+        final long tmp = Double.doubleToRawLongBits(a);
         final long tmp2 = (long) (b * (tmp - 4606921280493453312L)) + 4606921280493453312L;
         return Double.longBitsToDouble(tmp2);
     }
 
-    public static double exp(double val) {
+    public static double exp(final double val) {
         final long tmp = (long) (1512775 * val + (1072693248 - 60801));
         return Double.longBitsToDouble(tmp << 32);
     }
 
     public static float clamp(final float num, final float min, final float max) {
-        return Math.min(max, Math.max(num, min));
+        return num <= min ? min : min(num, max);
     }
 
     public static double clamp(final double num, final double min, final double max) {
-        return Math.min(max, Math.max(num, min));
+        return num <= min ? min : min(num, max);
     }
 
     public static int clamp(final int num, final int min, final int max) {
-        return Math.min(max, Math.max(num, min));
+        return num <= min ? min : min(num, max);
+    }
+
+    public static int min(final int v1, final int v2) {
+        return v1 <= v2 ? v1 : v2;
+    }
+
+    public static int max(final int v1, final int v2) {
+        return v1 <= v2 ? v2 : v1;
+    }
+
+    public static float min(final float v1, final float v2) {
+        return v1 <= v2 ? v1 : v2;
+    }
+
+    public static float max(final float v1, final float v2) {
+        return v1 <= v2 ? v2 : v1;
+    }
+
+    public static double min(final double v1, final double v2) {
+        return v1 <= v2 ? v1 : v2;
+    }
+
+    public static double max(final double v1, final double v2) {
+        return v1 <= v2 ? v2 : v1;
     }
 
     /**
@@ -231,7 +258,7 @@ public final class MathStuff {
      * @return Number clamped between 0 and 1
      */
     public static float clamp1(final float num) {
-        return Math.min(1, Math.max(num, 0));
+        return num <= 0 ? 0F : min(num, 1F);
     }
 
     /**
@@ -241,10 +268,11 @@ public final class MathStuff {
      * @return Number clamped between 0 and 1
      */
     public static double clamp1(final double num) {
-        return Math.min(1, Math.max(num, 0));
+        return num <= 0 ? 0F : min(num, 1F);
     }
 
     // Assumes center at origin.
+    @Nonnull
     public static Vec2f rotateScale(@Nonnull final Vec2f coord, final float radians, final float scale) {
         final float f = cos(radians);
         final float f1 = sin(radians);
@@ -253,11 +281,13 @@ public final class MathStuff {
         return new Vec2f(d0 * scale, d1 * scale);
     }
 
+    @Nonnull
     public static Vec2f rotate(@Nonnull final Vec2f coord, final float radians) {
         return rotateScale(coord, radians, 1F);
     }
 
-    public static final Vec3d getVectorForRotation(final float pitch, final float yaw) {
+    @Nonnull
+    public static Vec3d getVectorForRotation(final float pitch, final float yaw) {
         final float f = cos(-yaw * 0.017453292F - PI_F);
         final float f1 = sin(-yaw * 0.017453292F - PI_F);
         final float f2 = -cos(-pitch * 0.017453292F);
@@ -272,6 +302,7 @@ public final class MathStuff {
      * @param surfaceNormal Surface normal
      * @return The reflected vector
      */
+    @Nonnull
     public static Vec3d reflection(@Nonnull final Vec3d vector, @Nonnull final Vec3d surfaceNormal) {
         final double dot2 = vector.dotProduct(surfaceNormal) * 2;
         final double x = vector.x - dot2 * surfaceNormal.x;
@@ -282,5 +313,32 @@ public final class MathStuff {
 
     public static boolean isValid(@Nonnull final Vec3d vec) {
         return !(Double.isNaN(vec.x) || Double.isNaN(vec.y) || Double.isNaN(vec.z));
+    }
+
+    /**
+     * Simple method to add a scaled addened to a base.  Eliminates unecessary allocations.
+     * @param base Base to add another scaled vector to
+     * @param addened Vector to scale and add to the base
+     * @param scale Scale to apply to the addened vector before adding to the base
+     * @return Vector that is a sum of the base and the addened that has been scaled
+     */
+    @Nonnull
+    public static Vec3d addScaled(@Nonnull final Vec3d base, @Nonnull final Vec3d addened, final double scale) {
+        return new Vec3d(base.x + addened.x * scale, base.y + addened.y * scale, base.z + addened.z * scale);
+    }
+
+    /**
+     * Calculates the normal vector between two points
+     * @param origin Origin point
+     * @param target Point where the normal will point
+     * @return Normal vector between the two points
+     */
+    @Nonnull
+    public static Vec3d normalize(@Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
+        final double x = target.x - origin.x;
+        final double y = target.y - origin.y;
+        final double z = target.z - origin.z;
+        final double d0 = Math.sqrt(x * x + y * y + z * z);
+        return d0 < 1.0E-4D ? Vec3d.ZERO : new Vec3d(x / d0, y / d0, z / d0);
     }
 }

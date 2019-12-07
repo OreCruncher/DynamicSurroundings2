@@ -65,7 +65,7 @@ public final class SoundVolumeEvaluator {
         Preconditions.checkNotNull(sound);
         final float volumeScale = getVolumeScale(sound);
         final float volume = sound.getVolume() * getCategoryVolumeScale(sound.getCategory()) * volumeScale;
-        return MathStuff.clamp(volume, 0.0F, 1.0F);
+        return MathStuff.clamp1(volume);
     }
 
 }

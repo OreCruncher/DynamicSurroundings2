@@ -62,7 +62,7 @@ public class AudioEvent extends Event {
         }
 
         public void setStrength(final float str) {
-            this.strength = MathStuff.clamp(str, 0F, 1F);
+            this.strength = MathStuff.clamp1(str);
         }
     }
 

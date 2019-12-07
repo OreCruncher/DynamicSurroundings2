@@ -126,6 +126,10 @@ public final class SourceContext {
         return this.pos;
     }
 
+    public int getAttenuationDistance() {
+        return this.sound != null ? this.sound.getSound().getAttenuationDistance() : -1;
+    }
+
     public void attachSound(@Nonnull final ISound sound) {
         this.sound = sound;
         captureState();

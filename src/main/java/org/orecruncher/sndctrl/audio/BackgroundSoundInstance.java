@@ -147,7 +147,7 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
         }
 
         // Clamp it so we are valid
-        this.fadeScale = MathStuff.clamp(this.fadeScale, 0F, 1F);
+        this.fadeScale = MathStuff.clamp1(this.fadeScale);
 
         // If the fadeScale amount is beneath our low end threshold the sound
         // is effectively done.
@@ -164,6 +164,6 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
      * @param scale Value between 0F and 1F inclusive.
      */
     public void setFadeScaleTarget(final float scale) {
-        this.fadeScaleTarget = MathStuff.clamp(scale, 0F, 1F);
+        this.fadeScaleTarget = MathStuff.clamp1(scale);
     }
 }

@@ -20,6 +20,7 @@ package org.orecruncher.lib.reflection;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public class IntegerField<T> extends ObjectField<T, Integer> {
 
     public IntegerField(@Nonnull final String className, @Nonnull final String... fieldName) {

@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@SuppressWarnings("unused")
 public final class TagUtils {
     private TagUtils() {
 

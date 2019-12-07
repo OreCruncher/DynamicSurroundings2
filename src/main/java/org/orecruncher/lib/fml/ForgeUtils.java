@@ -35,17 +35,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public final class ForgeUtils {
     private ForgeUtils() {
 
     }
 
-    @Nullable
+    @Nonnull
     public static Optional<? extends ModContainer> findModContainer(@Nonnull final String modId) {
         return ModList.get().getModContainerById(modId);
     }
 
-    @Nullable
+    @Nonnull
     public static Optional<IModInfo> getModInfo(@Nonnull final String modId) {
         return findModContainer(modId).map(ModContainer::getModInfo);
     }
@@ -73,7 +74,7 @@ public final class ForgeUtils {
         return ModList.get().getModFiles()
                 .stream()
                 .flatMap(e -> e.getMods().stream())
-                .map(e -> e.getModId())
+                .map(IModInfo::getModId)
                 .distinct()
                 .collect(Collectors.toList());
     }

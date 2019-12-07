@@ -20,7 +20,6 @@ package org.orecruncher.sndctrl.audio.handlers;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -114,11 +113,6 @@ public final class SourceContext {
     @Nonnull
     public SourcePropertyFloat getAirAbsorb() {
         return this.airAbsorb;
-    }
-
-    @Nonnull
-    public SoundCategory getSoundCategory() {
-        return this.sound != null ? this.sound.getCategory() : SoundCategory.AMBIENT;
     }
 
     @Nonnull

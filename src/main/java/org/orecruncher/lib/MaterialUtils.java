@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+@SuppressWarnings("unused")
 public final class MaterialUtils {
 
     private static final Map<Material, String> materialMap = new Reference2ObjectOpenHashMap<>();

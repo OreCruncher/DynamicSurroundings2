@@ -39,18 +39,18 @@ import java.util.function.Supplier;
 public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> {
 
     private final Object2ObjectOpenHashMap<BlockStateMatcher, T> map = new Object2ObjectOpenHashMap<>();
-    @Nullable
-    private Supplier<T> defaultValue;
+    @Nonnull
+    private Supplier<T> defaultValue = () -> null;
 
     @Nullable
     public T get(@Nonnull final BlockState state) {
         T result = this.map.get(BlockStateMatcher.create(state));
         if (result == null)
             result = this.map.get(BlockStateMatcher.asGeneric(state));
-        return result != null ? result : this.defaultValue != null ? this.defaultValue.get() : null;
+        return result != null ? result : this.defaultValue.get();
     }
 
-    public void setDefaultValue(@Nullable final Supplier<T> s) {
+    public void setDefaultValue(@Nonnull final Supplier<T> s) {
         this.defaultValue = s;
     }
 
@@ -83,21 +83,21 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
     @Nullable
     public T put(@Nonnull final String block, @Nonnull final T val) {
         final BlockStateMatcher matcher = BlockStateMatcher.create(block);
-        Objects.requireNonNull(matcher, String.format("Invalid block name '%s'", block));
+        Objects.requireNonNull(matcher);
         return put(matcher, val);
     }
 
     @Nullable
     public T put(@Nonnull final BlockState state, @Nonnull final T val) {
         final BlockStateMatcher matcher = BlockStateMatcher.create(state);
-        Objects.requireNonNull(matcher, String.format("Invalid block state '%s'", state.toString()));
+        Objects.requireNonNull(matcher);
         return put(matcher, val);
     }
 
     @Nullable
     public T put(@Nonnull final Block block, @Nonnull final T val) {
         final BlockStateMatcher matcher = BlockStateMatcher.create(block);
-        Objects.requireNonNull(matcher, String.format("Invalid block '%s'", block.toString()));
+        Objects.requireNonNull(matcher);
         return put(matcher, val);
     }
 

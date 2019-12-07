@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
  * Utility functions for parsing and handling string based block names.  Handles things like properties, both fully
  * and partially described.
  */
+@SuppressWarnings("unused")
 public final class BlockNameUtil {
 
     // https://www.regexplanet.com/advanced/java/index.html

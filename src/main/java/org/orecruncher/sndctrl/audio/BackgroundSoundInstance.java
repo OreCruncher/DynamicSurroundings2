@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
  * of Minecraft.  The difference here is that the volume can fade in and out.  Used by Dynamic Surroundings
  * to scale background sound volumes based on biome distribution.
  */
+@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
 public final class BackgroundSoundInstance extends WrappedSoundInstance {
 
@@ -58,7 +59,6 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
         return SoundCategory.AMBIENT;
     }
 
-    @Nonnull
     @Override
     public boolean canRepeat() {
         return !isDonePlaying() && super.canRepeat();

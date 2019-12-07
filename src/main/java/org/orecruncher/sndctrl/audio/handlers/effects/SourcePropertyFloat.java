@@ -24,8 +24,6 @@ import org.lwjgl.openal.AL11;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 
-import javax.annotation.Nonnull;
-
 @OnlyIn(Dist.CLIENT)
 public final class SourcePropertyFloat {
 
@@ -35,8 +33,9 @@ public final class SourcePropertyFloat {
     private float value;
     private boolean process;
 
-    public SourcePropertyFloat(@Nonnull final int property, final float val, final float min, final float max) {
+    public SourcePropertyFloat(final int property, final float val, final float min, final float max) {
         this.property = property;
+        this.value = val;
         this.min = min;
         this.max = max;
         this.process = false;

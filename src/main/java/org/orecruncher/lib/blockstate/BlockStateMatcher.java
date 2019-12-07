@@ -18,8 +18,7 @@
 
 package org.orecruncher.lib.blockstate;
 
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
@@ -34,9 +33,10 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public final class BlockStateMatcher {
 
-    private static final Reference2ObjectOpenHashMap<IProperty<?>, Object> EMPTY = new Reference2ObjectOpenHashMap<>(0);
+    private static final ImmutableMap<IProperty<?>, Object> EMPTY = ImmutableMap.of();
 
     // All instances will have this defined
     @Nonnull
@@ -45,7 +45,7 @@ public final class BlockStateMatcher {
     // Sometimes an exact match of state is needed. The state being compared
     // would have to match all these properties.
     @Nonnull
-    private final Reference2ObjectOpenHashMap<IProperty<?>, Object> props;
+    private final ImmutableMap<IProperty<?>, Object> props;
 
     private BlockStateMatcher(@Nonnull final BlockState state) {
         this.block = state.getBlock();
@@ -57,7 +57,7 @@ public final class BlockStateMatcher {
     }
 
     private BlockStateMatcher(@Nonnull final Block block,
-                              @Nonnull final Reference2ObjectOpenHashMap<IProperty<?>, Object> props) {
+                              @Nonnull final ImmutableMap<IProperty<?>, Object> props) {
         this.block = block;
         this.props = props;
     }
@@ -99,12 +99,10 @@ public final class BlockStateMatcher {
         }
 
         final Map<String, String> properties = result.getProperties();
-        final Reference2ObjectOpenHashMap<IProperty<?>, Object> props = new Reference2ObjectOpenHashMap<>(
-                properties.size());
+        final Map<IProperty<?>, Object> props = new IdentityHashMap<>(properties.size());
 
         // Blow out the property list
         for (final Map.Entry<String, String> entry : properties.entrySet()) {
-            // Stuff in our meta property if requested
             final String s = entry.getKey();
             final IProperty<?> prop = container.getProperty(s);
             if (prop != null) {
@@ -126,7 +124,7 @@ public final class BlockStateMatcher {
         // match. Otherwise it will be an exact match on the default
         // state.
         if (props.size() > 0) {
-            return new BlockStateMatcher(defaultState.getBlock(), props);
+            return new BlockStateMatcher(defaultState.getBlock(), ImmutableMap.copyOf(props));
         } else {
             return new BlockStateMatcher(defaultState);
         }
@@ -173,7 +171,7 @@ public final class BlockStateMatcher {
     private boolean matchProps(@Nonnull final BlockState state) {
         if (this.props.isEmpty())
             return true;
-        for (final Reference2ObjectMap.Entry<IProperty<?>, Object> entry : this.props.reference2ObjectEntrySet()) {
+        for (final Map.Entry<IProperty<?>, Object> entry : this.props.entrySet()) {
             final Object result = state.get(entry.getKey());
             if (!entry.getValue().equals(result))
                 return false;
@@ -205,7 +203,7 @@ public final class BlockStateMatcher {
                 return false;
 
             // Run 'em down doing compares
-            for (final Reference2ObjectMap.Entry<IProperty<?>, Object> entry : m.props.reference2ObjectEntrySet()) {
+            for (final Map.Entry<IProperty<?>, Object> entry : m.props.entrySet()) {
                 final Object v = this.props.get(entry.getKey());
                 if (v == null || !v.equals(entry.getValue()))
                     return false;
@@ -216,16 +214,9 @@ public final class BlockStateMatcher {
     }
 
     @Nonnull
-    private Reference2ObjectOpenHashMap<IProperty<?>, Object> getPropsFromState(@Nonnull final BlockState state) {
-
-        final Reference2ObjectOpenHashMap<IProperty<?>, Object> result = new Reference2ObjectOpenHashMap<>(1);
-
-        for (final IProperty<?> prop : state.getProperties()) {
-            final Object o = state.get(prop);
-            result.put(prop, o);
-        }
-
-        return result.size() == 0 ? EMPTY : result;
+    private ImmutableMap<IProperty<?>, Object> getPropsFromState(@Nonnull final BlockState state) {
+        final ImmutableMap<IProperty<?>, Comparable<?>> source = state.getValues();
+        return source.size() == 0 ? EMPTY : ImmutableMap.copyOf(source);
     }
 
     @Override
@@ -234,7 +225,7 @@ public final class BlockStateMatcher {
         final StringBuilder builder = new StringBuilder();
         builder.append(ForgeRegistries.BLOCKS.getKey(this.block));
         if (!this.props.isEmpty()) {
-            final String txt = this.props.reference2ObjectEntrySet().stream()
+            final String txt = this.props.entrySet().stream()
                     .map(e -> e.getKey().getName() + "=" + getValue(this.block, e.getKey().getName(), e.getValue()))
                     .collect(Collectors.joining(","));
             builder.append('[').append(txt).append(']');

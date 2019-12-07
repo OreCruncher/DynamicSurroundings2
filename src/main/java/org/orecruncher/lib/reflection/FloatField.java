@@ -20,6 +20,7 @@ package org.orecruncher.lib.reflection;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public class FloatField<T> extends ObjectField<T, Float> {
 
     public FloatField(@Nonnull final String className, @Nonnull final String... fieldName) {

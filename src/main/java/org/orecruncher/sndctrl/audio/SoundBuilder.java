@@ -38,6 +38,7 @@ import java.util.Random;
 /**
  * SoundBuilder is a factory object that produces ISoundInstances within the specified parameters.
  */
+@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
 public final class SoundBuilder {
 

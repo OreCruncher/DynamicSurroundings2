@@ -34,7 +34,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.lwjgl.openal.*;
 import org.orecruncher.lib.Utilities;
@@ -48,6 +47,7 @@ import org.orecruncher.sndctrl.xface.ISoundSource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -77,7 +77,7 @@ public final class SoundFXProcessor {
     @Nonnull
     private static final LazyInitializer<ForkJoinPool> threadPool = new LazyInitializer<ForkJoinPool>() {
         @Override
-        protected ForkJoinPool initialize() throws ConcurrentException {
+        protected ForkJoinPool initialize() {
             LOGGER.info("Threads allocated to SoundControl sound processor: %d", SOUND_PROCESS_THREADS);
             return new ForkJoinPool(SOUND_PROCESS_THREADS);
         }
@@ -139,7 +139,7 @@ public final class SoundFXProcessor {
             // Using 4 aux slots instead of the default 2
             final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
             final long ctx = ALC10.alcCreateContext(device, attribs);
-            final boolean result = ALC10.alcMakeContextCurrent(ctx);
+            ALC10.alcMakeContextCurrent(ctx);
 
             // Have to renable since we reset the context
             AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
@@ -180,10 +180,16 @@ public final class SoundFXProcessor {
         if (!isAvailable())
             return;
 
-        final IChannelManagerEntry cme = Utilities.safeCast(entry, IChannelManagerEntry.class).get();
         try {
+
+            final Optional<IChannelManagerEntry> optionalCme = Utilities.safeCast(entry, IChannelManagerEntry.class);
+            if (!optionalCme.isPresent())
+                return;
+
+            final IChannelManagerEntry cme = optionalCme.get();
+
             // Because of where this is hooked SoundSource may not have been created.  Have to wait for creation.
-            SoundSource src = null;
+            SoundSource src;
             while ((src = cme.getSource()) == null)
                 Thread.yield();
 
@@ -248,7 +254,7 @@ public final class SoundFXProcessor {
      *
      * @param event Event trigger in question.
      */
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPrecipitationStrength(@Nonnull final AudioEvent.PrecipitationStrengthEvent event) {
         event.setStrength(Minecraft.getInstance().world.rainingStrength);
         event.setCanceled(true);

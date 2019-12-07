@@ -24,8 +24,7 @@ import org.lwjgl.openal.AL11;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 
-import javax.annotation.Nonnull;
-
+@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
 public final class SourcePropertyInt {
 
@@ -35,10 +34,11 @@ public final class SourcePropertyInt {
     private int value;
     private boolean process;
 
-    public SourcePropertyInt(@Nonnull final int property, final int val, final int min, final int max) {
+    public SourcePropertyInt(final int property, final int val, final int min, final int max) {
         this.property = property;
         this.min = min;
         this.max = max;
+        this.value = val;
         this.process = false;
     }
 

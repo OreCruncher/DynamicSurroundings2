@@ -27,6 +27,7 @@ import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
 public class AudioEvent extends Event {
     public AudioEvent() {
@@ -50,11 +51,17 @@ public class AudioEvent extends Event {
      */
     @Cancelable
     public final static class PrecipitationStrengthEvent extends AudioEvent {
+        @Nonnull
         private final World world;
         private float strength;
 
         public PrecipitationStrengthEvent(@Nonnull final World world) {
             this.world = world;
+        }
+
+        @Nonnull
+        public World getWorld() {
+            return this.world;
         }
 
         public float getStrength() {

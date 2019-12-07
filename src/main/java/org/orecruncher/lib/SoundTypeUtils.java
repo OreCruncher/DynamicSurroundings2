@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.TreeMap;
 
+@SuppressWarnings("unused")
 public final class SoundTypeUtils {
 
     private static final Map<SoundType, String> soundTypeMap = new Reference2ObjectOpenHashMap<>();

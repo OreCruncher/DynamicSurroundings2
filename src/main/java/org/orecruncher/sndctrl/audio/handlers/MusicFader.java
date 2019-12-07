@@ -45,6 +45,7 @@ import java.util.Objects;
  * BattleMusic is being played, or when a player hits the "play" button in the
  * sound configuration.
  */
+@SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class MusicFader {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(MusicFader.class);

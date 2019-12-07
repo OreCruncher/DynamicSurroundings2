@@ -40,6 +40,7 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class SoundProcessor {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundProcessor.class);

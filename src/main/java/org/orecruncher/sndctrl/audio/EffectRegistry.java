@@ -44,7 +44,6 @@ import java.util.Map;
 public final class EffectRegistry {
 
     private static final String MATERIAL_PREFIX = "+";
-    private static final String SOUNDTYPE_PREFIX = "^";
     private static final String TAG_PREFIX = "#";
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(EffectRegistry.class);

@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public interface IModLog {
     void info(@Nonnull final String msg, @Nullable final Object... parms);
 

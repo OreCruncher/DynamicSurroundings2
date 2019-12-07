@@ -23,6 +23,7 @@ package org.orecruncher.lib.random;
  * Intended to be fast. Limit is that it can only generate random numbers 0 -
  * 32K.
  */
+@SuppressWarnings("unused")
 public final class LCGRandom {
 
     private long v;

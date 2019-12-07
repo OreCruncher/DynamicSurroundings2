@@ -75,10 +75,10 @@ public final class SoundRegistry {
                     final Map<String, SoundMetadataConfig> result = JsonUtils.loadConfig(mod, SoundMetadataConfig.class);
                     if (result.size() > 0) {
                         LOGGER.debug("Processing %s", mod);
-                        result.entrySet().forEach(kvp -> {
-                            if (!kvp.getValue().isDefault()) {
-                                final SoundMetadata data = new SoundMetadata(kvp.getValue());
-                                final ResourceLocation resource = new ResourceLocation(mod.getNamespace(), kvp.getKey());
+                        result.forEach((key, value) -> {
+                            if (!value.isDefault()) {
+                                final SoundMetadata data = new SoundMetadata(value);
+                                final ResourceLocation resource = new ResourceLocation(mod.getNamespace(), key);
                                 soundMetadata.put(resource, data);
                             }
                         });

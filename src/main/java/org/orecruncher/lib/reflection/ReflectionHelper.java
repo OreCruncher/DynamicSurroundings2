@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+@SuppressWarnings("unused")
 public final class ReflectionHelper {
     private ReflectionHelper() {
     }

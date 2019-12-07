@@ -149,10 +149,10 @@ public final class SoundFXUtils {
         float sendGain2 = 0F;
         float sendGain3 = 0F;
 
-        float sendCutoff0 = 1F;
-        float sendCutoff1 = 1F;
-        float sendCutoff2 = 1F;
-        float sendCutoff3 = 1F;
+        float sendCutoff0;
+        float sendCutoff1;
+        float sendCutoff2;
+        float sendCutoff3;
 
         // Shoot rays around sound
         final float[] bounceRatio = new float[REVERB_RAY_BOUNCES];

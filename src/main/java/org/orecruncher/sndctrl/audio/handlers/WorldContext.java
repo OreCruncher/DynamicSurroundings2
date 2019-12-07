@@ -86,7 +86,6 @@ public final class WorldContext {
     /**
      * Coefficient used for dampening sound.  Usually caused by the player's head being in lava or water.
      */
-    @Nonnull
     public final float auralDampening;
 
     public WorldContext() {

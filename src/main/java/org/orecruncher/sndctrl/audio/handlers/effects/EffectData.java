@@ -21,8 +21,6 @@ package org.orecruncher.sndctrl.audio.handlers.effects;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nonnull;
-
 /**
  * The state context for a given effect.
  */

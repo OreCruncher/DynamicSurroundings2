@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
 public final class SoundMetadata {
 

@@ -33,6 +33,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
 public class SoundInstance extends LocatableSound implements ISoundInstance {
 

@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 /**
  * Simple EMA calculator.
  */
+@SuppressWarnings("unused")
 public class EMA {
 
     private final String name;

@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
+@SuppressWarnings("unused")
 public class ReflectedMethod<R> {
 
     protected final String className;

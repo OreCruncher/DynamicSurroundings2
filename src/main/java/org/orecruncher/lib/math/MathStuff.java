@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
  * http://riven8192.blogspot.com/2009/08/fastmath-sincos-lookup-tables.html
  * http://riven8192.blogspot.com/2009/08/fastmath-atan2-lookup-table.html
  */
+@SuppressWarnings("unused")
 public final class MathStuff {
     public static final double PHI = 0.5D + Math.sqrt(5) / 2D;  // Golden ratio
     public static final float PHI_F = (float) PHI;

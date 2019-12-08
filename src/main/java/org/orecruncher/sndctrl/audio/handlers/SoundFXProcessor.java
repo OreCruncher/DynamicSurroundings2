@@ -35,12 +35,13 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
-import org.lwjgl.openal.*;
+import org.lwjgl.openal.AL10;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.threading.Worker;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.events.AudioEvent;
 import org.orecruncher.sndctrl.mixins.IChannelManagerEntry;
 import org.orecruncher.sndctrl.xface.ISoundSource;
@@ -64,7 +65,6 @@ public final class SoundFXProcessor {
     static boolean isAvailable;
     private static final int SOUND_PROCESS_ITERATION = 1000 / 20;   // Match MC client tick rate
     private static final int SOUND_PROCESS_THREADS;
-    private static int MAX_SOUNDS;
     // Sparse array to hold references to the SoundContexts of playing sounds
     private static SourceContext[] sources;
     @Nullable
@@ -119,56 +119,21 @@ public final class SoundFXProcessor {
         return isAvailable;
     }
 
-    /**
-     * This method is invoked via the MixinSoundSystem injection.  It will be called when the sound system
-     * is intialized, and it gives an opportunity to setup special effects processing.
-     *
-     * @param device Device context created by the Minecraft sound system
-     */
-    public static void initialize(final long device) {
+    public static void initialize() {
 
-        if (!Config.CLIENT.sound.enableEnhancedSounds.get())
-            return;
+        Effects.initialize();
 
-        final ALCCapabilities deviceCaps = ALC.createCapabilities(device);
+        sources = new SourceContext[SoundUtils.getMaxSounds()];
 
-        if (!deviceCaps.ALC_EXT_EFX) {
-            LOGGER.warn("EFX audio extensions not found on the current device.  Sound FX features will be disabled.");
-            return;
-        }
+        soundProcessor = new Worker(
+                "SoundControl Sound Processor",
+                SoundFXProcessor::processSounds,
+                SOUND_PROCESS_ITERATION,
+                LOGGER
+        );
+        soundProcessor.start();
 
-        try {
-
-            // Using 4 aux slots instead of the default 2
-            final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
-            final long ctx = ALC10.alcCreateContext(device, attribs);
-            ALC10.alcMakeContextCurrent(ctx);
-
-            // Have to renable since we reset the context
-            AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
-
-            // Calculate the number of sources available and allocate an array to match
-            final int mono = ALC11.alcGetInteger(device, ALC11.ALC_MONO_SOURCES);
-            final int stereo = ALC11.alcGetInteger(device, ALC11.ALC_STEREO_SOURCES);
-            MAX_SOUNDS = mono + stereo;
-            sources = new SourceContext[MAX_SOUNDS];
-
-            Effects.initialize();
-
-            soundProcessor = new Worker(
-                    "SoundControl Sound Processor",
-                    SoundFXProcessor::processSounds,
-                    SOUND_PROCESS_ITERATION,
-                    LOGGER
-            );
-            soundProcessor.start();
-
-            isAvailable = true;
-        } catch (@Nonnull final Throwable t) {
-            LOGGER.warn(t.getMessage());
-            LOGGER.warn("OpenAL special effects for sounds will not be available");
-        }
-
+        isAvailable = true;
     }
 
     /**
@@ -192,6 +157,11 @@ public final class SoundFXProcessor {
             final IChannelManagerEntry cme = optionalCme.get();
 
             // Because of where this is hooked SoundSource may not have been created.  Have to wait for creation.
+            // Note that this yield can be a bit dangerous.  There is a limit as to the number of sound sources that
+            // can play at a time, but the Minecraft sound handler will queue up more sounds that permitted.  When
+            // this happens SoundSource will be null, and the while loop below will block the client thread from
+            // processing.  There is a check in SoundProcessor that if more sounds that can be queued is performed it
+            // will block that sound play to prevent overload.
             SoundSource src;
             while ((src = cme.getSource()) == null)
                 Thread.yield();
@@ -220,7 +190,8 @@ public final class SoundFXProcessor {
      * @param soundId The ID of the sound source that is being removed.
      */
     public static void stopSoundPlay(final int soundId) {
-        sources[sourceIdToIdx(soundId)] = null;
+        if (isAvailable())
+            sources[sourceIdToIdx(soundId)] = null;
     }
 
     /**
@@ -242,7 +213,7 @@ public final class SoundFXProcessor {
     private static void processSounds() {
         try {
             final ForkJoinPool pool = threadPool.get();
-            for (int i = 0; i < MAX_SOUNDS; i++) {
+            for (int i = 0; i < SoundUtils.getMaxSounds(); i++) {
                 final SourceContext ctx = sources[i];
                 if (ctx != null && ctx.shouldExecute())
                     pool.execute(ctx);
@@ -275,7 +246,7 @@ public final class SoundFXProcessor {
 
     private static int sourceIdToIdx(final int soundId) {
         final int idx = soundId - 1;
-        if (idx < 0 || idx >= MAX_SOUNDS) {
+        if (idx < 0 || idx >= SoundUtils.getMaxSounds()) {
             throw new IllegalStateException("Invalid source ID: " + idx);
         }
         return idx;

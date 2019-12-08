@@ -19,7 +19,7 @@
 package org.orecruncher.sndctrl.mixins;
 
 import net.minecraft.client.audio.SoundSystem;
-import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
+import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,7 +36,7 @@ public abstract class MixinSoundSystem {
     @Inject(method = "func_216404_a()V", at = @At("TAIL"))
     private void initialize(CallbackInfo ci) {
         try {
-            SoundFXProcessor.initialize(field_216411_b);
+            SoundUtils.initialize(field_216411_b);
         } catch (final Throwable ignored) {
         }
     }

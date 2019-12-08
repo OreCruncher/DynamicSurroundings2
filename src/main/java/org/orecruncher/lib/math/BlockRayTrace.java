@@ -28,10 +28,10 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nonnull;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class BlockRayTrace {
+
+    private static final double NUDGE = -1.0E-7D;
 
     final IBlockReader world;
     final RayTraceContext.BlockMode blockMode;
@@ -53,41 +53,50 @@ public class BlockRayTrace {
         this.fluidMode = fm;
     }
 
-    private static BlockRayTraceResult traceLoop(BlockRayTrace ctx, BiFunction<BlockRayTrace, BlockPos, BlockRayTraceResult> hitCheck, Function<BlockRayTrace, BlockRayTraceResult> miss) {
-        if (ctx.start.equals(ctx.end)) {
-            return miss.apply(ctx);
+    @Nonnull
+    public BlockRayTraceResult trace() {
+        return traceLoop();
+    }
+
+    @Nonnull
+    public BlockRayTraceResult trace(@Nonnull final Vec3d start, @Nonnull final Vec3d end) {
+        this.start = start;
+        this.end = end;
+        return traceLoop();
+    }
+
+    private BlockRayTraceResult traceLoop() {
+        if (this.start.equals(this.end)) {
+            return miss();
         } else {
-            double xLerp = MathHelper.lerp(-1.0E-7D, ctx.end.x, ctx.start.x);
-            double yLerp = MathHelper.lerp(-1.0E-7D, ctx.end.y, ctx.start.y);
-            double zLerp = MathHelper.lerp(-1.0E-7D, ctx.end.z, ctx.start.z);
-            double lerpX = MathHelper.lerp(-1.0E-7D, ctx.start.x, ctx.end.x);
-            double lerpY = MathHelper.lerp(-1.0E-7D, ctx.start.y, ctx.end.y);
-            double lerpZ = MathHelper.lerp(-1.0E-7D, ctx.start.z, ctx.end.z);
+            double lerpX = MathHelper.lerp(NUDGE, this.start.x, this.end.x);
+            double lerpY = MathHelper.lerp(NUDGE, this.start.y, this.end.y);
+            double lerpZ = MathHelper.lerp(NUDGE, this.start.z, this.end.z);
             int posX = MathHelper.floor(lerpX);
             int posY = MathHelper.floor(lerpY);
             int posZ = MathHelper.floor(lerpZ);
             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(posX, posY, posZ);
-            BlockRayTraceResult traceResult = hitCheck.apply(ctx, mutablePos);
-            if (traceResult != null) {
-                return traceResult;
-            } else {
+            BlockRayTraceResult traceResult = hitCheck(mutablePos);
+            if (traceResult == null) {
+                double xLerp = MathHelper.lerp(NUDGE, this.end.x, this.start.x);
+                double yLerp = MathHelper.lerp(NUDGE, this.end.y, this.start.y);
+                double zLerp = MathHelper.lerp(NUDGE, this.end.z, this.start.z);
                 double lenX = xLerp - lerpX;
                 double lenY = yLerp - lerpY;
                 double lenZ = zLerp - lerpZ;
                 int dirX = MathHelper.signum(lenX);
                 int dirY = MathHelper.signum(lenY);
                 int dirZ = MathHelper.signum(lenZ);
-                float deltaX = dirX == 0 ? Float.MAX_VALUE : (float) (dirX / lenX);
-                float deltaY = dirY == 0 ? Float.MAX_VALUE : (float) (dirY / lenY);
-                float deltaZ = dirZ == 0 ? Float.MAX_VALUE : (float) (dirZ / lenZ);
-                float X = (float) (deltaX * (dirX > 0 ? 1.0D - MathHelper.frac(lerpX) : MathHelper.frac(lerpX)));
-                float Y = (float) (deltaY * (dirY > 0 ? 1.0D - MathHelper.frac(lerpY) : MathHelper.frac(lerpY)));
-                float Z = (float) (deltaZ * (dirZ > 0 ? 1.0D - MathHelper.frac(lerpZ) : MathHelper.frac(lerpZ)));
+                double deltaX = dirX == 0 ? Double.MAX_VALUE : (dirX / lenX);
+                double deltaY = dirY == 0 ? Double.MAX_VALUE : (dirY / lenY);
+                double deltaZ = dirZ == 0 ? Double.MAX_VALUE : (dirZ / lenZ);
+                double X = deltaX * (dirX > 0 ? 1.0D - MathHelper.frac(lerpX) : MathHelper.frac(lerpX));
+                double Y = deltaY * (dirY > 0 ? 1.0D - MathHelper.frac(lerpY) : MathHelper.frac(lerpY));
+                double Z = deltaZ * (dirZ > 0 ? 1.0D - MathHelper.frac(lerpZ) : MathHelper.frac(lerpZ));
 
-                //BlockRayTraceResult traceResult;
                 do {
-                    if (X > 1.0F && Y > 1.0F && Z > 1.0F) {
-                        return miss.apply(ctx);
+                    if (X > 1.0D && Y > 1.0D && Z > 1.0D) {
+                        return miss();
                     }
 
                     if (X < Y) {
@@ -106,52 +115,53 @@ public class BlockRayTrace {
                         Z += deltaZ;
                     }
 
-                    traceResult = hitCheck.apply(ctx, mutablePos.setPos(posX, posY, posZ));
+                    traceResult = hitCheck(mutablePos.setPos(posX, posY, posZ));
                 } while (traceResult == null);
 
-                return traceResult;
             }
+            return traceResult;
         }
     }
 
-    @Nonnull
-    public BlockRayTraceResult trace() {
-        return rayTraceBlocks();
+    private BlockRayTraceResult miss() {
+        final Vec3d directionVec = this.start.subtract(this.end);
+        return BlockRayTraceResult.createMiss(this.end, Direction.getFacingFromVector(directionVec.x, directionVec.y, directionVec.z), new BlockPos(this.end));
     }
 
-    @Nonnull
-    public BlockRayTraceResult trace(@Nonnull final Vec3d start, @Nonnull final Vec3d end) {
-        this.start = start;
-        this.end = end;
-        return rayTraceBlocks();
+    // Fast path an empty air block as much as possible.  For tracing this would be the most common block
+    // encountered.
+    private BlockRayTraceResult hitCheck(@Nonnull final BlockPos pos) {
+        // Handle the block
+        BlockRayTraceResult traceResult = null;
+        final BlockState state = this.world.getBlockState(pos);
+        if (!state.isAir(this.world, pos)) {
+            final VoxelShape voxelShape = this.blockMode.get(state, this.world, pos, ISelectionContext.dummy());
+            if (!voxelShape.isEmpty())
+                traceResult = this.world.rayTraceBlocks(this.start, this.end, pos, voxelShape, state);
+        }
+
+        // Handle it's fluid state
+        BlockRayTraceResult fluidTraceResult = null;
+        final IFluidState fluidState = state.getFluidState();
+        if (!fluidState.isEmpty()) {
+            final VoxelShape voxelFluidShape = this.fluidMode.test(fluidState) ? state.getShape(this.world, pos) : VoxelShapes.empty();
+            if (!voxelFluidShape.isEmpty())
+                fluidTraceResult = voxelFluidShape.rayTrace(this.start, this.end, pos);
+        }
+
+        // No results for either
+        if (traceResult == fluidTraceResult)
+            return null;
+        // No fluid result
+        if (fluidTraceResult == null)
+            return traceResult;
+        // No block result
+        if (traceResult == null)
+            return fluidTraceResult;
+
+        // Get the closest
+        final double blockDistance = this.start.squareDistanceTo(traceResult.getHitVec());
+        final double fluidDistance = this.start.squareDistanceTo(fluidTraceResult.getHitVec());
+        return blockDistance <= fluidDistance ? traceResult : fluidTraceResult;
     }
-
-    @Nonnull
-    private BlockRayTraceResult rayTraceBlocks() {
-        return traceLoop(this, (ctx, pos) -> {
-            // Handle the block
-            final BlockState state = ctx.world.getBlockState(pos);
-            final VoxelShape voxelShape = ctx.blockMode.get(state, ctx.world, pos, ISelectionContext.dummy());
-            final BlockRayTraceResult traceResult = ctx.world.rayTraceBlocks(ctx.start, ctx.end, pos, voxelShape, state);
-
-            // Handle it's fluid state
-            BlockRayTraceResult fluidTraceResult = null;
-            final IFluidState fluidState = state.getFluidState(); //ctx.world.getFluidState(pos);
-            if (!fluidState.isEmpty()) {
-                final VoxelShape voxelFluidShape = ctx.fluidMode.test(fluidState) ? state.getShape(ctx.world, pos) : VoxelShapes.empty();
-                fluidTraceResult = voxelFluidShape.isEmpty() ? null : voxelFluidShape.rayTrace(ctx.start, ctx.end, pos);
-            }
-
-            // Get the distances for each
-            final float blockDistance = traceResult == null ? Float.MAX_VALUE : (float) ctx.start.squareDistanceTo(traceResult.getHitVec());
-            final float fluidDistance = fluidTraceResult == null ? Float.MAX_VALUE : (float) ctx.start.squareDistanceTo(fluidTraceResult.getHitVec());
-
-            // Return the hit result for the closest one
-            return blockDistance <= fluidDistance ? traceResult : fluidTraceResult;
-        }, (ctx) -> {
-            final Vec3d directionVec = ctx.start.subtract(ctx.end);
-            return BlockRayTraceResult.createMiss(ctx.end, Direction.getFacingFromVector(directionVec.x, directionVec.y, directionVec.z), new BlockPos(ctx.end));
-        });
-    }
-
 }

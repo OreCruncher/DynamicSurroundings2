@@ -18,7 +18,10 @@
 
 package org.orecruncher.lib.math;
 
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

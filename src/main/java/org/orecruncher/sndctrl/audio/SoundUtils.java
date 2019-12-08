@@ -28,7 +28,12 @@ import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.openal.*;
 import org.orecruncher.lib.Utilities;
+import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.sndctrl.Config;
+import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 import org.orecruncher.sndctrl.misc.ModEnvironment;
 import org.orecruncher.sndctrl.mixins.ISoundEngineMixin;
 import org.orecruncher.sndctrl.mixins.ISoundHandlerMixin;
@@ -44,7 +49,10 @@ import java.util.Objects;
  */
 @OnlyIn(Dist.CLIENT)
 public final class SoundUtils {
-    private static final int MAX_SOUNDS = 255;
+    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundUtils.class);
+
+    private static int MAX_SOUNDS = 0;
+    private static int SOUND_LIMIT = 0;
     private static final Map<String, SoundCategory> categoryMapper;
 
     // Since the pieces of the Minecraft sound system are effectively singletons, cache these values for reuse.
@@ -67,12 +75,12 @@ public final class SoundUtils {
     private SoundUtils() {
     }
 
-    static boolean hasRoom() {
-        return getTotalPlaying() < MAX_SOUNDS;
+    public static int getMaxSounds() {
+        return MAX_SOUNDS;
     }
 
-    static int getMaxSounds() {
-        return MAX_SOUNDS;
+    public static boolean hasRoom() {
+        return getTotalPlaying() < SOUND_LIMIT;
     }
 
     static int getTotalPlaying() {
@@ -149,6 +157,48 @@ public final class SoundUtils {
                 .add("s", sound.getSound().isStreaming())
                 .toString();
         //@formatter:on
+    }
+
+    /**
+     * This method is invoked via the MixinSoundSystem injection.  It will be called when the sound system
+     * is intialized, and it gives an opportunity to setup special effects processing.
+     *
+     * @param device Device context created by the Minecraft sound system
+     */
+    public static void initialize(final long device) {
+
+        try {
+
+            boolean hasFX = false;
+            if (Config.CLIENT.sound.enableEnhancedSounds.get()) {
+                final ALCCapabilities deviceCaps = ALC.createCapabilities(device);
+                hasFX = deviceCaps.ALC_EXT_EFX;
+            }
+
+            if (hasFX) {
+                // Using 4 aux slots instead of the default 2
+                final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
+                final long ctx = ALC10.alcCreateContext(device, attribs);
+                ALC10.alcMakeContextCurrent(ctx);
+
+                // Have to renable since we reset the context
+                AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
+            } else {
+                LOGGER.warn("EFX audio extensions not found on the current device or enhanced sounds not enabled.");
+            }
+
+            // Calculate the number of source slots available
+            MAX_SOUNDS = ALC11.alcGetInteger(device, ALC11.ALC_MONO_SOURCES);
+            SOUND_LIMIT = MAX_SOUNDS - 10;
+
+            if (hasFX)
+                SoundFXProcessor.initialize();
+
+        } catch (@Nonnull final Throwable t) {
+            LOGGER.warn(t.getMessage());
+            LOGGER.warn("OpenAL special effects for sounds will not be available");
+        }
+
     }
 
 }

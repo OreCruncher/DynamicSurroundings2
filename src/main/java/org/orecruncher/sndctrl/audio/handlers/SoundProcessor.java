@@ -35,6 +35,7 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.audio.SoundUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -140,10 +141,15 @@ public final class SoundProcessor {
 
     // Event handler for sound plays - hooked in static class initializer
     private static void soundPlay(@Nonnull final PlaySoundEvent e) {
-        // Don't mess with our config sound instances from the config
-        // menu
+        // If there is no sound assigned, or if there is no more room in the play lists kill it
         final ISound theSound = e.getSound();
-        if (theSound == null || MusicFader.isConfigSoundInstance(theSound))
+        if (theSound == null || !SoundUtils.hasRoom()) {
+            e.setResultSound(null);
+            return;
+        }
+
+        // Don't mess with our config sound instances from the config menu
+        if (MusicFader.isConfigSoundInstance(theSound))
             return;
 
         // Check to see if we need to block sound processing

@@ -26,6 +26,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.math.BlockRayTrace;
 
 import javax.annotation.Nonnull;
 
@@ -63,12 +64,12 @@ public final class WorldUtils {
 
     @Nonnull
     public static BlockRayTraceResult rayTraceBlock(@Nonnull final IBlockReader world, @Nonnull final Vec3d source, @Nonnull final Vec3d dest, RayTraceContext.BlockMode bm, RayTraceContext.FluidMode fm) {
-        final RayTraceContext ctx = new RayTraceContext(source, dest, bm, fm, DummyEntity.INSTANCE);
-        return world.rayTraceBlocks(ctx);
+        return new BlockRayTrace(world, source, dest, bm, fm).trace();
     }
 
     @OnlyIn(Dist.CLIENT)
     public static boolean isInGame() {
         return Minecraft.getInstance().world != null && Minecraft.getInstance().player != null;
     }
+
 }

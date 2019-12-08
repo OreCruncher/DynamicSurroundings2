@@ -16,11 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib;
+package org.orecruncher.lib.math;
 
 import net.minecraft.util.math.*;
-import net.minecraft.world.IBlockReader;
-import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,25 +27,19 @@ import java.util.Iterator;
 public class RayTraceIterator implements Iterator<BlockRayTraceResult> {
 
     @Nonnull
-    private final IBlockReader world;
+    private final BlockRayTrace traceContext;
     @Nonnull
     private final BlockPos targetBlock;
     @Nonnull
     private final Vec3d normal;
-    @Nonnull
-    private Vec3d origin;
-    @Nonnull
-    private Vec3d target;
 
     @Nullable
     private BlockRayTraceResult hitResult;
 
-    public RayTraceIterator(@Nonnull final IBlockReader world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
-        this.world = world;
-        this.targetBlock = new BlockPos(target);
-        this.normal = MathStuff.normalize(origin, target);
-        this.origin = origin;
-        this.target = target;
+    public RayTraceIterator(@Nonnull final BlockRayTrace traceContext) {
+        this.traceContext = traceContext;
+        this.targetBlock = new BlockPos(traceContext.end);
+        this.normal = MathStuff.normalize(traceContext.start, traceContext.end);
         doTrace();
     }
 
@@ -55,7 +47,7 @@ public class RayTraceIterator implements Iterator<BlockRayTraceResult> {
         if (this.hitResult != null && this.hitResult.getPos().equals(this.targetBlock)) {
             this.hitResult = null;
         } else {
-            this.hitResult = WorldUtils.rayTraceBlock(this.world, this.origin, this.target);
+            this.hitResult = this.traceContext.trace();
         }
     }
 
@@ -70,7 +62,7 @@ public class RayTraceIterator implements Iterator<BlockRayTraceResult> {
         if (this.hitResult == null || this.hitResult.getType() == RayTraceResult.Type.MISS)
             throw new IllegalStateException("No more blocks in trace");
         final BlockRayTraceResult result = this.hitResult;
-        this.origin = this.hitResult.getHitVec().add(this.normal);
+        this.traceContext.start = this.hitResult.getHitVec().add(this.normal);
         doTrace();
         return result;
     }

@@ -48,6 +48,8 @@
   },
   "fluid": {
     "minecraft:water": 0.6,
-    "minecraft:lava": 0.9
+    "minecraft:flowing_water": 0.6,
+    "minecraft:lava": 0.9,
+    "minecraft:flowing_lava": 0.9
   }
 }

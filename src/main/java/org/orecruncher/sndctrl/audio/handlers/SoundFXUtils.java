@@ -36,7 +36,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.RayTraceIterator;
+import org.orecruncher.lib.math.BlockRayTrace;
+import org.orecruncher.lib.math.RayTraceIterator;
 import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
@@ -159,12 +160,14 @@ public final class SoundFXUtils {
 
         float sharedAirspace = 0F;
 
+        final BlockRayTrace traceContext = new BlockRayTrace(ctx.world, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.SOURCE_ONLY);
+
         for (int i = 0; i < REVERB_RAYS; i++) {
 
             Vec3d origin = soundPos;
             Vec3d target = origin.add(REVERB_RAY_PROJECTED[i]);
 
-            final BlockRayTraceResult rayHit = ctx.rayTraceBlocks(origin, target);
+            final BlockRayTraceResult rayHit = traceContext.trace(origin, target);
 
             if (isMiss(rayHit))
                 continue;
@@ -187,7 +190,7 @@ public final class SoundFXUtils {
                 origin = MathStuff.addScaled(lastHitPos, newRayDir, 0.01F);
                 target = MathStuff.addScaled(origin, newRayDir, MAX_REVERB_DISTANCE);
 
-                final BlockRayTraceResult newRayHit = ctx.rayTraceBlocks(origin, target);
+                final BlockRayTraceResult newRayHit = traceContext.trace(origin, target);
 
                 if (isMiss(newRayHit)) {
                     totalRayDistance += lastHitPos.distanceTo(ctx.playerEyePosition);
@@ -205,7 +208,7 @@ public final class SoundFXUtils {
                     // player share airspace.
                     if (!Effects.simplerSharedAirspaceSimulation || j == REVERB_RAY_BOUNCES - 1) {
                         final Vec3d finalRayStart = MathStuff.addScaled(lastHitPos, lastHitNormal, 0.01F);
-                        final BlockRayTraceResult finalRayHit = ctx.rayTraceBlocks(finalRayStart, ctx.playerEyePosition);
+                        final BlockRayTraceResult finalRayHit = traceContext.trace(finalRayStart, ctx.playerEyePosition);
                         if (isMiss(finalRayHit)) {
                             sharedAirspace += 1.0F;
                         }
@@ -334,7 +337,8 @@ public final class SoundFXUtils {
 
         float accum = 0F;
 
-        final Iterator<BlockRayTraceResult> itr = new RayTraceIterator(ctx.world, origin, target);
+        final BlockRayTrace traceContext = new BlockRayTrace(ctx.world, origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+        final Iterator<BlockRayTraceResult> itr = new RayTraceIterator(traceContext);
         for (int i = 0; i < OCCLUSION_RAYS; i++) {
             if (itr.hasNext()) {
                 final BlockState state = ctx.world.getBlockState(itr.next().getPos());

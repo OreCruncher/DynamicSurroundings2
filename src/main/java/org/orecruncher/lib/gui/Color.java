@@ -16,16 +16,16 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib;
+package org.orecruncher.lib.gui;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
-import java.util.EnumMap;
-import java.util.Map;
 
 /**
  * Holds an RGB triple. See: http://www.rapidtables.com/web/color/RGB_Color.htm
@@ -34,78 +34,37 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class Color {
 
-    public static final Color RED = new Color(255, 0, 0);
-    public static final Color ORANGE = new Color(255, 127, 0);
-    public static final Color YELLOW = new Color(255, 255, 0);
-    public static final Color LGREEN = new Color(127, 255, 0);
-    public static final Color GREEN = new Color(0, 255, 0);
-    public static final Color TURQOISE = new Color(0, 255, 127);
-    public static final Color CYAN = new Color(0, 255, 255);
-    public static final Color AUQUAMARINE = new Color(0, 127, 255);
-    public static final Color BLUE = new Color(0, 0, 255);
-    public static final Color VIOLET = new Color(127, 0, 255);
-    public static final Color MAGENTA = new Color(255, 0, 255);
-    public static final Color RASPBERRY = new Color(255, 0, 127);
-    public static final Color BLACK = new Color(0, 0, 0);
-    public static final Color WHITE = new Color(255, 255, 255);
-    public static final Color PURPLE = new Color(80, 0, 80);
-    public static final Color INDIGO = new Color(75, 0, 130);
-    public static final Color NAVY = new Color(0, 0, 128);
-    public static final Color TAN = new Color(210, 180, 140);
-    public static final Color GOLD = new Color(255, 215, 0);
-    public static final Color GRAY = new Color(128, 128, 128);
-    public static final Color LGRAY = new Color(192, 192, 192);
-    public static final Color SLATEGRAY = new Color(112, 128, 144);
-    public static final Color DARKSLATEGRAY = new Color(47, 79, 79);
-
-    // Minecraft colors mapped to codes
-    public static final Color MC_BLACK = new Color(0, 0, 0);
-    public static final Color MC_DARKBLUE = new Color(0, 0, 170);
-    public static final Color MC_DARKGREEN = new Color(0, 170, 0);
-    public static final Color MC_DARKAQUA = new Color(0, 170, 170);
-    public static final Color MC_DARKRED = new Color(170, 0, 0);
-    public static final Color MC_DARKPURPLE = new Color(170, 0, 170);
-    public static final Color MC_GOLD = new Color(255, 170, 0);
-    public static final Color MC_GRAY = new Color(170, 170, 170);
-    public static final Color MC_DARKGRAY = new Color(85, 85, 85);
-    public static final Color MC_BLUE = new Color(85, 85, 255);
-    public static final Color MC_GREEN = new Color(85, 255, 85);
-    public static final Color MC_AQUA = new Color(85, 255, 255);
-    public static final Color MC_RED = new Color(255, 85, 85);
-    public static final Color MC_LIGHTPURPLE = new Color(255, 85, 255);
-    public static final Color MC_YELLOW = new Color(255, 255, 85);
-    public static final Color MC_WHITE = new Color(255, 255, 255);
-
-    // Basic Aurora color
-    public static final Color AURORA_RED = new Color(1.0F, 0F, 0F);
-    public static final Color AURORA_GREEN = new Color(0.5F, 1.0F, 0.0F);
-    public static final Color AURORA_BLUE = new Color(0F, 0.8F, 1.0F);
-
-    private static final Map<TextFormatting, Color> colorLookup = new EnumMap<>(TextFormatting.class);
-
-    static {
-        colorLookup.put(TextFormatting.BLACK, MC_BLACK);
-        colorLookup.put(TextFormatting.DARK_BLUE, MC_DARKBLUE);
-        colorLookup.put(TextFormatting.DARK_GREEN, MC_DARKGREEN);
-        colorLookup.put(TextFormatting.DARK_AQUA, MC_DARKAQUA);
-        colorLookup.put(TextFormatting.DARK_RED, MC_DARKRED);
-        colorLookup.put(TextFormatting.DARK_PURPLE, MC_DARKPURPLE);
-        colorLookup.put(TextFormatting.GOLD, MC_GOLD);
-        colorLookup.put(TextFormatting.GRAY, MC_GRAY);
-        colorLookup.put(TextFormatting.DARK_GRAY, MC_DARKGRAY);
-        colorLookup.put(TextFormatting.BLUE, MC_BLUE);
-        colorLookup.put(TextFormatting.GREEN, MC_GREEN);
-        colorLookup.put(TextFormatting.AQUA, MC_AQUA);
-        colorLookup.put(TextFormatting.RED, MC_RED);
-        colorLookup.put(TextFormatting.LIGHT_PURPLE, MC_LIGHTPURPLE);
-        colorLookup.put(TextFormatting.YELLOW, MC_YELLOW);
-        colorLookup.put(TextFormatting.WHITE, MC_WHITE);
-    }
-
     protected float red;
     protected float green;
     protected float blue;
     protected float alpha;
+
+    public Color(@Nonnull final String fmt) {
+        final String[] parts = fmt.split(",");
+        Preconditions.checkArgument(parts.length > 2);
+
+        final int r = Integer.getInteger(parts[0]);
+        final int g = Integer.getInteger(parts[1]);
+        final int b = Integer.getInteger(parts[2]);
+        final int a = parts.length == 4 ? Integer.getInteger(parts[3]) : 255;
+
+        this.red = MathStuff.clamp1(r / 255F);
+        this.green = MathStuff.clamp1(g / 255F);
+        this.blue = MathStuff.clamp1(b / 255F);
+        this.alpha = MathStuff.clamp1(a / 255F);
+    }
+
+    public Color(@Nonnull final TextFormatting fmt) {
+        Preconditions.checkArgument(fmt.isColor());
+        Preconditions.checkNotNull(fmt.getColor());
+
+        final int color = fmt.getColor();
+        this.red = ((color >> 16) & 0xff) / 255F;
+        this.green = ((color >> 8) & 0xff) / 255F;
+        this.blue = (color & 0xff) / 255F;
+        this.alpha = 1F;
+    }
+
     public Color(@Nonnull final Color color) {
         this(color.red, color.green, color.blue, color.alpha);
     }
@@ -131,22 +90,18 @@ public class Color {
     }
 
     public Color(final float red, final float green, final float blue, final float alpha) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.alpha = alpha;
+        this.red = MathStuff.clamp1(red);
+        this.green = MathStuff.clamp1(green);
+        this.blue = MathStuff.clamp1(blue);
+        this.alpha = MathStuff.clamp1(alpha);
     }
 
     public Color(final double red, final double green, final double blue, final double alpha) {
         this((float) red, (float) green, (float) blue, (float) alpha);
     }
 
-    public static Color getColor(final TextFormatting format) {
-        return colorLookup.get(format);
-    }
-
     protected static float blend(final float c1, final float c2, final float factor) {
-        return (float) Math.sqrt((1.0F - factor) * c1 * c1 + factor * c2 * c2);
+        return MathStuff.clamp1((float) Math.sqrt((1.0F - factor) * c1 * c1 + factor * c2 * c2));
     }
 
     public float red() {
@@ -225,9 +180,9 @@ public class Color {
     // darkens
     @Nonnull
     public Color luminance(final float percent) {
-        final float r = Math.min(Math.max(0, this.red + (this.red * percent)), 1.0F);
-        final float g = Math.min(Math.max(0, this.green + (this.green * percent)), 1.0F);
-        final float b = Math.min(Math.max(0, this.blue + (this.blue * percent)), 1.0F);
+        final float r = MathStuff.clamp1(this.red + (this.red * percent));
+        final float g = MathStuff.clamp1(this.green + (this.green * percent));
+        final float b = MathStuff.clamp1(this.blue + (this.blue * percent));
         return new Color(r, g, b, this.alpha);
     }
 
@@ -280,9 +235,9 @@ public class Color {
         @Nonnull
         @Override
         public Color add(final float red, final float green, final float blue) {
-            this.red += red;
-            this.green += green;
-            this.blue += blue;
+            this.red = MathStuff.clamp1(this.red + red);
+            this.green = MathStuff.clamp1(this.green + green);
+            this.blue = MathStuff.clamp1(this.blue + blue);
             return this;
         }
 
@@ -298,18 +253,18 @@ public class Color {
         @Nonnull
         @Override
         public Color scale(final float scaleRed, final float scaleGreen, final float scaleBlue) {
-            this.red *= scaleRed;
-            this.green *= scaleGreen;
-            this.blue *= scaleBlue;
+            this.red = MathStuff.clamp1(this.red * scaleRed);
+            this.green = MathStuff.clamp1(this.green * scaleGreen);
+            this.blue = MathStuff.clamp1(this.blue * scaleBlue);
             return this;
         }
 
         @Nonnull
         @Override
         public Color mix(final float red, final float green, final float blue) {
-            this.red = (this.red + red) / 2.0F;
-            this.green = (this.green + green) / 2.0F;
-            this.blue = (this.blue + blue) / 2.0F;
+            this.red = MathStuff.clamp1((this.red + red) / 2.0F);
+            this.green = MathStuff.clamp1((this.green + green) / 2.0F);
+            this.blue = MathStuff.clamp1((this.blue + blue) / 2.0F);
             return this;
         }
 

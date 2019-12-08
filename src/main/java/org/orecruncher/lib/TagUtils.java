@@ -19,6 +19,7 @@
 package org.orecruncher.lib;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -27,11 +28,23 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public final class TagUtils {
     private TagUtils() {
 
+    }
+
+    @Nonnull
+    public static Collection<Tag<Block>> getBlockStateTags(@Nonnull final BlockState state) {
+        final List<Tag<Block>> tags = new ArrayList<>();
+        for(ResourceLocation res : state.getBlock().getTags()) {
+            tags.add(getBlockTag(res));
+        }
+        return tags;
     }
 
     @Nullable

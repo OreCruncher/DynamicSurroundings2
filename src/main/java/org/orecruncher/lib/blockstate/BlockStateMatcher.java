@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public final class BlockStateMatcher {
 
-    private static final ImmutableMap<IProperty<?>, Object> EMPTY = ImmutableMap.of();
+    private static final ImmutableMap<IProperty<?>, Comparable<?>> EMPTY = ImmutableMap.of();
 
     // All instances will have this defined
     @Nonnull
@@ -45,7 +45,7 @@ public final class BlockStateMatcher {
     // Sometimes an exact match of state is needed. The state being compared
     // would have to match all these properties.
     @Nonnull
-    private final ImmutableMap<IProperty<?>, Object> props;
+    private final ImmutableMap<IProperty<?>, Comparable<?>> props;
 
     private BlockStateMatcher(@Nonnull final BlockState state) {
         this.block = state.getBlock();
@@ -57,7 +57,7 @@ public final class BlockStateMatcher {
     }
 
     private BlockStateMatcher(@Nonnull final Block block,
-                              @Nonnull final ImmutableMap<IProperty<?>, Object> props) {
+                              @Nonnull final ImmutableMap<IProperty<?>, Comparable<?>> props) {
         this.block = block;
         this.props = props;
     }
@@ -99,7 +99,7 @@ public final class BlockStateMatcher {
         }
 
         final Map<String, String> properties = result.getProperties();
-        final Map<IProperty<?>, Object> props = new IdentityHashMap<>(properties.size());
+        final Map<IProperty<?>, Comparable<?>> props = new IdentityHashMap<>(properties.size());
 
         // Blow out the property list
         for (final Map.Entry<String, String> entry : properties.entrySet()) {
@@ -108,7 +108,7 @@ public final class BlockStateMatcher {
             if (prop != null) {
                 final Optional<?> optional = prop.parseValue(entry.getValue());
                 if (optional.isPresent()) {
-                    props.put(prop, optional.get());
+                    props.put(prop, (Comparable<?>) optional.get());
                 } else {
                     final String allowed = getAllowedValues(block, s);
                     Lib.LOGGER.warn("Property value '%s' for property '%s' not found for block '%s'",
@@ -171,7 +171,7 @@ public final class BlockStateMatcher {
     private boolean matchProps(@Nonnull final BlockState state) {
         if (this.props.isEmpty())
             return true;
-        for (final Map.Entry<IProperty<?>, Object> entry : this.props.entrySet()) {
+        for (final Map.Entry<IProperty<?>, Comparable<?>> entry : this.props.entrySet()) {
             final Object result = state.get(entry.getKey());
             if (!entry.getValue().equals(result))
                 return false;
@@ -193,8 +193,8 @@ public final class BlockStateMatcher {
             if (this.block != m.block)
                 return false;
 
-            // If both lists are empty its a match
-            if (this.props.isEmpty() && m.props.isEmpty())
+            // If they are the same list then they are equal
+            if (this.props == m.props)
                 return true;
 
             // If the other list is larger there isn't a way it's going
@@ -203,8 +203,8 @@ public final class BlockStateMatcher {
                 return false;
 
             // Run 'em down doing compares
-            for (final Map.Entry<IProperty<?>, Object> entry : m.props.entrySet()) {
-                final Object v = this.props.get(entry.getKey());
+            for (final Map.Entry<IProperty<?>, Comparable<?>> entry : m.props.entrySet()) {
+                final Comparable<?> v = this.props.get(entry.getKey());
                 if (v == null || !v.equals(entry.getValue()))
                     return false;
             }
@@ -214,9 +214,8 @@ public final class BlockStateMatcher {
     }
 
     @Nonnull
-    private ImmutableMap<IProperty<?>, Object> getPropsFromState(@Nonnull final BlockState state) {
-        final ImmutableMap<IProperty<?>, Comparable<?>> source = state.getValues();
-        return source.size() == 0 ? EMPTY : ImmutableMap.copyOf(source);
+    private ImmutableMap<IProperty<?>, Comparable<?>> getPropsFromState(@Nonnull final BlockState state) {
+        return state.getValues();
     }
 
     @Override

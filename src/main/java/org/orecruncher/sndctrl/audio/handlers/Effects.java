@@ -35,13 +35,13 @@ import org.orecruncher.sndctrl.audio.handlers.effects.ReverbEffectSlot;
 @OnlyIn(Dist.CLIENT)
 public final class Effects {
     // General config settings that need to make their way somewhere
-    public static final float rolloffFactor = 1F;
-    public static final float globalReverbMultiplier = 0.7f;
-    public static final float globalReverbBrightness = 1F;
-    public static final float globalBlockAbsorption = 1F;
+    private static final float ROLLOFF_FACTOR = 1F;
+    private static final float GLOBAL_REVERB_MULTIPLIER = 0.7F;
+    private static final float GLOBAL_REVERB_BRIGHTNESS = 1F;
+
+    public static final float GLOBAL_BLOCK_ABSORPTION = 1F;
     public static final float SNOW_AIR_ABSORPTION_FACTOR = 5F;
     public static final float RAIN_AIR_ABSORPTION_FACTOR = 2F;
-    public static final boolean simplerSharedAirspaceSimulation = false;
 
     public static final ReverbData reverbData0;
     public static final ReverbData reverbData1;
@@ -63,60 +63,60 @@ public final class Effects {
 
     static {
         reverbData0 = new ReverbData();
-        reverbData0.decayTime = 0.15f;
-        reverbData0.density = 0.0f;
-        reverbData0.diffusion = 1.0f;
-        reverbData0.gain = 0.2f * 0.85f * globalReverbMultiplier;
-        reverbData0.gainHF = 0.99f;
-        reverbData0.decayHFRatio = 0.6f * globalReverbBrightness;
-        reverbData0.reflectionsGain = 2.5f;
-        reverbData0.reflectionsDelay = 0.001f;
-        reverbData0.lateReverbGain = 1.26f;
-        reverbData0.lateReverbDelay = 0.011f;
-        reverbData0.airAbsorptionGainHF = 0.994f;
-        reverbData0.roomRolloffFactor = 0.16f * rolloffFactor;
+        reverbData0.decayTime = 0.15F;
+        reverbData0.density = 0.0F;
+        reverbData0.diffusion = 1.0F;
+        reverbData0.gain = 0.2F * 0.85F * GLOBAL_REVERB_MULTIPLIER;
+        reverbData0.gainHF = 0.99F;
+        reverbData0.decayHFRatio = 0.6F * GLOBAL_REVERB_BRIGHTNESS;
+        reverbData0.reflectionsGain = 2.5F;
+        reverbData0.reflectionsDelay = 0.001F;
+        reverbData0.lateReverbGain = 1.26F;
+        reverbData0.lateReverbDelay = 0.011F;
+        reverbData0.airAbsorptionGainHF = 0.994F;
+        reverbData0.roomRolloffFactor = 0.16F * ROLLOFF_FACTOR;
 
         reverbData1 = new ReverbData();
-        reverbData1.decayTime = 0.55f;
-        reverbData1.density = 0.0f;
-        reverbData1.diffusion = 1.0f;
-        reverbData1.gain = 0.3f * 0.85F * globalReverbMultiplier;
-        reverbData1.gainHF = 0.99f;
-        reverbData1.decayHFRatio = 0.7f * globalReverbBrightness;
-        reverbData1.reflectionsGain = 0.2f;
-        reverbData1.reflectionsDelay = 0.015f;
-        reverbData1.lateReverbGain = 1.26f;
-        reverbData1.lateReverbDelay = 0.011f;
-        reverbData1.airAbsorptionGainHF = 0.994f;
-        reverbData1.roomRolloffFactor = 0.15f * rolloffFactor;
+        reverbData1.decayTime = 0.55F;
+        reverbData1.density = 0.0F;
+        reverbData1.diffusion = 1.0F;
+        reverbData1.gain = 0.3F * 0.85F * GLOBAL_REVERB_MULTIPLIER;
+        reverbData1.gainHF = 0.99F;
+        reverbData1.decayHFRatio = 0.7F * GLOBAL_REVERB_BRIGHTNESS;
+        reverbData1.reflectionsGain = 0.2F;
+        reverbData1.reflectionsDelay = 0.015F;
+        reverbData1.lateReverbGain = 1.26F;
+        reverbData1.lateReverbDelay = 0.011F;
+        reverbData1.airAbsorptionGainHF = 0.994F;
+        reverbData1.roomRolloffFactor = 0.15F * ROLLOFF_FACTOR;
 
         reverbData2 = new ReverbData();
-        reverbData2.decayTime = 1.68f;
-        reverbData2.density = 0.1f;
-        reverbData2.diffusion = 1.0f;
-        reverbData2.gain = 0.5f * 0.85F * globalReverbMultiplier;
-        reverbData2.gainHF = 0.99f;
-        reverbData2.decayHFRatio = 0.7f * globalReverbBrightness;
-        reverbData2.reflectionsGain = 0.0f;
-        reverbData2.reflectionsDelay = 0.021f;
-        reverbData2.lateReverbGain = 1.26f;
-        reverbData2.lateReverbDelay = 0.021f;
-        reverbData2.airAbsorptionGainHF = 0.994f;
-        reverbData2.roomRolloffFactor = 0.13f * rolloffFactor;
+        reverbData2.decayTime = 1.68F;
+        reverbData2.density = 0.1F;
+        reverbData2.diffusion = 1.0F;
+        reverbData2.gain = 0.5F * 0.85F * GLOBAL_REVERB_MULTIPLIER;
+        reverbData2.gainHF = 0.99F;
+        reverbData2.decayHFRatio = 0.7F * GLOBAL_REVERB_BRIGHTNESS;
+        reverbData2.reflectionsGain = 0.0F;
+        reverbData2.reflectionsDelay = 0.021F;
+        reverbData2.lateReverbGain = 1.26F;
+        reverbData2.lateReverbDelay = 0.021F;
+        reverbData2.airAbsorptionGainHF = 0.994F;
+        reverbData2.roomRolloffFactor = 0.13F * ROLLOFF_FACTOR;
 
         reverbData3 = new ReverbData();
-        reverbData3.decayTime = 4.142f;
-        reverbData3.density = 0.5f;
-        reverbData3.diffusion = 1.0f;
-        reverbData3.gain = 0.4f * 0.85F * globalReverbMultiplier;
-        reverbData3.gainHF = 0.89f;
-        reverbData3.decayHFRatio = 0.7f * globalReverbBrightness;
-        reverbData3.reflectionsGain = 0.0f;
-        reverbData3.reflectionsDelay = 0.025f;
-        reverbData3.lateReverbGain = 1.26f;
-        reverbData3.lateReverbDelay = 0.021f;
-        reverbData3.airAbsorptionGainHF = 0.994f;
-        reverbData3.roomRolloffFactor = 0.11f * rolloffFactor;
+        reverbData3.decayTime = 4.142F;
+        reverbData3.density = 0.5F;
+        reverbData3.diffusion = 1.0F;
+        reverbData3.gain = 0.4F * 0.85F * GLOBAL_REVERB_MULTIPLIER;
+        reverbData3.gainHF = 0.89F;
+        reverbData3.decayHFRatio = 0.7F * GLOBAL_REVERB_BRIGHTNESS;
+        reverbData3.reflectionsGain = 0.0F;
+        reverbData3.reflectionsDelay = 0.025F;
+        reverbData3.lateReverbGain = 1.26F;
+        reverbData3.lateReverbDelay = 0.021F;
+        reverbData3.airAbsorptionGainHF = 0.994F;
+        reverbData3.roomRolloffFactor = 0.11F * ROLLOFF_FACTOR;
     }
 
     private Effects() {

@@ -24,11 +24,15 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+/**
+ * Block ray trace and context rolled into one!  With some optimizations specific to blocks.  These routines are
+ * based on what the Minecraft raytrace algorithms do.  Pretty standard voxel based ray trace.
+ */
 public class BlockRayTrace {
 
     private static final double NUDGE = -1.0E-7D;
@@ -36,6 +40,7 @@ public class BlockRayTrace {
     final IBlockReader world;
     final RayTraceContext.BlockMode blockMode;
     final RayTraceContext.FluidMode fluidMode;
+    final ISelectionContext selectionCtx;
 
     // Can be changed dynamically to avoid recreating contexts
     Vec3d start;
@@ -51,6 +56,7 @@ public class BlockRayTrace {
         this.end = end;
         this.blockMode = bm;
         this.fluidMode = fm;
+        this.selectionCtx = ISelectionContext.dummy();
     }
 
     @Nonnull
@@ -65,6 +71,7 @@ public class BlockRayTrace {
         return traceLoop();
     }
 
+    @Nonnull
     private BlockRayTraceResult traceLoop() {
         if (this.start.equals(this.end)) {
             return miss();
@@ -75,9 +82,14 @@ public class BlockRayTrace {
             int posX = MathHelper.floor(lerpX);
             int posY = MathHelper.floor(lerpY);
             int posZ = MathHelper.floor(lerpZ);
+
+            // Do a quick check on the first block.  If there is a hit return
+            // that result.  Else, traverse the line segment between start and end
+            // points until a hit.
             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(posX, posY, posZ);
             BlockRayTraceResult traceResult = hitCheck(mutablePos);
             if (traceResult == null) {
+                // No hit.  Do the calcs to traverse the line
                 double xLerp = MathHelper.lerp(NUDGE, this.end.x, this.start.x);
                 double yLerp = MathHelper.lerp(NUDGE, this.end.y, this.start.y);
                 double zLerp = MathHelper.lerp(NUDGE, this.end.z, this.start.z);
@@ -94,11 +106,15 @@ public class BlockRayTrace {
                 double Y = deltaY * (dirY > 0 ? 1.0D - MathHelper.frac(lerpY) : MathHelper.frac(lerpY));
                 double Z = deltaZ * (dirZ > 0 ? 1.0D - MathHelper.frac(lerpZ) : MathHelper.frac(lerpZ));
 
+                // Main processing loop that traverses the line segement between start and end point.  This process
+                // will continue until there is a miss or a block is hit.
                 do {
+                    // Reached the end of the line?
                     if (X > 1.0D && Y > 1.0D && Z > 1.0D) {
                         return miss();
                     }
 
+                    // Delta the axis that needs to be advanced.
                     if (X < Y) {
                         if (X < Z) {
                             posX += dirX;
@@ -115,27 +131,32 @@ public class BlockRayTrace {
                         Z += deltaZ;
                     }
 
+                    // Check for a hit.  If null is returned loop back around.
                     traceResult = hitCheck(mutablePos.setPos(posX, posY, posZ));
                 } while (traceResult == null);
 
             }
+            // Return whatever result we have
             return traceResult;
         }
     }
 
+    @Nonnull
     private BlockRayTraceResult miss() {
         final Vec3d directionVec = this.start.subtract(this.end);
         return BlockRayTraceResult.createMiss(this.end, Direction.getFacingFromVector(directionVec.x, directionVec.y, directionVec.z), new BlockPos(this.end));
     }
 
     // Fast path an empty air block as much as possible.  For tracing this would be the most common block
-    // encountered.
+    // encountered.  As an FYI the logic needs to consider both the solid and fluid aspects of a block since
+    // Minecraft now has this notion of water logged.
+    @Nullable
     private BlockRayTraceResult hitCheck(@Nonnull final BlockPos pos) {
         // Handle the block
         BlockRayTraceResult traceResult = null;
         final BlockState state = this.world.getBlockState(pos);
         if (!state.isAir(this.world, pos)) {
-            final VoxelShape voxelShape = this.blockMode.get(state, this.world, pos, ISelectionContext.dummy());
+            final VoxelShape voxelShape = this.blockMode.get(state, this.world, pos, this.selectionCtx);
             if (!voxelShape.isEmpty())
                 traceResult = this.world.rayTraceBlocks(this.start, this.end, pos, voxelShape, state);
         }
@@ -159,7 +180,8 @@ public class BlockRayTrace {
         if (traceResult == null)
             return fluidTraceResult;
 
-        // Get the closest
+        // Get the closest.  It is possible to encounter the water before the solid, like a fence post that is
+        // water logged.
         final double blockDistance = this.start.squareDistanceTo(traceResult.getHitVec());
         final double fluidDistance = this.start.squareDistanceTo(fluidTraceResult.getHitVec());
         return blockDistance <= fluidDistance ? traceResult : fluidTraceResult;

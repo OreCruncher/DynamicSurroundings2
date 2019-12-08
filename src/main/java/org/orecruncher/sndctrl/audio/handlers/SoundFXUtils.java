@@ -135,7 +135,7 @@ public final class SoundFXUtils {
         // Need to offset sound toward player if it is in a solid block
         final Vec3d soundPos = offsetPositionIfSolid(ctx.world, source.getPosition(), ctx.playerEyePosition);
 
-        final float absorptionCoeff = Effects.globalBlockAbsorption * 3.0F;
+        final float absorptionCoeff = Effects.GLOBAL_BLOCK_ABSORPTION * 3.0F;
         final float airAbsorptionFactor = calculateWeatherAbsorption(ctx, soundPos, ctx.playerEyePosition);
         final float occlusionAccumulation = calculateOcclusion(ctx, soundPos, ctx.playerEyePosition);
 
@@ -167,7 +167,7 @@ public final class SoundFXUtils {
             Vec3d origin = soundPos;
             Vec3d target = origin.add(REVERB_RAY_PROJECTED[i]);
 
-            final BlockRayTraceResult rayHit = traceContext.trace(origin, target);
+            BlockRayTraceResult rayHit = traceContext.trace(origin, target);
 
             if (isMiss(rayHit))
                 continue;
@@ -190,28 +190,26 @@ public final class SoundFXUtils {
                 origin = MathStuff.addScaled(lastHitPos, newRayDir, 0.01F);
                 target = MathStuff.addScaled(origin, newRayDir, MAX_REVERB_DISTANCE);
 
-                final BlockRayTraceResult newRayHit = traceContext.trace(origin, target);
+                rayHit = traceContext.trace(origin, target);
 
-                if (isMiss(newRayHit)) {
+                if (isMiss(rayHit)) {
                     totalRayDistance += lastHitPos.distanceTo(ctx.playerEyePosition);
                 } else {
 
                     bounceRatio[j] += blockReflectivity;
-                    totalRayDistance += lastHitPos.distanceTo(newRayHit.getHitVec());
+                    totalRayDistance += lastHitPos.distanceTo(rayHit.getHitVec());
 
-                    lastHitPos = newRayHit.getHitVec();
-                    lastHitNormal = surfaceNormal(newRayHit.getFace());
+                    lastHitPos = rayHit.getHitVec();
+                    lastHitNormal = surfaceNormal(rayHit.getFace());
                     lastRayDir = newRayDir;
-                    lastHitBlock = newRayHit.getPos();
+                    lastHitBlock = rayHit.getPos();
 
-                    // Cast one final ray towards the player. If it's unobstructed, then the sound source and the
-                    // player share airspace.
-                    if (!Effects.simplerSharedAirspaceSimulation || j == REVERB_RAY_BOUNCES - 1) {
-                        final Vec3d finalRayStart = MathStuff.addScaled(lastHitPos, lastHitNormal, 0.01F);
-                        final BlockRayTraceResult finalRayHit = traceContext.trace(finalRayStart, ctx.playerEyePosition);
-                        if (isMiss(finalRayHit)) {
-                            sharedAirspace += 1.0F;
-                        }
+                    // Cast a ray back at the player.  If it is a miss there is a path back from the reflection
+                    // point to the player meaning they share the same airspace.
+                    final Vec3d finalRayStart = MathStuff.addScaled(lastHitPos, lastHitNormal, 0.01F);
+                    final BlockRayTraceResult finalRayHit = traceContext.trace(finalRayStart, ctx.playerEyePosition);
+                    if (isMiss(finalRayHit)) {
+                        sharedAirspace += 1.0F;
                     }
                 }
 
@@ -229,7 +227,7 @@ public final class SoundFXUtils {
                 sendGain3 += cross3 * energyTowardsPlayer * 12.8F;
 
                 // Nowhere to bounce off of, stop bouncing!
-                if (isMiss(newRayHit)) {
+                if (isMiss(rayHit)) {
                     break;
                 }
             }
@@ -240,11 +238,7 @@ public final class SoundFXUtils {
         bounceRatio[2] = bounceRatio[2] / REVERB_RAYS;
         bounceRatio[3] = bounceRatio[3] / REVERB_RAYS;
 
-        if (Effects.simplerSharedAirspaceSimulation) {
-            sharedAirspace *= RECIP_PRIMARY_RAYS * 64F;
-        } else {
-            sharedAirspace *= RECIP_TOTAL_RAYS * 64F;
-        }
+        sharedAirspace *= RECIP_PRIMARY_RAYS * 64F;
 
         final float sharedAirspaceWeight0 = MathStuff.clamp1(sharedAirspace / 20.0F);
         final float sharedAirspaceWeight1 = MathStuff.clamp1(sharedAirspace / 15.0F);

@@ -25,6 +25,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.EXTEfx;
 import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.lib.random.LCGRandom;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
@@ -37,8 +38,10 @@ import javax.annotation.Nullable;
 public final class SourceContext {
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SourceContext.class);
-
-    private static final int UPDATE_FEQUENCY = 4;
+    // Lightweight randomizer used to distribute updates across an interval
+    private static final LCGRandom RANDOM = new LCGRandom();
+    // Frequency of sound effect updates in thread schedule ticks
+    private static final int UPDATE_FEQUENCY_TICKS = 10;
 
     @Nonnull
     private final Object sync = new Object();
@@ -61,7 +64,7 @@ public final class SourceContext {
     private Vec3d pos;
 
     private boolean isDisabled;
-    private int updateCount = UPDATE_FEQUENCY;
+    private int updateCount;
 
     public SourceContext() {
         this.lowPass0 = new LowPassData();
@@ -155,10 +158,18 @@ public final class SourceContext {
         }
     }
 
+    /**
+     * Called by the sound processing thread when scheduling work items for sound updates.  This routine should only
+     * be called by the background thread.
+     *
+     * @return true the work item should be scheduled; false otherwise
+     */
     public boolean shouldExecute() {
-        final boolean result = (this.updateCount % UPDATE_FEQUENCY) == 0;
-        this.updateCount++;
-        return result;
+        // If brand new randomize the start time
+        if (this.updateCount == 0) {
+            this.updateCount = RANDOM.nextInt(UPDATE_FEQUENCY_TICKS);
+        }
+        return (this.updateCount++ % UPDATE_FEQUENCY_TICKS) == 0;
     }
 
     /**

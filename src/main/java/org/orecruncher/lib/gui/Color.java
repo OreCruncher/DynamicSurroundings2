@@ -100,7 +100,7 @@ public class Color {
         this((float) red, (float) green, (float) blue, (float) alpha);
     }
 
-    protected static float blend(final float c1, final float c2, final float factor) {
+    protected static float blnd(final float c1, final float c2, final float factor) {
         return MathStuff.clamp1((float) Math.sqrt((1.0F - factor) * c1 * c1 + factor * c2 * c2));
     }
 
@@ -156,9 +156,9 @@ public class Color {
     @Nonnull
     public Color blend(@Nonnull final Color color, final float factor) {
         return new Color(
-                blend(this.red, color.red, factor),
-                blend(this.green, color.green, factor),
-                blend(this.blue, color.blue, factor),
+                blnd(this.red, color.red, factor),
+                blnd(this.green, color.green, factor),
+                blnd(this.blue, color.blue, factor),
                 this.alpha);
     }
 
@@ -244,9 +244,9 @@ public class Color {
         @Nonnull
         @Override
         public Color blend(@Nonnull final Color color, final float factor) {
-            this.red = blend(this.red, color.red, factor);
-            this.green = blend(this.green, color.green, factor);
-            this.blue = blend(this.blue, color.blue, factor);
+            this.red = blnd(this.red, color.red, factor);
+            this.green = blnd(this.green, color.green, factor);
+            this.blue = blnd(this.blue, color.blue, factor);
             return this;
         }
 

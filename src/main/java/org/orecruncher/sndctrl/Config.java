@@ -115,6 +115,7 @@ public final class Config {
             public final BooleanValue enableEnhancedSounds;
             public final BooleanValue muteInBackground;
             public final IntValue cullInterval;
+            public final IntValue backgroundThreadWorkers;
             public final ConfigValue<List<? extends String>> individualSounds;
             public final ConfigValue<List<? extends String>> startupSoundList;
 
@@ -148,6 +149,12 @@ public final class Config {
                         .comment("Ticks between culled sound events (0 to disable culling)")
                         .translation("sndctrl.cfg.sound.CullInterval")
                         .defineInRange("Sound Culling Interval", 20, 0, Integer.MAX_VALUE);
+
+                this.backgroundThreadWorkers = builder
+                        .comment("Number of background threads to handle sound effect calculations (0 is default)")
+                        .translation("sndctrl.cfg.sound.threads")
+                        .worldRestart()
+                        .defineInRange("Background Workers", 0, 0, 8);
 
                 builder.pop();
                 //@formatter:on

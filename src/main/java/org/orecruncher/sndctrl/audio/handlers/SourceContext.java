@@ -33,15 +33,20 @@ import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.concurrent.ForkJoinTask;
 
+/**
+ * Used to track and apply sound effects for a given sound instance in the sound engine.  It is also a task to
+ * facilitate queuing to background processing.
+ */
 @OnlyIn(Dist.CLIENT)
-public final class SourceContext {
+public final class SourceContext extends ForkJoinTask<Void> {
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SourceContext.class);
     // Lightweight randomizer used to distribute updates across an interval
     private static final LCGRandom RANDOM = new LCGRandom();
-    // Frequency of sound effect updates in thread schedule ticks
-    private static final int UPDATE_FEQUENCY_TICKS = 10;
+    // Frequency of sound effect updates in thread schedule ticks.  Works out to be 3 times a second.
+    private static final int UPDATE_FEQUENCY_TICKS = 7;
 
     @Nonnull
     private final Object sync = new Object();
@@ -172,13 +177,21 @@ public final class SourceContext {
         return (this.updateCount++ % UPDATE_FEQUENCY_TICKS) == 0;
     }
 
+    // Ignored
+    public final Void getRawResult() { return null; }
+    // Ignored
+    public final void setRawResult(Void x) {}
+
     /**
-     * Called during the client tick to perform the various calculations that need to be made to make the sound do
-     * special things.  Do not call from the SoundSource processing thread or bad things will happen!
+     * Called by the thread pool when executing the task
+     *
+     * @return Will always return true
      */
-    public void update() {
+    @Override
+    public final boolean exec() {
         captureState();
         updateImpl();
+        return true;
     }
 
     private void updateImpl() {
@@ -201,4 +214,5 @@ public final class SourceContext {
                 .addValue(SoundUtils.debugString(this.sound))
                 .toString();
     }
+
 }

@@ -62,11 +62,8 @@ public final class SoundFXProcessor {
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundFXProcessor.class);
     static boolean isAvailable;
-    private static final int SOUND_PROCESS_ITERATION = 1000 / 30;
-    // Default the pool would want 1 thread per core.  Shouldn't need that many so scale down.  Also,
-    // the handling thread will also help reduce the workload if needed, so there is a +1 hidden in this
-    // math.
-    private static final int SOUND_PROCESS_THREADS = Math.max(Runtime.getRuntime().availableProcessors() / 3, 1);
+    private static final int SOUND_PROCESS_ITERATION = 1000 / 20;   // Match MC client tick rate
+    private static final int SOUND_PROCESS_THREADS;
     private static int MAX_SOUNDS;
     // Sparse array to hold references to the SoundContexts of playing sounds
     private static SourceContext[] sources;
@@ -87,6 +84,12 @@ public final class SoundFXProcessor {
     private static WorldContext worldContext = new WorldContext();
 
     static {
+
+        int threads = Config.CLIENT.sound.backgroundThreadWorkers.get();
+        if (threads == 0)
+            threads = 1;
+        SOUND_PROCESS_THREADS = threads;
+
         IGNORE_CATEGORIES.add(SoundCategory.WEATHER);   // Thunder and the like
         IGNORE_CATEGORIES.add(SoundCategory.RECORDS);   // Jukebox
         IGNORE_CATEGORIES.add(SoundCategory.MUSIC);     // Background music
@@ -200,7 +203,8 @@ public final class SoundFXProcessor {
                     ctx.disable();
                 } else {
                     final int idx = sourceIdToIdx(ss.getSourceId());
-                    ctx.update();
+                    // First update before first actual play.  This is occuring on the client thread.
+                    ctx.exec();
                     sources[idx] = ctx;
                 }
             });
@@ -241,7 +245,7 @@ public final class SoundFXProcessor {
             for (int i = 0; i < MAX_SOUNDS; i++) {
                 final SourceContext ctx = sources[i];
                 if (ctx != null && ctx.shouldExecute())
-                    pool.execute(ctx::update);
+                    pool.execute(ctx);
             }
             pool.awaitQuiescence(5, TimeUnit.MINUTES);
         } catch (@Nonnull final Throwable t) {

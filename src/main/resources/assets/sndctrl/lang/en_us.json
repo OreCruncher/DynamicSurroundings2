@@ -17,6 +17,8 @@
 	"sndctrl.cfg.sound.Mute.tooltip": "Mute sound when Minecraft is in the background",
 	"sndctrl.cfg.sound.CullInterval": "Sound Culling Interval",
 	"sndctrl.cfg.sound.CullInterval.tooltip": "Ticks between culled sound events (0 to disable culling)",
+	"sndctrl.cfg.sound.threads": "Background Workers",
+	"sndctrl.cfg.sound.threads.tooltip": "Number of background threads to handle sound effect calculations (0 is default)",
 	"sndctrl.cfg.logging": "Logging Options",
 	"sndctrl.cfg.logging.tooltip": "Defines how Sound Control logging will behave",
 	"sndctrl.cfg.logging.EnableDebug": "Debug Logging",

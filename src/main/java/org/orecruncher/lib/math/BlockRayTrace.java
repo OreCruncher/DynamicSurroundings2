@@ -143,8 +143,8 @@ public class BlockRayTrace {
         // Handle it's fluid state
         BlockRayTraceResult fluidTraceResult = null;
         final IFluidState fluidState = state.getFluidState();
-        if (!fluidState.isEmpty()) {
-            final VoxelShape voxelFluidShape = this.fluidMode.test(fluidState) ? state.getShape(this.world, pos) : VoxelShapes.empty();
+        if (!fluidState.isEmpty() && this.fluidMode.test(fluidState)) {
+            final VoxelShape voxelFluidShape = state.getShape(this.world, pos);
             if (!voxelFluidShape.isEmpty())
                 fluidTraceResult = voxelFluidShape.rayTrace(this.start, this.end, pos);
         }

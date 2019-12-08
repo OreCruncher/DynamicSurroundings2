@@ -90,10 +90,13 @@ public final class SoundFXProcessor {
             threads = 1;
         SOUND_PROCESS_THREADS = threads;
 
-        IGNORE_CATEGORIES.add(SoundCategory.WEATHER);   // Thunder and the like
         IGNORE_CATEGORIES.add(SoundCategory.RECORDS);   // Jukebox
         IGNORE_CATEGORIES.add(SoundCategory.MUSIC);     // Background music
         IGNORE_CATEGORIES.add(SoundCategory.MASTER);    // Anything slotted to master, like menu buttons
+
+        // Don't process weather sounds if configured
+        if (!Config.CLIENT.sound.enhancedWeather.get())
+            IGNORE_CATEGORIES.add(SoundCategory.WEATHER);
 
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);
     }
@@ -169,9 +172,8 @@ public final class SoundFXProcessor {
             Utilities.safeCast(src, ISoundSource.class).ifPresent(ss -> {
                 final SourceContext ctx = ss.getSourceContext();
                 ctx.attachSound(sound);
-                if (isCategoryIgnored(sound.getCategory())) {
-                    ctx.disable();
-                } else {
+                if (!isCategoryIgnored(sound.getCategory())) {
+                    ctx.enable();
                     final int idx = sourceIdToIdx(ss.getSourceId());
                     // First update before first actual play.  This is occuring on the client thread.
                     ctx.exec();

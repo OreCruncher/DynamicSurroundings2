@@ -125,7 +125,7 @@ public final class SoundFXUtils {
         assert ctx.player != null;
 
         if (ctx.isNotValid()
-                || source.isDisabled()
+                || !source.isEnabled()
                 || !inRange(source.getPosition(), ctx.playerEyePosition, source.getAttenuationDistance())
                 || source.getPosition().equals(Vec3d.ZERO)) {
             clearSettings(source);

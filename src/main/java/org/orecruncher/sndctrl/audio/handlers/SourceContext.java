@@ -68,7 +68,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
     @Nonnull
     private Vec3d pos;
 
-    private boolean isDisabled;
+    private boolean isEnabled;
     private int updateCount;
 
     public SourceContext() {
@@ -85,12 +85,12 @@ public final class SourceContext extends ForkJoinTask<Void> {
         return this.sync;
     }
 
-    public boolean isDisabled() {
-        return this.isDisabled;
+    public boolean isEnabled() {
+        return this.isEnabled;
     }
 
-    public void disable() {
-        this.isDisabled = true;
+    public void enable() {
+        this.isEnabled = true;
     }
 
     @Nonnull
@@ -147,7 +147,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
      * can happen.
      */
     public void tick(final int sourceId) {
-        if(!isDisabled()) {
+        if (isEnabled()) {
             synchronized (this.sync()) {
                 // Upload the data
                 Effects.filter0.apply(sourceId, this.lowPass0, 0, Effects.auxSlot0);

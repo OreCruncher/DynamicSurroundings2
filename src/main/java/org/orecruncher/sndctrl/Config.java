@@ -82,8 +82,6 @@ public final class Config {
 
         //@formatter:off
         private static final List<String> defaultSoundConfig = ImmutableList.<String>builder()
-                .add("minecraft:block.water.ambient cull")
-                .add("minecraft:block.lava.ambient cull")
                 .add("minecraft:entity.sheep.ambient cull")
                 .add("minecraft:entity.chicken.ambient cull")
                 .add("minecraft:entity.cow.ambient cull")
@@ -116,6 +114,7 @@ public final class Config {
             public final BooleanValue muteInBackground;
             public final IntValue cullInterval;
             public final IntValue backgroundThreadWorkers;
+            public final BooleanValue enhancedWeather;
             public final ConfigValue<List<? extends String>> individualSounds;
             public final ConfigValue<List<? extends String>> startupSoundList;
 
@@ -129,6 +128,12 @@ public final class Config {
                         .comment("Enable sound reverb and filtering")
                         .translation("sndctrl.cfg.sound.EnhancedSounds")
                         .define("Enable Enhanced Sounds", true);
+
+                this.enhancedWeather = builder
+                        .worldRestart()
+                        .comment("Enable enhanced sounds for weather effects")
+                        .translation("sndctrl.cfg.sound.EnhancedWeather")
+                        .define("Enable Enhanced Weather Sounds", true);
 
                 this.individualSounds = builder
                         .comment("Options to configure sounds on an individual basis")
@@ -151,9 +156,9 @@ public final class Config {
                         .defineInRange("Sound Culling Interval", 20, 0, Integer.MAX_VALUE);
 
                 this.backgroundThreadWorkers = builder
-                        .comment("Number of background threads to handle sound effect calculations (0 is default)")
-                        .translation("sndctrl.cfg.sound.threads")
                         .worldRestart()
+                        .comment("Number of background threads to handle sound effect calculations (0 is default)")
+                        .translation("sndctrl.cfg.sound.Threads")
                         .defineInRange("Background Workers", 0, 0, 8);
 
                 builder.pop();

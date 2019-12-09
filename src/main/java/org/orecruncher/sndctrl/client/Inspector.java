@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -42,6 +41,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.codehaus.plexus.util.StringUtils;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.MaterialUtils;
 import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.TickCounter;
@@ -54,6 +54,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -86,22 +87,24 @@ public class Inspector {
         }
 
         if (state != null) {
-            final BlockStateMatcher info = BlockStateMatcher.create(state);
-            text.add("BLOCK: " + info.toString());
-            text.add(TextFormatting.DARK_AQUA + info.getBlock().getClass().getName());
-            text.add("Material: " + MaterialUtils.getMaterialName(state.getMaterial()));
-            final SoundType st = state.getSoundType();
-            text.add("Step Sound: " + st.getStepSound().getRegistryName().toString());
-            text.add("Reflectivity: " + ((IBlockStateEffects) state).getReflectivity());
-            text.add("Occlusion: " + ((IBlockStateEffects) state).getOcclusion());
-            text.add(TEXT_BLOCKSTATE);
-            final CompoundNBT nbt = NBTUtil.writeBlockState(state);
-            text.add(nbt.toString());
-            final List<String> tagNames = getTags(state);
-            if (tagNames.size() > 0) {
-                text.add(TEXT_TAGS);
-                for (final String ore : tagNames)
-                    text.add(TextFormatting.GOLD + ore);
+            final Optional<BlockStateMatcher> info = BlockStateMatcher.create(state);
+            if (info.isPresent()) {
+                text.add("BLOCK: " + info.get().toString());
+                text.add(TextFormatting.DARK_AQUA + info.get().getBlock().getClass().getName());
+                text.add("Material: " + MaterialUtils.getMaterialName(state.getMaterial()));
+                final SoundType st = state.getSoundType();
+                text.add("Step Sound: " + st.getStepSound().getRegistryName().toString());
+                text.add("Reflectivity: " + ((IBlockStateEffects) state).getReflectivity());
+                text.add("Occlusion: " + ((IBlockStateEffects) state).getOcclusion());
+                text.add(TEXT_BLOCKSTATE);
+                final CompoundNBT nbt = NBTUtil.writeBlockState(state);
+                text.add(nbt.toString());
+                final List<String> tagNames = getTags(state);
+                if (tagNames.size() > 0) {
+                    text.add(TEXT_TAGS);
+                    for (final String ore : tagNames)
+                        text.add(TextFormatting.GOLD + ore);
+                }
             }
         }
 
@@ -109,7 +112,7 @@ public class Inspector {
     }
 
     private static boolean isHolding() {
-        final PlayerEntity player = Minecraft.getInstance().player;
+        final PlayerEntity player = GameUtils.getPlayer();
         if (player == null)
             return false;
         final ItemStack held = player.getHeldItem(Hand.MAIN_HAND);
@@ -124,9 +127,9 @@ public class Inspector {
             diagnostics = ImmutableList.of();
 
             if (Config.CLIENT.logging.enableLogging.get() && isHolding()) {
-                final World world = Minecraft.getInstance().world;
+                final World world = GameUtils.getWorld();
                 final List<String> data = new ArrayList<>();
-                final RayTraceResult current = Minecraft.getInstance().objectMouseOver;
+                final RayTraceResult current = GameUtils.getMC().objectMouseOver;
                 if (current instanceof BlockRayTraceResult) {
                     final BlockRayTraceResult trace = (BlockRayTraceResult) current;
                     if (trace.getType() != RayTraceResult.Type.MISS) {
@@ -134,10 +137,7 @@ public class Inspector {
                         final BlockState state = world.getBlockState(trace.getPos());
 
                         if (!state.isAir(world, trace.getPos())) {
-                            final ItemStack stack = state.getBlock().getPickBlock(
-                                    state, current, world,
-                                    trace.getPos(), Minecraft.getInstance().player);
-
+                            final ItemStack stack = state.getBlock().getPickBlock(state, current, world, trace.getPos(), GameUtils.getPlayer());
                             diagnostics = gatherBlockText(stack, data, state, trace.getPos());
                         }
                     }
@@ -148,7 +148,7 @@ public class Inspector {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT && diagnostics.size() > 0 && Minecraft.getInstance().gameSettings.showDebugInfo) {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT && diagnostics.size() > 0 && GameUtils.displayDebug()) {
             event.getLeft().addAll(diagnostics);
         }
     }

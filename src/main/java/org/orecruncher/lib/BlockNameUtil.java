@@ -43,7 +43,7 @@ public final class BlockNameUtil {
 
     // https://www.regexplanet.com/advanced/java/index.html
     private static final Pattern pattern = Pattern
-            .compile("([\\w\\-]+:[\\w\\.\\-/]+)\\[?((?:\\w+=\\w+)?(?:,\\w+=\\w+)*)\\]?\\+?(\\w+)?");
+            .compile("([\\w\\-]+:[\\w.\\-/]+)\\[?((?:\\w+=\\w+)?(?:,\\w+=\\w+)*)]?\\+?(\\w+)?");
 
     private BlockNameUtil() {
 
@@ -70,27 +70,27 @@ public final class BlockNameUtil {
          * Name of the blockName in standard domain:path form.
          */
         @Nonnull
-        private String blockName;
+        private final String blockName;
 
         /**
          * The block from the registries
          */
         @Nonnull
-        private Block block;
+        private final Block block;
 
         /**
          * The parsed properties after the blockName name, if present
          */
         @Nonnull
-        private Map<String, String> properties;
+        private final Map<String, String> properties;
 
         /**
          * Extra information that may have been appended at the end
          */
         @Nullable
-        private String extras;
+        private final String extras;
 
-        private NameResult(final Matcher matcher) {
+        private NameResult(@Nonnull final Matcher matcher) {
             this.blockName = matcher.group(1);
             this.block = Objects.requireNonNull(
                     ForgeRegistries.BLOCKS.getValue(new ResourceLocation(this.blockName)),

@@ -33,6 +33,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.Config;
@@ -82,7 +83,7 @@ public final class SoundEventHandling {
                     .build();
 
             // Queue it up on the main client thread.
-            Minecraft.getInstance().enqueue(() -> {
+            GameUtils.getMC().enqueue(() -> {
                 try {
                     AudioEngine.play(sound);
                 } catch (@Nonnull final Throwable t) {
@@ -98,7 +99,7 @@ public final class SoundEventHandling {
             return;
 
         if (Config.CLIENT.sound.muteInBackground.get()) {
-            final boolean active = Minecraft.getInstance().isGameFocused();
+            final boolean active = GameUtils.getMC().isGameFocused();
             final boolean muted = isMuted();
             if (active && muted) {
                 setMuted(false);
@@ -119,9 +120,8 @@ public final class SoundEventHandling {
         if (flag) {
             listener.setGain(MUTE_VOLUME);
         } else {
-            final GameSettings options = Minecraft.getInstance().gameSettings;
-            if (options != null)
-                listener.setGain(options.getSoundLevel(SoundCategory.MASTER));
+            final GameSettings options = GameUtils.getGameSettings();
+            listener.setGain(options.getSoundLevel(SoundCategory.MASTER));
         }
     }
 }

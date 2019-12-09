@@ -18,7 +18,6 @@
 
 package org.orecruncher.sndctrl.audio.handlers;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,6 +27,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.SoundControl;
@@ -92,8 +92,8 @@ public final class MusicFader {
         // MUSIC category to be re-evaluated, and the getClampedVolume() override will
         // scale accordingly.
         if (Float.compare(oldScale, currentScale) != 0) {
-            final float mcScale = Minecraft.getInstance().gameSettings.getSoundLevel(SoundCategory.MUSIC);
-            Minecraft.getInstance().getSoundHandler().setSoundLevel(SoundCategory.MUSIC, mcScale);
+            final float mcScale = GameUtils.getGameSettings().getSoundLevel(SoundCategory.MUSIC);
+            GameUtils.getSoundHander().setSoundLevel(SoundCategory.MUSIC, mcScale);
         }
     }
 

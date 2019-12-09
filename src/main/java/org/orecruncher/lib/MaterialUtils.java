@@ -30,10 +30,12 @@ import java.util.TreeMap;
 @SuppressWarnings("unused")
 public final class MaterialUtils {
 
-    private static final Map<Material, String> materialMap = new Reference2ObjectOpenHashMap<>();
+    private static final Reference2ObjectOpenHashMap<Material, String> materialMap = new Reference2ObjectOpenHashMap<>();
     private static final Map<String, Material> materialMapInv = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     static {
+        materialMap.defaultReturnValue("CUSTOM");
+
         materialMap.put(Material.AIR, "AIR");
         materialMap.put(Material.STRUCTURE_VOID, "STRUCTURE_VOID");
         materialMap.put(Material.PORTAL, "PORTAL");

@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.blockstate;
 
+import com.google.common.base.MoreObjects;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -44,10 +45,10 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
 
     @Nullable
     public T get(@Nonnull final BlockState state) {
-        T result = this.map.get(BlockStateMatcher.create(state));
+        T result = BlockStateMatcher.create(state).map(this.map::get).orElse(null);
         if (result == null)
-            result = this.map.get(BlockStateMatcher.asGeneric(state));
-        return result != null ? result : this.defaultValue.get();
+            result = BlockStateMatcher.asGeneric(state).map(this.map::get).orElse(this.defaultValue.get());
+        return result;
     }
 
     public void setDefaultValue(@Nonnull final Supplier<T> s) {
@@ -78,27 +79,6 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
     @Nullable
     public T get(Object key) {
         return get((BlockState) key);
-    }
-
-    @Nullable
-    public T put(@Nonnull final String block, @Nonnull final T val) {
-        final BlockStateMatcher matcher = BlockStateMatcher.create(block);
-        Objects.requireNonNull(matcher);
-        return put(matcher, val);
-    }
-
-    @Nullable
-    public T put(@Nonnull final BlockState state, @Nonnull final T val) {
-        final BlockStateMatcher matcher = BlockStateMatcher.create(state);
-        Objects.requireNonNull(matcher);
-        return put(matcher, val);
-    }
-
-    @Nullable
-    public T put(@Nonnull final Block block, @Nonnull final T val) {
-        final BlockStateMatcher matcher = BlockStateMatcher.create(block);
-        Objects.requireNonNull(matcher);
-        return put(matcher, val);
     }
 
     @Override
@@ -140,4 +120,17 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
     public Set<Entry<BlockStateMatcher, T>> entrySet() {
         return this.map.entrySet();
     }
+
+    public void put(@Nonnull final String blockName, @Nonnull final T val) {
+        BlockStateMatcher.create(blockName).ifPresent(m -> put(m, val));
+    }
+
+    public void put(@Nonnull final BlockState state, @Nonnull final T val) {
+        BlockStateMatcher.create(state).ifPresent(m -> put(m, val));
+    }
+
+    public void put(@Nonnull final Block block, @Nonnull final T val) {
+        BlockStateMatcher.create(block).ifPresent(m -> put(m, val));
+    }
+
 }

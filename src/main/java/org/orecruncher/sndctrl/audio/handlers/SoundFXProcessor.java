@@ -36,6 +36,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.lwjgl.openal.AL10;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.threading.Worker;
@@ -233,13 +234,13 @@ public final class SoundFXProcessor {
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPrecipitationStrength(@Nonnull final AudioEvent.PrecipitationStrengthEvent event) {
-        event.setStrength(Minecraft.getInstance().world.rainingStrength);
+        event.setStrength(GameUtils.getWorld().rainingStrength);
         event.setCanceled(true);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
-        if (isAvailable() && Minecraft.getInstance().gameSettings.showDebugInfo && soundProcessor != null) {
+        if (isAvailable() && GameUtils.displayDebug() && soundProcessor != null) {
             final String msg = soundProcessor.getDiagnosticString();
             if (!StringUtils.isEmpty(msg))
                 event.getLeft().add(TextFormatting.GREEN + msg);

@@ -36,6 +36,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import org.apache.commons.lang3.StringUtils;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.Config;
@@ -86,7 +87,7 @@ public final class AudioEngine {
         if (state != SoundState.STOPPING && !state.isTerminal()) {
             // Tell Minecraft to stop the sound.  Termination will be detected in the client tick handler.
             sound.setState(SoundState.STOPPING);
-            Minecraft.getInstance().getSoundHandler().stop(getActualSound(sound));
+            GameUtils.getSoundHander().stop(getActualSound(sound));
         }
     }
 
@@ -95,7 +96,7 @@ public final class AudioEngine {
      */
     public static void stopAll() {
         LOGGER.debug("Stopping all sounds");
-        Minecraft.getInstance().getSoundHandler().stop();
+        GameUtils.getSoundHander().stop();
         playingSounds.reference2ObjectEntrySet().fastForEach(kvp -> kvp.getKey().setState(SoundState.DONE));
         processTerminalSounds();
     }
@@ -184,7 +185,7 @@ public final class AudioEngine {
                 */
                 final ISoundInstance original = getOriginalSound(sound);
                 playedSound = null;
-                Minecraft.getInstance().getSoundHandler().play(original);
+                GameUtils.getSoundHander().play(original);
                 if (playedSound != null) {
                     // Did the sound get replaced?  If so, need to wrap in a proxy for tracking
                     if (playedSound != original) {
@@ -314,7 +315,7 @@ public final class AudioEngine {
 
     public static void initialize() {
         MinecraftForge.EVENT_BUS.register(AudioEngine.class);
-        Minecraft.getInstance().getSoundHandler().addListener(new SoundListener());
+        GameUtils.getSoundHander().addListener(new SoundListener());
     }
 
     /**

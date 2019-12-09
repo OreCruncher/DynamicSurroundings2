@@ -24,6 +24,7 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.audio.ISoundInstance;
@@ -42,7 +43,7 @@ public final class SoundVolumeEvaluator {
     private static float getCategoryVolumeScale(@Nonnull final SoundCategory category) {
         // Master category already controlled by master gain so ignore
         if (category != SoundCategory.MASTER)
-            return Minecraft.getInstance().gameSettings.getSoundLevel(category);
+            return GameUtils.getGameSettings().getSoundLevel(category);
         return 1F;
     }
 

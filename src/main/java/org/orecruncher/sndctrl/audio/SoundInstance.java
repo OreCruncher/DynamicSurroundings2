@@ -37,8 +37,6 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class SoundInstance extends LocatableSound implements ISoundInstance {
 
-    //private static final float ATTENUATION_OFFSET = 32F;
-
     private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
     @Nonnull
@@ -93,16 +91,6 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     public void setPosition(@Nonnull final Vec3d pos) {
         this.setPosition((float) pos.x, (float) pos.y, (float) pos.z);
     }
-
-    /*
-    @Override
-    public float getY() {
-        // Non-attenuated sounds we play 32 blocks above the player.  Makes it sound right with headphones.
-        final float y = super.getY();
-        return getAttenuationType() == AttenuationType.NONE ? y + ATTENUATION_OFFSET : y;
-    }
-
-     */
 
     public void setAttenuationType(@Nonnull final ISound.AttenuationType type) {
         this.attenuationType = type;

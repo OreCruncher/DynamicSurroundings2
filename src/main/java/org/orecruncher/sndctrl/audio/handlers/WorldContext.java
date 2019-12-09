@@ -23,14 +23,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import org.orecruncher.lib.WorldUtils;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.sndctrl.audio.EffectRegistry;
 import org.orecruncher.sndctrl.events.AudioEvent;
 
@@ -89,9 +87,9 @@ public final class WorldContext {
     public final float auralDampening;
 
     public WorldContext() {
-        if (WorldUtils.isInGame()) {
-            this.player = Minecraft.getInstance().player;
-            this.world = Minecraft.getInstance().world;
+        if (GameUtils.isInGame()) {
+            this.player = GameUtils.getPlayer();
+            this.world = GameUtils.getWorld();
             this.isPrecipitating = this.world.isRaining();
             this.playerPosition = this.player.getPositionVec();
             this.playerEyePosition = this.player.getEyePosition(1F);
@@ -126,18 +124,6 @@ public final class WorldContext {
 
     public boolean isNotValid() {
         return this.mc == null;
-    }
-
-    @Nonnull
-    public BlockRayTraceResult rayTraceBlocks(@Nonnull final Vec3d src, @Nonnull final Vec3d dest) {
-        return rayTraceBlocks(src, dest, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
-    }
-
-    @Nonnull
-    public BlockRayTraceResult rayTraceBlocks(@Nonnull final Vec3d src, @Nonnull final Vec3d dest, @Nonnull final RayTraceContext.BlockMode bm, @Nonnull final RayTraceContext.FluidMode fm) {
-        assert this.world != null;
-        assert this.player != null;
-        return WorldUtils.rayTraceBlock(this.world, src, dest, bm, fm);
     }
 
 }

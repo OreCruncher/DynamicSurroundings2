@@ -29,10 +29,12 @@ import java.util.TreeMap;
 @SuppressWarnings("unused")
 public final class SoundTypeUtils {
 
-    private static final Map<SoundType, String> soundTypeMap = new Reference2ObjectOpenHashMap<>();
+    private static final Reference2ObjectOpenHashMap<SoundType, String> soundTypeMap = new Reference2ObjectOpenHashMap<>();
     private static final Map<String, SoundType> soundTypeMapInv = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     static {
+        soundTypeMap.defaultReturnValue("CUSTOM");
+
         soundTypeMap.put(SoundType.WOOD, "WOOD");
         soundTypeMap.put(SoundType.GROUND, "GROUND");
         soundTypeMap.put(SoundType.PLANT, "PLANT");

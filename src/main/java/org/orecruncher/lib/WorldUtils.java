@@ -18,18 +18,10 @@
 
 package org.orecruncher.lib;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.math.BlockRayTrace;
 
 import javax.annotation.Nonnull;
 
@@ -58,21 +50,6 @@ public final class WorldUtils {
 
         final Biome biome = world.getBiome(pos);
         return biome.doesWaterFreeze(world, pos) ? Biome.RainType.SNOW : Biome.RainType.RAIN;
-    }
-
-    @Nonnull
-    public static BlockRayTraceResult rayTraceBlock(@Nonnull final IBlockReader world, @Nonnull final Vec3d source, @Nonnull final Vec3d dest) {
-        return rayTraceBlock(world, source, dest, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
-    }
-
-    @Nonnull
-    public static BlockRayTraceResult rayTraceBlock(@Nonnull final IBlockReader world, @Nonnull final Vec3d source, @Nonnull final Vec3d dest, RayTraceContext.BlockMode bm, RayTraceContext.FluidMode fm) {
-        return new BlockRayTrace(world, source, dest, bm, fm).trace();
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean isInGame() {
-        return Minecraft.getInstance().world != null && Minecraft.getInstance().player != null;
     }
 
 }

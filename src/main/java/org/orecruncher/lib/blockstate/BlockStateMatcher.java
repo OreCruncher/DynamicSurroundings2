@@ -29,13 +29,13 @@ import org.orecruncher.lib.BlockNameUtil.NameResult;
 import org.orecruncher.lib.Lib;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public final class BlockStateMatcher {
 
+    // Universal empty property list for dedupe
     private static final ImmutableMap<IProperty<?>, Comparable<?>> EMPTY = ImmutableMap.of();
 
     // All instances will have this defined
@@ -48,54 +48,53 @@ public final class BlockStateMatcher {
     private final ImmutableMap<IProperty<?>, Comparable<?>> props;
 
     private BlockStateMatcher(@Nonnull final BlockState state) {
-        this.block = state.getBlock();
-        this.props = getPropsFromState(state);
+        this(state.getBlock(), state.getValues());
     }
 
     private BlockStateMatcher(@Nonnull final Block block) {
-        this(block, EMPTY);
+        this.block = block;
+        this.props = EMPTY;
     }
 
     private BlockStateMatcher(@Nonnull final Block block,
                               @Nonnull final ImmutableMap<IProperty<?>, Comparable<?>> props) {
         this.block = block;
-        this.props = props;
+        this.props = props.size() > 0 ? props : EMPTY;
     }
 
     @Nonnull
-    public static BlockStateMatcher asGeneric(@Nonnull final BlockState state) {
-        return new BlockStateMatcher(state.getBlock());
+    public static Optional<BlockStateMatcher> asGeneric(@Nonnull final BlockState state) {
+        return Optional.of(new BlockStateMatcher(state.getBlock()));
     }
 
     @Nonnull
-    public static BlockStateMatcher create(@Nonnull final BlockState state) {
-        return new BlockStateMatcher(state);
+    public static Optional<BlockStateMatcher> create(@Nonnull final BlockState state) {
+        return Optional.of(new BlockStateMatcher(state));
     }
 
     @Nonnull
-    public static BlockStateMatcher create(@Nonnull final Block block) {
-        return new BlockStateMatcher(block);
-    }
-
-    @Nullable
-    public static BlockStateMatcher create(@Nonnull final String blockId) {
-        return BlockNameUtil.parseBlockName(blockId).map(BlockStateMatcher::create).orElse(null);
+    public static Optional<BlockStateMatcher> create(@Nonnull final Block block) {
+        return Optional.of(new BlockStateMatcher(block));
     }
 
     @Nonnull
-    public static BlockStateMatcher create(@Nonnull final NameResult result) {
+    public static Optional<BlockStateMatcher> create(@Nonnull final String blockId) {
+        return BlockNameUtil.parseBlockName(blockId).flatMap(BlockStateMatcher::create);
+    }
+
+    @Nonnull
+    public static Optional<BlockStateMatcher> create(@Nonnull final NameResult result) {
         final Block block = result.getBlock();
         final BlockState defaultState = block.getDefaultState();
         final StateContainer<Block, BlockState> container = block.getStateContainer();
         if (container.getValidStates().size() == 1) {
-            // Easy case - it's always an identical match because there are no other
-            // properties
-            return new BlockStateMatcher(defaultState);
+            // Easy case - it's always an identical match because there are no other properties
+            return Optional.of(new BlockStateMatcher(defaultState));
         }
 
         if (!result.hasProperties()) {
-            // No NBT specification so this is a generic
-            return new BlockStateMatcher(block);
+            // No property specification so this is a generic
+            return Optional.of(new BlockStateMatcher(block));
         }
 
         final Map<String, String> properties = result.getProperties();
@@ -120,13 +119,12 @@ public final class BlockStateMatcher {
             }
         }
 
-        // If we have properties it will be a partial generic type
-        // match. Otherwise it will be an exact match on the default
-        // state.
+        // If we have properties it will be a partial generic type match. Otherwise it will be an exact match
+        // on the default state.
         if (props.size() > 0) {
-            return new BlockStateMatcher(defaultState.getBlock(), ImmutableMap.copyOf(props));
+            return Optional.of(new BlockStateMatcher(defaultState.getBlock(), ImmutableMap.copyOf(props)));
         } else {
-            return new BlockStateMatcher(defaultState);
+            return Optional.of(new BlockStateMatcher(defaultState));
         }
 
     }
@@ -160,7 +158,7 @@ public final class BlockStateMatcher {
     }
 
     @Nonnull
-    public List<BlockState> getMatchingBlockStates() {
+    public Collection<BlockState> getMatchingBlockStates() {
         //@formatter:off
         return this.block.getStateContainer().getValidStates().stream()
                 .filter(this::matchProps)
@@ -211,11 +209,6 @@ public final class BlockStateMatcher {
             return true;
         }
         return false;
-    }
-
-    @Nonnull
-    private ImmutableMap<IProperty<?>, Comparable<?>> getPropsFromState(@Nonnull final BlockState state) {
-        return state.getValues();
     }
 
     @Override

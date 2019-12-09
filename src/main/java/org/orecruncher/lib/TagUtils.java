@@ -41,7 +41,7 @@ public final class TagUtils {
     @Nonnull
     public static Collection<Tag<Block>> getBlockStateTags(@Nonnull final BlockState state) {
         final List<Tag<Block>> tags = new ArrayList<>();
-        for(ResourceLocation res : state.getBlock().getTags()) {
+        for (final ResourceLocation res : state.getBlock().getTags()) {
             tags.add(getBlockTag(res));
         }
         return tags;

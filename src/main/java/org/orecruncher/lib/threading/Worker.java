@@ -26,29 +26,37 @@ import org.orecruncher.lib.math.TimerEMA;
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
-public class Worker {
+public final class Worker {
 
     @Nonnull
     private final Thread thread;
     @Nonnull
     private final Runnable task;
-    private final int frequency;
     @Nonnull
     private final IModLog logger;
+    private final int frequency;
     @Nonnull
     private String diagnosticString;
 
-    public Worker(@Nonnull final String name, @Nonnull final Runnable task, final int frequency, @Nonnull final IModLog logger) {
+    /**
+     * Instantiates a worker thread to execute a task on a repeating basis.
+     *
+     * @param threadName     Name of the worker thread
+     * @param task           The task to be executed
+     * @param frequencyMsecs The frequency of execution in msecs
+     * @param logger         The logger to use when logging is needed
+     */
+    public Worker(@Nonnull final String threadName, @Nonnull final Runnable task, final int frequencyMsecs, @Nonnull final IModLog logger) {
         this.thread = new Thread(this::run);
-        this.thread.setName(name);
+        this.thread.setName(threadName);
         this.thread.setDaemon(true);
         this.task = task;
-        this.frequency = frequency;
+        this.frequency = frequencyMsecs;
         this.logger = logger;
         this.diagnosticString = StringUtils.EMPTY;
     }
 
-    public void run() {
+    private void run() {
         final TimerEMA timeTrack = new TimerEMA(this.thread.getName());
         final StopWatch sw = new StopWatch();
         for (; ; ) {
@@ -77,10 +85,18 @@ public class Worker {
 
     }
 
+    /**
+     * Starts up the worker.  Execution will start immediately.
+     */
     public void start() {
         this.thread.start();
     }
 
+    /**
+     * Gathers a diagnostic string to display or log.
+     *
+     * @return String for logging or display
+     */
     @Nonnull
     public String getDiagnosticString() {
         return this.diagnosticString;

@@ -20,11 +20,12 @@ package org.orecruncher.lib.blockstate;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.lib.Lib;
+import org.orecruncher.lib.logging.IModLog;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,8 +33,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -43,9 +42,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public final class BlockStateParser {
 
-    // https://www.regexplanet.com/advanced/java/index.html
-    private static final Pattern pattern = Pattern
-            .compile("([a-z0-9_.-]+:[a-z0-9/._-]+)\\[?((?:\\w+=\\w+)?(?:,\\w+=\\w+)*)]?\\+?(\\w+)?");
+    private static final IModLog LOGGER = Lib.LOGGER;
 
     private BlockStateParser() {
 
@@ -57,13 +54,47 @@ public final class BlockStateParser {
      */
     @Nonnull
     public static Optional<ParseResult> parseBlockState(@Nonnull final String blockName) {
-        try {
-            final Matcher matcher = pattern.matcher(blockName);
-            return matcher.matches() ? Optional.of(new ParseResult(matcher)) : Optional.empty();
-        } catch (final Exception ex) {
-            Lib.LOGGER.error(ex, "Unable to parse '%s'", blockName);
+
+        String temp = blockName;
+        int idx = temp.indexOf('+');
+
+        String extras = null;
+
+        if (idx > 0) {
+            extras = temp.substring(idx + 1);
+            temp = temp.substring(0, idx);
         }
-        return Optional.empty();
+
+        Map<String, String> properties = ImmutableMap.of();
+
+        idx = temp.indexOf('[');
+        if (idx > 0) {
+            try {
+                int end = temp.indexOf(']');
+                String propString = temp.substring(idx + 1, end);
+                properties = Arrays.stream(propString.split(","))
+                        .map(elem -> elem.split("="))
+                        .collect(Collectors.toMap(e -> e[0], e -> e[1]));
+                temp = temp.substring(0, idx);
+            } catch(@Nonnull final Throwable ignore) {
+                LOGGER.warn("Unable to parse properties of '%s'", blockName);
+                return Optional.empty();
+            }
+        }
+
+        if (!ResourceLocation.isResouceNameValid(temp)) {
+            LOGGER.warn("Invalid blockname '%s' for entry '%s'", temp, blockName);
+            return Optional.empty();
+        }
+
+        final ResourceLocation resource = new ResourceLocation(temp);
+        final Block block = ForgeRegistries.BLOCKS.getValue(resource);
+        if (block == null || (block == Blocks.AIR && !"mincraft:air".equals(temp))) {
+            LOGGER.warn("Unknown block '%s' for entry '%s'", temp, blockName);
+            return Optional.empty();
+        }
+
+        return Optional.of(new ParseResult(temp, block, properties, extras));
     }
 
     public final static class ParseResult {
@@ -92,22 +123,11 @@ public final class BlockStateParser {
         @Nullable
         private final String extras;
 
-        private ParseResult(@Nonnull final Matcher matcher) {
-            this.blockName = matcher.group(1);
-            this.block = Objects.requireNonNull(
-                    ForgeRegistries.BLOCKS.getValue(new ResourceLocation(this.blockName)),
-                    String.format("The blockName '%s' is invalid", this.blockName));
-
-            final String temp = matcher.group(2);
-            if (!StringUtils.isEmpty(temp)) {
-                this.properties = Arrays.stream(temp.split(","))
-                        .map(elem -> elem.split("="))
-                        .collect(Collectors.toMap(e -> e[0], e -> e[1]));
-            } else {
-                this.properties = ImmutableMap.of();
-            }
-
-            this.extras = matcher.group(3);
+        private ParseResult(@Nonnull final String blockName, @Nonnull final Block block, @Nonnull final Map<String, String> props, @Nullable final String extras) {
+            this.blockName = blockName;
+            this.block = block;
+            this.properties = props;
+            this.extras = extras;
         }
 
         @Nonnull
@@ -148,11 +168,16 @@ public final class BlockStateParser {
                 final String props = getProperties()
                         .entrySet()
                         .stream()
-                        .map(e -> e.getKey() + '=' + e.getValue())
+                        .map(Objects::toString)
                         .collect(Collectors.joining(","));
                 builder.append(props);
                 builder.append(']');
             }
+
+            if (!StringUtils.isEmpty(this.extras)) {
+                builder.append('+').append(this.extras);
+            }
+
             return builder.toString();
         }
     }

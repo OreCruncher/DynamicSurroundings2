@@ -60,6 +60,7 @@ public final class EffectRegistry {
     private static final Object2FloatOpenHashMap<ResourceLocation> fluidCoefficient = new Object2FloatOpenHashMap<>();
 
     static {
+
         // Occlusion setup
         materialOcclusion.defaultReturnValue(-1F);
         for (final Material mat : MaterialUtils.getMaterials())

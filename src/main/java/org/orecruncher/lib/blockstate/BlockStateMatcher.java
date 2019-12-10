@@ -24,12 +24,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.orecruncher.lib.BlockNameUtil;
-import org.orecruncher.lib.BlockNameUtil.NameResult;
+import org.orecruncher.lib.blockstate.BlockStateParser.ParseResult;
 import org.orecruncher.lib.Lib;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -79,11 +80,11 @@ public final class BlockStateMatcher {
 
     @Nonnull
     public static Optional<BlockStateMatcher> create(@Nonnull final String blockId) {
-        return BlockNameUtil.parseBlockName(blockId).flatMap(BlockStateMatcher::create);
+        return BlockStateParser.parseBlockState(blockId).flatMap(BlockStateMatcher::create);
     }
 
     @Nonnull
-    public static Optional<BlockStateMatcher> create(@Nonnull final NameResult result) {
+    public static Optional<BlockStateMatcher> create(@Nonnull final ParseResult result) {
         final Block block = result.getBlock();
         final BlockState defaultState = block.getDefaultState();
         final StateContainer<Block, BlockState> container = block.getStateContainer();
@@ -130,26 +131,20 @@ public final class BlockStateMatcher {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Comparable<T>> String getValue(@Nonnull final Block block,
-                                                             @Nonnull final String propName, @Nonnull final Object val) {
-        final StateContainer<Block, BlockState> container = block.getStateContainer();
-        final IProperty<T> prop = (IProperty<T>) container.getProperty(propName);
+    @Nonnull
+    private static <T extends Comparable<T>> String getValue(@Nonnull final Block block, @Nonnull final String propName, @Nonnull final Object val) {
+        final IProperty<T> prop = (IProperty<T>) block.getStateContainer().getProperty(propName);
         assert prop != null;
         return prop.getName((T) val);
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T extends Comparable<T>> String getAllowedValues(final Block block, final String propName) {
-        final List<String> result = new ArrayList<>();
-        final StateContainer<Block, BlockState> container = block.getStateContainer();
-        final IProperty<T> prop = (IProperty<T>) container.getProperty(propName);
+    @Nonnull
+    private static <T extends Comparable<T>> String getAllowedValues(@Nonnull final Block block, @Nonnull final String propName) {
+        @SuppressWarnings("unchecked") final IProperty<T> prop = (IProperty<T>) block.getStateContainer().getProperty(propName);
         if (prop != null) {
-            final Collection<T> vals = prop.getAllowedValues();
-            for (final T v : vals) {
-                result.add(prop.getName(v));
-            }
+            return prop.getAllowedValues().stream().map(prop::getName).collect(Collectors.joining(","));
         }
-        return String.join(",", result);
+        return "Invalid property " + propName;
     }
 
     @Nonnull
@@ -157,29 +152,9 @@ public final class BlockStateMatcher {
         return this.block;
     }
 
-    @Nonnull
-    public Collection<BlockState> getMatchingBlockStates() {
-        //@formatter:off
-        return this.block.getStateContainer().getValidStates().stream()
-                .filter(this::matchProps)
-                .collect(Collectors.toList());
-        //@formatter:on
-    }
-
-    private boolean matchProps(@Nonnull final BlockState state) {
-        if (this.props.isEmpty())
-            return true;
-        for (final Map.Entry<IProperty<?>, Comparable<?>> entry : this.props.entrySet()) {
-            final Object result = state.get(entry.getKey());
-            if (!entry.getValue().equals(result))
-                return false;
-        }
-
-        return true;
-    }
-
     @Override
     public int hashCode() {
+        // All matchers for the same block map to the same hashcode
         return this.block.hashCode();
     }
 

@@ -27,9 +27,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Special Map implementation that is implemented with BlockStateMatcher as a key type.  It handles any special
@@ -131,6 +131,11 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
 
     public void put(@Nonnull final Block block, @Nonnull final T val) {
         BlockStateMatcher.create(block).ifPresent(m -> put(m, val));
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).addValue(this.map.entrySet().stream().map(Object::toString).collect(Collectors.joining("\n"))).toString();
     }
 
 }

@@ -86,7 +86,6 @@ public final class EffectRegistry {
         } catch (@Nonnull final Throwable t) {
             LOGGER.error(t, "Unable to load %s", res.toString());
         }
-
     }
 
     /**

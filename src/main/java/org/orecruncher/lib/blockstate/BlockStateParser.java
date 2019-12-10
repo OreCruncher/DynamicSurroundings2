@@ -16,13 +16,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib;
+package org.orecruncher.lib.blockstate;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
+import org.orecruncher.lib.Lib;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,32 +41,32 @@ import java.util.stream.Collectors;
  * and partially described.
  */
 @SuppressWarnings("unused")
-public final class BlockNameUtil {
+public final class BlockStateParser {
 
     // https://www.regexplanet.com/advanced/java/index.html
     private static final Pattern pattern = Pattern
-            .compile("([\\w\\-]+:[\\w.\\-/]+)\\[?((?:\\w+=\\w+)?(?:,\\w+=\\w+)*)]?\\+?(\\w+)?");
+            .compile("([a-z0-9_.-]+:[a-z0-9/._-]+)\\[?((?:\\w+=\\w+)?(?:,\\w+=\\w+)*)]?\\+?(\\w+)?");
 
-    private BlockNameUtil() {
+    private BlockStateParser() {
 
     }
 
     /**
-     * Parses the blockName name passed in and returns the result of that parsing.
-     * If null is returned it means there was some sort of error.
+     * Parses the block state string passed in and returns the result of that parsing.  If null is returned it means
+     * there was some sort of error.
      */
     @Nonnull
-    public static Optional<NameResult> parseBlockName(@Nonnull final String blockName) {
+    public static Optional<ParseResult> parseBlockState(@Nonnull final String blockName) {
         try {
             final Matcher matcher = pattern.matcher(blockName);
-            return matcher.matches() ? Optional.of(new NameResult(matcher)) : Optional.empty();
+            return matcher.matches() ? Optional.of(new ParseResult(matcher)) : Optional.empty();
         } catch (final Exception ex) {
             Lib.LOGGER.error(ex, "Unable to parse '%s'", blockName);
         }
         return Optional.empty();
     }
 
-    public final static class NameResult {
+    public final static class ParseResult {
 
         /**
          * Name of the blockName in standard domain:path form.
@@ -90,7 +92,7 @@ public final class BlockNameUtil {
         @Nullable
         private final String extras;
 
-        private NameResult(@Nonnull final Matcher matcher) {
+        private ParseResult(@Nonnull final Matcher matcher) {
             this.blockName = matcher.group(1);
             this.block = Objects.requireNonNull(
                     ForgeRegistries.BLOCKS.getValue(new ResourceLocation(this.blockName)),

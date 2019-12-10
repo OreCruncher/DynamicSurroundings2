@@ -152,39 +152,21 @@ public final class SoundFXProcessor {
         if (!isAvailable())
             return;
 
-        try {
-
-            final Optional<IChannelManagerEntry> optionalCme = Utilities.safeCast(entry, IChannelManagerEntry.class);
-            if (!optionalCme.isPresent())
-                return;
-
-            final IChannelManagerEntry cme = optionalCme.get();
-
-            // Because of where this is hooked SoundSource may not have been created.  Have to wait for creation.
-            // Note that this yield can be a bit dangerous.  There is a limit as to the number of sound sources that
-            // can play at a time, but the Minecraft sound handler will queue up more sounds that permitted.  When
-            // this happens SoundSource will be null, and the while loop below will block the client thread from
-            // processing.  There is a check in SoundProcessor that if more sounds that can be queued is performed it
-            // will block that sound play to prevent overload.
-            SoundSource src;
-            while ((src = cme.getSource()) == null)
-                Thread.yield();
-
-            Utilities.safeCast(src, ISoundSource.class).ifPresent(ss -> {
+        // Double suplex!  Queue the operation on the sound executor to do the config work.  This should queue in
+        // behind any attempt at getting a sound source.
+        entry.runOnSoundExecutor(source -> {
+            Utilities.safeCast(source, ISoundSource.class).ifPresent(ss -> {
                 final SourceContext ctx = ss.getSourceContext();
                 ctx.attachSound(sound);
-                if (!isCategoryIgnored(sound.getCategory())) {
+                if (!isCategoryIgnored(sound.getCategory()) && ss.getSourceId() > 0) {
                     ctx.enable();
                     final int idx = sourceIdToIdx(ss.getSourceId());
-                    // First update before first actual play.  This is occuring on the client thread.
+                    // First update before first actual play.
                     ctx.exec();
                     sources[idx] = ctx;
                 }
             });
-        } catch (@Nonnull final Throwable t) {
-            LOGGER.error(t, "Error obtaining SoundSource information in callback");
-        }
-
+        });
     }
 
     /**

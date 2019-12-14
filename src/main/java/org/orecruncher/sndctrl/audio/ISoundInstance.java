@@ -53,4 +53,27 @@ public interface ISoundInstance extends ISound {
      */
     boolean canMute();
 
+    /**
+     * The number of ticks to delay playing the sound.  Keep in mind a tick is 50msecs.
+     *
+     * @return Number of ticks to delay play
+     */
+    int getPlayDelay();
+
+    /**
+     * Sets the delay in ticks for the playing sound.  Keep in mind a tick is 50 msecs.
+     *
+     * @param delay Number of ticks to delay play
+     */
+    void setPlayDelay(final int delay);
+
+    /**
+     * Indicates if the sound is delayed when played
+     *
+     * @return true if the sound is to be delayed, false otherwise
+     */
+    default boolean isDelayed() {
+        return getPlayDelay() > 0;
+    }
+
 }

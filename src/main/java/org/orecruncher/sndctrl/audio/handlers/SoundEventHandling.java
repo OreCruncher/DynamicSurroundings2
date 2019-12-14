@@ -77,19 +77,21 @@ public final class SoundEventHandling {
                 res = possibles.get(XorShiftRandom.current().nextInt(possibles.size()));
             }
 
-            final SoundEvent se = SoundRegistry.getSound(new ResourceLocation(res));
-            final ISoundInstance sound = SoundBuilder.builder(se, SoundCategory.MASTER)
-                    .setAttenuation(ISound.AttenuationType.NONE)
-                    .build();
+            final SoundEvent se = SoundRegistry.getSound(new ResourceLocation(res)).orElse(null);
+            if (se != null) {
+                final ISoundInstance sound = SoundBuilder.builder(se, SoundCategory.MASTER)
+                        .setAttenuation(ISound.AttenuationType.NONE)
+                        .build();
 
-            // Queue it up on the main client thread.
-            GameUtils.getMC().enqueue(() -> {
-                try {
-                    AudioEngine.play(sound);
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Error executing startup sound '%s'", se.toString());
-                }
-            });
+                // Queue it up on the main client thread.
+                GameUtils.getMC().enqueue(() -> {
+                    try {
+                        AudioEngine.play(sound);
+                    } catch (@Nonnull final Throwable t) {
+                        LOGGER.error(t, "Error executing startup sound '%s'", se.toString());
+                    }
+                });
+            }
         }
     }
 

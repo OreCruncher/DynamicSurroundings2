@@ -24,6 +24,7 @@ import org.lwjgl.openal.EXTEfx;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
@@ -44,9 +45,9 @@ public abstract class Slot {
     public final void initialize() {
         if (this.slot == EXTEfx.AL_EFFECTSLOT_NULL) {
             this.slot = this.factory.get();
-            check();
+            check("Slot factor get");
             this.init0();
-            check();
+            check("Slot init0");
         }
     }
 
@@ -56,7 +57,11 @@ public abstract class Slot {
         return this.slot;
     }
 
-    protected void check() {
-        SoundFXProcessor.validate();
+    protected void check(@Nonnull final String msg) {
+        SoundFXProcessor.validate(msg);
+    }
+
+    protected void check(@Nullable final Supplier<String> err) {
+        SoundFXProcessor.validate(err);
     }
 }

@@ -162,6 +162,16 @@ public final class ProxySound implements IProxySound, ISoundInstance, ITickableS
     }
 
     @Override
+    public int getPlayDelay() {
+        return this.original.getPlayDelay();
+    }
+
+    @Override
+    public void setPlayDelay(final int delay) {
+        this.original.setPlayDelay(delay);
+    }
+
+    @Override
     public void tick() {
         this.tickable.ifPresent(ITickableSound::tick);
     }

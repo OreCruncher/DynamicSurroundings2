@@ -47,7 +47,7 @@ public class LowPassFilterSlot extends Slot {
             } else {
                 AL11.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_EFFECTSLOT_NULL);
             }
-            check();
+            check("LowPassFilterSlot EXTEfx.AL_DIRECT_FILTER");
         }
     }
 
@@ -61,7 +61,7 @@ public class LowPassFilterSlot extends Slot {
             } else {
                 AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_EFFECTSLOT_NULL, auxSend, EXTEfx.AL_FILTER_NULL);
             }
-            check();
+            check("LowPassFilterSlot EXTEfx.AL_AUXILIARY_SEND_FILTER");
         }
     }
 }

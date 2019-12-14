@@ -70,6 +70,16 @@ public class EntitySoundInstance extends WrappedSoundInstance {
         return !this.entity.isAlive() || super.isDonePlaying();
     }
 
+    @Override
+    public int getPlayDelay() {
+        return this.sound.getPlayDelay();
+    }
+
+    @Override
+    public void setPlayDelay(final int delay) {
+        this.sound.setPlayDelay(delay);
+    }
+
     private void updatePosition() {
         final Vec3d box = this.entity.getBoundingBox().getCenter();
         this.x = (float) box.x;

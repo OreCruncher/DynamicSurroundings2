@@ -96,8 +96,7 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
     @Nonnull
     @Override
     public AttenuationType getAttenuationType() {
-        // Always NONE
-        return SoundUtils.noAttenuation();
+        return AttenuationType.NONE;
     }
 
     public void fade() {
@@ -120,6 +119,16 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
     @Override
     public boolean canMute() {
         return true;
+    }
+
+    @Override
+    public int getPlayDelay() {
+        return this.sound.getPlayDelay();
+    }
+
+    @Override
+    public void setPlayDelay(final int delay) {
+        this.sound.setPlayDelay(delay);
     }
 
     @Override

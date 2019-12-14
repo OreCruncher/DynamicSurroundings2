@@ -60,7 +60,7 @@ public final class SourcePropertyFloat {
     public void apply(final int sourceId) {
         if (doProcess()) {
             AL11.alSourcef(sourceId, this.property, getValue());
-            SoundFXProcessor.validate();
+            SoundFXProcessor.validate("SourcePropertyFloat apply");
         }
     }
 }

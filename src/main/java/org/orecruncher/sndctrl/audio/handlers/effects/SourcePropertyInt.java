@@ -61,7 +61,7 @@ public final class SourcePropertyInt {
     public void apply(final int sourceId) {
         if (doProcess()) {
             AL11.alSourcei(sourceId, this.property, getValue());
-            SoundFXProcessor.validate();
+            SoundFXProcessor.validate("SourcePropertyInt apply");
         }
     }
 }

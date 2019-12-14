@@ -19,10 +19,29 @@
 package org.orecruncher.lib;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public final class Utilities {
     private Utilities() {
+    }
+
+    /**
+     * Iterates through the parametesr to indentify the first non-null value and returns it.  If no parameters are
+     * specified, or a non-null reference could not be found, an exception will be thrown.
+     *
+     * @param objs Object references to evaluate
+     * @param <T> Type of object
+     * @return Reference to the first non-null reference in the parameter list.
+     */
+    @SafeVarargs
+    @Nonnull
+    public static <T> T firstNonNull(@Nullable final T... objs) {
+        if (objs != null && objs.length > 0)
+            for (final T o : objs)
+                if (o != null)
+                    return o;
+        throw new NullPointerException();
     }
 
     @Nonnull

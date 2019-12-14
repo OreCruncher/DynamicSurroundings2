@@ -16,23 +16,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio.handlers.effects;
+package org.orecruncher.sndctrl.audio.acoustic;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.openal.AL10;
-import org.lwjgl.openal.EXTEfx;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-public class AuxSlot extends Slot {
+public class AcousticException extends Exception {
 
-    public AuxSlot() {
-        super(EXTEfx::alGenAuxiliaryEffectSlots);
-    }
-
-    @Override
-    protected void init0() {
-        EXTEfx.alAuxiliaryEffectSloti(getSlot(), EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL10.AL_TRUE);
-        check("AuxSlot EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO");
+    public AcousticException(@Nonnull final String msg, @Nullable final Object... params) {
+        super(String.format(msg, params));
     }
 }

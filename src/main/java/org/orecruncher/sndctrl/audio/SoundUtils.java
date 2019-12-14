@@ -103,17 +103,12 @@ public final class SoundUtils {
     }
 
     @Nullable
-    static SoundCategory getSoundCategory(@Nonnull final String name) {
+    public static SoundCategory getSoundCategory(@Nonnull final String name) {
         return categoryMapper.get(Objects.requireNonNull(name));
     }
 
     public static float getMasterGain() {
         return listener.getGain();
-    }
-
-    @Nonnull
-    public static ISound.AttenuationType noAttenuation() {
-        return ModEnvironment.SoundPhysics.isLoaded() ? ISound.AttenuationType.LINEAR : ISound.AttenuationType.NONE;
     }
 
     /**

@@ -42,6 +42,7 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     @Nonnull
     private SoundState state = SoundState.NONE;
 
+    private int playDelay;
     private boolean canMute;
 
     SoundInstance(@Nonnull final SoundEvent event, @Nonnull final SoundCategory cat) {
@@ -59,6 +60,7 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.attenuationType = ISound.AttenuationType.LINEAR;
 
         this.canMute = cat == SoundCategory.MUSIC;
+        this.playDelay = 0;
         this.sound = SoundHandler.MISSING_SOUND;
     }
 
@@ -123,6 +125,15 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
 
     public boolean isDonePlaying() {
         return getState().isTerminal();
+    }
+
+    @Override
+    public int getPlayDelay() {
+        return this.playDelay;
+    }
+
+    public void setPlayDelay(final int delay) {
+        this.playDelay = delay;
     }
 
     @Override

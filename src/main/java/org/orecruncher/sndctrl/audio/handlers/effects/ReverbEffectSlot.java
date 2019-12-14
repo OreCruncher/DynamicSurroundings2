@@ -57,7 +57,7 @@ public class ReverbEffectSlot extends Slot {
             } else {
                 EXTEfx.alAuxiliaryEffectSloti(aux.getSlot(), EXTEfx.AL_EFFECTSLOT_EFFECT, EXTEfx.AL_EFFECTSLOT_NULL);
             }
-            check();
+            check("ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT");
         }
     }
 }

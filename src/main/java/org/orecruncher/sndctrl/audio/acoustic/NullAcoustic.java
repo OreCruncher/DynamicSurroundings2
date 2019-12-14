@@ -16,23 +16,50 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio.handlers.effects;
+package org.orecruncher.sndctrl.audio.acoustic;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.openal.AL10;
-import org.lwjgl.openal.EXTEfx;
 
+import javax.annotation.Nonnull;
+
+/**
+ * Simple acoustic that has no sound.
+ */
 @OnlyIn(Dist.CLIENT)
-public class AuxSlot extends Slot {
+public final class NullAcoustic implements IAcoustic {
 
-    public AuxSlot() {
-        super(EXTEfx::alGenAuxiliaryEffectSlots);
+    public static final IAcoustic INSTANCE = new NullAcoustic();
+
+    private NullAcoustic() {
+
     }
 
     @Override
-    protected void init0() {
-        EXTEfx.alAuxiliaryEffectSloti(getSlot(), EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL10.AL_TRUE);
-        check("AuxSlot EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO");
+    public String getName() {
+        return "No Acoustic";
+    }
+
+    @Override
+    public void playAt(@Nonnull BlockPos pos, @Nonnull AcousticEvent event) {
+
+    }
+
+    @Override
+    public void playAt(@Nonnull Vec3d pos, @Nonnull AcousticEvent event) {
+
+    }
+
+    @Override
+    public void playNear(@Nonnull Entity entity, @Nonnull AcousticEvent event) {
+
+    }
+
+    @Override
+    public void playBackground(@Nonnull AcousticEvent event) {
+
     }
 }

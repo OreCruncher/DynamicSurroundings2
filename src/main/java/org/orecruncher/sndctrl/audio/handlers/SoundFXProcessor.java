@@ -19,10 +19,8 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ChannelManager;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
@@ -44,15 +42,14 @@ import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.events.AudioEvent;
-import org.orecruncher.sndctrl.mixins.IChannelManagerEntry;
 import org.orecruncher.sndctrl.xface.ISoundSource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoundFXProcessor {
@@ -239,24 +236,25 @@ public final class SoundFXProcessor {
 
     /**
      * Validates that the current OpenAL state is not in error.  If in an error state an exception will be thrown.
+     *
+     * @param msg Optional message to be displayed along with error data
      */
-    public static void validate() {
-        validate(null);
+    public static void validate(@Nonnull final String msg) {
+        validate(() -> msg);
     }
 
     /**
      * Validates that the current OpenAL state is not in error.  If in an error state an exception will be thrown.
      *
-     * @param msg Message to add to the exception information if it is thrown.
+     * @param err Supplier for the error message to post with exception info
      */
-    public static void validate(@Nullable String msg) {
+    public static void validate(@Nullable final Supplier<String> err) {
         final int error = AL10.alGetError();
         if (error != AL10.AL_NO_ERROR) {
             String errorName = AL10.alGetString(error);
             if (StringUtils.isEmpty(errorName))
                 errorName = Integer.toString(error);
-            if (StringUtils.isEmpty(msg))
-                msg = "NONE";
+            final String msg = Utilities.firstNonNull(err != null ? err.get() : null, "NONE");
             throw new IllegalStateException(String.format("OpenAL Error: %s [%s]", errorName, msg));
         }
     }

@@ -28,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.mixins.ILocatableSoundMixin;
 
@@ -43,6 +44,8 @@ import java.util.Random;
 public final class SoundBuilder {
 
     private static final Random RANDOM = XorShiftRandom.current();
+    private static final float[] volumeDelta = {-0.2F, 0.0F, 0.0F, 0.2F, 0.2F, 0.2F};
+    private static final float[] pitchDelta = {-0.2F, 0.0F, 0.0F, 0.2F, 0.2F, 0.2F};
 
     @Nonnull
     private final SoundEvent soundEvent;
@@ -62,6 +65,11 @@ public final class SoundBuilder {
     private int repeatDelayMax;
     private boolean global;
     private boolean canMute;
+
+    private boolean variableVolume;
+    private boolean variablePitch;
+
+    private int playDelay;
 
     private SoundBuilder(@Nonnull final SoundEvent evt, @Nonnull final SoundCategory cat) {
         Objects.requireNonNull(evt);
@@ -85,7 +93,7 @@ public final class SoundBuilder {
     public static SoundBuilder builder(@Nonnull final SoundInstance proto) {
         Objects.requireNonNull(proto);
 
-        final SoundEvent se = SoundRegistry.getSound(proto.getSoundLocation());
+        final SoundEvent se = SoundRegistry.getSound(proto.getSoundLocation()).orElseThrow(NullPointerException::new);
         final SoundCategory sc = proto.getCategory();
         return new SoundBuilder(se, sc).from(proto);
     }
@@ -100,12 +108,12 @@ public final class SoundBuilder {
         Objects.requireNonNull(name);
 
         final ResourceLocation resource = new ResourceLocation(name);
-        final SoundEvent se = SoundRegistry.getSound(resource);
+        final SoundEvent se = SoundRegistry.getSound(resource).orElseThrow(NullPointerException::new);
         final SoundCategory cat = SoundRegistry.getSoundCategory(resource, SoundCategory.MASTER);
         final SoundBuilder builder = new SoundBuilder(se, cat);
         builder.setVolume(volume);
         builder.setCanMute(false);
-        builder.setAttenuation(SoundUtils.noAttenuation());
+        builder.setAttenuation(AttenuationType.NONE);
         return builder.build();
     }
 
@@ -148,25 +156,49 @@ public final class SoundBuilder {
         return this;
     }
 
+    /**
+     * Sets the possible volume range for a sound instance.  Will disable variable volume setting.
+     */
     @Nonnull
     public SoundBuilder setVolumeRange(final float min, final float max) {
-        this.volumeMin = Math.min(min, max);
-        this.volumeMax = Math.max(min, max);
+        this.volumeMin = MathStuff.min(min, max);
+        this.volumeMax = MathStuff.max(min, max);
+        this.variableVolume = false;
         return this;
     }
 
     @Nonnull
+    public SoundBuilder setVariableVolume(final boolean f) {
+        this.variableVolume = f;
+        if (f)
+            this.volumeMax = this.volumeMin;
+        return this;
+    }
+
+    /**
+     * Sets the possible pitch range for a sound instance.  Will disable variable pitch setting.
+     */
+    @Nonnull
     public SoundBuilder setPitchRange(final float min, final float max) {
-        this.pitchMin = Math.min(min, max);
-        this.pitchMax = Math.max(min, max);
+        this.pitchMin = MathStuff.min(min, max);
+        this.pitchMax = MathStuff.max(min, max);
+        this.variablePitch = false;
+        return this;
+    }
+
+    @Nonnull
+    public SoundBuilder setVariablePitch(final boolean f) {
+        this.variablePitch = f;
+        if (f)
+            this.pitchMax = this.pitchMin;
         return this;
     }
 
     @Nonnull
     public SoundBuilder setRepeateDelayRange(final int min, final int max) {
         this.repeatable = true;
-        this.repeatDelayMin = Math.min(min, max);
-        this.repeatDelayMax = Math.max(min, max);
+        this.repeatDelayMin = MathStuff.min(min, max);
+        this.repeatDelayMax = MathStuff.max(min, max);
         return this;
     }
 
@@ -177,8 +209,12 @@ public final class SoundBuilder {
     }
 
     private float getVolume() {
-        if (Float.compare(this.volumeMin, this.volumeMax) == 0)
-            return this.volumeMin;
+        if (Float.compare(this.volumeMin, this.volumeMax) == 0) {
+            float result = this.volumeMin;
+            if (this.variableVolume)
+                result *= 1F + volumeDelta[RANDOM.nextInt(volumeDelta.length)];
+            return result;
+        }
         return this.volumeMin + RANDOM.nextFloat() * (this.volumeMax - this.volumeMin);
     }
 
@@ -189,8 +225,12 @@ public final class SoundBuilder {
     }
 
     private float getPitch() {
-        if (Float.compare(this.pitchMin, this.pitchMax) == 0)
-            return this.pitchMin;
+        if (Float.compare(this.pitchMin, this.pitchMax) == 0) {
+            float result = this.pitchMin;
+            if (this.variablePitch)
+                result *= 1F + pitchDelta[RANDOM.nextInt(pitchDelta.length)];
+            return result;
+        }
         return this.pitchMin + RANDOM.nextFloat() * (this.pitchMax - this.pitchMin);
     }
 
@@ -227,6 +267,12 @@ public final class SoundBuilder {
     }
 
     @Nonnull
+    public SoundBuilder setPlayDelay(final int delay) {
+        this.playDelay = delay;
+        return this;
+    }
+
+    @Nonnull
     public ISoundInstance build() {
         final SoundInstance sound = create(this.soundEvent, this.soundCategory);
         sound.setVolume(this.getVolume());
@@ -235,12 +281,13 @@ public final class SoundBuilder {
         sound.setRepeatDelay(this.getRepeatDelay());
         sound.setGlobal(this.global);
         sound.setCanMute(this.canMute);
+        sound.setPlayDelay(this.playDelay);
 
         if (!this.global) {
             sound.setPosition(this.position);
             sound.setAttenuationType(this.attenuation);
         } else {
-            sound.setAttenuationType(SoundUtils.noAttenuation());
+            sound.setAttenuationType(AttenuationType.NONE);
         }
 
         return sound;

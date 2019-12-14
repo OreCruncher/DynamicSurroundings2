@@ -97,7 +97,7 @@ public final class AudioEngine {
     public static void stopAll() {
         LOGGER.debug("Stopping all sounds");
         GameUtils.getSoundHander().stop();
-        playingSounds.reference2ObjectEntrySet().fastForEach(kvp -> kvp.getKey().setState(SoundState.DONE));
+        playingSounds.keySet().forEach(s -> s.setState(SoundState.DONE));
         processTerminalSounds();
     }
 
@@ -172,11 +172,17 @@ public final class AudioEngine {
         // Set the initial state
         sound.setState(SoundState.QUEUING);
 
-        // Check if the sound even has a chance at playing.  If the calculated volume is too low the sound engine
-        // will just drop it.  This check isn't perfect, but will get the majority of the cases.
         if (SoundUtils.isSoundVolumeBlocked(sound)) {
+            // Check if the sound even has a chance at playing.  If the calculated volume is too low the sound engine
+            // will just drop it.  This check isn't perfect, but will get the majority of the cases.
             sound.setState(SoundState.BLOCKED);
+        } else if (sound.isDelayed()) {
+            // The sound has delay play so stick it in Minecraft's delay queue and set state for tracking
+            GameUtils.getSoundHander().playDelayed(sound, sound.getPlayDelay());
+            sound.setState(SoundState.DELAYED);
+            playingSounds.put(sound, callback);
         } else if (SoundUtils.hasRoom()) {
+            // Play the sound now
             try {
                 /*
                  If the incoming sound is an IProxySound, try submitting the original sound.  It may be able to play

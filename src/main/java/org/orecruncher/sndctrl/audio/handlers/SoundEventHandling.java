@@ -19,7 +19,6 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import net.minecraft.client.GameSettings;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.Listener;
 import net.minecraft.client.gui.screen.MainMenuScreen;
@@ -79,7 +78,7 @@ public final class SoundEventHandling {
 
             final SoundEvent se = SoundRegistry.getSound(new ResourceLocation(res)).orElse(null);
             if (se != null) {
-                final ISoundInstance sound = SoundBuilder.builder(se, SoundCategory.MASTER)
+                final ISoundInstance sound = SoundBuilder.builder(se, Category.MASTER)
                         .setAttenuation(ISound.AttenuationType.NONE)
                         .build();
 

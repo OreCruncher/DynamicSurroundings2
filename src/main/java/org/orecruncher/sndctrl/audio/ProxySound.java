@@ -94,6 +94,12 @@ public final class ProxySound implements IProxySound, ISoundInstance, ITickableS
         return this.sound.getCategory();
     }
 
+    @Nonnull
+    @Override
+    public ISoundCategory getSoundCategory() {
+        return this.original.getSoundCategory();
+    }
+
     @Override
     public boolean canRepeat() {
         return false;

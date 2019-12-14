@@ -19,7 +19,6 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
@@ -27,6 +26,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.math.MathStuff;
+import org.orecruncher.sndctrl.audio.Category;
+import org.orecruncher.sndctrl.audio.ISoundCategory;
 import org.orecruncher.sndctrl.audio.ISoundInstance;
 
 import javax.annotation.Nonnull;
@@ -40,11 +41,16 @@ public final class SoundVolumeEvaluator {
     private SoundVolumeEvaluator() {
     }
 
-    private static float getCategoryVolumeScale(@Nonnull final SoundCategory category) {
+    private static float getCategoryVolumeScale(@Nonnull final ISound sound) {
+        final ISoundInstance si = Utilities.safeCast(sound, ISoundInstance.class).orElse(null);
+        if (si != null) {
+            final ISoundCategory sc = si.getSoundCategory();
+            return sc == Category.MASTER ? 1F : sc.getVolumeScale();
+        }
+
         // Master category already controlled by master gain so ignore
-        if (category != SoundCategory.MASTER)
-            return GameUtils.getGameSettings().getSoundLevel(category);
-        return 1F;
+        final SoundCategory category = sound.getCategory();
+        return category == SoundCategory.MASTER ? 1F : GameUtils.getGameSettings().getSoundLevel(category);
     }
 
     private static boolean canMute(@Nonnull final ISound sound) {
@@ -65,7 +71,7 @@ public final class SoundVolumeEvaluator {
     public static float getClampedVolume(@Nonnull final ISound sound) {
         Preconditions.checkNotNull(sound);
         final float volumeScale = getVolumeScale(sound);
-        final float volume = sound.getVolume() * getCategoryVolumeScale(sound.getCategory()) * volumeScale;
+        final float volume = sound.getVolume() * getCategoryVolumeScale(sound) * volumeScale;
         return MathStuff.clamp1(volume);
     }
 

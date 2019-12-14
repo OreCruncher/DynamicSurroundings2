@@ -19,9 +19,7 @@
 package org.orecruncher.sndctrl.audio;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -34,7 +32,6 @@ import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.audio.acoustic.AcousticCompiler;
 import org.orecruncher.sndctrl.audio.config.SoundMetadataConfig;
 
 import javax.annotation.Nonnull;
@@ -68,9 +65,6 @@ public final class SoundRegistry {
     }
 
     private static void onSetup(@Nonnull final FMLClientSetupEvent event) {
-
-        AcousticCompiler c = new AcousticCompiler("test");
-        c.compile("{'test': { '_type': 'delayed'}}");
 
         // Initializes the internal sound registry once all the other mods have
         // registered their sounds.
@@ -115,7 +109,7 @@ public final class SoundRegistry {
     }
 
     @Nonnull
-    public static SoundCategory getSoundCategory(@Nonnull final ResourceLocation sound, @Nonnull final SoundCategory defaultCategory) {
+    public static ISoundCategory getSoundCategory(@Nonnull final ResourceLocation sound, @Nonnull final ISoundCategory defaultCategory) {
         return Utilities.firstNonNull(soundMetadata.get(Objects.requireNonNull(sound)).getCategory(), defaultCategory);
     }
 

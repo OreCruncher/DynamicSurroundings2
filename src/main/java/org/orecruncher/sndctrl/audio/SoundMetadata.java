@@ -19,7 +19,6 @@
 package org.orecruncher.sndctrl.audio;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -29,12 +28,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.sndctrl.audio.config.SoundMetadataConfig;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
 public final class SoundMetadata {
 
@@ -44,15 +41,15 @@ public final class SoundMetadata {
     private final TextComponent title;
     @Nonnull
     private final TextComponent caption;
-    @Nullable
-    private final SoundCategory category;
+    @Nonnull
+    private final ISoundCategory category;
     @Nonnull
     private final List<TextComponent> credits;
 
     SoundMetadata() {
         this.title = NO_STRING;
         this.caption = NO_STRING;
-        this.category = null;
+        this.category = Category.MASTER;
         this.credits = ImmutableList.of();
     }
 
@@ -61,7 +58,7 @@ public final class SoundMetadata {
 
         this.title = StringUtils.isEmpty(cfg.title) ? NO_STRING : new TranslationTextComponent(cfg.title);
         this.caption = StringUtils.isEmpty(cfg.caption) ? NO_STRING : new TranslationTextComponent(cfg.caption);
-        this.category = SoundUtils.getSoundCategory(cfg.category);
+        this.category = Category.getCategory(cfg.category).orElse(Category.NEUTRAL);
 
         if (cfg.credits == null || cfg.credits.size() == 0) {
             this.credits = ImmutableList.of();
@@ -112,8 +109,8 @@ public final class SoundMetadata {
      *
      * @return SoundCategory specified in the sound event metadata, or null if not present.
      */
-    @Nullable
-    public SoundCategory getCategory() {
+    @Nonnull
+    public ISoundCategory getCategory() {
         return this.category;
     }
 

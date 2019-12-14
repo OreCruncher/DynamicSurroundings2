@@ -62,7 +62,6 @@ public class DelayedAcoustic extends SimpleAcoustic {
     protected void play(@Nonnull final ISoundInstance sound) {
         if (hasDelay()) {
             int delay = this.delayMin;
-            final int delta = this.delayMax - this.delayMin;
             if (this.delayMax > this.delayMin)
                 delay += RANDOM.nextInt(this.delayMax - this.delayMin);
             sound.setPlayDelay(delay);

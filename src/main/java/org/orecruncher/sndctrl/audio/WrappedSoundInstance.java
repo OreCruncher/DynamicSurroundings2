@@ -95,6 +95,12 @@ public abstract class WrappedSoundInstance implements ISoundInstance, ITickableS
         return this.sound.getCategory();
     }
 
+    @Nonnull
+    @Override
+    public ISoundCategory getSoundCategory() {
+        return this.sound.getSoundCategory();
+    }
+
     @Override
     public boolean canRepeat() {
         return this.sound.canRepeat();

@@ -23,7 +23,6 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.LocatableSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -41,17 +40,20 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
 
     @Nonnull
     private SoundState state = SoundState.NONE;
+    @Nonnull
+    private ISoundCategory category;
 
     private int playDelay;
     private boolean canMute;
 
-    SoundInstance(@Nonnull final SoundEvent event, @Nonnull final SoundCategory cat) {
+    SoundInstance(@Nonnull final SoundEvent event, @Nonnull final ISoundCategory cat) {
         this(event.getName(), cat);
     }
 
-    SoundInstance(@Nonnull final ResourceLocation soundResource, @Nonnull final SoundCategory cat) {
-        super(soundResource, cat);
+    SoundInstance(@Nonnull final ResourceLocation soundResource, @Nonnull final ISoundCategory cat) {
+        super(soundResource, cat.getRealCategory());
 
+        this.category = cat;
         this.volume = 1F;
         this.pitch = 1F;
         this.setPosition(0, 0, 0);
@@ -59,9 +61,15 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.repeatDelay = 0;
         this.attenuationType = ISound.AttenuationType.LINEAR;
 
-        this.canMute = cat == SoundCategory.MUSIC;
+        this.canMute = cat == Category.MUSIC;
         this.playDelay = 0;
         this.sound = SoundHandler.MISSING_SOUND;
+    }
+
+    @Override
+    @Nonnull
+    public ISoundCategory getSoundCategory() {
+        return this.category;
     }
 
     @Override

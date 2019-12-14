@@ -22,7 +22,6 @@ import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.client.audio.LocatableSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -50,7 +49,7 @@ public final class SoundBuilder {
     @Nonnull
     private final SoundEvent soundEvent;
     @Nonnull
-    private SoundCategory soundCategory;
+    private ISoundCategory soundCategory;
     @Nonnull
     private Vec3d position = Vec3d.ZERO;
     @Nonnull
@@ -71,7 +70,7 @@ public final class SoundBuilder {
 
     private int playDelay;
 
-    private SoundBuilder(@Nonnull final SoundEvent evt, @Nonnull final SoundCategory cat) {
+    private SoundBuilder(@Nonnull final SoundEvent evt, @Nonnull final ISoundCategory cat) {
         Objects.requireNonNull(evt);
         Objects.requireNonNull(cat);
 
@@ -81,25 +80,24 @@ public final class SoundBuilder {
 
     @Nonnull
     public static SoundBuilder builder(@Nonnull final SoundEvent evt) {
-        return builder(evt, SoundCategory.AMBIENT);
+        return builder(evt, Category.AMBIENT);
     }
 
     @Nonnull
-    public static SoundBuilder builder(@Nonnull final SoundEvent evt, @Nonnull final SoundCategory cat) {
+    public static SoundBuilder builder(@Nonnull final SoundEvent evt, @Nonnull final ISoundCategory cat) {
         return new SoundBuilder(evt, cat);
     }
 
     @Nonnull
     public static SoundBuilder builder(@Nonnull final SoundInstance proto) {
         Objects.requireNonNull(proto);
-
         final SoundEvent se = SoundRegistry.getSound(proto.getSoundLocation()).orElseThrow(NullPointerException::new);
-        final SoundCategory sc = proto.getCategory();
+        final ISoundCategory sc = Category.getCategory(proto.getCategory()).orElseThrow(NullPointerException::new);
         return new SoundBuilder(se, sc).from(proto);
     }
 
     @Nonnull
-    public static SoundInstance create(@Nonnull final SoundEvent evt, @Nonnull final SoundCategory cat) {
+    public static SoundInstance create(@Nonnull final SoundEvent evt, @Nonnull final ISoundCategory cat) {
         return new SoundInstance(evt, cat);
     }
 
@@ -109,7 +107,7 @@ public final class SoundBuilder {
 
         final ResourceLocation resource = new ResourceLocation(name);
         final SoundEvent se = SoundRegistry.getSound(resource).orElseThrow(NullPointerException::new);
-        final SoundCategory cat = SoundRegistry.getSoundCategory(resource, SoundCategory.MASTER);
+        final ISoundCategory cat = SoundRegistry.getSoundCategory(resource, Category.MASTER);
         final SoundBuilder builder = new SoundBuilder(se, cat);
         builder.setVolume(volume);
         builder.setCanMute(false);
@@ -121,13 +119,13 @@ public final class SoundBuilder {
     public SoundBuilder from(@Nonnull final LocatableSound ps) {
         Objects.requireNonNull(ps);
 
-        this.soundCategory = ps.getCategory();
+        this.soundCategory = Category.getCategory(ps.getCategory()).orElse(Category.MASTER);
         this.position = new Vec3d(ps.getX(), ps.getY(), ps.getZ());
         this.attenuation = ps.getAttenuationType();
         this.global = ps.isGlobal();
         this.repeatable = ps.canRepeat();
         this.repeatDelayMin = this.repeatDelayMax = ps.getRepeatDelay();
-        this.canMute = this.soundCategory == SoundCategory.MUSIC;
+        this.canMute = this.soundCategory == Category.MUSIC;
 
         final ILocatableSoundMixin sound = (ILocatableSoundMixin) ps;
         this.volumeMin = this.volumeMax = sound.getVolumeRaw();

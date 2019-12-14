@@ -31,6 +31,13 @@ import javax.annotation.Nonnull;
 public interface ISoundInstance extends ISound {
 
     /**
+     * The sound category the sound instance belongs to.
+     *
+     * @return The category the sound belongs to
+     */
+    ISoundCategory getSoundCategory();
+
+    /**
      * The current SoundState of the sound instance.
      *
      * @return SoundState of the sound instance

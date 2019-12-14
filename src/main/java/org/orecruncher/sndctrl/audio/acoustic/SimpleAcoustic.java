@@ -19,7 +19,6 @@
 package org.orecruncher.sndctrl.audio.acoustic;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
@@ -27,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.audio.AudioEngine;
+import org.orecruncher.sndctrl.audio.Category;
 import org.orecruncher.sndctrl.audio.ISoundInstance;
 import org.orecruncher.sndctrl.audio.SoundBuilder;
 
@@ -39,7 +39,7 @@ import javax.annotation.Nonnull;
 public class SimpleAcoustic implements IAcoustic {
 
     @Nonnull
-    private final AcousticFactory factory;
+    private final IAcousticFactory factory;
     @Nonnull
     private final String name;
 
@@ -48,10 +48,10 @@ public class SimpleAcoustic implements IAcoustic {
     }
 
     public SimpleAcoustic(@Nonnull final String name, @Nonnull final SoundEvent evt) {
-        this(name, new AcousticFactory(SoundBuilder.builder(evt, SoundCategory.NEUTRAL)));
+        this(name, new AcousticFactory(SoundBuilder.builder(evt, Category.NEUTRAL)));
     }
 
-    public SimpleAcoustic(@Nonnull final String name, @Nonnull final AcousticFactory factory) {
+    public SimpleAcoustic(@Nonnull final String name, @Nonnull final IAcousticFactory factory) {
         this.name = StringUtils.isNullOrEmpty(name) ? "<UNNAMED>" : name;
         this.factory = factory;
     }

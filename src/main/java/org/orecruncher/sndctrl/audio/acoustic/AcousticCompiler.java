@@ -21,16 +21,13 @@ package org.orecruncher.sndctrl.audio.acoustic;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.audio.SoundBuilder;
-import org.orecruncher.sndctrl.audio.SoundRegistry;
-import org.orecruncher.sndctrl.audio.SoundUtils;
+import org.orecruncher.sndctrl.audio.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -181,7 +178,7 @@ public final class AcousticCompiler {
         final String sound = entry.getValue().getAsString();
         final ResourceLocation res = new ResourceLocation(sound);
         final SoundEvent evt = SoundRegistry.getSound(res).orElseThrow(IllegalStateException::new);
-        final SoundBuilder builder = SoundBuilder.builder(evt, SoundCategory.NEUTRAL);
+        final SoundBuilder builder = SoundBuilder.builder(evt, Category.NEUTRAL);
         return Optional.of(new SimpleAcoustic(entry.getKey(), new AcousticFactory(builder)));
     }
 
@@ -200,7 +197,7 @@ public final class AcousticCompiler {
         if (obj.has(Constants.DELAY)) {
             acoustic.setDelay(getIntSetting(Constants.DELAY, obj, 0));
         } else {
-            acoustic.setDelay(getIntSetting(Constants.MIN_DELAY, obj, this.minDelay));
+            acoustic.setDelayMin(getIntSetting(Constants.MIN_DELAY, obj, this.minDelay));
             acoustic.setDelayMax(getIntSetting(Constants.MAX_DELAY, obj, this.maxDelay));
         }
         return Optional.of(acoustic);
@@ -265,13 +262,13 @@ public final class AcousticCompiler {
 
         final SoundEvent evt = SoundRegistry.getSound(res).orElse(SoundRegistry.MISSING);
 
-        SoundCategory cat = null;
+        ISoundCategory cat = null;
         if (obj.has(Constants.CATEGORY)) {
-            cat = SoundUtils.getSoundCategory(obj.get(Constants.CATEGORY).getAsString());
+            cat = Category.getCategory(obj.get(Constants.CATEGORY).getAsString()).orElseThrow(() -> new AcousticException("Unknown sound category"));
         }
 
         if (cat == null) {
-            cat = SoundRegistry.getSoundCategory(res, SoundCategory.NEUTRAL);
+            cat = SoundRegistry.getSoundCategory(res, Category.NEUTRAL);
         }
 
         final SoundBuilder builder = SoundBuilder.builder(evt, cat);

@@ -59,6 +59,12 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
         return SoundCategory.AMBIENT;
     }
 
+    @Nonnull
+    @Override
+    public ISoundCategory getSoundCategory() {
+        return Category.AMBIENT;
+    }
+
     @Override
     public boolean canRepeat() {
         return !isDonePlaying() && super.canRepeat();

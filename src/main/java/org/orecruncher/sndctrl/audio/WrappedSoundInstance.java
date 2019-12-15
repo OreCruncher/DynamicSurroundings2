@@ -141,11 +141,6 @@ public abstract class WrappedSoundInstance implements ISoundInstance, ITickableS
         return this.sound.getZ();
     }
 
-    @Override
-    public boolean canMute() {
-        return this.sound.canMute();
-    }
-
     @Nonnull
     @Override
     public AttenuationType getAttenuationType() {

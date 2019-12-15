@@ -53,14 +53,6 @@ public interface ISoundInstance extends ISound {
     void setState(@Nonnull final SoundState state);
 
     /**
-     * Indicates if the sound can be muted by the other major sound sources, like
-     * battle music.
-     *
-     * @return true if the sound instance can be muted, false otherwise.
-     */
-    boolean canMute();
-
-    /**
      * The number of ticks to delay playing the sound.  Keep in mind a tick is 50msecs.
      *
      * @return Number of ticks to delay play

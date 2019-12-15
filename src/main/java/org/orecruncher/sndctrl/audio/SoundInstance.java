@@ -114,11 +114,6 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.repeatDelay = delay;
     }
 
-    @Override
-    public boolean canMute() {
-        return this.canMute;
-    }
-
     public void setCanMute(final boolean f) {
         this.canMute = f;
     }

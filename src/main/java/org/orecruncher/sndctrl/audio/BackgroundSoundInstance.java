@@ -123,11 +123,6 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
     }
 
     @Override
-    public boolean canMute() {
-        return true;
-    }
-
-    @Override
     public int getPlayDelay() {
         return this.sound.getPlayDelay();
     }

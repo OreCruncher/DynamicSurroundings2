@@ -158,11 +158,6 @@ public final class ProxySound implements IProxySound, ISoundInstance, ITickableS
     }
 
     @Override
-    public boolean canMute() {
-        return this.sound.getCategory() == SoundCategory.MUSIC;
-    }
-
-    @Override
     public boolean isDonePlaying() {
         return this.tickable.map(ITickableSound::isDonePlaying).orElse(false);
     }

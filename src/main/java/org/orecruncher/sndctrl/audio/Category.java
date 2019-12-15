@@ -23,6 +23,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.sndctrl.audio.handlers.MusicFader;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -33,10 +34,14 @@ import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
 public final class Category implements ISoundCategory {
+    // Mappings for easy searching
+    private static final Map<String, ISoundCategory> nameToCategory = new HashMap<>();
+    private static final Map<SoundCategory, ISoundCategory> categoryToNew = new IdentityHashMap<>();
+
     // Sound categories of the base Minecraft game
     public static final ISoundCategory MASTER = new SoundCategoryWrapper(SoundCategory.MASTER);
-    public static final ISoundCategory MUSIC = new SoundCategoryWrapper(SoundCategory.MUSIC);
-    public static final ISoundCategory RECORDS = new SoundCategoryWrapper(SoundCategory.RECORDS);
+    public static final ISoundCategory MUSIC = new FaderSoundCategoryWrapper(SoundCategory.MUSIC);
+    public static final ISoundCategory RECORDS = new FaderSoundCategoryWrapper(SoundCategory.RECORDS);
     public static final ISoundCategory WEATHER = new SoundCategoryWrapper(SoundCategory.WEATHER);
     public static final ISoundCategory BLOCKS = new SoundCategoryWrapper(SoundCategory.BLOCKS);
     public static final ISoundCategory HOSTILE = new SoundCategoryWrapper(SoundCategory.HOSTILE);
@@ -44,10 +49,6 @@ public final class Category implements ISoundCategory {
     public static final ISoundCategory PLAYERS = new SoundCategoryWrapper(SoundCategory.PLAYERS);
     public static final ISoundCategory AMBIENT = new SoundCategoryWrapper(SoundCategory.AMBIENT);
     public static final ISoundCategory VOICE = new SoundCategoryWrapper(SoundCategory.VOICE);
-
-    // Mappings for easy searching
-    private static final Map<String, ISoundCategory> nameToCategory = new HashMap<>();
-    private static final Map<SoundCategory, ISoundCategory> categoryToNew = new IdentityHashMap<>();
 
     static {
         categoryToNew.put(SoundCategory.MASTER, MASTER);
@@ -138,6 +139,18 @@ public final class Category implements ISoundCategory {
         @Nonnull
         public String toString() {
             return MoreObjects.toStringHelper(this).addValue(getName()).toString();
+        }
+    }
+
+    private static class FaderSoundCategoryWrapper extends SoundCategoryWrapper {
+
+        public FaderSoundCategoryWrapper(@Nonnull SoundCategory cat) {
+            super(cat);
+        }
+
+        @Override
+        public float getVolumeScale() {
+            return super.getVolumeScale() * MusicFader.getMusicScaling();
         }
     }
 }

@@ -54,6 +54,12 @@ public class SimultaneousAcoustic implements IAcoustic {
     }
 
     @Override
+    public void play(@Nonnull final AcousticEvent event) {
+        for (final IAcoustic a : this.acoustics)
+            a.play(event);
+    }
+
+    @Override
     public void playAt(@Nonnull final BlockPos pos, @Nonnull final AcousticEvent event) {
         for (final IAcoustic a : this.acoustics)
             a.playAt(pos, event);

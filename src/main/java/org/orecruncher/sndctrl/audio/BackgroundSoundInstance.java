@@ -52,19 +52,6 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
         this.lastTick = TickCounter.getTickCount() + 1;
     }
 
-    @Nonnull
-    @Override
-    public SoundCategory getCategory() {
-        // Background sounds are always ambient
-        return SoundCategory.AMBIENT;
-    }
-
-    @Nonnull
-    @Override
-    public ISoundCategory getSoundCategory() {
-        return Category.AMBIENT;
-    }
-
     @Override
     public boolean canRepeat() {
         return !isDonePlaying() && super.canRepeat();
@@ -97,12 +84,6 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
     public float getZ() {
         // Always 0
         return 0;
-    }
-
-    @Nonnull
-    @Override
-    public AttenuationType getAttenuationType() {
-        return AttenuationType.NONE;
     }
 
     public void fade() {

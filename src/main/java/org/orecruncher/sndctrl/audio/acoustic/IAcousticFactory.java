@@ -30,6 +30,12 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public interface IAcousticFactory {
     /**
+     * Creates a non-attenuated sound instance that plays on the MASTER category.
+     */
+    @Nonnull
+    ISoundInstance createSound();
+
+    /**
      * Creates a sound instance centered in the block at the specified position.
      */
     @Nonnull

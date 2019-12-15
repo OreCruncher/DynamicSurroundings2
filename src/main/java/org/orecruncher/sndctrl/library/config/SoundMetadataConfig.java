@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio.config;
+package org.orecruncher.sndctrl.library.config;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;

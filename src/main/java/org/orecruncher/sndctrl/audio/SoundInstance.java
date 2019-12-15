@@ -44,7 +44,6 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     private ISoundCategory category;
 
     private int playDelay;
-    private boolean canMute;
 
     SoundInstance(@Nonnull final SoundEvent event, @Nonnull final ISoundCategory cat) {
         this(event.getName(), cat);
@@ -61,7 +60,6 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.repeatDelay = 0;
         this.attenuationType = ISound.AttenuationType.LINEAR;
 
-        this.canMute = cat == Category.MUSIC;
         this.playDelay = 0;
         this.sound = SoundHandler.MISSING_SOUND;
     }
@@ -112,10 +110,6 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
 
     public void setRepeatDelay(final int delay) {
         this.repeatDelay = delay;
-    }
-
-    public void setCanMute(final boolean f) {
-        this.canMute = f;
     }
 
     public void setVolume(final float v) {

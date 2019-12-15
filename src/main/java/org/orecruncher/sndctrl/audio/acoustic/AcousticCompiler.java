@@ -25,9 +25,13 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.JsonUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.audio.*;
+import org.orecruncher.sndctrl.audio.Category;
+import org.orecruncher.sndctrl.audio.ISoundCategory;
+import org.orecruncher.sndctrl.audio.SoundBuilder;
+import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -112,7 +116,7 @@ public final class AcousticCompiler {
     public List<IAcoustic> compile(@Nonnull final String acousticJson) {
         try {
             final JsonObject obj = gson.fromJson(acousticJson, JsonObject.class);
-            return generateMap(obj);
+            return generateFromMap(obj);
         } catch (@Nonnull final Throwable t) {
             SoundControl.LOGGER.warn("Unable to parse acoustic: %s", t.getMessage());
         }
@@ -121,7 +125,28 @@ public final class AcousticCompiler {
     }
 
     @Nonnull
-    private List<IAcoustic> generateMap(@Nonnull final JsonObject obj) {
+    public List<IAcoustic> compile(@Nonnull final ResourceLocation acousticFile) {
+        final List<IAcoustic> result = new ArrayList<>();
+        try {
+            final Map<String, JsonElement> acousticList = JsonUtils.loadConfig(acousticFile, JsonElement.class);
+            for (final Map.Entry<String, JsonElement> kvp : acousticList.entrySet()) {
+                try {
+                    dispatch(kvp).ifPresent(result::add);
+                } catch (@Nonnull final Throwable t) {
+                    SoundControl.LOGGER.error(t, "Unable to parse map acoustic '%s'='%s'", kvp.getKey(), kvp.getValue().toString());
+                }
+            }
+
+            return result;
+        } catch (@Nonnull final Throwable t) {
+            SoundControl.LOGGER.warn("Unable to parse acoustic: %s", t.getMessage());
+        }
+
+        return ImmutableList.of();
+    }
+
+    @Nonnull
+    private List<IAcoustic> generateFromMap(@Nonnull final JsonObject obj) {
         final List<IAcoustic> result = new ArrayList<>();
         final Set<Map.Entry<String, JsonElement>> acousticList = obj.entrySet();
         for (final Map.Entry<String, JsonElement> kvp : acousticList) {
@@ -177,7 +202,7 @@ public final class AcousticCompiler {
     private Optional<IAcoustic> inlineHandler(@Nonnull final Map.Entry<String, JsonElement> entry) {
         final String sound = entry.getValue().getAsString();
         final ResourceLocation res = new ResourceLocation(sound);
-        final SoundEvent evt = SoundRegistry.getSound(res).orElseThrow(IllegalStateException::new);
+        final SoundEvent evt = SoundLibrary.getSound(res).orElseThrow(IllegalStateException::new);
         final SoundBuilder builder = SoundBuilder.builder(evt, Category.NEUTRAL);
         return Optional.of(new SimpleAcoustic(entry.getKey(), new AcousticFactory(builder)));
     }
@@ -260,7 +285,7 @@ public final class AcousticCompiler {
             res = new ResourceLocation(soundName);
         }
 
-        final SoundEvent evt = SoundRegistry.getSound(res).orElse(SoundRegistry.MISSING);
+        final SoundEvent evt = SoundLibrary.getSound(res).orElse(SoundLibrary.MISSING);
 
         ISoundCategory cat = null;
         if (obj.has(Constants.CATEGORY)) {
@@ -268,7 +293,7 @@ public final class AcousticCompiler {
         }
 
         if (cat == null) {
-            cat = SoundRegistry.getSoundCategory(res, Category.NEUTRAL);
+            cat = SoundLibrary.getSoundCategory(res, Category.NEUTRAL);
         }
 
         final SoundBuilder builder = SoundBuilder.builder(evt, cat);
@@ -298,7 +323,7 @@ public final class AcousticCompiler {
         if (!obj.has(Constants.MAP))
             throw new AcousticException("Sound configuration does not have a 'map' property defined");
 
-        return generateMap(obj.get(Constants.MAP).getAsJsonObject());
+        return generateFromMap(obj.get(Constants.MAP).getAsJsonObject());
     }
 
     @FunctionalInterface
@@ -307,7 +332,7 @@ public final class AcousticCompiler {
     }
 
     private static class Constants {
-        public static final String TYPE = "_type";
+        public static final String TYPE = "type";
         public static final String NAME = "name";
         public static final String CATEGORY = "category";
         public static final String MIN_PITCH = "pitch_min";

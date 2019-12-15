@@ -18,6 +18,7 @@
 
 package org.orecruncher.sndctrl.audio.acoustic;
 
+import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -25,6 +26,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.audio.BackgroundSoundInstance;
+import org.orecruncher.sndctrl.audio.Category;
 import org.orecruncher.sndctrl.audio.ISoundInstance;
 import org.orecruncher.sndctrl.audio.SoundBuilder;
 
@@ -49,6 +51,19 @@ public class AcousticFactory implements IAcousticFactory {
 
     private static float randomRange() {
         return RANDOM.nextInt(AcousticFactory.SOUND_RANGE) - RANDOM.nextInt(AcousticFactory.SOUND_RANGE);
+    }
+
+    /**
+     * Creates a sound instance for the MASTER category that is non-attenuated
+     */
+    @Override
+    @Nonnull
+    public ISoundInstance createSound() {
+        final SoundBuilder copy = new SoundBuilder(this.builder);
+        return copy
+                .setCategory(Category.MASTER)
+                .setAttenuation(ISound.AttenuationType.NONE)
+                .setPosition(Vec3d.ZERO).build();
     }
 
     /**
@@ -97,7 +112,13 @@ public class AcousticFactory implements IAcousticFactory {
     @Override
     @Nonnull
     public ISoundInstance createBackgroundSound() {
-        return new BackgroundSoundInstance(this.builder.build());
+        final SoundBuilder copy = new SoundBuilder(this.builder);
+        final ISoundInstance sound = copy
+                .setAttenuation(ISound.AttenuationType.NONE)
+                .setPosition(Vec3d.ZERO)
+                .setCategory(Category.AMBIENT)
+                .build();
+        return new BackgroundSoundInstance(sound);
     }
 
 }

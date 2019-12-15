@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio;
+package org.orecruncher.sndctrl.library;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.SerializedName;
@@ -41,12 +41,12 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public final class EffectRegistry {
+public final class AudioEffectLibrary {
 
     private static final String MATERIAL_PREFIX = "+";
     private static final String TAG_PREFIX = "#";
 
-    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(EffectRegistry.class);
+    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(AudioEffectLibrary.class);
 
     // Occlusion data
     private static final Object2FloatOpenHashMap<Material> materialOcclusion = new Object2FloatOpenHashMap<>();
@@ -87,6 +87,10 @@ public final class EffectRegistry {
         } catch (@Nonnull final Throwable t) {
             LOGGER.error(t, "Unable to load %s", res.toString());
         }
+    }
+
+    public static void initialize() {
+        // Currently does nothing.  Called during startup which triggers the class init.
     }
 
     /**

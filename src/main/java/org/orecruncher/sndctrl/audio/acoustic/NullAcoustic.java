@@ -44,22 +44,27 @@ public final class NullAcoustic implements IAcoustic {
     }
 
     @Override
-    public void playAt(@Nonnull BlockPos pos, @Nonnull AcousticEvent event) {
+    public void play(@Nonnull final AcousticEvent event) {
 
     }
 
     @Override
-    public void playAt(@Nonnull Vec3d pos, @Nonnull AcousticEvent event) {
+    public void playAt(@Nonnull final BlockPos pos, @Nonnull final AcousticEvent event) {
 
     }
 
     @Override
-    public void playNear(@Nonnull Entity entity, @Nonnull AcousticEvent event) {
+    public void playAt(@Nonnull final Vec3d pos, @Nonnull final AcousticEvent event) {
 
     }
 
     @Override
-    public void playBackground(@Nonnull AcousticEvent event) {
+    public void playNear(@Nonnull final Entity entity, @Nonnull final AcousticEvent event) {
+
+    }
+
+    @Override
+    public void playBackground(@Nonnull final AcousticEvent event) {
 
     }
 }

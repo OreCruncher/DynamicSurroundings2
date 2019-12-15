@@ -25,7 +25,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
-import org.orecruncher.sndctrl.audio.config.SoundMetadataConfig;
+import org.orecruncher.sndctrl.library.config.SoundMetadataConfig;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -46,14 +46,14 @@ public final class SoundMetadata {
     @Nonnull
     private final List<TextComponent> credits;
 
-    SoundMetadata() {
+    public SoundMetadata() {
         this.title = NO_STRING;
         this.caption = NO_STRING;
         this.category = Category.MASTER;
         this.credits = ImmutableList.of();
     }
 
-    SoundMetadata(@Nonnull final SoundMetadataConfig cfg) {
+    public SoundMetadata(@Nonnull final SoundMetadataConfig cfg) {
         Objects.requireNonNull(cfg);
 
         this.title = StringUtils.isEmpty(cfg.title) ? NO_STRING : new TranslationTextComponent(cfg.title);

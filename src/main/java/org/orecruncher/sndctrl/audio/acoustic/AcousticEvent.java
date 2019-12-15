@@ -34,6 +34,7 @@ public final class AcousticEvent {
     public static final AcousticEvent NONE = new AcousticEvent("none", null).register();
     private final String name;
     private final AcousticEvent transition;
+
     public AcousticEvent(@Nonnull final String name, @Nullable final AcousticEvent transition) {
         this.name = name;
         this.transition = transition;

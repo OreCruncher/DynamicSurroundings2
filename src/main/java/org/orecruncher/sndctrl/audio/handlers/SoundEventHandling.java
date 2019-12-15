@@ -38,6 +38,9 @@ import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.*;
+import org.orecruncher.sndctrl.audio.acoustic.IAcoustic;
+import org.orecruncher.sndctrl.library.AcousticLibrary;
+import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -58,13 +61,11 @@ public final class SoundEventHandling {
 
             hasPlayed = true;
 
-            //@formatter:off
             final List<String> possibles = Config.CLIENT.sound.startupSoundList.get()
                     .stream()
                     .map(StringUtils::trim)
                     .filter(s -> s.length() > 0)
                     .collect(Collectors.toList());
-            //@formatter:on
 
             if (possibles.size() == 0)
                 return;
@@ -76,21 +77,15 @@ public final class SoundEventHandling {
                 res = possibles.get(XorShiftRandom.current().nextInt(possibles.size()));
             }
 
-            final SoundEvent se = SoundRegistry.getSound(new ResourceLocation(res)).orElse(null);
-            if (se != null) {
-                final ISoundInstance sound = SoundBuilder.builder(se, Category.MASTER)
-                        .setAttenuation(ISound.AttenuationType.NONE)
-                        .build();
-
-                // Queue it up on the main client thread.
-                GameUtils.getMC().enqueue(() -> {
-                    try {
-                        AudioEngine.play(sound);
-                    } catch (@Nonnull final Throwable t) {
-                        LOGGER.error(t, "Error executing startup sound '%s'", se.toString());
-                    }
-                });
-            }
+            final IAcoustic sound = AcousticLibrary.INSTANCE.resolve(res);
+            // Queue it up on the main client thread.
+            GameUtils.getMC().enqueue(() -> {
+                try {
+                    sound.play();
+                } catch (@Nonnull final Throwable t) {
+                    LOGGER.error(t, "Error executing startup sound '%s'", sound.toString());
+                }
+            });
         }
     }
 

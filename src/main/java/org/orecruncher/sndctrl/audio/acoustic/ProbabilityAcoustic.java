@@ -77,6 +77,11 @@ public class ProbabilityAcoustic implements IAcoustic {
     }
 
     @Override
+    public void play(@Nonnull final AcousticEvent event) {
+        select().ifPresent(a -> a.play(event));
+    }
+
+    @Override
     public void playAt(@Nonnull BlockPos pos, @Nonnull final AcousticEvent event) {
         select().ifPresent(a -> a.playAt(pos, event));
     }

@@ -30,6 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.mixins.ILocatableSoundMixin;
+import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -63,12 +64,29 @@ public final class SoundBuilder {
     private int repeatDelayMin;
     private int repeatDelayMax;
     private boolean global;
-    private boolean canMute;
 
     private boolean variableVolume;
     private boolean variablePitch;
 
     private int playDelay;
+
+    public SoundBuilder(@Nonnull final SoundBuilder builder) {
+        this.soundEvent = builder.soundEvent;
+        this.soundCategory = builder.soundCategory;
+        this.position = builder.position;
+        this.attenuation = builder.attenuation;
+        this.volumeMin = builder.volumeMin;
+        this.volumeMax = builder.volumeMax;
+        this.pitchMin = builder.pitchMin;
+        this.pitchMax = builder.pitchMax;
+        this.repeatable = builder.repeatable;
+        this.repeatDelayMin = builder.repeatDelayMin;
+        this.repeatDelayMax = builder.repeatDelayMax;
+        this.global = builder.global;
+        this.variableVolume = builder.variableVolume;
+        this.variablePitch = builder.variablePitch;
+        this.playDelay = builder.playDelay;
+    }
 
     private SoundBuilder(@Nonnull final SoundEvent evt, @Nonnull final ISoundCategory cat) {
         Objects.requireNonNull(evt);
@@ -91,7 +109,7 @@ public final class SoundBuilder {
     @Nonnull
     public static SoundBuilder builder(@Nonnull final SoundInstance proto) {
         Objects.requireNonNull(proto);
-        final SoundEvent se = SoundRegistry.getSound(proto.getSoundLocation()).orElseThrow(NullPointerException::new);
+        final SoundEvent se = SoundLibrary.getSound(proto.getSoundLocation()).orElseThrow(NullPointerException::new);
         final ISoundCategory sc = Category.getCategory(proto.getCategory()).orElseThrow(NullPointerException::new);
         return new SoundBuilder(se, sc).from(proto);
     }
@@ -106,11 +124,10 @@ public final class SoundBuilder {
         Objects.requireNonNull(name);
 
         final ResourceLocation resource = new ResourceLocation(name);
-        final SoundEvent se = SoundRegistry.getSound(resource).orElseThrow(NullPointerException::new);
-        final ISoundCategory cat = SoundRegistry.getSoundCategory(resource, Category.MASTER);
+        final SoundEvent se = SoundLibrary.getSound(resource).orElseThrow(NullPointerException::new);
+        final ISoundCategory cat = SoundLibrary.getSoundCategory(resource, Category.MASTER);
         final SoundBuilder builder = new SoundBuilder(se, cat);
         builder.setVolume(volume);
-        builder.setCanMute(false);
         builder.setAttenuation(AttenuationType.NONE);
         return builder.build();
     }
@@ -125,11 +142,16 @@ public final class SoundBuilder {
         this.global = ps.isGlobal();
         this.repeatable = ps.canRepeat();
         this.repeatDelayMin = this.repeatDelayMax = ps.getRepeatDelay();
-        this.canMute = this.soundCategory == Category.MUSIC;
 
         final ILocatableSoundMixin sound = (ILocatableSoundMixin) ps;
         this.volumeMin = this.volumeMax = sound.getVolumeRaw();
         this.pitchMin = this.pitchMax = sound.getPitchRaw();
+        return this;
+    }
+
+    @Nonnull
+    public SoundBuilder setCategory(@Nonnull final ISoundCategory cat) {
+        this.soundCategory = cat;
         return this;
     }
 
@@ -259,12 +281,6 @@ public final class SoundBuilder {
     }
 
     @Nonnull
-    public SoundBuilder setCanMute(final boolean f) {
-        this.canMute = f;
-        return this;
-    }
-
-    @Nonnull
     public SoundBuilder setPlayDelay(final int delay) {
         this.playDelay = delay;
         return this;
@@ -278,7 +294,6 @@ public final class SoundBuilder {
         sound.setRepeat(this.repeatable);
         sound.setRepeatDelay(this.getRepeatDelay());
         sound.setGlobal(this.global);
-        sound.setCanMute(this.canMute);
         sound.setPlayDelay(this.playDelay);
 
         if (!this.global) {

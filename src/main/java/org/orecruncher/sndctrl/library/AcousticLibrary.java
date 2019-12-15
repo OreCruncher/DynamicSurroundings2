@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio.acoustic;
+package org.orecruncher.sndctrl.library;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap;
 import net.minecraft.util.ResourceLocation;
@@ -24,13 +24,11 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.audio.SoundRegistry;
+import org.orecruncher.sndctrl.audio.acoustic.*;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import javax.annotation.Nullable;
+import java.util.*;
 
 @OnlyIn(Dist.CLIENT)
 public enum AcousticLibrary {
@@ -51,6 +49,32 @@ public enum AcousticLibrary {
      */
     public void addAcoustic(@Nonnull final String name, @Nonnull final IAcoustic acoustic) {
         this.compiled.put(name, acoustic);
+    }
+
+    public void initialize() {
+        // This should be invoked from the completion phase of loading.  Need to scan the entire sound event list
+        // creating acoustic entries.
+        final Map<ResourceLocation, SoundEvent> sounds = SoundLibrary.getRegisteredSounds();
+        for (final Map.Entry<ResourceLocation, SoundEvent> kvp : sounds.entrySet()) {
+            final String name = kvp.getKey().toString();
+            if (!compiled.containsKey(name)) {
+                final Optional<SoundEvent> evt = SoundLibrary.getSound(kvp.getKey());
+                evt.ifPresent(e -> addAcoustic(name, new SimpleAcoustic(name, e)));
+            }
+        }
+    }
+
+    public void processFile(@Nonnull final ResourceLocation acousticFile) {
+        final AcousticCompiler compiler = new AcousticCompiler(acousticFile.getNamespace());
+        final List<IAcoustic> acoustics = compiler.compile(acousticFile);
+        for (final IAcoustic a : acoustics) {
+            addAcoustic(a.getName(), a);
+        }
+    }
+
+    @Nonnull
+    public IAcoustic resolve(@Nonnull final ResourceLocation location) {
+        return resolve(location.toString());
     }
 
     @Nonnull
@@ -75,18 +99,19 @@ public enum AcousticLibrary {
                     s.add(t);
                 result = s;
             }
-            this.compiled.put(acousticName, result);
+            addAcoustic(acousticName, result);
         }
 
         return result;
     }
 
+    @Nullable
     private IAcoustic generateAcoustic(@Nonnull final String name) {
         IAcoustic a = this.compiled.get(name);
         if (a == null) {
             // Nope. Doesn't exist yet. It could be a sound name based on location.
             final ResourceLocation loc = new ResourceLocation(name);
-            final Optional<SoundEvent> evt = SoundRegistry.getSound(loc);
+            final Optional<SoundEvent> evt = SoundLibrary.getSound(loc);
             if (evt.isPresent())
                 a = generateAcoustic(evt.get());
         }
@@ -99,7 +124,7 @@ public enum AcousticLibrary {
         IAcoustic result = this.compiled.get(evt.getName().toString());
         if (result == null) {
             result = new SimpleAcoustic(evt);
-            this.compiled.put(result.getName(), result);
+            addAcoustic(result.getName(), result);
         }
         return result;
     }

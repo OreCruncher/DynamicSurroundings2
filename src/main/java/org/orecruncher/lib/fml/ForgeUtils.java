@@ -27,6 +27,7 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.orecruncher.lib.GameUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public final class ForgeUtils {
@@ -82,9 +84,22 @@ public final class ForgeUtils {
     @OnlyIn(Dist.CLIENT)
     @Nonnull
     public static List<String> getResourcePackIdList() {
-        return Minecraft.getInstance().getResourcePackList().getEnabledPacks()
+        return GameUtils.getMC().getResourcePackList().getEnabledPacks()
                 .stream()
                 .flatMap(e -> e.getResourcePack().getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES).stream())
                 .collect(Collectors.toList());
     }
+
+    @OnlyIn(Dist.CLIENT)
+    @Nonnull
+    public static List<ResourceLocation> getResourceLocations(@Nonnull final String path) {
+        return Stream.concat(
+                    ForgeUtils.getModIdList().stream(),
+                    ForgeUtils.getResourcePackIdList().stream()
+                )
+                .distinct()
+                .map(e -> new ResourceLocation(e, path))
+                .collect(Collectors.toList());
+    }
+
 }

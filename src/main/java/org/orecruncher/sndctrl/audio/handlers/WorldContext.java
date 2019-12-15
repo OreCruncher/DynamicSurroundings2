@@ -29,7 +29,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import org.orecruncher.lib.GameUtils;
-import org.orecruncher.sndctrl.audio.EffectRegistry;
+import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.events.AudioEvent;
 
 import javax.annotation.Nonnull;
@@ -99,7 +99,7 @@ public final class WorldContext {
             final Fluid fs = this.player.world.getFluidState(this.playerEyePos).getFluid();
             final ResourceLocation name = fs.getRegistryName();
             if (name != null)
-                this.auralDampening = EffectRegistry.getFluidCoeffcient(name);
+                this.auralDampening = AudioEffectLibrary.getFluidCoeffcient(name);
             else
                 this.auralDampening = 0;
 

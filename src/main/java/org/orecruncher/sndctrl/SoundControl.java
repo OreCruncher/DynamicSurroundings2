@@ -24,11 +24,15 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
 import org.orecruncher.sndctrl.audio.AudioEngine;
+import org.orecruncher.sndctrl.library.AcousticLibrary;
+import org.orecruncher.sndctrl.library.AudioEffectLibrary;
+import org.orecruncher.sndctrl.library.SoundLibrary;
 import org.orecruncher.sndctrl.misc.ModEnvironment;
 
 import javax.annotation.Nonnull;
@@ -56,6 +60,7 @@ public final class SoundControl {
         // Various event bus registrations
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupComplete);
         MinecraftForge.EVENT_BUS.register(this);
 
         // Initialize our configuration
@@ -68,6 +73,13 @@ public final class SoundControl {
 
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
         AudioEngine.initialize();
+        SoundLibrary.initialize();
+        AudioEffectLibrary.initialize();
+    }
+
+    private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
+        // Mod initialization and IMC processing should have completed by now.  Do any further baking.
+        AcousticLibrary.INSTANCE.initialize();
     }
 
     @SubscribeEvent

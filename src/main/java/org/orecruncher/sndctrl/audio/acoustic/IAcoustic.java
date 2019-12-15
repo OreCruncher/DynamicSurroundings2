@@ -37,6 +37,15 @@ public interface IAcoustic {
     String getName();
 
     /**
+     * Play the acoustic on the MASTER channel with no attenuation.
+     */
+    default void play() {
+        play(AcousticEvent.NONE);
+    }
+
+    void play(@Nonnull final AcousticEvent event);
+
+    /**
      * Play the acoustic at the specified block position.
      */
     default void playAt(@Nonnull final BlockPos pos) {

@@ -19,7 +19,7 @@
 package org.orecruncher.sndctrl.mixins;
 
 import net.minecraft.block.BlockState;
-import org.orecruncher.sndctrl.audio.EffectRegistry;
+import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.xface.IBlockStateEffects;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -32,14 +32,14 @@ public class MixinBlockState implements IBlockStateEffects {
     @Override
     public float getOcclusion() {
         if (this.occlusion < 0)
-            this.occlusion = EffectRegistry.getOcclusion((BlockState) ((Object) this));
+            this.occlusion = AudioEffectLibrary.getOcclusion((BlockState) ((Object) this));
         return this.occlusion;
     }
 
     @Override
     public float getReflectivity() {
         if (this.reflectivity < 0)
-            this.reflectivity = EffectRegistry.getReflectivity((BlockState) ((Object) this));
+            this.reflectivity = AudioEffectLibrary.getReflectivity((BlockState) ((Object) this));
         return this.reflectivity;
     }
 }

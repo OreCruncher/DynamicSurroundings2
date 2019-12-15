@@ -62,6 +62,11 @@ public class SimpleAcoustic implements IAcoustic {
     }
 
     @Override
+    public void play(@Nonnull final AcousticEvent ignored) {
+        play(this.factory.createSound());
+    }
+
+    @Override
     public void playAt(@Nonnull final BlockPos pos, @Nonnull final AcousticEvent ignored) {
         play(this.factory.createSoundAt(pos));
     }

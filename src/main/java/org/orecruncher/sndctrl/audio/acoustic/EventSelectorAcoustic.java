@@ -56,6 +56,11 @@ public class EventSelectorAcoustic implements IAcoustic {
     }
 
     @Override
+    public void play(@Nonnull final AcousticEvent event) {
+        resolve(event).ifPresent(IAcoustic::play);
+    }
+
+    @Override
     public void playAt(@Nonnull final BlockPos pos, @Nonnull final AcousticEvent event) {
         resolve(event).ifPresent(a -> a.playAt(pos));
     }

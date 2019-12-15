@@ -16,23 +16,22 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio;
+package org.orecruncher.sndctrl.library;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.JsonUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.audio.config.SoundMetadataConfig;
+import org.orecruncher.sndctrl.audio.ISoundCategory;
+import org.orecruncher.sndctrl.audio.SoundMetadata;
+import org.orecruncher.sndctrl.library.config.SoundMetadataConfig;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -40,7 +39,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Handles all things related to registered sounds.  This registry is kept in parallel with the Forge registeries.
@@ -48,52 +46,56 @@ import java.util.stream.Stream;
  * side mods that add their own sounds.  Also, extended data about sounds is maintained, like ownership and
  * attribution, that can be used when rendering tooltips and the like in a GUI.
  */
-@Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public final class SoundRegistry {
+@OnlyIn(Dist.CLIENT)
+public final class SoundLibrary {
     public static final SoundEvent MISSING = new SoundEvent(new ResourceLocation(SoundControl.MOD_ID, "missing_sound"));
-    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundRegistry.class);
+    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundLibrary.class);
     private static final Object2ObjectOpenHashMap<ResourceLocation, SoundEvent> myRegistry = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<ResourceLocation, SoundMetadata> soundMetadata = new Object2ObjectOpenHashMap<>();
 
     static {
-        myRegistry.defaultReturnValue(SoundRegistry.MISSING);
+        myRegistry.defaultReturnValue(SoundLibrary.MISSING);
         soundMetadata.defaultReturnValue(new SoundMetadata());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, SoundRegistry::onSetup);
     }
 
-    private SoundRegistry() {
+    private SoundLibrary() {
     }
 
-    private static void onSetup(@Nonnull final FMLClientSetupEvent event) {
+    public static void initialize() {
 
         // Initializes the internal sound registry once all the other mods have
         // registered their sounds.
         ForgeRegistries.SOUND_EVENTS.forEach(se -> myRegistry.put(se.getName(), se));
 
-        // Crawl through all the sound json files for all the resource packs gather metadata that will be used in the
-        // tooltip display in the config GUI. A pack could add extra fields in the Json for things like author and
-        // attribution.
-        final List<ResourceLocation> packs =
-                Stream.concat(
-                        ForgeUtils.getModIdList().stream(),
-                        ForgeUtils.getResourcePackIdList().stream()
-                )
-                .distinct()
-                .map(e -> new ResourceLocation(e, "sounds.json"))
-                .collect(Collectors.toList());
+        // Gather up resource pack sound files and process them to ensure meta data is collected
+        // and we become aware of configured sounds.  Resource pack sounds generally replace existing
+        // registration, but this allows for new sounds to be added client side.
+        final List<ResourceLocation> packs = ForgeUtils.getResourcePackIdList().stream().map(p -> new ResourceLocation(p, "sounds.json")).collect(Collectors.toList());;
 
         for (final ResourceLocation packId : packs) {
-            final Map<String, SoundMetadataConfig> result = JsonUtils.loadConfig(packId, SoundMetadataConfig.class);
-            if (result.size() > 0) {
-                LOGGER.debug("Processing %s", packId);
-                result.forEach((key, value) -> {
-                    if (!value.isDefault()) {
-                        final SoundMetadata data = new SoundMetadata(value);
-                        final ResourceLocation resource = new ResourceLocation(packId.getNamespace(), key);
-                        soundMetadata.put(resource, data);
+            registerSoundMeta(packId);
+        }
+    }
+
+    // Package internal!
+    static Map<ResourceLocation, SoundEvent> getRegisteredSounds() {
+        return myRegistry;
+    }
+
+    public static void registerSoundMeta(@Nonnull final ResourceLocation soundFile) {
+        final Map<String, SoundMetadataConfig> result = JsonUtils.loadConfig(soundFile, SoundMetadataConfig.class);
+        if (result.size() > 0) {
+            LOGGER.debug("Processing %s", soundFile);
+            result.forEach((key, value) -> {
+                if (!value.isDefault()) {
+                    final SoundMetadata data = new SoundMetadata(value);
+                    final ResourceLocation resource = new ResourceLocation(soundFile.getNamespace(), key);
+                    soundMetadata.put(resource, data);
+                    if (!myRegistry.containsKey(resource)) {
+                        myRegistry.put(resource, new SoundEvent(resource));
                     }
-                });
-            }
+                }
+            });
         }
     }
 

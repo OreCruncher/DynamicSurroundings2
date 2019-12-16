@@ -15,6 +15,7 @@
 /.gradle/
 /.project
 /.settings/
+/out/
 /eula.txt
 /world/
 /banned-ips.json

@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.capabilities.entityfx;
+package org.orecruncher.lib.effects.entity;
 
 import javax.annotation.Nullable;
 

@@ -37,7 +37,7 @@ public enum AcousticLibrary {
 
     private final Map<String, IAcoustic> compiled = new Object2ObjectAVLTreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-    private AcousticLibrary() {
+    AcousticLibrary() {
 
     }
 

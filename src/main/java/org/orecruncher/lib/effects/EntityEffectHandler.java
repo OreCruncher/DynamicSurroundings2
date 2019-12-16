@@ -29,8 +29,8 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.capabilities.CapabilityEntityFXData;
-import org.orecruncher.sndctrl.capabilities.entityfx.IEntityFX;
+import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
+import org.orecruncher.lib.effects.entity.IEntityFX;
 import org.orecruncher.sndctrl.library.EntityEffectInfo;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 
@@ -47,6 +47,7 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class EntityEffectHandler {
 
+    private static final int EFFECT_DISTANCESQ = (int) Math.pow(Config.CLIENT.effects.effectRange.get(), 2);
     protected static final ObjectArray<IEntityEffectFactoryHandler> entityEffectfactoryHandlers = new ObjectArray<>();
 
     private EntityEffectHandler() {
@@ -102,27 +103,23 @@ public final class EntityEffectHandler {
         if (entity == null || !entity.getEntityWorld().isRemote)
             return;
 
-        final IEntityFX cap = entity.getCapability(CapabilityEntityFXData.FX_INFO).orElse(null);
-        if (cap != null) {
-            final double distanceThreshold = Config.CLIENT.effects.effectRange.get();
-            final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= (distanceThreshold * distanceThreshold);
-            final EntityEffectManager handler = cap.get();
-            if (handler != null && !inRange) {
+        entity.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent( cap -> {
+            final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= EFFECT_DISTANCESQ;
+            final EntityEffectManager mgr = cap.get();
+            if (mgr != null && !inRange) {
                 cap.clear();
-            } else if (handler == null && inRange && entity.isAlive()) {
+            } else if (mgr == null && inRange && entity.isAlive()) {
                 cap.set(create(entity).get());
-            } else if (handler != null) {
-                handler.update();
+            } else if (mgr != null) {
+                mgr.update();
             }
-        }
+        });
     }
 
     private static void clearHandlers() {
         final Iterable<Entity> entities = GameUtils.getWorld().getAllEntities();
         for (final Entity e: entities) {
-            final IEntityFX fx = e.getCapability(CapabilityEntityFXData.FX_INFO).orElse(null);
-            if (fx != null)
-                fx.clear();
+            e.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent(IEntityFX::clear);
         }
     }
 

@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.capabilities;
+package org.orecruncher.lib.effects.entity;
 
 import javax.annotation.Nonnull;
 
@@ -37,18 +37,19 @@ import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.lib.capability.NullStorage;
 import org.orecruncher.lib.capability.SerializableProvider;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.capabilities.entityfx.EntityFXData;
-import org.orecruncher.sndctrl.capabilities.entityfx.IEntityFX;
 
+@OnlyIn(Dist.CLIENT)
 public class CapabilityEntityFXData {
 
+	@SuppressWarnings("ConstantConditions")
 	@CapabilityInject(IEntityFX.class)
+	@Nonnull
 	public static final Capability<IEntityFX> FX_INFO = null;
 	public static final ResourceLocation CAPABILITY_ID = new ResourceLocation(SoundControl.MOD_ID, "entityfx");
 
 	@OnlyIn(Dist.CLIENT)
 	public static void register() {
-		CapabilityManager.INSTANCE.register(IEntityFX.class, new NullStorage<IEntityFX>(), EntityFXData::new);
+		CapabilityManager.INSTANCE.register(IEntityFX.class, new NullStorage<>(), EntityFXData::new);
 	}
 
 	@OnlyIn(Dist.CLIENT)

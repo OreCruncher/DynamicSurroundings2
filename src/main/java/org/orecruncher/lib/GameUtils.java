@@ -21,6 +21,7 @@ package org.orecruncher.lib;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -43,7 +44,7 @@ public final class GameUtils {
 
     @OnlyIn(Dist.CLIENT)
     @Nullable
-    public static World getWorld() {
+    public static ClientWorld getWorld() {
         return getMC().world;
     }
 

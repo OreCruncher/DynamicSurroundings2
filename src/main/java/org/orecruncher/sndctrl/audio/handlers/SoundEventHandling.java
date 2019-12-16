@@ -19,12 +19,9 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import net.minecraft.client.GameSettings;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.Listener;
 import net.minecraft.client.gui.screen.MainMenuScreen;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.event.TickEvent;
@@ -40,7 +37,6 @@ import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.*;
 import org.orecruncher.sndctrl.audio.acoustic.IAcoustic;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
-import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.List;

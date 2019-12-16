@@ -16,30 +16,29 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.effects;
+package org.orecruncher.lib.effects;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.GameUtils;
 
 /**
  * Interface for an effect.
  */
 @OnlyIn(Dist.CLIENT)
-public abstract class EntityEffect {
+public abstract class AbstractEntityEffect {
 
-	private IEntityEffectHandlerState state;
+	private EntityEffectManager manager;
 
 	/**
 	 * Do not perform any heavy initialization in the CTOR! Do it in the
 	 * initialize() method!
 	 */
-	public EntityEffect() {
+	protected AbstractEntityEffect() {
 
 	}
 
@@ -55,28 +54,16 @@ public abstract class EntityEffect {
 	 * Called by the EntityEffectLibrary during the initialization of an
 	 * EntityEffectHandler. Override this method to perform any initialization
 	 * specific to the EntityEffect. Remember to call the super class!
-	 *
-	 * @param state The state provided by the EntityEffectLibrary
 	 */
-	public void intitialize(@Nonnull final IEntityEffectHandlerState state) {
-		this.state = state;
-	}
-
-	/**
-	 * Accessor to obtain the IEntityEffectHandlerState associated with this
-	 * EntityEffect instance.
-	 *
-	 * @return Associated IEntityEffectHandlerState instance
-	 */
-	protected IEntityEffectHandlerState getState() {
-		return this.state;
+	public void intitialize(@Nonnull final EntityEffectManager manager) {
+		this.manager = manager;
 	}
 
 	/**
 	 * Called when an EntityEffect should update it's state and take action based on
 	 * results. Called once per tick.
 	 */
-	public abstract void update(@Nonnull final Entity subject);
+	public abstract void update(@Nonnull final Entity entity);
 
 	/**
 	 * Indicates to the EntityEffectHandler that the EntityEffect wants to be called
@@ -100,8 +87,36 @@ public abstract class EntityEffect {
 	 * @return true if in first person view, false otherwise
 	 */
 	public boolean isFirstPersonView() {
-		final GameSettings settings = GameUtils.getGameSettings();
-		return settings.thirdPersonView == 0;
+		return this.manager.isFirstPersonView();
+	}
+
+	/**
+	 * Used by an EntityEffect to add a Particle to the system.
+	 *
+	 * @param particle The Particle instance to add to the particle system.
+	 */
+	public void addParticle(@Nonnull final Particle particle) {
+		this.manager.addParticle(particle);
+	}
+
+	/**
+	 * Determines if the specified Entity is the current active player.
+	 *
+	 * @param entity The Entity to evaluate
+	 * @return true if the Entity is the current player, false otherwise
+	 */
+	public boolean isActivePlayer(@Nonnull final Entity entity) {
+		return this.manager.isActivePlayer(entity);
+	}
+
+	/**
+	 * Obtain a reference to the client's player
+	 *
+	 * @return Reference to the EntityPlayer. Will not be null.
+	 */
+	@Nonnull
+	public PlayerEntity thePlayer() {
+		return this.manager.thePlayer();
 	}
 
 	@Override

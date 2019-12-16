@@ -22,14 +22,14 @@ import javax.annotation.Nullable;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.sndctrl.effects.EntityEffectHandler;
+import org.orecruncher.lib.effects.EntityEffectManager;
 
 @OnlyIn(Dist.CLIENT)
 public interface IEntityFX {
 
-	void set(@Nullable final EntityEffectHandler handler);
+	void set(@Nullable final EntityEffectManager handler);
 
-	EntityEffectHandler get();
+	EntityEffectManager get();
 
 	default void clear() {
 		set(null);

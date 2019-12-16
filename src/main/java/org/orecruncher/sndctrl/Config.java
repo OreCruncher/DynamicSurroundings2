@@ -80,7 +80,6 @@ public final class Config {
 
     public static class Client {
 
-        //@formatter:off
         private static final List<String> defaultSoundConfig = ImmutableList.<String>builder()
                 .add("minecraft:entity.sheep.ambient cull")
                 .add("minecraft:entity.chicken.ambient cull")
@@ -96,15 +95,17 @@ public final class Config {
                 .add("minecraft:entity.chicken.egg")
                 .add("minecraft:ambient.underwater.exit")
                 .build();
-        //@formatter:on
 
         @Nonnull
         public final Sound sound;
         @Nonnull
         public final Logging logging;
+        @Nonnull
+        public final Effects effects;
 
         Client(@Nonnull final ForgeConfigSpec.Builder builder) {
             this.sound = new Sound(builder);
+            this.effects = new Effects(builder);
             this.logging = new Logging(builder);
         }
 
@@ -119,7 +120,6 @@ public final class Config {
             public final ConfigValue<List<? extends String>> startupSoundList;
 
             Sound(@Nonnull final ForgeConfigSpec.Builder builder) {
-                //@formatter:off
                 builder.comment("General options for defining sound effects")
                         .push("Sound Options");
 
@@ -162,7 +162,24 @@ public final class Config {
                         .defineInRange("Background Workers", 0, 0, 8);
 
                 builder.pop();
-                //@formatter:on
+            }
+        }
+
+        public static class Effects {
+
+            public final IntValue effectRange;
+
+            Effects(@Nonnull final ForgeConfigSpec.Builder builder) {
+                builder.comment("Defines parameters for special effects")
+                        .push("Effect Options");
+
+                this.effectRange = builder
+                        .worldRestart()
+                        .comment("Block range of entity special effect handlign")
+                        .translation("sndctrl.cfg.effects.BlockRange")
+                        .defineInRange("Block Range", 24, 16, 64);
+
+                builder.pop();
             }
         }
 
@@ -173,7 +190,6 @@ public final class Config {
             public final IntValue flagMask;
 
             Logging(@Nonnull final ForgeConfigSpec.Builder builder) {
-                //@formatter:off
                 builder.comment("Defines how Sound Control logging will behave")
                         .push("Logging Options");
 
@@ -193,7 +209,6 @@ public final class Config {
                         .defineInRange("Debug Flag Mask", 0, 0, Integer.MAX_VALUE);
 
                 builder.pop();
-                //@formatter:on
             }
         }
     }

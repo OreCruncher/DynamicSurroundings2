@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.orecruncher.lib.Utilities;
+import org.orecruncher.lib.effects.EntityEffectHandler;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.audio.Category;
 import org.orecruncher.sndctrl.audio.ISoundCategory;
@@ -54,6 +55,7 @@ public final class IMC {
         dispatchTable.put(Constants.REGISTER_SOUND_CATEGORY, IMC::registerSoundCategoryHandler);
         dispatchTable.put(Constants.REGISTER_ACOUSTIC_FILE, IMC::registerAcousticFileHandler);
         dispatchTable.put(Constants.REGISTER_SOUND_META, IMC::registerSoundMetaHandler);
+        dispatchTable.put(Constants.REGISTER_EFFECT_FACTORY_HANDLER, IMC::registerEffectFactoryHandlerHandler);
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(IMC::processIMC);
     }
@@ -98,6 +100,11 @@ public final class IMC {
         event.ifPresent(AcousticLibrary.INSTANCE::processFile);
     }
 
+    private static void registerEffectFactoryHandlerHandler(@Nonnull final InterModComms.IMCMessage msg) {
+        final Optional<EntityEffectHandler.IEntityEffectFactoryHandler> event = Utilities.safeCast(msg.getMessageSupplier().get(), EntityEffectHandler.IEntityEffectFactoryHandler.class);
+        event.ifPresent(EntityEffectHandler::register);
+    }
+
     /**
      * Adds an AcousticEvent to the system so that it is recognized by the compiler
      *
@@ -135,11 +142,16 @@ public final class IMC {
         InterModComms.sendTo(SoundControl.MOD_ID, Constants.REGISTER_ACOUSTIC_FILE, () -> acousticFile);
     }
 
+    public static void registerEffectFactoryHandler(@Nonnull final EntityEffectHandler.IEntityEffectFactoryHandler handler) {
+        InterModComms.sendTo(SoundControl.MOD_ID, Constants.REGISTER_EFFECT_FACTORY_HANDLER, () -> handler);
+    }
+
     private static class Constants {
         public static final String REGISTER_ACOUSTIC_EVENT = "rae";
         public static final String REGISTER_SOUND_CATEGORY = "rsc";
         public static final String REGISTER_ACOUSTIC_FILE = "raf";
         public static final String REGISTER_SOUND_META = "rsm";
+        public static final String REGISTER_EFFECT_FACTORY_HANDLER = "refh";
     }
 
 }

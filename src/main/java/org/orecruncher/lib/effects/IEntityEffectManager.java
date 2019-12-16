@@ -16,34 +16,30 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.effects;
+package org.orecruncher.lib.effects;
 
-import java.util.List;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.sndctrl.library.EntityEffectInfo;
-
-/**
- * An IEntityEffectFactory creates an EntityEffect when it gets attached to an
- * EntityEffectHandler.
- */
 @OnlyIn(Dist.CLIENT)
-@FunctionalInterface
-public interface IEntityEffectFactory {
+public interface IEntityEffectManager {
 
-	/**
-	 * Creates 0 or more IEffects for the specified Entity. It is possible that some
-	 * condition on the Entity may prevent creation.
-	 *
-	 * @param entity The subject of the EntityEffect
-	 * @param eei    An object containing the Entities configuration parameters
-	 * @return A list of 0 or more IEffects to attach
-	 */
-	@Nonnull
-	List<EntityEffect> create(@Nonnull final Entity entity, @Nonnull final EntityEffectInfo eei);
+    boolean isActive();
 
+    boolean isEntityAlive();
+
+    double rangeToPlayerSq();
+
+    boolean isFirstPersonView();
+
+    void addParticle(@Nonnull final Particle particle);
+
+    boolean isActivePlayer(@Nonnull final Entity player);
+
+    PlayerEntity thePlayer();
 }

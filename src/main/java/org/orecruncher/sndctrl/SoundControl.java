@@ -26,6 +26,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.orecruncher.lib.effects.EntityEffectHandler;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
@@ -79,6 +80,7 @@ public final class SoundControl {
         SoundLibrary.initialize();
         AudioEffectLibrary.initialize();
         EntityEffectLibrary.initialize();
+        EntityEffectHandler.initialize();
     }
 
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {

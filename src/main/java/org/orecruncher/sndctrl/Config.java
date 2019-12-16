@@ -175,7 +175,7 @@ public final class Config {
 
                 this.effectRange = builder
                         .worldRestart()
-                        .comment("Block range of entity special effect handlign")
+                        .comment("Block range of entity special effect handling")
                         .translation("sndctrl.cfg.effects.BlockRange")
                         .defineInRange("Block Range", 24, 16, 64);
 

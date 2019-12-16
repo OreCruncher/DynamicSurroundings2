@@ -16,31 +16,23 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.misc;
+package org.orecruncher.sndctrl.capabilities.entityfx;
 
-import net.minecraftforge.fml.ModList;
+import javax.annotation.Nullable;
 
-import javax.annotation.Nonnull;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.effects.EntityEffectHandler;
 
-public enum ModEnvironment {
+@OnlyIn(Dist.CLIENT)
+public interface IEntityFX {
 
-    SoundPhysics("soundphysics"),
-    SereneSeasons("sereneseasons");
+	void set(@Nullable final EntityEffectHandler handler);
 
-    protected final String modId;
-    protected boolean isLoaded;
+	EntityEffectHandler get();
 
-    ModEnvironment(@Nonnull final String modId) {
-        this.modId = modId;
-    }
-
-    public static void initialize() {
-        for (final ModEnvironment me : ModEnvironment.values())
-            me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
-    }
-
-    public boolean isLoaded() {
-        return this.isLoaded;
-    }
+	default void clear() {
+		set(null);
+	}
 
 }

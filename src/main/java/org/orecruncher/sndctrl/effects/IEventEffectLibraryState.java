@@ -16,31 +16,24 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.misc;
-
-import net.minecraftforge.fml.ModList;
+package org.orecruncher.sndctrl.effects;
 
 import javax.annotation.Nonnull;
 
-public enum ModEnvironment {
+import net.minecraft.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-    SoundPhysics("soundphysics"),
-    SereneSeasons("sereneseasons");
+@OnlyIn(Dist.CLIENT)
+public interface IEventEffectLibraryState extends IEffectState {
 
-    protected final String modId;
-    protected boolean isLoaded;
-
-    ModEnvironment(@Nonnull final String modId) {
-        this.modId = modId;
-    }
-
-    public static void initialize() {
-        for (final ModEnvironment me : ModEnvironment.values())
-            me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
-    }
-
-    public boolean isLoaded() {
-        return this.isLoaded;
-    }
+	/**
+	 * Indicates if the specified player is the one sitting behind the screen.
+	 *
+	 * @param player The EntityPlayer to check
+	 * @return true if it is the local player, false otherwise
+	 */
+	@Override
+	boolean isActivePlayer(@Nonnull final Entity player);
 
 }

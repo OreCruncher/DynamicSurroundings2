@@ -28,5 +28,15 @@
 	"sndctrl.cfg.logging.VersionCheck": "Проверка новых версий",
 	"sndctrl.cfg.logging.VersionCheck.tooltip": "Вкл/выкл информацию о новых версиях мода",
 	"sndctrl.cfg.logging.FlagMask": "Маска отладки",
-	"sndctrl.cfg.logging.FlagMask.tooltip": "Битовая маска для включения различных отладочных трассировок"
+	"sndctrl.cfg.logging.FlagMask.tooltip": "Битовая маска для включения различных отладочных трассировок",
+	"sndctrl.format.TimeOfDay": "День %1$d, %2$d:%3$02d %4$s",
+	"sndctrl.format.AM": "до полудня",
+	"sndctrl.format.PM": "после полудня",
+	"sndctrl.format.SessionTime": "Время игры %1$d:%2$02d:%3$02d",
+	"sndctrl.format.NoSky": "Без облаков",
+	"sndctrl.format.Sunrise": "Рассвет",
+	"sndctrl.format.Sunset": "Закат",
+	"sndctrl.format.Daytime": "День",
+	"sndctrl.format.Nighttime": "Ночь"
+
 }

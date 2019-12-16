@@ -16,31 +16,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.misc;
+package org.orecruncher.sndctrl.library.config;
 
-import net.minecraftforge.fml.ModList;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nonnull;
+import com.google.gson.annotations.SerializedName;
 
-public enum ModEnvironment {
+public class EntityConfig {
 
-    SoundPhysics("soundphysics"),
-    SereneSeasons("sereneseasons");
-
-    protected final String modId;
-    protected boolean isLoaded;
-
-    ModEnvironment(@Nonnull final String modId) {
-        this.modId = modId;
-    }
-
-    public static void initialize() {
-        for (final ModEnvironment me : ModEnvironment.values())
-            me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
-    }
-
-    public boolean isLoaded() {
-        return this.isLoaded;
-    }
+	@SerializedName("effects")
+	public String effects = StringUtils.EMPTY;
+	@SerializedName("variator")
+	public String variator = "default";
 
 }

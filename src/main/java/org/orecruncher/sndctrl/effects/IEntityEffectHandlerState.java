@@ -16,31 +16,30 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.misc;
+package org.orecruncher.sndctrl.effects;
 
-import net.minecraftforge.fml.ModList;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nonnull;
+/**
+ * State from the EntityEffectHandler that is being provided to an EntityEffect
+ * during processing.
+ */
+@OnlyIn(Dist.CLIENT)
+public interface IEntityEffectHandlerState extends IEntityEffectState {
 
-public enum ModEnvironment {
+	/**
+	 * Whether the EntityEffectHandler is alive or dead.
+	 *
+	 * @return true if the EntityEffectHandler is active, false otherwise.
+	 */
+	boolean isAlive();
 
-    SoundPhysics("soundphysics"),
-    SereneSeasons("sereneseasons");
-
-    protected final String modId;
-    protected boolean isLoaded;
-
-    ModEnvironment(@Nonnull final String modId) {
-        this.modId = modId;
-    }
-
-    public static void initialize() {
-        for (final ModEnvironment me : ModEnvironment.values())
-            me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
-    }
-
-    public boolean isLoaded() {
-        return this.isLoaded;
-    }
+	/**
+	 * Provides the distance, squared, to the player entity behind the keyboard.
+	 *
+	 * @return Range to client player, squared.
+	 */
+	double rangeToPlayerSq();
 
 }

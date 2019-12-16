@@ -30,8 +30,10 @@ import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
 import org.orecruncher.sndctrl.audio.AudioEngine;
+import org.orecruncher.sndctrl.capabilities.CapabilityEntityFXData;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
+import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 import org.orecruncher.sndctrl.misc.ModEnvironment;
 
@@ -69,17 +71,20 @@ public final class SoundControl {
 
     private void commonSetup(@Nonnull final FMLCommonSetupEvent event) {
         ModEnvironment.initialize();
+        CapabilityEntityFXData.register();
     }
 
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
         AudioEngine.initialize();
         SoundLibrary.initialize();
         AudioEffectLibrary.initialize();
+        EntityEffectLibrary.initialize();
     }
 
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
         // Mod initialization and IMC processing should have completed by now.  Do any further baking.
         AcousticLibrary.INSTANCE.initialize();
+        EntityEffectLibrary.complete();
     }
 
     @SubscribeEvent

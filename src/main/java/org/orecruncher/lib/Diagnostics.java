@@ -37,12 +37,23 @@ import javax.annotation.Nonnull;
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class Diagnostics {
 
+    private static MinecraftClock clock;
+    @Nonnull
     private static DiagnosticEvent lastEvent = new DiagnosticEvent();
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onClientTick(@Nonnull final TickEvent.ClientTickEvent event) {
         if (GameUtils.displayDebug()) {
+
+            if (clock == null)
+                clock = new MinecraftClock();
+
+            if (GameUtils.isInGame())
+                clock.update(GameUtils.getWorld());
+
             final DiagnosticEvent evt = new DiagnosticEvent();
+            evt.addLeft(clock.getFormattedTime());
+
             MinecraftForge.EVENT_BUS.post(evt);
             lastEvent = evt;
         }

@@ -36,14 +36,14 @@ import net.minecraft.world.World;
 @OnlyIn(Dist.CLIENT)
 public class MinecraftClock {
 
-	private static final String AM = I18n.format("sndctrl.format.AM");
-	private static final String PM = I18n.format("sndctrl.format.PM");
-	private static final String NO_SKY = I18n.format("sndctrl.format.NoSky");
-	private static final String SUNRISE = I18n.format("sndctrl.format.Sunrise");
-	private static final String SUNSET = I18n.format("sndctrl.format.Sunset");
-	private static final String DAYTIME = I18n.format("sndctrl.format.Daytime");
-	private static final String NIGHTTIME = I18n.format("sndctrl.format.Nighttime");
-	private static final String TIME_FORMAT = I18n.format("sndctrl.format.TimeOfDay");
+	private static final String AM = Localization.load("sndctrl.format.AM");
+	private static final String PM = Localization.load("sndctrl.format.PM");
+	private static final String NO_SKY = Localization.load("sndctrl.format.NoSky");
+	private static final String SUNRISE = Localization.load("sndctrl.format.Sunrise");
+	private static final String SUNSET = Localization.load("sndctrl.format.Sunset");
+	private static final String DAYTIME = Localization.load("sndctrl.format.Daytime");
+	private static final String NIGHTTIME = Localization.load("sndctrl.format.Nighttime");
+	private static final String TIME_FORMAT = Localization.load("sndctrl.format.TimeOfDay");
 
 	protected int day;
 	protected int hour;

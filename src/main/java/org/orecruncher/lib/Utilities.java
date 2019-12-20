@@ -45,7 +45,7 @@ public final class Utilities {
     }
 
     @Nonnull
-    public static <S, T> Optional<T> safeCast(@Nonnull final S candidate, @Nonnull final Class<T> target) {
+    public static <S, T> Optional<T> safeCast(@Nullable final S candidate, @Nonnull final Class<T> target) {
         return target.isInstance(candidate) ? Optional.of(target.cast(candidate)) : Optional.empty();
     }
 }

@@ -27,9 +27,6 @@ import javax.annotation.Nonnull;
 
 public class WeatherVariableSet extends VariableSet<IWorldVariables> implements IWorldVariables {
 
-    private final LazyVariable<Boolean> isRaining = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getWorld().isRaining());
-    private final LazyVariable<Boolean> isThundering = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getWorld().isThundering());
-    private final LazyVariable<Float> rainFall = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getWorld().getRainStrength(1F) : 0F);
     private final LazyVariable<Float> temperature = new LazyVariable<>(() -> {
         if (GameUtils.isInGame()) {
             final World world = GameUtils.getWorld();
@@ -38,6 +35,9 @@ public class WeatherVariableSet extends VariableSet<IWorldVariables> implements 
         }
         return 0F;
     });
+    private boolean isRaining;
+    private boolean isThundering;
+    private float rainFall;
 
     public WeatherVariableSet() {
         super("weather");
@@ -51,25 +51,32 @@ public class WeatherVariableSet extends VariableSet<IWorldVariables> implements 
 
     @Override
     public void update() {
-        this.isRaining.reset();
-        this.isThundering.reset();
-        this.rainFall.reset();
+        if (GameUtils.isInGame()) {
+            final World world = GameUtils.getWorld();
+            this.isRaining = world.isRaining();
+            this.isThundering = world.isThundering();
+            this.rainFall = world.getRainStrength(1F);
+        } else {
+            this.isRaining = false;
+            this.isThundering = false;
+            this.rainFall = 0F;
+        }
         this.temperature.reset();
     }
 
     @Override
     public boolean isRaining() {
-        return this.isRaining.get();
+        return this.isRaining;
     }
 
     @Override
     public boolean isThundering() {
-        return this.isThundering.get();
+        return this.isThundering;
     }
 
     @Override
     public float getRainFall() {
-        return this.rainFall.get();
+        return this.rainFall;
     }
 
     @Override

@@ -62,21 +62,26 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
 
     @Override
     public void update() {
+        Biome newBiome = null;
         if (GameUtils.isInGame()) {
-            this.biome = GameUtils.getWorld().getBiome(GameUtils.getPlayer().getPosition());
+            newBiome = GameUtils.getWorld().getBiome(GameUtils.getPlayer().getPosition());
         } else {
-            this.biome = Biomes.PLAINS;
+            newBiome = Biomes.PLAINS;
         }
-        this.name.reset();
-        this.modid.reset();
-        this.rainfall.reset();
-        this.temperature.reset();
-        this.category.reset();
-        this.rainType.reset();
-        this.temp.reset();
-        this.traits.reset();
-        this.biomeTraits.reset();
-        this.biomeTraitNames.reset();
+
+        if (newBiome != this.biome) {
+            this.biome = newBiome;
+            this.name.reset();
+            this.modid.reset();
+            this.rainfall.reset();
+            this.temperature.reset();
+            this.category.reset();
+            this.rainType.reset();
+            this.temp.reset();
+            this.traits.reset();
+            this.biomeTraits.reset();
+            this.biomeTraitNames.reset();
+        }
     }
 
     @Override

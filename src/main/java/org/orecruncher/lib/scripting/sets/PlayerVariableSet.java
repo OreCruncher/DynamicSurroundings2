@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 
 public class PlayerVariableSet extends VariableSet<IPlayerVariables> implements IPlayerVariables {
 
-    private final LazyVariable<Boolean> isBurning = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isBurning());
     private final LazyVariable<Boolean> isSuffocating = new LazyVariable<>(() -> {
         if (GameUtils.isInGame()) {
             final PlayerEntity player = GameUtils.getPlayer();
@@ -37,22 +36,6 @@ public class PlayerVariableSet extends VariableSet<IPlayerVariables> implements 
         }
         return false;
     });
-    private final LazyVariable<Boolean> isFlying = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isAirBorne);
-    private final LazyVariable<Boolean> isSprintnig = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isSprinting());
-    private final LazyVariable<Boolean> isInLava = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isInLava());
-    private final LazyVariable<Boolean> isInvisible = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isInvisible());
-    private final LazyVariable<Boolean> isBlind = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isPotionActive(Effects.BLINDNESS));
-    private final LazyVariable<Boolean> isInWater = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isInvisible());
-    private final LazyVariable<Boolean> isMoving = new LazyVariable<>(() -> {
-        if (GameUtils.isInGame()) {
-            final PlayerEntity player = GameUtils.getPlayer();
-            return player.distanceWalkedModified != player.prevDistanceWalkedModified;
-        }
-        return false;
-    });
-    private final LazyVariable<Boolean> isWet = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isWet());
-    private final LazyVariable<Boolean> isRiding = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().isOnePlayerRiding());
-    private final LazyVariable<Boolean> isOnGround = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getPlayer().onGround);
     private final LazyVariable<Boolean> canSeeSky = new LazyVariable<>(() -> {
         if (GameUtils.isInGame()) {
             final World world = GameUtils.getWorld();
@@ -70,11 +53,22 @@ public class PlayerVariableSet extends VariableSet<IPlayerVariables> implements 
         }
         return false;
     });
-    private final LazyVariable<Float> health = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getPlayer().getHealth() : 0F);
-    private final LazyVariable<Float> maxHealth = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getPlayer().getMaxHealth() : 0F);
-    private final LazyVariable<Float> x = new LazyVariable<>(() -> GameUtils.isInGame() ? (float) GameUtils.getPlayer().posX : 0F);
-    private final LazyVariable<Float> y = new LazyVariable<>(() -> GameUtils.isInGame() ? (float) GameUtils.getPlayer().posY : 0F);
-    private final LazyVariable<Float> z = new LazyVariable<>(() -> GameUtils.isInGame() ? (float) GameUtils.getPlayer().posZ : 0F);
+    private boolean isBurning;
+    private boolean isFlying;
+    private boolean isSprintnig;
+    private boolean isInLava;
+    private boolean isInvisible;
+    private boolean isBlind;
+    private boolean isInWater;
+    private boolean isWet;
+    private boolean isRiding;
+    private boolean isOnGround;
+    private boolean isMoving;
+    private float health;
+    private float maxHealth;
+    private float x;
+    private float y;
+    private float z;
 
     public PlayerVariableSet() {
         super("player");
@@ -83,23 +77,48 @@ public class PlayerVariableSet extends VariableSet<IPlayerVariables> implements 
     @Override
     public void update() {
 
-        this.isBurning.reset();
+        if (GameUtils.isInGame()) {
+            final PlayerEntity player = GameUtils.getPlayer();
+            assert player != null;
+
+            this.isBurning = player.isBurning();
+            this.isFlying = player.isAirBorne;
+            this.isSprintnig = player.isSprinting();
+            this.isInLava = player.isInLava();
+            this.isInvisible = player.isInvisible();
+            this.isBlind = player.isPotionActive(Effects.BLINDNESS);
+            this.isInWater = player.isInWater();
+            this.isWet = player.isWet();
+            this.isRiding = player.isOnePlayerRiding();
+            this.isOnGround = player.onGround;
+            this.isMoving = player.distanceWalkedModified != player.prevDistanceWalkedModified;
+            this.health = player.getHealth();
+            this.maxHealth = player.getMaxHealth();
+            this.x = (float) player.posX;
+            this.y = (float) player.posY;
+            this.z = (float) player.posZ;
+
+        } else {
+
+            this.isBurning = false;
+            this.isFlying = false;
+            this.isSprintnig = false;
+            this.isInLava = false;
+            this.isInvisible = false;
+            this.isBlind = false;
+            this.isInWater = false;
+            this.isWet = false;
+            this.isRiding = false;
+            this.isOnGround = false;
+            this.health = 0;
+            this.maxHealth = 0;
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+
+        }
+
         this.isSuffocating.reset();
-        this.isFlying.reset();
-        this.isSprintnig.reset();
-        this.isInLava.reset();
-        this.isInvisible.reset();
-        this.isBlind.reset();
-        this.isInWater.reset();
-        this.isMoving.reset();
-        this.x.reset();
-        this.y.reset();
-        this.z.reset();
-        this.isWet.reset();
-        this.isRiding.reset();
-        this.isOnGround.reset();
-        this.health.reset();
-        this.maxHealth.reset();
         this.canRainOn.reset();
         this.canSeeSky.reset();
 
@@ -113,7 +132,7 @@ public class PlayerVariableSet extends VariableSet<IPlayerVariables> implements 
 
     @Override
     public boolean isBurning() {
-        return this.isBurning.get();
+        return this.isBurning;
     }
 
     @Override
@@ -123,52 +142,52 @@ public class PlayerVariableSet extends VariableSet<IPlayerVariables> implements 
 
     @Override
     public boolean isFlying() {
-        return this.isFlying.get();
+        return this.isFlying;
     }
 
     @Override
     public boolean isSprintnig() {
-        return this.isSprintnig.get();
+        return this.isSprintnig;
     }
 
     @Override
     public boolean isInLava() {
-        return this.isInLava.get();
+        return this.isInLava;
     }
 
     @Override
     public boolean isInvisible() {
-        return this.isInvisible.get();
+        return this.isInvisible;
     }
 
     @Override
     public boolean isBlind() {
-        return this.isBlind.get();
+        return this.isBlind;
     }
 
     @Override
     public boolean isInWater() {
-        return this.isInWater.get();
+        return this.isInWater;
     }
 
     @Override
     public boolean isMoving() {
-        return this.isMoving.get();
+        return this.isMoving;
     }
 
     @Override
     public boolean isWet() {
-        return this.isWet.get();
+        return this.isWet;
     }
 
     @Override
     public boolean isRiding() {
-        return this.isRiding.get();
+        return this.isRiding;
     }
 
     @Override
     public boolean isOnGround() {
-        return this.isOnGround.get();
+        return this.isOnGround;
     }
 
     @Override
@@ -183,26 +202,26 @@ public class PlayerVariableSet extends VariableSet<IPlayerVariables> implements 
 
     @Override
     public float getHealth() {
-        return this.health.get();
+        return this.health;
     }
 
     @Override
     public float getMaxHealth() {
-        return this.maxHealth.get();
+        return this.maxHealth;
     }
 
     @Override
     public float getX() {
-        return this.x.get();
+        return this.x;
     }
 
     @Override
     public float getY() {
-        return this.y.get();
+        return this.y;
     }
 
     @Override
     public float getZ() {
-        return this.z.get();
+        return this.z;
     }
 }

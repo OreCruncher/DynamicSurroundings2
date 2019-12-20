@@ -18,7 +18,7 @@
 
 package org.orecruncher.lib.scripting.sets;
 
-import org.orecruncher.lib.DiurnalUtils;
+import org.orecruncher.lib.DayCycle;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
@@ -26,14 +26,13 @@ import javax.annotation.Nonnull;
 
 public class DiurnalCycle extends VariableSet<IDiurnalCycle> implements IDiurnalCycle {
 
-    private final LazyVariable<Boolean> isAuroraVisible = new LazyVariable<>(() -> GameUtils.isInGame() && DiurnalUtils.isAuroraVisible(GameUtils.getWorld()));
-    private final LazyVariable<Float> moonPhaseFactor = new LazyVariable<>(() -> GameUtils.isInGame() ? DiurnalUtils.getMoonPhaseFactor(GameUtils.getWorld()) : 0F);
+    private final LazyVariable<Float> moonPhaseFactor = new LazyVariable<>(() -> GameUtils.isInGame() ? DayCycle.getMoonPhaseFactor(GameUtils.getWorld()) : 0F);
     private final LazyVariable<Float> celestialAngle = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getWorld().getCelestialAngle(0F) : 0F);
-    private DiurnalUtils.DayCycle cycle = DiurnalUtils.DayCycle.DAYTIME;
-    private final LazyVariable<Boolean> isDay = new LazyVariable<>(() -> cycle == DiurnalUtils.DayCycle.DAYTIME);
-    private final LazyVariable<Boolean> isNight = new LazyVariable<>(() -> cycle == DiurnalUtils.DayCycle.NIGHTTIME);
-    private final LazyVariable<Boolean> isSunrise = new LazyVariable<>(() -> cycle == DiurnalUtils.DayCycle.SUNRISE);
-    private final LazyVariable<Boolean> isSunset = new LazyVariable<>(() -> cycle == DiurnalUtils.DayCycle.SUNSET);
+    private boolean isAuroraVisible;
+    private boolean isDay;
+    private boolean isNight;
+    private boolean isSunrise;
+    private boolean isSunset;
 
     public DiurnalCycle() {
         super("diurnal");
@@ -48,43 +47,47 @@ public class DiurnalCycle extends VariableSet<IDiurnalCycle> implements IDiurnal
     public void update() {
 
         if (GameUtils.isInGame()) {
-            this.cycle = DiurnalUtils.getCycle(GameUtils.getWorld());
+            DayCycle cycle = DayCycle.getCycle(GameUtils.getWorld());
+            this.isAuroraVisible = cycle.isAuroraVisible();
+            this.isDay = cycle == DayCycle.DAYTIME;
+            this.isNight = cycle == DayCycle.NIGHTTIME;
+            this.isSunrise = cycle == DayCycle.SUNRISE;
+            this.isSunset = cycle == DayCycle.SUNSET;
         } else {
-            this.cycle = DiurnalUtils.DayCycle.DAYTIME;
+            this.isAuroraVisible = false;
+            this.isDay = false;
+            this.isNight = false;
+            this.isSunrise = false;
+            this.isSunset = false;
         }
 
-        this.isDay.reset();
-        this.isNight.reset();
-        this.isSunset.reset();
-        this.isSunset.reset();
-        this.isAuroraVisible.reset();
         this.moonPhaseFactor.reset();
         this.celestialAngle.reset();
     }
 
     @Override
     public boolean isDay() {
-        return this.isDay.get();
+        return this.isDay;
     }
 
     @Override
     public boolean isNight() {
-        return this.isNight.get();
+        return this.isNight;
     }
 
     @Override
     public boolean isSunrise() {
-        return this.isSunrise.get();
+        return this.isSunrise;
     }
 
     @Override
     public boolean isSunset() {
-        return this.isSunset.get();
+        return this.isSunset;
     }
 
     @Override
     public boolean isAuroraVisible() {
-        return this.isAuroraVisible.get();
+        return this.isAuroraVisible;
     }
 
     @Override

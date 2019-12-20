@@ -18,8 +18,6 @@
 
 package org.orecruncher.lib.scripting;
 
-import org.orecruncher.lib.GameUtils;
-
 import javax.annotation.Nonnull;
 
 /**

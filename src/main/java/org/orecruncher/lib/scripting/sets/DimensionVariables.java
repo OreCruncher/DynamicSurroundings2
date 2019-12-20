@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.scripting.sets;
 
+import net.minecraft.world.dimension.Dimension;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
@@ -25,9 +26,9 @@ import javax.annotation.Nonnull;
 
 public class DimensionVariables extends VariableSet<IDimensionVariables> implements IDimensionVariables {
 
-    private final LazyVariable<Integer> id = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getWorld().getDimension().getType().getId() : 0);
-    private final LazyVariable<String> name = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getWorld().getProviderName() : "UNKNOWN");
-    private final LazyVariable<Boolean> hasSky = new LazyVariable<>(() -> GameUtils.isInGame() && GameUtils.getWorld().getDimension().hasSkyLight());
+    private int id;
+    private String name;
+    private boolean hasSky;
 
     public DimensionVariables() {
         super("dim");
@@ -41,23 +42,30 @@ public class DimensionVariables extends VariableSet<IDimensionVariables> impleme
 
     @Override
     public void update() {
-        this.id.reset();
-        this.name.reset();
-        this.hasSky.reset();
+        if (GameUtils.isInGame()) {
+            final Dimension dim = GameUtils.getWorld().getDimension();
+            this.id = dim.getType().getId();
+            this.hasSky = dim.hasSkyLight();
+            this.name = GameUtils.getWorld().getProviderName();
+        } else {
+            this.id = 0;
+            this.hasSky = false;
+            this.name = "UNKNOWN";
+        }
     }
 
     @Override
     public int getId() {
-        return this.id.get();
+        return this.id;
     }
 
     @Override
     public String getDimName() {
-        return this.name.get();
+        return this.name;
     }
 
     @Override
     public boolean hasSky() {
-        return this.hasSky.get();
+        return this.hasSky;
     }
 }

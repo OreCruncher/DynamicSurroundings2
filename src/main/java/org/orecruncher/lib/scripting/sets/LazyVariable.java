@@ -19,12 +19,11 @@
 package org.orecruncher.lib.scripting.sets;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 /**
  * LazyVariable performs value caching to minimize the impact of initialization.  It has a reset mechanic so the value
- * can be cleared and requeried as needed.
+ * can be cleared and requeried as needed.  (Essentially this is a lighter weight LazyOptional.)
  *
  * @param <T> Type of value that is cached
  */

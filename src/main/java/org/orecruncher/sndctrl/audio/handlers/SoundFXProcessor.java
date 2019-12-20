@@ -24,7 +24,6 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -36,6 +35,7 @@ import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.lwjgl.openal.AL10;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
+import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.threading.Worker;
 import org.orecruncher.sndctrl.Config;
@@ -218,8 +218,8 @@ public final class SoundFXProcessor {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
-        if (isAvailable() && GameUtils.displayDebug() && soundProcessor != null) {
+    public static void onGatherText(@Nonnull final DiagnosticEvent event) {
+        if (isAvailable() && soundProcessor != null) {
             final String msg = soundProcessor.getDiagnosticString();
             if (!StringUtils.isEmpty(msg))
                 event.getLeft().add(TextFormatting.GREEN + msg);

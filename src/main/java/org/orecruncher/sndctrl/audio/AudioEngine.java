@@ -28,7 +28,6 @@ import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -38,6 +37,7 @@ import net.minecraftforge.fml.LogicalSide;
 import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
+import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
@@ -313,7 +313,7 @@ public final class AudioEngine {
     }
 
     @SubscribeEvent
-    public static void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
+    public static void onGatherText(@Nonnull final DiagnosticEvent event) {
         if (!diagnostics.isEmpty()) {
             event.getLeft().addAll(diagnostics);
         }

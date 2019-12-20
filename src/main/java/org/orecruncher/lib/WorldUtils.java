@@ -19,6 +19,7 @@
 package org.orecruncher.lib;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
@@ -29,6 +30,11 @@ public final class WorldUtils {
 
     private WorldUtils() {
 
+    }
+
+    @Nonnull
+    public static BlockPos getTopSolidOrLiquidBlock(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
+        return new BlockPos(pos.getX(), world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ()), pos.getZ());
     }
 
     /**

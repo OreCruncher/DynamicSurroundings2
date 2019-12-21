@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib;
 
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,7 +53,7 @@ public final class Diagnostics {
                 clock.update(GameUtils.getWorld());
 
             final DiagnosticEvent evt = new DiagnosticEvent();
-            evt.addLeft(clock.getFormattedTime());
+            evt.addLeft(TextFormatting.YELLOW + clock.getFormattedTime());
 
             MinecraftForge.EVENT_BUS.post(evt);
             lastEvent = evt;

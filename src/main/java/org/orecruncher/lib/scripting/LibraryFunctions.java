@@ -20,21 +20,29 @@ package org.orecruncher.lib.scripting;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * Methods that are added to the JavaScript runtime environment for use by scripts.
+ */
 public final class LibraryFunctions {
 
     public Object iif(final boolean flag, @Nullable final Object trueResult, @Nullable final Object falseResult) {
         return flag ? trueResult : falseResult;
     }
 
-    public boolean match(@Nonnull final String regex, @Nonnull final String subject) {
-        return Pattern.matches(regex, subject);
+    public boolean match(@Nonnull final String pattern, @Nonnull final String subject) {
+        Objects.requireNonNull(pattern);
+        Objects.requireNonNull(subject);
+        return Pattern.matches(pattern, subject);
     }
 
     public boolean oneof(@Nonnull final Object testee, @Nonnull final Object... possibles) {
+        Objects.requireNonNull(testee);
+        Objects.requireNonNull(possibles);
         for (final Object obj : possibles)
-            if (possibles.equals(testee))
+            if (testee.equals(obj))
                 return true;
         return false;
     }

@@ -19,22 +19,27 @@
 package org.orecruncher.lib;
 
 import net.minecraft.world.IWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
+import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
 
 public enum DayCycle {
 
-    NO_SKY(false),
-    SUNRISE(false),
-    SUNSET(true),
-    DAYTIME(false),
-    NIGHTTIME(true);
+    NO_SKY(false, "NoSky"),
+    SUNRISE(false, "Sunrise"),
+    SUNSET(true, "Sunset"),
+    DAYTIME(false, "Daytime"),
+    NIGHTTIME(true, "Nighttime");
 
     private final boolean auroraVisible;
+    private final String localizeString;
 
-    DayCycle(final boolean auroraVisible) {
+    DayCycle(final boolean auroraVisible, @Nonnull final String localName) {
         this.auroraVisible = auroraVisible;
+        this.localizeString = SoundControl.MOD_ID + ".format." + localName;
     }
 
     public static boolean isDaytime(@Nonnull final IWorld world) {
@@ -58,9 +63,9 @@ public enum DayCycle {
             return DayCycle.NO_SKY;
 
         final float brFactor = world.getDimension().getSunBrightness(1.0f);
-        if (brFactor > 0.6f)
+        if (brFactor > 0.68f)   // 0.6F on 0-1 scale
             return DayCycle.DAYTIME;
-        if (brFactor < 0.1f)
+        if (brFactor < 0.3f)    // 0 on 0-1 scale
             return DayCycle.NIGHTTIME;
         if (MathStuff.sin(world.getCelestialAngle(1.0f)) > 0.0)
             return DayCycle.SUNSET;
@@ -81,6 +86,12 @@ public enum DayCycle {
 
     public boolean isAuroraVisible() {
         return this.auroraVisible;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Nonnull
+    public String getFormattedName() {
+        return Localization.load(this.localizeString);
     }
 
 }

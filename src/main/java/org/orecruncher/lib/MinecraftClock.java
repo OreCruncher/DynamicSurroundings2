@@ -30,11 +30,6 @@ public class MinecraftClock {
 
 	private static final String AM = Localization.load("sndctrl.format.AM");
 	private static final String PM = Localization.load("sndctrl.format.PM");
-	private static final String NO_SKY = Localization.load("sndctrl.format.NoSky");
-	private static final String SUNRISE = Localization.load("sndctrl.format.Sunrise");
-	private static final String SUNSET = Localization.load("sndctrl.format.Sunset");
-	private static final String DAYTIME = Localization.load("sndctrl.format.Daytime");
-	private static final String NIGHTTIME = Localization.load("sndctrl.format.Nighttime");
 	private static final String TIME_FORMAT = Localization.load("sndctrl.format.TimeOfDay");
 
 	protected int day;
@@ -53,7 +48,7 @@ public class MinecraftClock {
 
 	public void update(@Nonnull final World world) {
 
-		long time = world.getGameTime();
+		long time = world.getDayTime();
 		this.day = (int) (time / 24000);
 		time -= this.day * 24000;
 		this.day++; // It's day 1, not 0 :)
@@ -89,23 +84,17 @@ public class MinecraftClock {
 	}
 
 	public String getTimeOfDay() {
-		switch (this.cycle) {
-		case NO_SKY:
-			return MinecraftClock.NO_SKY;
-		case SUNRISE:
-			return MinecraftClock.SUNRISE;
-		case SUNSET:
-			return MinecraftClock.SUNSET;
-		case DAYTIME:
-			return MinecraftClock.DAYTIME;
-		default:
-			return MinecraftClock.NIGHTTIME;
-		}
+		return this.cycle.getFormattedName();
 	}
 
 	public String getFormattedTime() {
-		return String.format(TIME_FORMAT, this.day, this.hour > 12 ? this.hour - 12 : this.hour, this.minute,
-				this.isAM ? AM : PM);
+		int h = this.hour;
+		if (h > 12)
+			h -= 12;
+		if (h == 0)
+			h = 12;
+
+		return String.format(TIME_FORMAT, this.day, h, this.minute, this.isAM ? AM : PM, this.cycle.getFormattedName());
 	}
 
 	@Override

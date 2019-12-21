@@ -55,8 +55,12 @@ public final class ExecutionContext {
     private final CompiledScript error;
 
     public ExecutionContext(@Nonnull final String contextName) {
+        this(contextName, FILTER);
+    }
+
+    public ExecutionContext(@Nonnull final String contextName, @Nonnull final ClassFilter filter) {
         this.contextName = contextName;
-        this.engine = new NashornScriptEngineFactory().getScriptEngine(FILTER);
+        this.engine = new NashornScriptEngineFactory().getScriptEngine(filter);
         this.error = makeFunction("'<ERROR>'");
         this.engine.put("lib", new LibraryFunctions());
     }

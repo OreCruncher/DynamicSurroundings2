@@ -78,13 +78,13 @@ public final class SoundControl {
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
         AudioEngine.initialize();
         SoundLibrary.initialize();
-        AudioEffectLibrary.initialize();
         EntityEffectLibrary.initialize();
         EntityEffectHandler.initialize();
     }
 
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
         // Mod initialization and IMC processing should have completed by now.  Do any further baking.
+        AudioEffectLibrary.initialize();
         AcousticLibrary.INSTANCE.initialize();
         EntityEffectLibrary.complete();
     }

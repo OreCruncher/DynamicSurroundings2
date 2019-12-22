@@ -34,12 +34,8 @@ import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 /**
  * Helper interface used to register items with Sound Control using IMC.
@@ -48,15 +44,8 @@ import java.util.stream.Collectors;
 public final class IMC {
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(IMC.class);
-    private static final Map<String, Consumer<InterModComms.IMCMessage>> dispatchTable = new HashMap<>(4);
 
     static {
-        dispatchTable.put(Constants.REGISTER_ACOUSTIC_EVENT, IMC::registerAcousticEventHandler);
-        dispatchTable.put(Constants.REGISTER_SOUND_CATEGORY, IMC::registerSoundCategoryHandler);
-        dispatchTable.put(Constants.REGISTER_ACOUSTIC_FILE, IMC::registerAcousticFileHandler);
-        dispatchTable.put(Constants.REGISTER_SOUND_META, IMC::registerSoundMetaHandler);
-        dispatchTable.put(Constants.REGISTER_EFFECT_FACTORY_HANDLER, IMC::registerEffectFactoryHandlerHandler);
-
         FMLJavaModLoadingContext.get().getModEventBus().addListener(IMC::processIMC);
     }
 
@@ -65,44 +54,31 @@ public final class IMC {
     }
 
     private static void processIMC(@Nonnull final InterModProcessEvent event) {
-
-        final List<InterModComms.IMCMessage> msgs = event.getIMCStream()
-                .collect(Collectors.toList());
-
-        for (final InterModComms.IMCMessage msg : msgs) {
-            LOGGER.debug("Processing IMC message '%s' from '%s'", msg.getMethod(), msg.getSenderModId());
-            final Consumer<InterModComms.IMCMessage> disp = dispatchTable.get(msg.getMethod());
-            if (disp != null) {
-                disp.accept(msg);
-            } else {
-                LOGGER.debug("Did not understand request '%s'", msg.getMethod());
-            }
-        }
+        event.getIMCStream().forEach(msg -> Methods.valueOf(msg.getMethod()).handle(msg));
     }
 
     private static void registerAcousticEventHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        final Optional<AcousticEvent> event = Utilities.safeCast(msg.getMessageSupplier().get(), AcousticEvent.class);
-        event.ifPresent(AcousticEvent::register);
+        handle(msg, AcousticEvent.class, AcousticEvent::register);
     }
 
     private static void registerSoundCategoryHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        final Optional<ISoundCategory> event = Utilities.safeCast(msg.getMessageSupplier().get(), ISoundCategory.class);
-        event.ifPresent(Category::register);
+        handle(msg, ISoundCategory.class, Category::register);
     }
 
     private static void registerSoundMetaHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        final Optional<ResourceLocation> event = Utilities.safeCast(msg.getMessageSupplier().get(), ResourceLocation.class);
-        event.ifPresent(SoundLibrary::registerSoundMeta);
+        handle(msg, ResourceLocation.class, SoundLibrary::registerSoundMeta);
     }
 
     private static void registerAcousticFileHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        final Optional<ResourceLocation> event = Utilities.safeCast(msg.getMessageSupplier().get(), ResourceLocation.class);
-        event.ifPresent(AcousticLibrary.INSTANCE::processFile);
+        handle(msg, ResourceLocation.class, AcousticLibrary.INSTANCE::processFile);
     }
 
     private static void registerEffectFactoryHandlerHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        final Optional<EntityEffectHandler.IEntityEffectFactoryHandler> event = Utilities.safeCast(msg.getMessageSupplier().get(), EntityEffectHandler.IEntityEffectFactoryHandler.class);
-        event.ifPresent(EntityEffectHandler::register);
+        handle(msg, EntityEffectHandler.IEntityEffectFactoryHandler.class, EntityEffectHandler::register);
+    }
+
+    private static <T> void handle(@Nonnull final InterModComms.IMCMessage msg, @Nonnull final Class<T> clazz, @Nonnull final Consumer<T> handler) {
+        Utilities.safeCast(msg.getMessageSupplier().get(), clazz).ifPresent(handler);
     }
 
     /**
@@ -111,7 +87,7 @@ public final class IMC {
      * @param event The Acoustic Event to register
      */
     public static void registerAcousticEvent(@Nonnull final AcousticEvent event) {
-        InterModComms.sendTo(SoundControl.MOD_ID, Constants.REGISTER_ACOUSTIC_EVENT, () -> event);
+        Methods.REGISTER_ACOUSTIC_EVENT.send(() -> event);
     }
 
     /**
@@ -120,7 +96,7 @@ public final class IMC {
      * @param category Sound Category to register
      */
     public static void registerSoundCategory(@Nonnull final ISoundCategory category) {
-        InterModComms.sendTo(SoundControl.MOD_ID, Constants.REGISTER_SOUND_CATEGORY, () -> category);
+        Methods.REGISTER_SOUND_CATEGORY.send(() -> category);
     }
 
     /**
@@ -130,7 +106,7 @@ public final class IMC {
      * @param soundFile Sound file to process for meta data and additional sounds
      */
     public static void regigisterSoundMeta(@Nonnull final ResourceLocation soundFile) {
-        InterModComms.sendTo(SoundControl.MOD_ID, Constants.REGISTER_SOUND_META, () -> soundFile);
+        Methods.REGISTER_SOUND_META.send(() -> soundFile);
     }
 
     /**
@@ -139,19 +115,43 @@ public final class IMC {
      * @param acousticFile Acoustic file to process
      */
     public static void registerAcousticFile(@Nonnull final ResourceLocation acousticFile) {
-        InterModComms.sendTo(SoundControl.MOD_ID, Constants.REGISTER_ACOUSTIC_FILE, () -> acousticFile);
+        Methods.REGISTER_ACOUSTIC_FILE.send(() -> acousticFile);
     }
 
+    /**
+     * Register an EffectFactoryHandler for the entity effect system.
+     *
+     * @param handler Effect handler to register
+     */
     public static void registerEffectFactoryHandler(@Nonnull final EntityEffectHandler.IEntityEffectFactoryHandler handler) {
-        InterModComms.sendTo(SoundControl.MOD_ID, Constants.REGISTER_EFFECT_FACTORY_HANDLER, () -> handler);
+        Methods.REGISTER_EFFECT_FACTORY_HANDLER.send(() -> handler);
     }
 
-    private static class Constants {
-        public static final String REGISTER_ACOUSTIC_EVENT = "rae";
-        public static final String REGISTER_SOUND_CATEGORY = "rsc";
-        public static final String REGISTER_ACOUSTIC_FILE = "raf";
-        public static final String REGISTER_SOUND_META = "rsm";
-        public static final String REGISTER_EFFECT_FACTORY_HANDLER = "refh";
+    private enum Methods {
+        REGISTER_ACOUSTIC_EVENT(IMC::registerAcousticEventHandler),
+        REGISTER_SOUND_CATEGORY(IMC::registerSoundCategoryHandler),
+        REGISTER_ACOUSTIC_FILE(IMC::registerAcousticFileHandler),
+        REGISTER_SOUND_META(IMC::registerSoundMetaHandler),
+        REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler);
+
+        private final Consumer<InterModComms.IMCMessage> handler;
+
+        Methods(@Nonnull final Consumer<InterModComms.IMCMessage> handler) {
+            this.handler = handler;
+        }
+
+        public void handle(@Nonnull final InterModComms.IMCMessage msg) {
+            LOGGER.debug("Processing IMC message '%s' from '%s'", msg.getMethod(), msg.getSenderModId());
+            try {
+                this.handler.accept(msg);
+            } catch (@Nonnull final Throwable t) {
+                LOGGER.error(t, "Error processing IMC message");
+            }
+        }
+
+        public void send(@Nonnull final Supplier<?> sup) {
+            InterModComms.sendTo(SoundControl.MOD_ID, this.name(), sup);
+        }
     }
 
 }

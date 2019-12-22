@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  */
 public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> {
 
-    private final Object2ObjectOpenHashMap<BlockStateMatcher, T> map = new Object2ObjectOpenHashMap<>();
+    private final Map<BlockStateMatcher, T> map = new Object2ObjectOpenHashMap<>();
     @Nonnull
     private Supplier<T> defaultValue = () -> null;
 

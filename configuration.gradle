@@ -12,7 +12,7 @@ project.archivesBaseName	= 'SoundControl'
 project.version         	= "${mcVersion}-${modVersion}${modDesignator}"
 
 project.ext.ssVersion     	= "2.0.0.9"
-project.ext.bopVersion      = "9.0.0.261"
+project.ext.bopVersion      = "9.0.0.262"
 project.ext.jeiVersion    	= "6.0.0.26"
 
 project.ext.modId        	= 'sndctrl'

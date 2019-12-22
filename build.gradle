@@ -28,7 +28,12 @@ if (file('secrets.properties').exists()) {
 }
 
 repositories {
-    maven { url = "https://repo.spongepowered.org/maven" }
+    maven {
+        url = 'https://files.minecraftforge.net/maven'
+    }
+    maven {
+        url = "https://repo.spongepowered.org/maven"
+    }
     maven {
         name = "Jitpack"
         url = "https://jitpack.io/"
@@ -47,6 +52,7 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
+    mavenLocal()
 }
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -55,7 +61,7 @@ minecraft {
     mappings channel: 'snapshot', version: project.ext.snapshot
 
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -156,8 +162,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    compile fg.deobf("biomes-o-plenty:BiomesOPlenty-${mcVersion}:${project.bopVersion}:universal")
-    compile fg.deobf("serene-seasons:SereneSeasons-${mcVersion}:${project.ssVersion}:universal")
+    compile fg.deobf("com.github.glitchfiend.biomesoplenty:BiomesOPlenty:${mcVersion}-${project.bopVersion}:universal")
+    compile fg.deobf("com.github.glitchfiend.biomesoplenty:SereneSeasons:${mcVersion}-${project.ssVersion}:universal")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mcVersion}:${project.jeiVersion}")
 

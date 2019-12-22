@@ -21,6 +21,7 @@ package org.orecruncher.sndctrl.audio.handlers;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.audio.ChannelManager;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
@@ -37,12 +38,12 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.lib.reflection.ObjectField;
 import org.orecruncher.lib.threading.Worker;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.events.AudioEvent;
-import org.orecruncher.sndctrl.xface.ISoundSource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,6 +54,13 @@ import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoundFXProcessor {
+
+    private static final ObjectField<SoundSource, SourceContext> sndctrl_context =
+            new ObjectField<>(
+                    SoundSource.class,
+                    new SourceContext(),
+                    "sndctrl_context"
+            );
 
     /**
      * Sound categories that are ignored when determing special effects.  Things like MASTER, RECORDS, and MUSIC.
@@ -152,28 +160,34 @@ public final class SoundFXProcessor {
         // Double suplex!  Queue the operation on the sound executor to do the config work.  This should queue in
         // behind any attempt at getting a sound source.
         entry.runOnSoundExecutor(source -> {
-            Utilities.safeCast(source, ISoundSource.class).ifPresent(ss -> {
-                final SourceContext ctx = ss.getSourceContext();
-                ctx.attachSound(sound);
-                if (!isCategoryIgnored(sound.getCategory()) && ss.getSourceId() > 0) {
-                    ctx.enable();
-                    final int idx = sourceIdToIdx(ss.getSourceId());
-                    // First update before first actual play.
-                    ctx.exec();
-                    sources[idx] = ctx;
-                }
-            });
+            final SourceContext ctx = new SourceContext();
+            sndctrl_context.set(source, ctx);
+            ctx.attachSound(sound);
+            if (!isCategoryIgnored(sound.getCategory()) && source.field_216441_b > 0) {
+                ctx.enable();
+                final int idx = sourceIdToIdx(source.field_216441_b);
+                // First update before first actual play.
+                ctx.exec();
+                sources[idx] = ctx;
+            }
         });
+    }
+
+    public static void tick(@Nonnull final SoundSource source) {
+        if (isAvailable()) {
+            final SourceContext ctx = sndctrl_context.get(source);
+            ctx.tick(source.field_216441_b);
+        }
     }
 
     /**
      * Injected into SoundSource and will be invoked when a sound source is being terminated.
      *
-     * @param soundId The ID of the sound source that is being removed.
+     * @param source The sound source that is stopping
      */
-    public static void stopSoundPlay(final int soundId) {
+    public static void stopSoundPlay(@Nonnull final SoundSource source) {
         if (isAvailable())
-            sources[sourceIdToIdx(soundId)] = null;
+            sources[sourceIdToIdx(source.field_216441_b)] = null;
     }
 
     /**

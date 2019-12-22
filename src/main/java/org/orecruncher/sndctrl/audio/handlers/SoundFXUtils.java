@@ -42,7 +42,7 @@ import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.math.RayTraceIterator;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
 import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
-import org.orecruncher.sndctrl.xface.IBlockStateEffects;
+import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -183,7 +183,7 @@ public final class SoundFXUtils {
             // Secondary ray bounces
             for (int j = 0; j < REVERB_RAY_BOUNCES; j++) {
 
-                final float blockReflectivity = ((IBlockStateEffects) ctx.world.getBlockState(lastHitBlock)).getReflectivity();
+                final float blockReflectivity = AudioEffectLibrary.getReflectivity(ctx.world.getBlockState(lastHitBlock));
                 final float energyTowardsPlayer = blockReflectivity * ENERGY_COEFF + ENERGY_CONST;
 
                 final Vec3d newRayDir = MathStuff.reflection(lastRayDir, lastHitNormal);
@@ -336,7 +336,7 @@ public final class SoundFXUtils {
         for (int i = 0; i < OCCLUSION_RAYS; i++) {
             if (itr.hasNext()) {
                 final BlockState state = ctx.world.getBlockState(itr.next().getPos());
-                accum += ((IBlockStateEffects) state).getOcclusion();
+                accum += AudioEffectLibrary.getOcclusion(state);
             } else {
                 break;
             }

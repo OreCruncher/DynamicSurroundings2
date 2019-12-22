@@ -48,7 +48,7 @@ import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.xface.IBlockStateEffects;
+import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -94,8 +94,8 @@ public class Inspector {
                 text.add("Material: " + MaterialUtils.getMaterialName(state.getMaterial()));
                 final SoundType st = state.getSoundType();
                 text.add("Step Sound: " + st.getStepSound().getRegistryName().toString());
-                text.add("Reflectivity: " + ((IBlockStateEffects) state).getReflectivity());
-                text.add("Occlusion: " + ((IBlockStateEffects) state).getOcclusion());
+                text.add("Reflectivity: " + AudioEffectLibrary.getReflectivity(state));
+                text.add("Occlusion: " + AudioEffectLibrary.getOcclusion(state));
                 text.add(TEXT_BLOCKSTATE);
                 final CompoundNBT nbt = NBTUtil.writeBlockState(state);
                 text.add(nbt.toString());

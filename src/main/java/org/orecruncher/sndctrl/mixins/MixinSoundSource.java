@@ -18,12 +18,9 @@
 
 package org.orecruncher.sndctrl.mixins;
 
+import net.minecraft.client.audio.SoundSource;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
-import org.orecruncher.sndctrl.audio.handlers.SourceContext;
-import org.orecruncher.sndctrl.xface.ISoundSource;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,30 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.annotation.Nonnull;
 
 @Mixin(net.minecraft.client.audio.SoundSource.class)
-public abstract class MixinSoundSource implements ISoundSource {
-
-    @Nonnull
-    private final SourceContext ctx = new SourceContext();
-    // ID of the playing source
-    @Shadow
-    @Final
-    private int field_216441_b;
-
-    /**
-     * Gets the source ID of the SoundSource
-     *
-     * @return ID of the SoundSource
-     */
-    @Override
-    public int getSourceId() {
-        return this.field_216441_b;
-    }
-
-    @Override
-    @Nonnull
-    public SourceContext getSourceContext() {
-        return this.ctx;
-    }
+public abstract class MixinSoundSource {
 
     /**
      * Invoked when the sound is actually triggered for playing.  We want to make sure out filters are applied before
@@ -64,7 +38,7 @@ public abstract class MixinSoundSource implements ISoundSource {
      */
     @Inject(method = "func_216438_c()V", at = @At("HEAD"))
     public void playTrigger(@Nonnull final CallbackInfo ignored) {
-        this.ctx.tick(this.field_216441_b);
+        SoundFXProcessor.tick((SoundSource)((Object) this));
     }
 
     /**
@@ -75,7 +49,7 @@ public abstract class MixinSoundSource implements ISoundSource {
      */
     @Inject(method = "func_216434_i()V", at = @At("TAIL"))
     public void tick(@Nonnull final CallbackInfo ignored) {
-        this.ctx.tick(this.field_216441_b);
+        SoundFXProcessor.tick((SoundSource)((Object) this));
     }
 
     /**
@@ -85,6 +59,6 @@ public abstract class MixinSoundSource implements ISoundSource {
      */
     @Inject(method = "func_216436_b()V", at = @At(value = "RETURN"))
     public void stop(@Nonnull final CallbackInfo ignored) {
-        SoundFXProcessor.stopSoundPlay(this.field_216441_b);
+        SoundFXProcessor.stopSoundPlay((SoundSource)((Object) this));
     }
 }

@@ -29,7 +29,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
-import org.orecruncher.sndctrl.mixins.ILocatableSoundMixin;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
@@ -143,9 +142,8 @@ public final class SoundBuilder {
         this.repeatable = ps.canRepeat();
         this.repeatDelayMin = this.repeatDelayMax = ps.getRepeatDelay();
 
-        final ILocatableSoundMixin sound = (ILocatableSoundMixin) ps;
-        this.volumeMin = this.volumeMax = sound.getVolumeRaw();
-        this.pitchMin = this.pitchMax = sound.getPitchRaw();
+        this.volumeMin = this.volumeMax = ps.volume;
+        this.pitchMin = this.pitchMax = ps.pitch;
         return this;
     }
 

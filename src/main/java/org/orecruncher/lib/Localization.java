@@ -19,11 +19,10 @@
 package org.orecruncher.lib;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.resources.Locale;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.sndctrl.mixins.ILanguageManager;
-import org.orecruncher.sndctrl.xface.ILocale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,13 +30,7 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public final class Localization {
 
-    private static final ILocale locale;
-
-    static {
-        final Locale l = Utilities.safeCast(GameUtils.getMC().getLanguageManager(), ILanguageManager.class)
-                .map(ILanguageManager::getCurrentLocale).orElse(null);
-        locale = Utilities.safeCast(l, ILocale.class).orElse(null);
-    }
+    private static final Locale locale = LanguageManager.CURRENT_LOCALE;
 
     private Localization() {
     }
@@ -49,8 +42,6 @@ public final class Localization {
 
     @Nonnull
     public static String load(@Nonnull final String fmt) {
-        if (locale == null)
-            return format(fmt);
-        return locale.load(fmt);
+        return locale.translateKeyPrivate(fmt);
     }
 }

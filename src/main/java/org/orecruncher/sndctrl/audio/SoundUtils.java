@@ -20,7 +20,6 @@ package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ChannelManager;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.Listener;
@@ -29,14 +28,11 @@ import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.*;
-import org.orecruncher.lib.Utilities;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
-import org.orecruncher.sndctrl.misc.ModEnvironment;
-import org.orecruncher.sndctrl.mixins.ISoundEngineMixin;
-import org.orecruncher.sndctrl.mixins.ISoundHandlerMixin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,11 +61,10 @@ public final class SoundUtils {
         for (final SoundCategory sc : SoundCategory.values())
             categoryMapper.put(sc.getName(), sc);
 
-        final SoundEngine engine = Utilities.safeCast(Minecraft.getInstance().getSoundHandler(), ISoundHandlerMixin.class).get().getSoundEngine();
-        final ISoundEngineMixin mixinEngine = Utilities.safeCast(engine, ISoundEngineMixin.class).get();
-        playing = mixinEngine.getPlayingSounds();
-        delayed = mixinEngine.getDelayedSounds();
-        listener = mixinEngine.getListener();
+        final SoundEngine engine = GameUtils.getSoundHander().sndManager;
+        playing = engine.playingSoundsChannel;
+        delayed = engine.delayedSounds;
+        listener = engine.listener;
     }
 
     private SoundUtils() {

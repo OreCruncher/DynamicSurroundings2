@@ -7,11 +7,6 @@
 	"mixins": [
 	],
 	"client": [
-		"IChannelManagerEntry",
-		"ILanguageManager",
-		"ISoundEngineMixin",
-		"ISoundHandlerMixin",
-		"MixinLocale",
 		"MixinSoundEngine",
 		"MixinSoundSystem",
 		"MixinSoundSource",

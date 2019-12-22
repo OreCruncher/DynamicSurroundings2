@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="[28,)"
 issueTrackerURL="https://github.com/OreCruncher/SoundControl/issues"
-displayURL="https://www.curseforge.com/minecraft/mc-mods/sound-control"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol"
 logoFile="logo.png"
 
 [[mods]]

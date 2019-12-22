@@ -160,24 +160,21 @@ public final class SoundFXProcessor {
         // Double suplex!  Queue the operation on the sound executor to do the config work.  This should queue in
         // behind any attempt at getting a sound source.
         entry.runOnSoundExecutor(source -> {
-            final SourceContext ctx = new SourceContext();
-            sndctrl_context.set(source, ctx);
-            ctx.attachSound(sound);
             if (!isCategoryIgnored(sound.getCategory()) && source.field_216441_b > 0) {
+                final SourceContext ctx = new SourceContext();
+                ctx.attachSound(sound);
                 ctx.enable();
-                final int idx = sourceIdToIdx(source.field_216441_b);
-                // First update before first actual play.
                 ctx.exec();
-                sources[idx] = ctx;
+                sndctrl_context.set(source, ctx);
+                sources[source.field_216441_b - 1] = ctx;
             }
         });
     }
 
     public static void tick(@Nonnull final SoundSource source) {
-        if (isAvailable()) {
-            final SourceContext ctx = sndctrl_context.get(source);
+        final SourceContext ctx = sndctrl_context.get(source);
+        if (ctx != null)
             ctx.tick(source.field_216441_b);
-        }
     }
 
     /**
@@ -186,8 +183,9 @@ public final class SoundFXProcessor {
      * @param source The sound source that is stopping
      */
     public static void stopSoundPlay(@Nonnull final SoundSource source) {
-        if (isAvailable())
-            sources[sourceIdToIdx(source.field_216441_b)] = null;
+        final SourceContext ctx = sndctrl_context.get(source);
+        if (ctx != null)
+            sources[source.field_216441_b - 1] = null;
     }
 
     /**
@@ -238,14 +236,6 @@ public final class SoundFXProcessor {
             if (!StringUtils.isEmpty(msg))
                 event.getLeft().add(TextFormatting.GREEN + msg);
         }
-    }
-
-    private static int sourceIdToIdx(final int soundId) {
-        final int idx = soundId - 1;
-        if (idx < 0 || idx >= SoundUtils.getMaxSounds()) {
-            throw new IllegalStateException("Invalid source ID: " + idx);
-        }
-        return idx;
     }
 
     /**

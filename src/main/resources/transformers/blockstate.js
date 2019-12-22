@@ -6,7 +6,7 @@ var FieldNode = Java.type('org.objectweb.asm.tree.FieldNode');
 function initializeCoreMod()
 {
     return {
-        "temperature_transformer": {
+        "blockstate_transformer": {
             "target": {
                 "type": "CLASS",
                 "names": function(listofclasses) { return ["net.minecraft.block.BlockState"]; }

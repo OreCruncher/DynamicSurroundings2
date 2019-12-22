@@ -20,10 +20,7 @@ package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.audio.ChannelManager;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.Listener;
-import net.minecraft.client.audio.SoundEngine;
+import net.minecraft.client.audio.*;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -48,7 +45,7 @@ public final class SoundUtils {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundUtils.class);
 
     private static int MAX_SOUNDS = 0;
-    private static int SOUND_LIMIT = 0;
+    private static int SOUND_LIMIT = 255; // 0;
     private static final Map<String, SoundCategory> categoryMapper;
 
     // Since the pieces of the Minecraft sound system are effectively singletons, cache these values for reuse.
@@ -153,11 +150,13 @@ public final class SoundUtils {
      * This method is invoked via the MixinSoundSystem injection.  It will be called when the sound system
      * is intialized, and it gives an opportunity to setup special effects processing.
      *
-     * @param device Device context created by the Minecraft sound system
+     * @param soundSystem The sound system instance being initialized
      */
-    public static void initialize(final long device) {
+    public static void initialize(@Nonnull final SoundSystem soundSystem) {
 
         try {
+
+            final long device = soundSystem.field_216411_b;
 
             boolean hasFX = false;
             if (Config.CLIENT.sound.enableEnhancedSounds.get()) {

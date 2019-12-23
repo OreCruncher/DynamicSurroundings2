@@ -1,21 +1,18 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-//    	maven { url = 'http://repo.spongepowered.org/maven' }
         maven { url = 'https://plugins.gradle.org/m2/' }
         jcenter()
         mavenCentral()
     }
     dependencies {
 		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-		//classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
 		classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.1.0'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-//apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
 
@@ -31,9 +28,6 @@ repositories {
     maven {
         url = 'https://files.minecraftforge.net/maven'
     }
-//    maven {
-//        url = "https://repo.spongepowered.org/maven"
-//    }
     maven {
         name = "Jitpack"
         url = "https://jitpack.io/"
@@ -75,8 +69,6 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             
-            //args '--mixin', 'mixins.sndctrl.json'
-
 			if (project.ext.has('secrets')) {
 				if (secrets.uuid != null)
 					args '--uuid', secrets.uuid
@@ -134,10 +126,6 @@ configurations {
     implementation.extendsFrom(embed)
 }
 
-//mixin {
-//	add sourceSets.main, "mixins.sndctrl.refmap.json"
-//}
-
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
@@ -190,7 +178,6 @@ jar {
     
     manifest {
         attributes([
-        	"MixinConfigs": "mixins.sndctrl.json",
             "Specification-Title": "${project.ext.modId}",
             "Specification-Vendor": "OreCruncher",
             "Specification-Version": "1", // We are version 1 of ourselves

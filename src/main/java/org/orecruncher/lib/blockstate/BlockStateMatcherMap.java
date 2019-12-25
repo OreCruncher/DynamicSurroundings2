@@ -45,9 +45,11 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
 
     @Nullable
     public T get(@Nonnull final BlockState state) {
-        T result = BlockStateMatcher.create(state).map(this.map::get).orElse(null);
+        T result = this.map.get(BlockStateMatcher.create(state));
         if (result == null)
-            result = BlockStateMatcher.asGeneric(state).map(this.map::get).orElse(this.defaultValue.get());
+            result = this.map.get(BlockStateMatcher.asGeneric(state));
+        if (result == null)
+            result = this.defaultValue.get();
         return result;
     }
 
@@ -122,15 +124,21 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
     }
 
     public void put(@Nonnull final String blockName, @Nonnull final T val) {
-        BlockStateMatcher.create(blockName).ifPresent(m -> put(m, val));
+        final BlockStateMatcher result = BlockStateMatcher.create(blockName);
+        if (!result.isEmpty())
+            put(result, val);
     }
 
     public void put(@Nonnull final BlockState state, @Nonnull final T val) {
-        BlockStateMatcher.create(state).ifPresent(m -> put(m, val));
+        final BlockStateMatcher result = BlockStateMatcher.create(state);
+        if (!result.isEmpty())
+            put(result, val);
     }
 
     public void put(@Nonnull final Block block, @Nonnull final T val) {
-        BlockStateMatcher.create(block).ifPresent(m -> put(m, val));
+        final BlockStateMatcher result = BlockStateMatcher.create(block);
+        if (!result.isEmpty())
+            put(result, val);
     }
 
     @Override

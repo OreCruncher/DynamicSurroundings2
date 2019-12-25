@@ -85,7 +85,7 @@ public final class SoundControl {
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
         // Mod initialization and IMC processing should have completed by now.  Do any further baking.
         AudioEffectLibrary.initialize();
-        AcousticLibrary.INSTANCE.initialize();
+        AcousticLibrary.initialize();
         EntityEffectLibrary.complete();
     }
 

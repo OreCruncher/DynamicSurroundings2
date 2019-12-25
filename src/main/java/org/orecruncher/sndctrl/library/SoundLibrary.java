@@ -73,7 +73,7 @@ public final class SoundLibrary {
         final List<ResourceLocation> packs = ForgeUtils.getResourcePackIdList().stream().map(p -> new ResourceLocation(p, "sounds.json")).collect(Collectors.toList());;
 
         for (final ResourceLocation packId : packs) {
-            registerSoundMeta(packId);
+            registerSoundFile(packId);
         }
     }
 
@@ -82,7 +82,7 @@ public final class SoundLibrary {
         return myRegistry;
     }
 
-    public static void registerSoundMeta(@Nonnull final ResourceLocation soundFile) {
+    public static void registerSoundFile(@Nonnull final ResourceLocation soundFile) {
         final Map<String, SoundMetadataConfig> result = JsonUtils.loadConfig(soundFile, SoundMetadataConfig.class);
         if (result.size() > 0) {
             LOGGER.debug("Processing %s", soundFile);

@@ -18,8 +18,11 @@
 
 package org.orecruncher.sndctrl.audio.acoustic;
 
+import com.google.common.base.MoreObjects;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,24 +32,24 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public final class AcousticEvent {
 
-    private static final Map<String, AcousticEvent> mapping = new HashMap<>();
+    private static final Map<ResourceLocation, AcousticEvent> mapping = new HashMap<>();
     @Nonnull
-    public static final AcousticEvent NONE = new AcousticEvent("none", null).register();
-    private final String name;
+    public static final AcousticEvent NONE = new AcousticEvent(new ResourceLocation(SoundControl.MOD_ID, "none"), null).register();
+    private final ResourceLocation name;
     private final AcousticEvent transition;
 
-    public AcousticEvent(@Nonnull final String name, @Nullable final AcousticEvent transition) {
+    public AcousticEvent(@Nonnull final ResourceLocation name, @Nullable final AcousticEvent transition) {
         this.name = name;
         this.transition = transition;
     }
 
     @Nullable
-    public static AcousticEvent getEvent(@Nonnull final String name) {
+    public static AcousticEvent getEvent(@Nonnull final ResourceLocation name) {
         return mapping.get(name);
     }
 
     @Nonnull
-    public String getName() {
+    public ResourceLocation getName() {
         return this.name;
     }
 
@@ -63,6 +66,14 @@ public final class AcousticEvent {
     public AcousticEvent register() {
         mapping.put(this.name, this);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        final MoreObjects.ToStringHelper builder = MoreObjects.toStringHelper(this).addValue(this.name.toString());
+        if (this.transition != null)
+            builder.add("transition", this.transition.getName());
+        return builder.toString();
     }
 
 }

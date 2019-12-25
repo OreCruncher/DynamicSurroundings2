@@ -87,10 +87,10 @@ public class Inspector {
         }
 
         if (state != null) {
-            final Optional<BlockStateMatcher> info = BlockStateMatcher.create(state);
-            if (info.isPresent()) {
-                text.add("BLOCK: " + info.get().toString());
-                text.add(TextFormatting.DARK_AQUA + info.get().getBlock().getClass().getName());
+            final BlockStateMatcher info = BlockStateMatcher.create(state);
+            if (!info.isEmpty()) {
+                text.add("BLOCK: " + info.toString());
+                text.add(TextFormatting.DARK_AQUA + info.getBlock().getClass().getName());
                 text.add("Material: " + MaterialUtils.getMaterialName(state.getMaterial()));
                 final SoundType st = state.getSoundType();
                 text.add("Step Sound: " + st.getStepSound().getRegistryName().toString());

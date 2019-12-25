@@ -108,7 +108,7 @@ public final class Category implements ISoundCategory {
     @Override
     @Nonnull
     public String toString() {
-        return MoreObjects.toStringHelper(this).addValue(getVolumeScale()).toString();
+        return MoreObjects.toStringHelper(this).addValue(getName()).add("scale", getVolumeScale()).toString();
     }
 
     private static class SoundCategoryWrapper implements ISoundCategory {
@@ -138,7 +138,7 @@ public final class Category implements ISoundCategory {
         @Override
         @Nonnull
         public String toString() {
-            return MoreObjects.toStringHelper(this).addValue(getName()).toString();
+            return MoreObjects.toStringHelper(this).addValue(getName()).add("scale", getVolumeScale()).toString();
         }
     }
 

@@ -21,11 +21,12 @@ package org.orecruncher.lib.blockstate;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.orecruncher.lib.blockstate.BlockStateParser.ParseResult;
 import org.orecruncher.lib.Lib;
+import org.orecruncher.lib.blockstate.BlockStateParser.ParseResult;
 
 import javax.annotation.Nonnull;
 import java.util.IdentityHashMap;
@@ -33,8 +34,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
 public final class BlockStateMatcher {
+
+    public static final BlockStateMatcher AIR = new BlockStateMatcher(Blocks.AIR.getDefaultState());
 
     // Universal empty property list for dedupe
     private static final ImmutableMap<IProperty<?>, Comparable<?>> EMPTY = ImmutableMap.of();
@@ -64,38 +66,38 @@ public final class BlockStateMatcher {
     }
 
     @Nonnull
-    public static Optional<BlockStateMatcher> asGeneric(@Nonnull final BlockState state) {
-        return Optional.of(new BlockStateMatcher(state.getBlock()));
+    public static BlockStateMatcher asGeneric(@Nonnull final BlockState state) {
+        return new BlockStateMatcher(state.getBlock());
     }
 
     @Nonnull
-    public static Optional<BlockStateMatcher> create(@Nonnull final BlockState state) {
-        return Optional.of(new BlockStateMatcher(state));
+    public static BlockStateMatcher create(@Nonnull final BlockState state) {
+        return new BlockStateMatcher(state);
     }
 
     @Nonnull
-    public static Optional<BlockStateMatcher> create(@Nonnull final Block block) {
-        return Optional.of(new BlockStateMatcher(block));
+    public static BlockStateMatcher create(@Nonnull final Block block) {
+        return new BlockStateMatcher(block);
     }
 
     @Nonnull
-    public static Optional<BlockStateMatcher> create(@Nonnull final String blockId) {
-        return BlockStateParser.parseBlockState(blockId).flatMap(BlockStateMatcher::create);
+    public static BlockStateMatcher create(@Nonnull final String blockId) {
+        return BlockStateParser.parseBlockState(blockId).map(BlockStateMatcher::create).orElse(BlockStateMatcher.AIR);
     }
 
     @Nonnull
-    public static Optional<BlockStateMatcher> create(@Nonnull final ParseResult result) {
+    public static BlockStateMatcher create(@Nonnull final ParseResult result) {
         final Block block = result.getBlock();
         final BlockState defaultState = block.getDefaultState();
         final StateContainer<Block, BlockState> container = block.getStateContainer();
         if (container.getValidStates().size() == 1) {
             // Easy case - it's always an identical match because there are no other properties
-            return Optional.of(new BlockStateMatcher(defaultState));
+            return new BlockStateMatcher(defaultState);
         }
 
         if (!result.hasProperties()) {
             // No property specification so this is a generic
-            return Optional.of(new BlockStateMatcher(block));
+            return new BlockStateMatcher(block);
         }
 
         final Map<String, String> properties = result.getProperties();
@@ -123,9 +125,9 @@ public final class BlockStateMatcher {
         // If we have properties it will be a partial generic type match. Otherwise it will be an exact match
         // on the default state.
         if (props.size() > 0) {
-            return Optional.of(new BlockStateMatcher(defaultState.getBlock(), ImmutableMap.copyOf(props)));
+            return new BlockStateMatcher(defaultState.getBlock(), ImmutableMap.copyOf(props));
         } else {
-            return Optional.of(new BlockStateMatcher(defaultState));
+            return new BlockStateMatcher(defaultState);
         }
 
     }
@@ -145,6 +147,10 @@ public final class BlockStateMatcher {
             return prop.getAllowedValues().stream().map(prop::getName).collect(Collectors.joining(","));
         }
         return "Invalid property " + propName;
+    }
+
+    public boolean isEmpty() {
+        return this.block == Blocks.AIR || this.block == Blocks.CAVE_AIR || this.block == Blocks.VOID_AIR;
     }
 
     @Nonnull

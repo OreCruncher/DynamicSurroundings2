@@ -18,8 +18,9 @@
 
 package org.orecruncher.sndctrl.audio.acoustic;
 
+import com.google.common.base.MoreObjects;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,6 +29,7 @@ import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.random.XorShiftRandom;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -39,13 +41,13 @@ public class ProbabilityAcoustic implements IAcoustic {
 
     private static final Random RANDOM = XorShiftRandom.current();
 
-    protected final String name;
+    protected final ResourceLocation name;
     protected final ObjectArray<Pair> acoustics = new ObjectArray<>();
     protected int totalWeight;
 
-    public ProbabilityAcoustic(@Nonnull final String name)
+    public ProbabilityAcoustic(@Nonnull final ResourceLocation name)
     {
-        this.name = StringUtils.isNullOrEmpty(name) ? "<UNNAMED>" : name;
+        this.name = Objects.requireNonNull(name);
     }
 
     public void add(@Nonnull final IAcoustic acoustic, final int weight) {
@@ -72,7 +74,7 @@ public class ProbabilityAcoustic implements IAcoustic {
 
     @Override
     @Nonnull
-    public String getName() {
+    public ResourceLocation getName() {
         return this.name;
     }
 
@@ -101,6 +103,11 @@ public class ProbabilityAcoustic implements IAcoustic {
         select().ifPresent(a -> a.playBackground(event));
     }
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).addValue(getName().toString()).add("entries", this.acoustics.size()).toString();
+    }
+
     private static class Pair {
         public final int weight;
         public final IAcoustic acoustic;
@@ -110,6 +117,4 @@ public class ProbabilityAcoustic implements IAcoustic {
             this.weight = weight;
         }
     }
-
-
 }

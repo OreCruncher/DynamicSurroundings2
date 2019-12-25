@@ -18,11 +18,14 @@
 
 package org.orecruncher.sndctrl.audio.acoustic;
 
+import com.google.common.base.MoreObjects;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
 
@@ -32,15 +35,17 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public final class NullAcoustic implements IAcoustic {
 
-    public static final IAcoustic INSTANCE = new NullAcoustic();
+    public static final IAcoustic INSTANCE = new NullAcoustic(new ResourceLocation(SoundControl.MOD_ID, "null_acoustic"));
 
-    private NullAcoustic() {
+    private final ResourceLocation name;
 
+    public NullAcoustic(@Nonnull final ResourceLocation name) {
+        this.name = name;
     }
 
     @Override
-    public String getName() {
-        return "No Acoustic";
+    public ResourceLocation getName() {
+        return this.name;
     }
 
     @Override
@@ -66,5 +71,10 @@ public final class NullAcoustic implements IAcoustic {
     @Override
     public void playBackground(@Nonnull final AcousticEvent event) {
 
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).toString();
     }
 }

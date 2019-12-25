@@ -26,11 +26,11 @@ import net.minecraft.util.StringUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.JsonUtils;
-import org.orecruncher.lib.Utilities;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.Category;
 import org.orecruncher.sndctrl.audio.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundBuilder;
+import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
@@ -62,12 +62,8 @@ public final class AcousticCompiler {
     private int minDelay;
     private int maxDelay;
 
-    public AcousticCompiler() {
-        this(null);
-    }
-
-    public AcousticCompiler(@Nullable final String defaultNamespace) {
-        this.nameSpace = Utilities.firstNonNull(defaultNamespace, SoundControl.MOD_ID);
+    public AcousticCompiler(@Nonnull final String defaultNamespace) {
+        this.nameSpace = defaultNamespace;
 
         handlers.put("simple", this::simpleHandler);
         handlers.put("delayed", this::delayedHandler);
@@ -116,40 +112,28 @@ public final class AcousticCompiler {
     public List<IAcoustic> compile(@Nonnull final String acousticJson) {
         try {
             final JsonObject obj = gson.fromJson(acousticJson, JsonObject.class);
-            return generateFromMap(obj);
+            return generate(obj.entrySet());
         } catch (@Nonnull final Throwable t) {
             SoundControl.LOGGER.warn("Unable to parse acoustic: %s", t.getMessage());
         }
-
         return ImmutableList.of();
     }
 
     @Nonnull
     public List<IAcoustic> compile(@Nonnull final ResourceLocation acousticFile) {
-        final List<IAcoustic> result = new ArrayList<>();
         try {
             final Map<String, JsonElement> acousticList = JsonUtils.loadConfig(acousticFile, JsonElement.class);
-            for (final Map.Entry<String, JsonElement> kvp : acousticList.entrySet()) {
-                try {
-                    dispatch(kvp).ifPresent(result::add);
-                } catch (@Nonnull final Throwable t) {
-                    SoundControl.LOGGER.error(t, "Unable to parse map acoustic '%s'='%s'", kvp.getKey(), kvp.getValue().toString());
-                }
-            }
-
-            return result;
+            return generate(acousticList.entrySet());
         } catch (@Nonnull final Throwable t) {
             SoundControl.LOGGER.warn("Unable to parse acoustic: %s", t.getMessage());
         }
-
         return ImmutableList.of();
     }
 
     @Nonnull
-    private List<IAcoustic> generateFromMap(@Nonnull final JsonObject obj) {
+    private List<IAcoustic> generate(@Nonnull final Set<Map.Entry<String, JsonElement>> set) {
         final List<IAcoustic> result = new ArrayList<>();
-        final Set<Map.Entry<String, JsonElement>> acousticList = obj.entrySet();
-        for (final Map.Entry<String, JsonElement> kvp : acousticList) {
+        for (final Map.Entry<String, JsonElement> kvp : set) {
             try {
                 dispatch(kvp).ifPresent(result::add);
             } catch (@Nonnull final Throwable t) {
@@ -199,51 +183,103 @@ public final class AcousticCompiler {
      * sound resource location, and other properties such as volume and pitch will be default.
      */
     @Nonnull
-    private Optional<IAcoustic> inlineHandler(@Nonnull final Map.Entry<String, JsonElement> entry) {
+    private Optional<IAcoustic> inlineHandler(@Nonnull final Map.Entry<String, JsonElement> entry) throws AcousticException {
         final String sound = entry.getValue().getAsString();
-        final ResourceLocation res = new ResourceLocation(sound);
+
+        if (StringUtils.isNullOrEmpty(sound)) {
+            return Optional.of(NullAcoustic.INSTANCE);
+        }
+
+        final ResourceLocation res = resolveResource(sound, null);
         final SoundEvent evt = SoundLibrary.getSound(res).orElseThrow(IllegalStateException::new);
-        final SoundBuilder builder = SoundBuilder.builder(evt, Category.NEUTRAL);
-        return Optional.of(new SimpleAcoustic(entry.getKey(), new AcousticFactory(builder)));
+        final SoundBuilder builder = SoundBuilder.builder(evt);
+        return Optional.of(new SimpleAcoustic(res, new AcousticFactory(builder)));
     }
 
     @Nonnull
     private Optional<IAcoustic> simpleHandler(@Nonnull final Map.Entry<String, JsonElement> entry) throws AcousticException {
-        final AcousticFactory factory = new AcousticFactory(create(entry.getValue().getAsJsonObject()));
-        return Optional.of(new SimpleAcoustic(entry.getKey(), factory));
+        final SoundBuilder builder = create(entry.getValue().getAsJsonObject());
+        final ResourceLocation acousticId;
+
+        if (StringUtils.isNullOrEmpty(entry.getKey())) {
+            acousticId = builder.getResourceName();
+        } else {
+            acousticId = resolveResource(entry.getKey(), null);
+        }
+
+        final AcousticFactory factory = new AcousticFactory(builder);
+        return Optional.of(new SimpleAcoustic(acousticId, factory));
     }
 
     @Nonnull
     private Optional<IAcoustic> delayedHandler(@Nonnull final Map.Entry<String, JsonElement> entry) throws AcousticException {
         final JsonObject obj = entry.getValue().getAsJsonObject();
         final SoundBuilder builder = create(obj);
-        final AcousticFactory factory = new AcousticFactory(builder);
-        final DelayedAcoustic acoustic = new DelayedAcoustic(entry.getKey(), factory);
-        if (obj.has(Constants.DELAY)) {
-            acoustic.setDelay(getIntSetting(Constants.DELAY, obj, 0));
+        final ResourceLocation acousticId;
+
+        if (StringUtils.isNullOrEmpty(entry.getKey())) {
+            acousticId = builder.getResourceName();
         } else {
-            acoustic.setDelayMin(getIntSetting(Constants.MIN_DELAY, obj, this.minDelay));
-            acoustic.setDelayMax(getIntSetting(Constants.MAX_DELAY, obj, this.maxDelay));
+            acousticId = resolveResource(entry.getKey(), null);
         }
-        return Optional.of(acoustic);
+
+        final AcousticFactory factory = new AcousticFactory(builder);
+        final DelayedAcoustic da = new DelayedAcoustic(acousticId, factory);
+
+        if (obj.has(Constants.DELAY)) {
+            da.setDelay(getIntSetting(Constants.DELAY, obj, 0));
+        } else {
+            da.setDelayMin(getIntSetting(Constants.MIN_DELAY, obj, this.minDelay));
+            da.setDelayMax(getIntSetting(Constants.MAX_DELAY, obj, this.maxDelay));
+        }
+
+        return Optional.of(da);
     }
 
     @Nonnull
     private Optional<IAcoustic> simultaneousHandler(@Nonnull final Map.Entry<String, JsonElement> entry) throws AcousticException {
-        final List<IAcoustic> list = generateFromList(entry.getValue().getAsJsonObject());
-        final SimultaneousAcoustic acoustic = new SimultaneousAcoustic(entry.getKey());
-        for (final IAcoustic a : list)
-            acoustic.add(a);
+        final ResourceLocation acousticId = resolveResource(entry.getKey(), "simultaneous");
+        final SimultaneousAcoustic acoustic = new SimultaneousAcoustic(acousticId);
+        final JsonArray array = entry.getValue().getAsJsonObject().getAsJsonArray(Constants.ARRAY);
+
+        if (array == null || array.size() == 0) {
+            throw new AcousticException("Simultaneous acoustic list is null or empty '%s'", entry.toString());
+        }
+
+        for (final JsonElement e : array) {
+            try {
+                dispatch(new AbstractMap.SimpleEntry<>("", e)).ifPresent(acoustic::add);
+            } catch (@Nonnull final Throwable t) {
+                SoundControl.LOGGER.error(t, "Unable to parse array acoustic '%s'", e.toString());
+            }
+        }
+
         return Optional.of(acoustic);
     }
 
     @Nonnull
     private Optional<IAcoustic> probabilityHandler(@Nonnull final Map.Entry<String, JsonElement> entry) throws AcousticException {
-        final List<IAcoustic> results = extractMap(entry.getValue());
-        final ProbabilityAcoustic acoustic = new ProbabilityAcoustic(entry.getKey());
-        for (final IAcoustic a : results) {
-            final int weight = Integer.parseInt(a.getName());
-            acoustic.add(a, weight);
+        final ResourceLocation acousticId = resolveResource(entry.getKey(), "probablility");
+        final ProbabilityAcoustic acoustic = new ProbabilityAcoustic(acousticId);
+        final JsonArray array = entry.getValue().getAsJsonObject().getAsJsonArray(Constants.ARRAY);
+
+        if (array == null || array.size() == 0 || (array.size() & 1) != 0) {
+            throw new AcousticException("Probability acoustic is invalid '%s'", entry.toString());
+        }
+
+        final Iterator<JsonElement> itr = array.iterator();
+        while (itr.hasNext()) {
+            try {
+                final JsonElement weight = itr.next();
+                if (!weight.isJsonPrimitive()) {
+                    throw new AcousticException("Expected weight value '%s'", weight.toString());
+                }
+
+                final JsonElement e = itr.next();
+                dispatch(new AbstractMap.SimpleEntry<>("", e)).ifPresent(a -> acoustic.add(a, weight.getAsInt()));
+            } catch (@Nonnull final Throwable t) {
+                SoundControl.LOGGER.error(t, "Unable to parse probability acoustic");
+            }
         }
 
         return Optional.of(acoustic);
@@ -251,15 +287,20 @@ public final class AcousticCompiler {
 
     @Nonnull
     private Optional<IAcoustic> eventSelectorHandler(@Nonnull final Map.Entry<String, JsonElement> entry) throws AcousticException {
-        final List<IAcoustic> results = extractMap(entry.getValue());
-        final EventSelectorAcoustic acoustic = new EventSelectorAcoustic(entry.getKey());
-        for (final IAcoustic a : results) {
-            final AcousticEvent evt = AcousticEvent.getEvent(a.getName());
-            if (evt == null)
-                throw new AcousticException("Unknown acoustic event '%s'", a.getName());
-            acoustic.add(evt, a);
+        final ResourceLocation acousticId = resolveResource(entry.getKey(), "eventSelector");
+        final EventSelectorAcoustic acoustic = new EventSelectorAcoustic(acousticId);
+        final Set<Map.Entry<String, JsonElement>> entries = entry.getValue().getAsJsonObject().entrySet();
+        for(final Map.Entry<String, JsonElement> e : entries) {
+            // Skip the type entry
+            if (e.getKey().equalsIgnoreCase(Constants.TYPE))
+                continue;
+            try {
+                final AcousticEvent ae = AcousticEvent.getEvent(AcousticLibrary.resolveResource(this.nameSpace, e.getKey()));
+                dispatch(e).ifPresent(a -> acoustic.add(ae, a));
+            } catch (@Nonnull final Throwable t) {
+                SoundControl.LOGGER.error(t, "Unable to parse event selector acoustic entry '%s'", e.toString());
+            }
         }
-
         return Optional.of(acoustic);
     }
 
@@ -272,19 +313,7 @@ public final class AcousticCompiler {
         if (StringUtils.isNullOrEmpty(soundName))
             throw new AcousticException("Invalid sound name '%s'", soundName);
 
-        ResourceLocation res = null;
-
-        if (soundName.charAt(0) == '@') {
-            // Sound is in the Minecraft namespace
-            res = new ResourceLocation("minecraft", soundName.substring(1));
-        } else if (!soundName.contains(":")) {
-            // It's just a path so assume the specified namespace
-            res = new ResourceLocation(this.nameSpace, soundName);
-        } else {
-            // It's a fully qualified location
-            res = new ResourceLocation(soundName);
-        }
-
+        final ResourceLocation res = resolveResource(soundName, null);
         final SoundEvent evt = SoundLibrary.getSound(res).orElse(SoundLibrary.MISSING);
 
         ISoundCategory cat = null;
@@ -318,12 +347,13 @@ public final class AcousticCompiler {
     }
 
     @Nonnull
-    private List<IAcoustic> extractMap(@Nonnull final JsonElement element) throws AcousticException {
-        final JsonObject obj = element.getAsJsonObject();
-        if (!obj.has(Constants.MAP))
-            throw new AcousticException("Sound configuration does not have a 'map' property defined");
-
-        return generateFromMap(obj.get(Constants.MAP).getAsJsonObject());
+    private ResourceLocation resolveResource(@Nonnull final String name, @Nullable final String defaultName) throws AcousticException {
+        String n = name;
+        if (StringUtils.isNullOrEmpty(n))
+            n = defaultName;
+        if (StringUtils.isNullOrEmpty(n))
+            throw new AcousticException("Sound name is null or empty");
+        return AcousticLibrary.resolveResource(this.nameSpace, n);
     }
 
     @FunctionalInterface
@@ -345,6 +375,5 @@ public final class AcousticCompiler {
         public static final String MAX_DELAY = "delay_max";
         public static final String DELAY = "delay";
         public static final String ARRAY = "array";
-        public static final String MAP = "map";
     }
 }

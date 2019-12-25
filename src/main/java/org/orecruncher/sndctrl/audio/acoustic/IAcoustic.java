@@ -19,6 +19,7 @@
 package org.orecruncher.sndctrl.audio.acoustic;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -34,7 +35,7 @@ public interface IAcoustic {
      *
      * @return Name of the acoustic
      */
-    String getName();
+    ResourceLocation getName();
 
     /**
      * Play the acoustic on the MASTER channel with no attenuation.

@@ -65,12 +65,12 @@ public final class IMC {
         handle(msg, ISoundCategory.class, Category::register);
     }
 
-    private static void registerSoundMetaHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        handle(msg, ResourceLocation.class, SoundLibrary::registerSoundMeta);
+    private static void registerSoundFileHandler(@Nonnull final InterModComms.IMCMessage msg) {
+        handle(msg, ResourceLocation.class, SoundLibrary::registerSoundFile);
     }
 
     private static void registerAcousticFileHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        handle(msg, ResourceLocation.class, AcousticLibrary.INSTANCE::processFile);
+        handle(msg, ResourceLocation.class, AcousticLibrary::processFile);
     }
 
     private static void registerEffectFactoryHandlerHandler(@Nonnull final InterModComms.IMCMessage msg) {
@@ -86,8 +86,9 @@ public final class IMC {
      *
      * @param event The Acoustic Event to register
      */
-    public static void registerAcousticEvent(@Nonnull final AcousticEvent event) {
-        Methods.REGISTER_ACOUSTIC_EVENT.send(() -> event);
+    public static void registerAcousticEvent(@Nonnull final AcousticEvent... event) {
+        for (final AcousticEvent e : event)
+            Methods.REGISTER_ACOUSTIC_EVENT.send(() -> e);
     }
 
     /**
@@ -95,8 +96,9 @@ public final class IMC {
      *
      * @param category Sound Category to register
      */
-    public static void registerSoundCategory(@Nonnull final ISoundCategory category) {
-        Methods.REGISTER_SOUND_CATEGORY.send(() -> category);
+    public static void registerSoundCategory(@Nonnull final ISoundCategory... category) {
+        for (final ISoundCategory c : category)
+            Methods.REGISTER_SOUND_CATEGORY.send(() -> c);
     }
 
     /**
@@ -105,8 +107,9 @@ public final class IMC {
      *
      * @param soundFile Sound file to process for meta data and additional sounds
      */
-    public static void regigisterSoundMeta(@Nonnull final ResourceLocation soundFile) {
-        Methods.REGISTER_SOUND_META.send(() -> soundFile);
+    public static void registerSoundFile(@Nonnull final ResourceLocation... soundFile) {
+        for (final ResourceLocation r : soundFile)
+            Methods.REGISTER_SOUND_FILE.send(() -> r);
     }
 
     /**
@@ -114,8 +117,9 @@ public final class IMC {
      *
      * @param acousticFile Acoustic file to process
      */
-    public static void registerAcousticFile(@Nonnull final ResourceLocation acousticFile) {
-        Methods.REGISTER_ACOUSTIC_FILE.send(() -> acousticFile);
+    public static void registerAcousticFile(@Nonnull final ResourceLocation... acousticFile) {
+        for (final ResourceLocation r : acousticFile)
+            Methods.REGISTER_ACOUSTIC_FILE.send(() -> r);
     }
 
     /**
@@ -123,15 +127,16 @@ public final class IMC {
      *
      * @param handler Effect handler to register
      */
-    public static void registerEffectFactoryHandler(@Nonnull final EntityEffectHandler.IEntityEffectFactoryHandler handler) {
-        Methods.REGISTER_EFFECT_FACTORY_HANDLER.send(() -> handler);
+    public static void registerEffectFactoryHandler(@Nonnull final EntityEffectHandler.IEntityEffectFactoryHandler... handler) {
+        for (final EntityEffectHandler.IEntityEffectFactoryHandler h : handler)
+            Methods.REGISTER_EFFECT_FACTORY_HANDLER.send(() -> h);
     }
 
     private enum Methods {
         REGISTER_ACOUSTIC_EVENT(IMC::registerAcousticEventHandler),
         REGISTER_SOUND_CATEGORY(IMC::registerSoundCategoryHandler),
         REGISTER_ACOUSTIC_FILE(IMC::registerAcousticFileHandler),
-        REGISTER_SOUND_META(IMC::registerSoundMetaHandler),
+        REGISTER_SOUND_FILE(IMC::registerSoundFileHandler),
         REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler);
 
         private final Consumer<InterModComms.IMCMessage> handler;

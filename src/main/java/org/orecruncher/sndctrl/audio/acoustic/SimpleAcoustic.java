@@ -18,9 +18,10 @@
 
 package org.orecruncher.sndctrl.audio.acoustic;
 
+import com.google.common.base.MoreObjects;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,6 +32,7 @@ import org.orecruncher.sndctrl.audio.ISoundInstance;
 import org.orecruncher.sndctrl.audio.SoundBuilder;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * A simple acoustic that uses an AcousticFactory to produce sound instances for playing.
@@ -41,23 +43,23 @@ public class SimpleAcoustic implements IAcoustic {
     @Nonnull
     private final IAcousticFactory factory;
     @Nonnull
-    private final String name;
+    private final ResourceLocation name;
 
     public SimpleAcoustic(@Nonnull final SoundEvent event) {
-        this(event.getName().toString(), event);
+        this(event.getName(), event);
     }
 
-    public SimpleAcoustic(@Nonnull final String name, @Nonnull final SoundEvent evt) {
+    public SimpleAcoustic(@Nonnull final ResourceLocation name, @Nonnull final SoundEvent evt) {
         this(name, new AcousticFactory(SoundBuilder.builder(evt, Category.NEUTRAL)));
     }
 
-    public SimpleAcoustic(@Nonnull final String name, @Nonnull final IAcousticFactory factory) {
-        this.name = StringUtils.isNullOrEmpty(name) ? "<UNNAMED>" : name;
+    public SimpleAcoustic(@Nonnull final ResourceLocation name, @Nonnull final IAcousticFactory factory) {
+        this.name = Objects.requireNonNull(name);
         this.factory = factory;
     }
 
     @Nonnull
-    public String getName() {
+    public ResourceLocation getName() {
         return this.name;
     }
 
@@ -88,5 +90,10 @@ public class SimpleAcoustic implements IAcoustic {
 
     protected void play(@Nonnull final ISoundInstance sound) {
         AudioEngine.play(sound);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).addValue(getName().toString()).toString();
     }
 }

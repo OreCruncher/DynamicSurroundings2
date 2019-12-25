@@ -97,7 +97,7 @@ public final class SoundBuilder {
 
     @Nonnull
     public static SoundBuilder builder(@Nonnull final SoundEvent evt) {
-        return builder(evt, Category.AMBIENT);
+        return builder(evt, SoundLibrary.getSoundCategory(evt.getName(), Category.AMBIENT));
     }
 
     @Nonnull
@@ -145,6 +145,11 @@ public final class SoundBuilder {
         this.volumeMin = this.volumeMax = ps.volume;
         this.pitchMin = this.pitchMax = ps.pitch;
         return this;
+    }
+
+    @Nonnull
+    public ResourceLocation getResourceName() {
+        return this.soundEvent.getName();
     }
 
     @Nonnull

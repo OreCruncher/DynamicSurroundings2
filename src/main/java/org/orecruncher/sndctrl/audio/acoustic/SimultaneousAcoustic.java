@@ -18,7 +18,9 @@
 
 package org.orecruncher.sndctrl.audio.acoustic;
 
+import com.google.common.base.MoreObjects;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -27,6 +29,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.collections.ObjectArray;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Plays a group of acoustics simultaneously creating a composite effect
@@ -35,12 +38,12 @@ import javax.annotation.Nonnull;
 public class SimultaneousAcoustic implements IAcoustic {
 
     @Nonnull
-    private final String name;
+    private final ResourceLocation name;
     @Nonnull
     private final ObjectArray<IAcoustic> acoustics = new ObjectArray<>(4);
 
-    public SimultaneousAcoustic(@Nonnull final String name) {
-        this.name = StringUtils.isNullOrEmpty(name) ? "<UNNAMED>" : name;
+    public SimultaneousAcoustic(@Nonnull final ResourceLocation name) {
+        this.name = Objects.requireNonNull(name);
     }
 
     public void add(@Nonnull final IAcoustic a) {
@@ -49,7 +52,7 @@ public class SimultaneousAcoustic implements IAcoustic {
 
     @Override
     @Nonnull
-    public String getName() {
+    public ResourceLocation getName() {
         return this.name;
     }
 
@@ -81,5 +84,10 @@ public class SimultaneousAcoustic implements IAcoustic {
     public void playBackground(@Nonnull final AcousticEvent event) {
         for (final IAcoustic a : this.acoustics)
             a.playBackground(event);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).addValue(getName().toString()).add("entries", this.acoustics.size()).toString();
     }
 }

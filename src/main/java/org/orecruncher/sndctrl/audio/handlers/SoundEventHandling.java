@@ -21,6 +21,7 @@ package org.orecruncher.sndctrl.audio.handlers;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.audio.Listener;
 import net.minecraft.client.gui.screen.MainMenuScreen;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -73,7 +74,7 @@ public final class SoundEventHandling {
                 res = possibles.get(XorShiftRandom.current().nextInt(possibles.size()));
             }
 
-            final IAcoustic sound = AcousticLibrary.INSTANCE.resolve(res);
+            final IAcoustic sound = AcousticLibrary.resolve(new ResourceLocation(res));
             // Queue it up on the main client thread.
             GameUtils.getMC().enqueue(() -> {
                 try {

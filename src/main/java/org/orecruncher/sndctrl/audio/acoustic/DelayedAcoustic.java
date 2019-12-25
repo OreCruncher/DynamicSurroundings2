@@ -18,6 +18,8 @@
 
 package org.orecruncher.sndctrl.audio.acoustic;
 
+import com.google.common.base.MoreObjects;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.XorShiftRandom;
@@ -38,7 +40,7 @@ public class DelayedAcoustic extends SimpleAcoustic {
     private int delayMin;
     private int delayMax;
 
-    public DelayedAcoustic(@Nonnull final String name, @Nonnull AcousticFactory factory) {
+    public DelayedAcoustic(@Nonnull final ResourceLocation name, @Nonnull AcousticFactory factory) {
         super(name, factory);
     }
 
@@ -67,5 +69,10 @@ public class DelayedAcoustic extends SimpleAcoustic {
             sound.setPlayDelay(delay);
         }
         super.play(sound);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).addValue(getName().toString()).toString();
     }
 }

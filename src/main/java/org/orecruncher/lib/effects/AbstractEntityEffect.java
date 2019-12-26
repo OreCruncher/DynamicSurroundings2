@@ -19,10 +19,14 @@
 package org.orecruncher.lib.effects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.Resource;
 
+import com.google.common.base.MoreObjects;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -33,13 +37,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public abstract class AbstractEntityEffect {
 
 	private EntityEffectManager manager;
+	private final ResourceLocation name;
 
 	/**
 	 * Do not perform any heavy initialization in the CTOR! Do it in the
 	 * initialize() method!
 	 */
-	protected AbstractEntityEffect() {
-
+	protected AbstractEntityEffect(@Nonnull final ResourceLocation name) {
+		this.name = name;
 	}
 
 	/**
@@ -48,7 +53,19 @@ public abstract class AbstractEntityEffect {
 	 * @return The name of the handler
 	 */
 	@Nonnull
-	public abstract String name();
+	public ResourceLocation getName() {
+		return this.name;
+	}
+
+	/**
+	 * Get's the entity associated with this effect.
+	 *
+	 * @return Entity associated with the effect, null otherwise
+	 */
+	@Nullable
+	public Entity getEntity() {
+		return this.manager.getEntity();
+	}
 
 	/**
 	 * Called by the EntityEffectLibrary during the initialization of an
@@ -63,7 +80,7 @@ public abstract class AbstractEntityEffect {
 	 * Called when an EntityEffect should update it's state and take action based on
 	 * results. Called once per tick.
 	 */
-	public abstract void update(@Nonnull final Entity entity);
+	public abstract void update();
 
 	/**
 	 * Indicates to the EntityEffectHandler that the EntityEffect wants to be called
@@ -121,7 +138,7 @@ public abstract class AbstractEntityEffect {
 
 	@Override
 	public String toString() {
-		return name();
+		return MoreObjects.toStringHelper(this).addValue(getName().toString()).toString();
 	}
 
 }

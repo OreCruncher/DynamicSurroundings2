@@ -31,6 +31,7 @@ import org.orecruncher.sndctrl.audio.Category;
 import org.orecruncher.sndctrl.audio.ISoundCategory;
 import org.orecruncher.sndctrl.audio.acoustic.AcousticEvent;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
+import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
@@ -74,7 +75,7 @@ public final class IMC {
     }
 
     private static void registerEffectFactoryHandlerHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        handle(msg, EntityEffectHandler.IEntityEffectFactoryHandler.class, EntityEffectHandler::register);
+        handle(msg, EntityEffectLibrary.IEntityEffectFactoryHandler.class, EntityEffectLibrary::register);
     }
 
     private static <T> void handle(@Nonnull final InterModComms.IMCMessage msg, @Nonnull final Class<T> clazz, @Nonnull final Consumer<T> handler) {
@@ -127,8 +128,8 @@ public final class IMC {
      *
      * @param handler Effect handler to register
      */
-    public static void registerEffectFactoryHandler(@Nonnull final EntityEffectHandler.IEntityEffectFactoryHandler... handler) {
-        for (final EntityEffectHandler.IEntityEffectFactoryHandler h : handler)
+    public static void registerEffectFactoryHandler(@Nonnull final EntityEffectLibrary.IEntityEffectFactoryHandler... handler) {
+        for (final EntityEffectLibrary.IEntityEffectFactoryHandler h : handler)
             Methods.REGISTER_EFFECT_FACTORY_HANDLER.send(() -> h);
     }
 

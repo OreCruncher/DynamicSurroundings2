@@ -31,11 +31,9 @@ import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
 import org.orecruncher.lib.effects.entity.IEntityFX;
-import org.orecruncher.sndctrl.library.EntityEffectInfo;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -48,24 +46,12 @@ import java.util.Optional;
 public final class EntityEffectHandler {
 
     private static final int EFFECT_DISTANCESQ = (int) Math.pow(Config.CLIENT.effects.effectRange.get(), 2);
-    protected static final ObjectArray<IEntityEffectFactoryHandler> entityEffectfactoryHandlers = new ObjectArray<>();
 
     private EntityEffectHandler() {
     }
 
     public static void initialize() {
         // Noop to cause class initializers to fire.
-    }
-
-    /**
-     * Registers an IEntityEffectFactoryFilter/IEntityEffectFactory pair. The filter
-     * is used by the EntityEffectLibrary to determine if an EntityEffect applies to
-     * a target entity.
-     *
-     * @param handler Factory handler to register with the system
-     */
-    public static void register(@Nonnull final IEntityEffectFactoryHandler handler) {
-        entityEffectfactoryHandlers.add(handler);
     }
 
     /**
@@ -77,15 +63,8 @@ public final class EntityEffectHandler {
      * @return An EntityEffectHandler for the Entity
      */
     @Nonnull
-    public static Optional<EntityEffectManager> create(@Nonnull final Entity entity) {
-        final ObjectArray<AbstractEntityEffect> effectToApply = new ObjectArray<>();
-
-        final EntityEffectInfo eei = EntityEffectLibrary.getEffects(entity);
-        entityEffectfactoryHandlers.forEach(h -> {
-            if (h.appliesTo(entity, eei))
-                effectToApply.addAll(h.get(entity, eei));
-        });
-
+    private static Optional<EntityEffectManager> create(@Nonnull final Entity entity) {
+        final ObjectArray<AbstractEntityEffect> effectToApply = EntityEffectLibrary.getEffects(entity);
         final EntityEffectManager result;
         if (effectToApply.size() > 0) {
             result = new EntityEffectManager(entity, effectToApply);
@@ -134,12 +113,6 @@ public final class EntityEffectHandler {
            if (GameUtils.getPlayer() == event.getEntity())
                clearHandlers();
         }
-    }
-
-    public interface IEntityEffectFactoryHandler {
-        boolean appliesTo(@Nonnull final Entity entity, @Nonnull final EntityEffectInfo info);
-
-        List<AbstractEntityEffect> get(@Nonnull final Entity entity, @Nonnull final EntityEffectInfo into);
     }
 
 }

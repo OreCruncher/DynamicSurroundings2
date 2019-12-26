@@ -18,7 +18,8 @@
 
 package org.orecruncher.lib.fml;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,14 +27,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.Lib;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,6 +101,25 @@ public final class ForgeUtils {
                 .distinct()
                 .map(e -> new ResourceLocation(e, path))
                 .collect(Collectors.toList());
+    }
+
+    public static Map<ResourceLocation, Class<? extends Entity>> getRegisteredEntities() {
+        final Map<ResourceLocation, Class<? extends Entity>> results = new HashMap<>();
+
+        final Collection<EntityType<?>> f = ForgeRegistries.ENTITIES.getValues();
+        for (final EntityType<?> et : f) {
+            try {
+
+                // Code should work as it relates to Minecraft.  Should have a dummy world.
+                final Entity entity = et.create(null);
+                results.put(et.getRegistryName(), entity.getClass());
+
+            } catch (@Nonnull final Throwable t) {
+                Lib.LOGGER.warn("Unable to instantiate '%s'", et.getRegistryName().toString());
+            }
+        }
+
+        return results;
     }
 
 }

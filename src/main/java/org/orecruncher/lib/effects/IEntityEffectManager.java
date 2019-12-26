@@ -31,6 +31,8 @@ public interface IEntityEffectManager {
 
     boolean isActive();
 
+    Entity getEntity();
+
     boolean isEntityAlive();
 
     double rangeToPlayerSq();

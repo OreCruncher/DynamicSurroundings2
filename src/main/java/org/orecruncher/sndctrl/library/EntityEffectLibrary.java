@@ -18,69 +18,69 @@
 
 package org.orecruncher.sndctrl.library;
 
-import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.lib.effects.AbstractEntityEffect;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 
 @OnlyIn(Dist.CLIENT)
 public final class EntityEffectLibrary {
 
-	private static final EntityEffectInfo DEFAULT = new EntityEffectInfo();
-	private static final Object2ObjectOpenHashMap<ResourceLocation, EntityEffectInfo> myEffects = new Object2ObjectOpenHashMap<>();
-	private static final Map<Class<? extends Entity>, EntityEffectInfo> effects = new Reference2ObjectOpenHashMap<>();
-	private static EntityEffectInfo playerEffects = DEFAULT;
+	private static final ObjectArray<IEntityEffectFactoryHandler> entityEffectfactoryHandlers = new ObjectArray<>();
 
 	private EntityEffectLibrary() {
 
 	}
 
 	public static void initialize() {
-
+		// Kick the class ctor
 	}
 
 	public static void complete() {
 		if (Config.CLIENT.logging.enableLogging.get()) {
-			SoundControl.LOGGER.info("Entity Effect Configuration");
-			SoundControl.LOGGER.info("===========================");
-			for (final Map.Entry<ResourceLocation, EntityEffectInfo> kvp : myEffects.entrySet()) {
-				SoundControl.LOGGER.info("%s = %s", kvp.getKey().toString(), kvp.getValue().toString());
+			SoundControl.LOGGER.info("Registered Handlers");
+			SoundControl.LOGGER.info("===================");
+			for (final IEntityEffectFactoryHandler h : entityEffectfactoryHandlers) {
+				SoundControl.LOGGER.info(h.getName().toString());
 			}
 		}
 	}
 
 	@Nonnull
-	public static EntityEffectInfo getEffects(@Nonnull final Entity entity) {
-		if (entity instanceof PlayerEntity)
-			return playerEffects;
+	public static ObjectArray<AbstractEntityEffect> getEffects(@Nonnull final Entity entity) {
+		final ObjectArray<AbstractEntityEffect> result = new ObjectArray<>(4);
+		entityEffectfactoryHandlers.forEach(h -> {
+			if (h.appliesTo(entity))
+				result.addAll(h.get(entity));
+		});
+		return result;
+	}
 
-		EntityEffectInfo info = effects.get(entity.getClass());
-		if (info == null) {
-			info = myEffects.get(entity.getType().getRegistryName());
-			if (info == null) {
-				// Slow crawl through looking for aliasing
-				for (final Map.Entry<Class<? extends Entity>, EntityEffectInfo> kvp : effects.entrySet()) {
-					if (kvp.getKey().isAssignableFrom(entity.getClass())) {
-						info = kvp.getValue();
-						break;
-					}
-				}
-				// If it is null we didn't find a class hit so assume default
-				if (info == null)
-					info = DEFAULT;
-			}
-			effects.put(entity.getClass(), info);
-		}
-		return info;
+	/**
+	 * Registers an IEntityEffectFactoryFilter/IEntityEffectFactory pair. The filter
+	 * is used by the EntityEffectLibrary to determine if an EntityEffect applies to
+	 * a target entity.
+	 *
+	 * @param handler Factory handler to register with the system
+	 */
+	public static void register(@Nonnull final EntityEffectLibrary.IEntityEffectFactoryHandler handler) {
+		entityEffectfactoryHandlers.add(handler);
+	}
+
+	public interface IEntityEffectFactoryHandler {
+		ResourceLocation getName();
+
+		boolean appliesTo(@Nonnull final Entity entity);
+
+		List<AbstractEntityEffect> get(@Nonnull final Entity entity);
 	}
 
 }

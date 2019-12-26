@@ -30,11 +30,14 @@ import org.orecruncher.sndctrl.audio.acoustic.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public final class AcousticLibrary {
 
-    private static final Map<ResourceLocation, IAcoustic> compiled = new Object2ObjectAVLTreeMap<>();
+    private static final ResourceLocation ADHOC = new ResourceLocation(SoundControl.MOD_ID, "ad_hoc");
+    private static final Map<String, IAcoustic> compiled = new Object2ObjectAVLTreeMap<>();
 
     AcousticLibrary() {
 
@@ -47,7 +50,7 @@ public final class AcousticLibrary {
      * @param acoustic The acoustic mapped to that name
      */
     public static void addAcoustic(@Nonnull final ResourceLocation name, @Nonnull final IAcoustic acoustic) {
-        compiled.put(name, acoustic);
+        compiled.put(name.toString(), acoustic);
     }
 
     public static void initialize() {
@@ -55,7 +58,7 @@ public final class AcousticLibrary {
         // creating acoustic entries.
         final Map<ResourceLocation, SoundEvent> sounds = SoundLibrary.getRegisteredSounds();
         for (final Map.Entry<ResourceLocation, SoundEvent> kvp : sounds.entrySet()) {
-            if (!compiled.containsKey(kvp.getKey())) {
+            if (!compiled.containsKey(kvp.getKey().toString())) {
                 final Optional<SoundEvent> evt = SoundLibrary.getSound(kvp.getKey());
                 evt.ifPresent(e -> addAcoustic(e.getName(), new SimpleAcoustic(e)));
             }
@@ -71,28 +74,68 @@ public final class AcousticLibrary {
     }
 
     @Nonnull
-    public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName) {
-        IAcoustic result = compiled.get(acousticName);
+    public static IAcoustic resolve(@Nonnull final String namespace, @Nonnull String definition, @Nullable final Function<ResourceLocation, IAcoustic> specials) {
+
+        // Reformat the definition to ensure proper sequencing, etc.
+        definition = Arrays.stream(definition.toLowerCase().split(","))
+                        .map(frag -> AcousticLibrary.resolveResource(namespace, frag).toString())
+                        .sorted()
+                        .collect(Collectors.joining(","));
+
+        IAcoustic result = compiled.get(definition);
         if (result == null) {
-            final IAcoustic[] parsed = Arrays.stream(acousticName.getPath().split(",")).map(fragment -> {
+            result = parseDefinition(null, definition, specials);
+        }
+        compiled.put(definition, result);
+        return result;
+    }
+
+    @Nonnull
+    public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName) {
+        return resolve(acousticName, null);
+    }
+
+    @Nonnull
+    private static IAcoustic parseDefinition(@Nullable ResourceLocation acousticName, @Nullable String definition, @Nullable final Function<ResourceLocation, IAcoustic> specials) {
+        IAcoustic result;
+        if (!StringUtils.isNullOrEmpty(definition)) {
+            if (acousticName == null)
+                acousticName = ADHOC;
+            final String nameSpace = acousticName.getNamespace();
+            final IAcoustic[] acoustics = Arrays.stream(definition.split(",")).map(fragment -> {
                 // See if we have an acoustic for this fragment
-                final ResourceLocation fragLoc = new ResourceLocation(fragment);
-                final IAcoustic a = generateAcoustic(fragLoc);
+                final ResourceLocation fragLoc = AcousticLibrary.resolveResource(nameSpace, fragment);
+                IAcoustic a = null;
+                if (specials != null)
+                    a = specials.apply(fragLoc);
+                if (a == null)
+                    a = generateAcoustic(fragLoc);
                 if (a == null)
                     SoundControl.LOGGER.warn("Acoustic '%s' not found!", fragment);
                 return a;
             }).filter(Objects::nonNull).toArray(IAcoustic[]::new);
 
-            if (parsed.length == 0) {
+            if (acoustics.length == 0) {
                 result = NullAcoustic.INSTANCE;
-            } else if (parsed.length == 1) {
-                result = parsed[0];
+            } else if (acoustics.length == 1) {
+                result = acoustics[0];
             } else {
                 final SimultaneousAcoustic s = new SimultaneousAcoustic(acousticName);
-                for (final IAcoustic t : parsed)
+                for (final IAcoustic t : acoustics)
                     s.add(t);
                 result = s;
             }
+        } else {
+            result = NullAcoustic.INSTANCE;
+        }
+        return result;
+    }
+
+    @Nonnull
+    public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nullable final String definition) {
+        IAcoustic result = compiled.get(acousticName.toString());
+        if (result == null) {
+            result = parseDefinition(acousticName, definition, null);
             addAcoustic(acousticName, result);
         }
 
@@ -122,12 +165,16 @@ public final class AcousticLibrary {
 
     @Nullable
     private static IAcoustic generateAcoustic(@Nonnull final ResourceLocation name) {
-        IAcoustic a = compiled.get(name);
+        IAcoustic a = compiled.get(name.toString());
         if (a == null) {
             // Nope. Doesn't exist yet. It could be a sound name based on location.
-            final Optional<SoundEvent> evt = SoundLibrary.getSound(name);
-            if (evt.isPresent())
-                a = generateAcoustic(evt.get());
+            if (name.getPath().equals("not_emitter")) {
+                a = NullAcoustic.INSTANCE;
+            } else {
+                final Optional<SoundEvent> evt = SoundLibrary.getSound(name);
+                if (evt.isPresent())
+                    a = generateAcoustic(evt.get());
+            }
         }
 
         return a;
@@ -135,7 +182,7 @@ public final class AcousticLibrary {
 
     @Nonnull
     private static IAcoustic generateAcoustic(@Nonnull final SoundEvent evt) {
-        IAcoustic result = compiled.get(evt.getName());
+        IAcoustic result = compiled.get(evt.getName().toString());
         if (result == null) {
             result = new SimpleAcoustic(evt);
             addAcoustic(result.getName(), result);

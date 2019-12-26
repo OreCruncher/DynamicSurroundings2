@@ -21,7 +21,6 @@ package org.orecruncher.sndctrl.audio.acoustic;
 import com.google.common.base.MoreObjects;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -47,7 +46,9 @@ public class SimultaneousAcoustic implements IAcoustic {
     }
 
     public void add(@Nonnull final IAcoustic a) {
-        this.acoustics.add(a);
+        // Ignore null acoustics
+        if (!(a instanceof NullAcoustic))
+            this.acoustics.add(a);
     }
 
     @Override

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.particle.Particle;
@@ -77,7 +78,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 			for (int i = 0; i < this.activeEffects.size(); i++) {
 				final AbstractEntityEffect e = this.activeEffects.get(i);
 				if (this.isActive || e.receiveLastCall())
-					e.update(entity);
+					e.update();
 			}
 		}
 	}
@@ -117,6 +118,16 @@ public class EntityEffectManager implements IEntityEffectManager {
 				result.add(e.toString());
 		}
 		return result;
+	}
+
+	/**
+	 * Gets the entity associated with this effect manager
+	 *
+	 * @return Entity if present, null otherwise
+	 */
+	@Nullable
+	public Entity getEntity() {
+		return this.subject.get();
 	}
 
 	/**

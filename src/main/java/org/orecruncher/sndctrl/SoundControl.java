@@ -85,8 +85,15 @@ public final class SoundControl {
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
         // Mod initialization and IMC processing should have completed by now.  Do any further baking.
         AudioEffectLibrary.initialize();
-        AcousticLibrary.initialize();
         EntityEffectLibrary.complete();
+
+        // Callback initialization where the acoustic library is concerned.  Only way to serialize access because
+        // of the new Forge parallel loading.
+        IMC.processCompletions();
+
+        // Initialize after.  Reason is that a mod could override a regular sound with a complex
+        // acoustic, so we only want to create a SimpleAcoustic if it does not exist in the map.
+        AcousticLibrary.initialize();
     }
 
     @SubscribeEvent

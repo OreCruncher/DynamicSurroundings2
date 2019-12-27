@@ -36,6 +36,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,8 +47,10 @@ import org.orecruncher.lib.MaterialUtils;
 import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
+import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.events.BlockInspectionEvent;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 
 import javax.annotation.Nonnull;
@@ -128,7 +131,6 @@ public class Inspector {
 
             if (Config.CLIENT.logging.enableLogging.get() && isHolding()) {
                 final World world = GameUtils.getWorld();
-                final List<String> data = new ArrayList<>();
                 final RayTraceResult current = GameUtils.getMC().objectMouseOver;
                 if (current instanceof BlockRayTraceResult) {
                     final BlockRayTraceResult trace = (BlockRayTraceResult) current;
@@ -137,8 +139,9 @@ public class Inspector {
                         final BlockState state = world.getBlockState(trace.getPos());
 
                         if (!state.isAir(world, trace.getPos())) {
-                            final ItemStack stack = state.getBlock().getPickBlock(state, current, world, trace.getPos(), GameUtils.getPlayer());
-                            diagnostics = gatherBlockText(stack, data, state, trace.getPos());
+                            final BlockInspectionEvent evt = new BlockInspectionEvent(trace, world, state, trace.getPos());
+                            MinecraftForge.EVENT_BUS.post(evt);
+                            diagnostics = evt.data;
                         }
                     }
                 }
@@ -146,10 +149,14 @@ public class Inspector {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT && diagnostics.size() > 0 && GameUtils.displayDebug()) {
-            event.getLeft().addAll(diagnostics);
-        }
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onBlockInspectionEvent(@Nonnull final BlockInspectionEvent event) {
+        final ItemStack stack = event.state.getBlock().getPickBlock(event.state, event.rayTrace, event.world, event.pos, GameUtils.getPlayer());
+        gatherBlockText(stack, event.data, event.state, event.pos);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onGatherText(@Nonnull final DiagnosticEvent event) {
+        event.getLeft().addAll(diagnostics);
     }
 }

@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.orecruncher.lib.Utilities;
-import org.orecruncher.lib.effects.EntityEffectHandler;
+import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.audio.Category;
 import org.orecruncher.sndctrl.audio.ISoundCategory;
@@ -45,6 +45,7 @@ import java.util.function.Supplier;
 public final class IMC {
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(IMC.class);
+    private static final ObjectArray<Runnable> callbacks = new ObjectArray<>(4);
 
     static {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(IMC::processIMC);
@@ -76,6 +77,10 @@ public final class IMC {
 
     private static void registerEffectFactoryHandlerHandler(@Nonnull final InterModComms.IMCMessage msg) {
         handle(msg, EntityEffectLibrary.IEntityEffectFactoryHandler.class, EntityEffectLibrary::register);
+    }
+
+    private static void registerCompletionCallbackHandler(@Nonnull final InterModComms.IMCMessage msg) {
+        Utilities.safeCast(msg.getMessageSupplier().get(), Runnable.class).ifPresent(callbacks::add);
     }
 
     private static <T> void handle(@Nonnull final InterModComms.IMCMessage msg, @Nonnull final Class<T> clazz, @Nonnull final Consumer<T> handler) {
@@ -133,12 +138,32 @@ public final class IMC {
             Methods.REGISTER_EFFECT_FACTORY_HANDLER.send(() -> h);
     }
 
+    /**
+     * Register a callback method to be invoked during completion processing.  Call may come back on a separate thread.
+     *
+     * @param callback  Callback to invoke on completion
+     */
+    public static void registerCompletionCallback(@Nonnull final Runnable... callback) {
+        for (final Runnable r : callback)
+            Methods.REGISTER_COMPLETION_CALLBACK.send(() -> r);
+    }
+
+    /**
+     * Called by the startup routine to process any callbacks that were posted.  Not to be called by other mods!
+     */
+    public static void processCompletions() {
+        for (final Runnable r: callbacks)
+            r.run();
+        callbacks.clear();
+    }
+
     private enum Methods {
         REGISTER_ACOUSTIC_EVENT(IMC::registerAcousticEventHandler),
         REGISTER_SOUND_CATEGORY(IMC::registerSoundCategoryHandler),
         REGISTER_ACOUSTIC_FILE(IMC::registerAcousticFileHandler),
         REGISTER_SOUND_FILE(IMC::registerSoundFileHandler),
-        REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler);
+        REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler),
+        REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler);
 
         private final Consumer<InterModComms.IMCMessage> handler;
 

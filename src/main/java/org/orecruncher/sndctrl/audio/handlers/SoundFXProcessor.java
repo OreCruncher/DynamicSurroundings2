@@ -19,6 +19,7 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import net.minecraft.client.audio.AudioStreamBuffer;
 import net.minecraft.client.audio.ChannelManager;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundSource;
@@ -42,6 +43,7 @@ import org.orecruncher.lib.reflection.ObjectField;
 import org.orecruncher.lib.threading.Worker;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.audio.Conversion;
 import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.events.AudioEvent;
 
@@ -146,7 +148,7 @@ public final class SoundFXProcessor {
     }
 
     /**
-     * Callback hook from a mixin injection.  This callback is made on the client thread after the sound source
+     * Callback hook from an injection.  This callback is made on the client thread after the sound source
      * is created, but before it is configured.
      *
      * @param sound The sound that is going to play
@@ -171,6 +173,12 @@ public final class SoundFXProcessor {
         });
     }
 
+    /**
+     * Callback hook from an injection.  Will be invoked by the sound processing thread when checking status which
+     * essentially is a "tick".
+     *
+     * @param source SoundSource being ticked
+     */
     public static void tick(@Nonnull final SoundSource source) {
         final SourceContext ctx = sndctrl_context.get(source);
         if (ctx != null)
@@ -186,6 +194,25 @@ public final class SoundFXProcessor {
         final SourceContext ctx = sndctrl_context.get(source);
         if (ctx != null)
             sources[source.field_216441_b - 1] = null;
+    }
+
+    /**
+     * Injected into SoundSource and will be invoked when a non-streaming sound data stream is attached to the
+     * SoundSource.  Take the opportunity to convert the audio stream into mono format if needed.
+     *
+     * @param source SoundSource for which the audio buffer is being generated
+     * @param buffer The buffer in question.
+     */
+    @Nonnull
+    public static AudioStreamBuffer playBuffer(@Nonnull final SoundSource source, @Nonnull final AudioStreamBuffer buffer) {
+        if (isAvailable()) {
+            final SourceContext ctx = sndctrl_context.get(source);
+            if (ctx != null && ctx.getSound() != null) {
+                if (ctx.getSound().getAttenuationType() != ISound.AttenuationType.NONE)
+                    return Conversion.convert(buffer);
+            }
+        }
+        return buffer;
     }
 
     /**

@@ -20,22 +20,66 @@ package org.orecruncher.lib;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.ResourcePackInfo;
+import net.minecraft.resources.ResourcePackType;
+import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagCollection;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public final class TagUtils {
+
+    private static final Object BLOCK_TAG_MUTEX = new Object();
+    private static TagCollection<Block> blockTags;
+
     private TagUtils() {
 
+    }
+
+    /**
+     * Obtain a tag collection based on client side data packs.  For the vast majority of cases for mod configuration
+     * this is all that is required.
+     *
+     * @return TagCollection for blocks
+     */
+    private static TagCollection<Block> getBlockTagCollection() {
+        if (blockTags == null) {
+            synchronized (BLOCK_TAG_MUTEX) {
+                if (blockTags == null) {
+                    final SimpleReloadableResourceManager resourceManager = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA, Thread.currentThread());
+                    final List<IResourcePack> list = GameUtils.getMC().getResourcePackList().getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
+
+                    for (IResourcePack iresourcepack : list) {
+                        resourceManager.addResourcePack(iresourcepack);
+                    }
+
+                    final TagCollection<Block> tags = new TagCollection<>(
+                            r -> Optional.ofNullable(ForgeRegistries.BLOCKS.getValue(r)),
+                            "tags/blocks",
+                            false,
+                            "block");
+
+                    try {
+                        final Map<ResourceLocation, Tag.Builder<Block>> mapping = tags.reload(resourceManager, ForkJoinPool.commonPool()).get();
+                        tags.registerAll(mapping);
+                    } catch (@Nonnull final Throwable t) {
+                        Lib.LOGGER.error(t, "Unable to load tags!");
+                    }
+                    blockTags = tags;
+                }
+            }
+        }
+
+        return blockTags;
     }
 
     @Nonnull
@@ -54,9 +98,10 @@ public final class TagUtils {
 
     @Nullable
     public static Tag<Block> getBlockTag(@Nonnull final ResourceLocation res) {
-        return BlockTags.getCollection().get(res);
+        return getBlockTagCollection().get(res);
     }
 
+    /*
     @Nullable
     public static Tag<Item> getItemTag(@Nonnull final String name) {
         return getItemTag(new ResourceLocation(name));
@@ -66,4 +111,6 @@ public final class TagUtils {
     public static Tag<Item> getItemTag(@Nonnull final ResourceLocation res) {
         return ItemTags.getCollection().get(res);
     }
+
+     */
 }

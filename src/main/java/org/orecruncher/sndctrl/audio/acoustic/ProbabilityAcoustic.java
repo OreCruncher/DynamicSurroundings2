@@ -66,8 +66,7 @@ public class ProbabilityAcoustic implements IAcoustic {
 
         int targetWeight = RANDOM.nextInt(this.totalWeight);
 
-        while ((targetWeight -= this.acoustics.get(i - 1).weight) >= 0)
-            i--;
+        for (i = this.acoustics.size(); (targetWeight -= this.acoustics.get(i - 1).weight) >= 0; i--);
 
         return Optional.of(this.acoustics.get(i - 1).acoustic);
     }

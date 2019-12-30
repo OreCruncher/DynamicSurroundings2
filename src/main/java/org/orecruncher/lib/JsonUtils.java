@@ -99,7 +99,8 @@ public final class JsonUtils {
         Objects.requireNonNull(path);
 
         try (final InputStream stream = clazz.getResourceAsStream(path)) {
-            return load(stream, clazz);
+            if (stream != null)
+                return load(stream, clazz);
         } catch (final Throwable t) {
             Lib.LOGGER.error(t, "Unable to load resource [%s] from JAR", path);
         }

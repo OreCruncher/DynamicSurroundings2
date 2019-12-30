@@ -20,6 +20,7 @@ package org.orecruncher.lib;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
@@ -38,8 +39,28 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public final class TagUtils {
 
-    private static final Object BLOCK_TAG_MUTEX = new Object();
-    private static TagCollection<Block> blockTags;
+    private static final Singleton<TagCollection<Block>> blockTags = new Singleton<>(
+            () -> {
+                final TagCollection<Block> tags = new TagCollection<>(
+                        r -> Optional.ofNullable(ForgeRegistries.BLOCKS.getValue(r)),
+                        "tags/blocks",
+                        false,
+                        "block");
+
+                return TagUtils.getBlockTagCollection(tags);
+            }
+    );
+    private static final Singleton<TagCollection<Item>> itemTags = new Singleton<>(
+            () -> {
+                final TagCollection<Item> tags = new TagCollection<>(
+                        r -> Optional.ofNullable(ForgeRegistries.ITEMS.getValue(r)),
+                        "tags/items",
+                        false,
+                        "item");
+
+                return TagUtils.getBlockTagCollection(tags);
+            }
+    );
 
     private TagUtils() {
 
@@ -51,35 +72,22 @@ public final class TagUtils {
      *
      * @return TagCollection for blocks
      */
-    private static TagCollection<Block> getBlockTagCollection() {
-        if (blockTags == null) {
-            synchronized (BLOCK_TAG_MUTEX) {
-                if (blockTags == null) {
-                    final SimpleReloadableResourceManager resourceManager = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA, Thread.currentThread());
-                    final List<IResourcePack> list = GameUtils.getMC().getResourcePackList().getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
+    private static <T> TagCollection<T> getBlockTagCollection(@Nonnull final TagCollection<T> tags) {
+        final SimpleReloadableResourceManager resourceManager = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA, Thread.currentThread());
+        final List<IResourcePack> list = GameUtils.getMC().getResourcePackList().getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
 
-                    for (IResourcePack iresourcepack : list) {
-                        resourceManager.addResourcePack(iresourcepack);
-                    }
-
-                    final TagCollection<Block> tags = new TagCollection<>(
-                            r -> Optional.ofNullable(ForgeRegistries.BLOCKS.getValue(r)),
-                            "tags/blocks",
-                            false,
-                            "block");
-
-                    try {
-                        final Map<ResourceLocation, Tag.Builder<Block>> mapping = tags.reload(resourceManager, ForkJoinPool.commonPool()).get();
-                        tags.registerAll(mapping);
-                    } catch (@Nonnull final Throwable t) {
-                        Lib.LOGGER.error(t, "Unable to load tags!");
-                    }
-                    blockTags = tags;
-                }
-            }
+        for (IResourcePack iresourcepack : list) {
+            resourceManager.addResourcePack(iresourcepack);
         }
 
-        return blockTags;
+        try {
+            final Map<ResourceLocation, Tag.Builder<T>> mapping = tags.reload(resourceManager, ForkJoinPool.commonPool()).get();
+            tags.registerAll(mapping);
+        } catch (@Nonnull final Throwable t) {
+            Lib.LOGGER.error(t, "Unable to load tags!");
+        }
+
+        return tags;
     }
 
     @Nonnull
@@ -98,10 +106,9 @@ public final class TagUtils {
 
     @Nullable
     public static Tag<Block> getBlockTag(@Nonnull final ResourceLocation res) {
-        return getBlockTagCollection().get(res);
+        return blockTags.instance().get(res);
     }
 
-    /*
     @Nullable
     public static Tag<Item> getItemTag(@Nonnull final String name) {
         return getItemTag(new ResourceLocation(name));
@@ -109,8 +116,6 @@ public final class TagUtils {
 
     @Nullable
     public static Tag<Item> getItemTag(@Nonnull final ResourceLocation res) {
-        return ItemTags.getCollection().get(res);
+        return itemTags.instance().get(res);
     }
-
-     */
 }

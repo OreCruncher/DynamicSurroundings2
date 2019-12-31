@@ -93,6 +93,17 @@ public final class ForgeUtils {
 
     @OnlyIn(Dist.CLIENT)
     @Nonnull
+    public static List<String> getConfigLocations() {
+        return Stream.concat(
+                    ForgeUtils.getModIdList().stream(),
+                    ForgeUtils.getResourcePackIdList().stream()
+                )
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Nonnull
     public static List<ResourceLocation> getResourceLocations(@Nonnull final String path) {
         return Stream.concat(
                     ForgeUtils.getModIdList().stream(),

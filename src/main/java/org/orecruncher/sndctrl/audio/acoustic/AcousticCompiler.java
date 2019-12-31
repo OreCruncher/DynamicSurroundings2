@@ -109,6 +109,19 @@ public final class AcousticCompiler {
     }
 
     @Nonnull
+    public static IAcoustic combine(@Nullable final IAcoustic... acoustics) {
+        if (acoustics == null || acoustics.length == 0)
+            return NullAcoustic.INSTANCE;
+
+        if (acoustics.length == 1)
+            return acoustics[0];
+
+        final SimultaneousAcoustic result = new SimultaneousAcoustic(new ResourceLocation(SoundControl.MOD_ID, "adhoc"));
+        Arrays.stream(acoustics).forEach(result::add);
+        return result;
+    }
+
+    @Nonnull
     public List<IAcoustic> compile(@Nonnull final String acousticJson) {
         try {
             final JsonObject obj = gson.fromJson(acousticJson, JsonObject.class);

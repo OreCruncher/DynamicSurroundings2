@@ -45,7 +45,7 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class EntityEffectHandler {
 
-    private static final int EFFECT_DISTANCESQ = (int) Math.pow(Config.CLIENT.effects.effectRange.get(), 2);
+    private static final int EFFECT_DISTANCESQ = (int) Math.pow(Config.CLIENT.effects.get_effectRange(), 2);
 
     private EntityEffectHandler() {
     }

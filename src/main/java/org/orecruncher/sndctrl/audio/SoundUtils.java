@@ -159,7 +159,7 @@ public final class SoundUtils {
             final long device = soundSystem.field_216411_b;
 
             boolean hasFX = false;
-            if (Config.CLIENT.sound.enableEnhancedSounds.get()) {
+            if (Config.CLIENT.sound.get_enableEnhancedSounds()) {
                 final ALCCapabilities deviceCaps = ALC.createCapabilities(device);
                 hasFX = deviceCaps.ALC_EXT_EFX;
             }

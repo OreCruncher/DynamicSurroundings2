@@ -58,7 +58,7 @@ public final class SoundEventHandling {
 
             hasPlayed = true;
 
-            final List<String> possibles = Config.CLIENT.sound.startupSoundList.get()
+            final List<String> possibles = Config.CLIENT.sound.get_startupSoundList()
                     .stream()
                     .map(StringUtils::trim)
                     .filter(s -> s.length() > 0)
@@ -91,7 +91,7 @@ public final class SoundEventHandling {
         if (event.side != LogicalSide.CLIENT || event.phase == TickEvent.Phase.END)
             return;
 
-        if (Config.CLIENT.sound.muteInBackground.get()) {
+        if (Config.CLIENT.sound.get_muteInBackground()) {
             final boolean active = GameUtils.getMC().isGameFocused();
             final boolean muted = isMuted();
             if (active && muted) {

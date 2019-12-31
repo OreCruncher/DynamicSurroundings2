@@ -93,7 +93,7 @@ public final class SoundFXProcessor {
 
     static {
 
-        int threads = Config.CLIENT.sound.backgroundThreadWorkers.get();
+        int threads = Config.CLIENT.sound.get_backgroundThreadWorkers();
         if (threads == 0)
             threads = 1;
         SOUND_PROCESS_THREADS = threads;
@@ -103,7 +103,7 @@ public final class SoundFXProcessor {
         IGNORE_CATEGORIES.add(SoundCategory.MASTER);    // Anything slotted to master, like menu buttons
 
         // Don't process weather sounds if configured
-        if (!Config.CLIENT.sound.enhancedWeather.get())
+        if (!Config.CLIENT.sound.get_enhancedWeather())
             IGNORE_CATEGORIES.add(SoundCategory.WEATHER);
 
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);

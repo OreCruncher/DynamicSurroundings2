@@ -76,9 +76,9 @@ public final class SoundProcessor {
         blockedSounds.clear();
         volumeControl.clear();
 
-        cullInterval = Config.CLIENT.sound.cullInterval.get();
+        cullInterval = Config.CLIENT.sound.get_cullInterval();
 
-        for (final String line : Config.CLIENT.sound.individualSounds.get()) {
+        for (final String line : Config.CLIENT.sound.get_individualSounds()) {
             final String[] parts = line.split(" ");
             if (parts.length < 2) {
                 LOGGER.warn("Missing tokens in sound settings? (%s)", line);

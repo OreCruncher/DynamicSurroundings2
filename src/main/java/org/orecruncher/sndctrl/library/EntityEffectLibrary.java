@@ -45,7 +45,7 @@ public final class EntityEffectLibrary {
 	}
 
 	public static void complete() {
-		if (Config.CLIENT.logging.enableLogging.get()) {
+		if (Config.CLIENT.logging.get_enableLogging()) {
 			SoundControl.LOGGER.info("Registered Handlers");
 			SoundControl.LOGGER.info("===================");
 			for (final IEntityEffectFactoryHandler h : entityEffectfactoryHandlers) {

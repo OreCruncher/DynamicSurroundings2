@@ -33,6 +33,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
@@ -52,8 +53,9 @@ public final class Config {
     }
 
     private static void applyConfig() {
-        SoundControl.LOGGER.setDebug(Config.CLIENT.logging.enableLogging.get());
-        SoundControl.LOGGER.setTraceMask(Config.CLIENT.logging.flagMask.get());
+        CLIENT.update();
+        SoundControl.LOGGER.setDebug(Config.CLIENT.logging.get_enableLogging());
+        SoundControl.LOGGER.setTraceMask(Config.CLIENT.logging.get_flagMask());
     }
 
     @SubscribeEvent
@@ -109,15 +111,29 @@ public final class Config {
             this.logging = new Logging(builder);
         }
 
+        void update() {
+            this.sound.update();
+            this.effects.update();
+            this.logging.update();
+        }
+
         public static class Sound {
 
-            public final BooleanValue enableEnhancedSounds;
-            public final BooleanValue muteInBackground;
-            public final IntValue cullInterval;
-            public final IntValue backgroundThreadWorkers;
-            public final BooleanValue enhancedWeather;
-            public final ConfigValue<List<? extends String>> individualSounds;
-            public final ConfigValue<List<? extends String>> startupSoundList;
+            private final BooleanValue enableEnhancedSounds;
+            private final BooleanValue muteInBackground;
+            private final IntValue cullInterval;
+            private final IntValue backgroundThreadWorkers;
+            private final BooleanValue enhancedWeather;
+            private final ConfigValue<List<? extends String>> individualSounds;
+            private final ConfigValue<List<? extends String>> startupSoundList;
+
+            private boolean _enableEnhancedSounds;
+            private boolean _muteInBackground;
+            private int _cullInterval;
+            private int _backgroundThreadWorkers;
+            private boolean _enhancedWeather;
+            private List<String> _individualSounds;
+            private List<String> _startupSoundList;
 
             Sound(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("General options for defining sound effects")
@@ -163,11 +179,51 @@ public final class Config {
 
                 builder.pop();
             }
+
+            void update() {
+                this._backgroundThreadWorkers = this.backgroundThreadWorkers.get();
+                this._enableEnhancedSounds = this.enableEnhancedSounds.get();
+                this._cullInterval = this.cullInterval.get();
+                this._enhancedWeather = this.enhancedWeather.get();
+                this._individualSounds = this.individualSounds.get().stream().map(Object::toString).collect(Collectors.toList());
+                this._muteInBackground = this.muteInBackground.get();
+                this._startupSoundList = this.startupSoundList.get().stream().map(Object::toString).collect(Collectors.toList());
+            }
+
+            public int get_backgroundThreadWorkers() {
+                return this._backgroundThreadWorkers;
+            }
+
+            public boolean get_enableEnhancedSounds() {
+                return this._enableEnhancedSounds;
+            }
+
+            public int get_cullInterval() {
+                return this._cullInterval;
+            }
+
+            public boolean get_enhancedWeather() {
+                return this._enhancedWeather;
+            }
+
+            public List<String> get_individualSounds() {
+                return this._individualSounds;
+            }
+
+            public boolean get_muteInBackground() {
+                return this._muteInBackground;
+            }
+
+            public List<String> get_startupSoundList() {
+                return this._startupSoundList;
+            }
         }
 
         public static class Effects {
 
-            public final IntValue effectRange;
+            private final IntValue effectRange;
+
+            private int _effectRange;
 
             Effects(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines parameters for special effects")
@@ -181,13 +237,25 @@ public final class Config {
 
                 builder.pop();
             }
+
+            void update() {
+                this._effectRange = this.effectRange.get();
+            }
+
+            public int get_effectRange() {
+                return this._effectRange;
+            }
         }
 
         public static class Logging {
 
-            public final BooleanValue enableLogging;
-            public final BooleanValue onlineVersionCheck;
-            public final IntValue flagMask;
+            private final BooleanValue enableLogging;
+            private final BooleanValue onlineVersionCheck;
+            private final IntValue flagMask;
+
+            private boolean _enableLogging;
+            private boolean _onlineVersionCheck;
+            private int _flagMask;
 
             Logging(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines how Sound Control logging will behave")
@@ -209,6 +277,24 @@ public final class Config {
                         .defineInRange("Debug Flag Mask", 0, 0, Integer.MAX_VALUE);
 
                 builder.pop();
+            }
+
+            void update() {
+                this._enableLogging = this.enableLogging.get();
+                this._onlineVersionCheck = this.onlineVersionCheck.get();
+                this._flagMask = this.flagMask.get();
+            }
+
+            public boolean get_enableLogging() {
+                return this._enableLogging;
+            }
+
+            public boolean get_onlineVersionCheck() {
+                return this._onlineVersionCheck;
+            }
+
+            public int get_flagMask() {
+                return this._flagMask;
             }
         }
     }

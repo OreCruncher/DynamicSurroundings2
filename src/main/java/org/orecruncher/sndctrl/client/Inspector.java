@@ -129,7 +129,7 @@ public class Inspector {
 
             diagnostics = ImmutableList.of();
 
-            if (Config.CLIENT.logging.enableLogging.get() && isHolding()) {
+            if (Config.CLIENT.logging.get_enableLogging() && isHolding()) {
                 final World world = GameUtils.getWorld();
                 final RayTraceResult current = GameUtils.getMC().objectMouseOver;
                 if (current instanceof BlockRayTraceResult) {

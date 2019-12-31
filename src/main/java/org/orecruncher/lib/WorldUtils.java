@@ -48,10 +48,11 @@ public final class WorldUtils {
     public static Biome.RainType getCurrentPrecipitationAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
         if (!world.isRaining()) {
             return Biome.RainType.NONE;
-        } else if (!world.isSkyLightMax(pos)) {
-            return Biome.RainType.NONE;
-        } else if (world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY()) {
-            return Biome.RainType.NONE;
+        } else {
+            final BlockPos p = world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
+            if (p.getY() > pos.getY()) {
+                return Biome.RainType.NONE;
+            }
         }
 
         final Biome biome = world.getBiome(pos);

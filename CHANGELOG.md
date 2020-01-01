@@ -1,3 +1,11 @@
+### SoundControl-1.14.4-0.0.2.0
+**Requirements**
+* Forge 1.14.4-28.1.96+
+
+**What's New**
+* Convert stereo sounds to mono on the fly
+* Internal changes to support Dynamic Surroundings: Mob Effects
+
 ### SoundControl-1.14.4-0.0.1.0
 **Requirements**
 * Forge 1.14.4-28.1.96+

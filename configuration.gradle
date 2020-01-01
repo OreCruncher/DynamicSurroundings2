@@ -3,7 +3,7 @@
 def mcVersion    	= '1.14.4'
 def modVersion   	= '0.0.2.0'
 def modDesignator	= ''
-def forgeVersion 	= '28.1.109'
+def forgeVersion 	= '28.1.110'
 def snapshot     	= '20191215-1.14.3'
 
 // General Mod version stuff

@@ -20,8 +20,10 @@ package org.orecruncher.lib.fml;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModContainer;
@@ -31,6 +33,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Lib;
+import org.orecruncher.lib.world.FakeWorld;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -117,13 +120,16 @@ public final class ForgeUtils {
     public static Map<ResourceLocation, Class<? extends Entity>> getRegisteredEntities() {
         final Map<ResourceLocation, Class<? extends Entity>> results = new HashMap<>();
 
+        final World fake = FakeWorld.create("Fake");
         final Collection<EntityType<?>> f = ForgeRegistries.ENTITIES.getValues();
         for (final EntityType<?> et : f) {
             try {
 
                 // Code should work as it relates to Minecraft.  Should have a dummy world.
-                final Entity entity = et.create(null);
-                results.put(et.getRegistryName(), entity.getClass());
+                final Entity entity = et.create(fake);
+                if (entity instanceof LivingEntity) {
+                    results.put(et.getRegistryName(), entity.getClass());
+                }
 
             } catch (@Nonnull final Throwable t) {
                 Lib.LOGGER.warn("Unable to instantiate '%s'", et.getRegistryName().toString());

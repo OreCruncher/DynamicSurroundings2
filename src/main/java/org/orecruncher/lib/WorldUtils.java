@@ -23,10 +23,22 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
+import org.orecruncher.sndctrl.misc.ModEnvironment;
+import sereneseasons.season.SeasonHooks;
 
 import javax.annotation.Nonnull;
+import java.util.function.BiFunction;
 
 public final class WorldUtils {
+
+    private static final BiFunction<World, BlockPos, Float> TEMP;
+
+    static {
+        if (ModEnvironment.SereneSeasons.isLoaded())
+            TEMP = (world, pos) -> SeasonHooks.getBiomeTemperature(world, world.getBiome(pos), pos);
+        else
+            TEMP = (world, pos) -> world.getBiome(pos).getTemperature(pos);
+    }
 
     private WorldUtils() {
 
@@ -35,6 +47,10 @@ public final class WorldUtils {
     @Nonnull
     public static BlockPos getTopSolidOrLiquidBlock(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
         return new BlockPos(pos.getX(), world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ()), pos.getZ());
+    }
+
+    public static float getTemperatureAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
+        return TEMP.apply(world, pos);
     }
 
     /**
@@ -47,16 +63,25 @@ public final class WorldUtils {
      */
     public static Biome.RainType getCurrentPrecipitationAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
         if (!world.isRaining()) {
+            // Not currently raining
             return Biome.RainType.NONE;
-        } else {
-            final BlockPos p = world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
-            if (p.getY() > pos.getY()) {
-                return Biome.RainType.NONE;
-            }
         }
 
         final Biome biome = world.getBiome(pos);
-        return biome.doesWaterFreeze(world, pos) ? Biome.RainType.SNOW : Biome.RainType.RAIN;
+
+        // If the biome has no rain...
+        if (biome.getPrecipitation() == Biome.RainType.NONE)
+            return Biome.RainType.NONE;
+
+        // Is there a block above that is blocking the rainfall?
+        final BlockPos p = world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
+        if (p.getY() > pos.getY()) {
+            return Biome.RainType.NONE;
+        }
+
+        // Use the temperature of the biome to get whether it is raining or snowing
+        final float temp = getTemperatureAt(world, pos);
+        return temp < 0.15F ? Biome.RainType.SNOW : Biome.RainType.RAIN;
     }
 
 }

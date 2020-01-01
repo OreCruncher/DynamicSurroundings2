@@ -45,8 +45,6 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class EntityEffectHandler {
 
-    private static final int EFFECT_DISTANCESQ = (int) Math.pow(Config.CLIENT.effects.get_effectRange(), 2);
-
     private EntityEffectHandler() {
     }
 
@@ -83,7 +81,8 @@ public final class EntityEffectHandler {
             return;
 
         entity.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent( cap -> {
-            final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= EFFECT_DISTANCESQ;
+            final int effectDistSq = Config.CLIENT.effects.get_effectRange() * Config.CLIENT.effects.get_effectRange();
+            final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= effectDistSq;
             final EntityEffectManager mgr = cap.get();
             if (mgr != null && !inRange) {
                 cap.clear();

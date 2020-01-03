@@ -51,6 +51,10 @@ public abstract class Slot {
         }
     }
 
+    public final void deinitialize() {
+        this.slot = EXTEfx.AL_EFFECTSLOT_NULL;
+    }
+
     protected abstract void init0();
 
     public int getSlot() {

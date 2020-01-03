@@ -190,4 +190,8 @@ public final class SoundUtils {
 
     }
 
+    public static void deinitialize(@Nonnull final SoundSystem soundSystem) {
+        SoundFXProcessor.deinitialize();
+    }
+
 }

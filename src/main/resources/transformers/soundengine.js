@@ -7,7 +7,9 @@ var FieldInsnNode = Java.type('org.objectweb.asm.tree.FieldInsnNode');
 var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode');
 
 var SOUND_ENGINE_LOAD = ASM.mapMethod("func_148608_i");
+var SOUND_ENGINE_UNLOAD = ASM.mapMethod("func_148613_b");
 var SOUND_SYSTEM_INITIALIZE = ASM.mapMethod("func_216404_a");
+var SOUND_SYSTEM_DEINITIALIZE = ASM.mapMethod("func_216409_b");
 var SOUND_MANAGER = ASM.mapField("field_217937_g");
 var GET_CLAMPED_VOLUME = ASM.mapMethod("func_188770_e");
 var PLAY_SOUND = ASM.mapMethod("func_148611_c");
@@ -44,6 +46,21 @@ function initializeCoreMod()
                 ASM.insertInsnList(targetMethod, ASM.MethodType.VIRTUAL, "net/minecraft/client/audio/SoundSystem", SOUND_SYSTEM_INITIALIZE, "()V", newInstructions, ASM.InsertMode.INSERT_AFTER);
                 log("Hooked SoundEngine.load()");
 
+                var deinitCall = ASM.buildMethodCall(
+                    "org/orecruncher/sndctrl/audio/SoundUtils",
+                    "deinitialize",
+                    "(Lnet/minecraft/client/audio/SoundSystem;)V",
+                    ASM.MethodType.STATIC
+                );
+
+                newInstructions = new InsnList();
+                newInstructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                newInstructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/audio/SoundEngine", SOUND_MANAGER, "Lnet/minecraft/client/audio/SoundSystem;"));
+                newInstructions.add(deinitCall);
+
+                targetMethod = findMethod(classNode, SOUND_ENGINE_UNLOAD);
+                ASM.insertInsnList(targetMethod, ASM.MethodType.VIRTUAL, "net/minecraft/client/audio/SoundSystem", SOUND_SYSTEM_DEINITIALIZE, "()V", newInstructions, ASM.InsertMode.INSERT_BEFORE);
+                log("Hooked SoundEngine.unload()");
 
                 var clamped = ASM.buildMethodCall(
                     "org/orecruncher/sndctrl/audio/handlers/SoundVolumeEvaluator",

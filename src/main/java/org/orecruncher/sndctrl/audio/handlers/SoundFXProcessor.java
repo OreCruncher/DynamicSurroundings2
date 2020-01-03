@@ -49,6 +49,7 @@ import org.orecruncher.sndctrl.events.AudioEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -131,20 +132,30 @@ public final class SoundFXProcessor {
     }
 
     public static void initialize() {
-
         Effects.initialize();
 
         sources = new SourceContext[SoundUtils.getMaxSounds()];
 
-        soundProcessor = new Worker(
-                "SoundControl Sound Processor",
-                SoundFXProcessor::processSounds,
-                SOUND_PROCESS_ITERATION,
-                LOGGER
-        );
-        soundProcessor.start();
+        if (soundProcessor == null) {
+            soundProcessor = new Worker(
+                    "SoundControl Sound Processor",
+                    SoundFXProcessor::processSounds,
+                    SOUND_PROCESS_ITERATION,
+                    LOGGER
+            );
+            soundProcessor.start();
+        }
 
         isAvailable = true;
+    }
+
+    public static void deinitialize() {
+        isAvailable = false;
+        soundProcessor.stop();
+        Arrays.fill(sources, null);
+        soundProcessor = null;
+        sources = null;
+        Effects.deinitialize();
     }
 
     /**

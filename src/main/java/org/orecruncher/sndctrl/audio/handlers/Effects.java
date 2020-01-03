@@ -151,4 +151,28 @@ public final class Effects {
         reverb2.apply(reverbData2, auxSlot2);
         reverb3.apply(reverbData3, auxSlot3);
     }
+
+    public static void deinitialize() {
+        auxSlot0.deinitialize();
+        auxSlot1.deinitialize();
+        auxSlot2.deinitialize();
+        auxSlot3.deinitialize();
+
+        reverb0.deinitialize();
+        reverb1.deinitialize();
+        reverb2.deinitialize();
+        reverb3.deinitialize();
+
+        filter0.deinitialize();
+        filter1.deinitialize();
+        filter2.deinitialize();
+        filter3.deinitialize();
+
+        direct.deinitialize();
+
+        reverbData0.setProcess(false);
+        reverbData1.setProcess(false);
+        reverbData2.setProcess(false);
+        reverbData3.setProcess(false);
+    }
 }

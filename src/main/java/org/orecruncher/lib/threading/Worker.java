@@ -37,6 +37,7 @@ public final class Worker {
     private final int frequency;
     @Nonnull
     private String diagnosticString;
+    private boolean stopProcessing;
 
     /**
      * Instantiates a worker thread to execute a task on a repeating basis.
@@ -59,7 +60,7 @@ public final class Worker {
     private void run() {
         final TimerEMA timeTrack = new TimerEMA(this.thread.getName());
         final StopWatch sw = new StopWatch();
-        for (; ; ) {
+        while (!this.stopProcessing ) {
             sw.start();
             try {
                 task.run();
@@ -90,6 +91,15 @@ public final class Worker {
      */
     public void start() {
         this.thread.start();
+    }
+
+    public void stop() {
+        try {
+            this.stopProcessing = true;
+            this.thread.join();
+        } catch(@Nonnull final Throwable t) {
+            logger.warn("Error stopping worker thread '%s'", this.thread.getName());
+        }
     }
 
     /**

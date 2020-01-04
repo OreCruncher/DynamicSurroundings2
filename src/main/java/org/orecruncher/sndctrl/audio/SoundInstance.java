@@ -136,10 +136,9 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     @Override
     @Nonnull
     public String toString() {
-        //@formatter:off
         return MoreObjects.toStringHelper(this)
                 .addValue(getSoundLocation().toString())
-                .addValue(getCategory().toString())
+                .addValue(getSoundCategory().toString())
                 .addValue(getAttenuationType().toString())
                 .addValue(getState().toString())
                 .add("v", getVolume())
@@ -148,7 +147,6 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
                 .add("y", getY())
                 .add("z", getZ())
                 .toString();
-        //@formatter:on
     }
 
 }

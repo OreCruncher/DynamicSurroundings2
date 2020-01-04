@@ -1,3 +1,10 @@
+### SoundControl-1.14.4-0.0.3.0
+**Requirements**
+* Forge 1.14.4-28.1.96+
+
+**Fixes**
+* Sounds would stop playing when a resource pack reload would occur (or F3+T)
+
 ### SoundControl-1.14.4-0.0.2.0
 **Requirements**
 * Forge 1.14.4-28.1.96+

@@ -1,9 +1,9 @@
 ### Sound Control
 Forge mod that gives the player control over the sounds that play.
 
-<a href="https://minecraft.curseforge.com/projects/soundcontrol"><img src="http://cf.way2muchnoise.eu/versions/soundcontrol.svg" alt="CurseForge Project"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol"><img src="http://cf.way2muchnoise.eu/versions/dynamic-surroundings-soundcontrol.svg" alt="CurseForge Project"/></a>
 </br></br>
-<a href="https://minecraft.curseforge.com/projects/soundcontrol"><img src="http://cf.way2muchnoise.eu/soundcontrol_downloads.svg" alt="CurseForge Project"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol"><img src="http://cf.way2muchnoise.eu/full_dynamic-surroundings-soundcontrol_downloads.svg" alt="CurseForge Project"/></a>
 </br></br>
 
 ### License

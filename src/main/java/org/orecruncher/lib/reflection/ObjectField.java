@@ -24,6 +24,7 @@ import org.orecruncher.lib.Lib;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class ObjectField<T, R> {
@@ -35,9 +36,9 @@ public class ObjectField<T, R> {
     @Nonnull
     private final String fieldName;
     @Nonnull
-    private final R defaultValue;
+    private final Supplier<R> defaultValue;
 
-    public ObjectField(@Nonnull final String className, @Nonnull final R defaultValue, @Nonnull final String... fieldName) {
+    public ObjectField(@Nonnull final String className, @Nonnull final Supplier<R> defaultValue, @Nonnull final String... fieldName) {
         Preconditions.checkNotNull(defaultValue);
         Preconditions.checkNotNull(className);
         Preconditions.checkArgument(fieldName.length > 0, "Field name cannot be empty");
@@ -51,7 +52,7 @@ public class ObjectField<T, R> {
         }
     }
 
-    public ObjectField(@Nonnull final Class<T> clazz, @Nonnull final R defaultValue, @Nonnull final String... fieldName) {
+    public ObjectField(@Nonnull final Class<T> clazz, @Nonnull final Supplier<R> defaultValue, @Nonnull final String... fieldName) {
         Preconditions.checkNotNull(defaultValue);
         Preconditions.checkNotNull(clazz);
         Preconditions.checkArgument(fieldName.length > 0, "Field name cannot be empty");
@@ -72,13 +73,13 @@ public class ObjectField<T, R> {
     @SuppressWarnings("unchecked")
     public R get(@Nonnull T obj) {
         if (isNotAvailable())
-            return this.defaultValue;
+            return this.defaultValue.get();
 
         try {
             return (R) this.field.get(obj);
         } catch (@Nonnull final Throwable ignored) {
         }
-        return this.defaultValue;
+        return this.defaultValue.get();
     }
 
     public void set(@Nonnull T obj, @Nonnull R value) {

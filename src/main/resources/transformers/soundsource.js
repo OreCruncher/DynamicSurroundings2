@@ -21,7 +21,7 @@ function log(message)
 function initializeCoreMod()
 {
     return {
-        "soundsource_transformer": {
+        "sndctrl_soundsource_transformer": {
             "target": {
                 "type": "CLASS",
                 "names": function(listofclasses) { return ["net.minecraft.client.audio.SoundSource"]; }

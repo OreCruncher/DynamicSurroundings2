@@ -47,7 +47,7 @@ public final class AudioEffectLibrary {
     private static final ObjectField<BlockState, EffectData> sndctrl_effectData =
             new ObjectField<>(
                     BlockState.class,
-                    new EffectData(1F, 0.5F),
+                    () -> new EffectData(1F, 0.5F),
                     "sndctrl_effectData"
             );
 

@@ -61,7 +61,7 @@ public final class SoundFXProcessor {
     private static final ObjectField<SoundSource, SourceContext> sndctrl_context =
             new ObjectField<>(
                     SoundSource.class,
-                    new SourceContext(),
+                    SourceContext::new,
                     "sndctrl_context"
             );
 

@@ -18,7 +18,11 @@
 
 package org.orecruncher.lib;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -51,6 +55,15 @@ public final class WorldUtils {
 
     public static float getTemperatureAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
         return TEMP.apply(world, pos);
+    }
+
+    public static boolean isSolid(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final Direction dir) {
+        final BlockState state = world.getBlockState(pos);
+        return Block.doesSideFillSquare(state.getCollisionShape(world, pos, ISelectionContext.dummy()),dir);
+    }
+
+    public static boolean isTopSolid(@Nonnull final World world, @Nonnull final BlockPos pos) {
+        return isSolid(world, pos, Direction.UP);
     }
 
     /**

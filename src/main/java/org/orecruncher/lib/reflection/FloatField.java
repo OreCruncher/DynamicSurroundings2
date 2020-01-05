@@ -24,11 +24,11 @@ import javax.annotation.Nonnull;
 public class FloatField<T> extends ObjectField<T, Float> {
 
     public FloatField(@Nonnull final String className, @Nonnull final String... fieldName) {
-        super(className, 0F, fieldName);
+        super(className, () -> 0F, fieldName);
     }
 
     public FloatField(@Nonnull final String className, final float defaultValue, @Nonnull final String... fieldName) {
-        super(className, defaultValue, fieldName);
+        super(className, () -> defaultValue, fieldName);
     }
 
     public FloatField(@Nonnull final Class<T> clazz, @Nonnull final String... fieldName) {
@@ -36,6 +36,6 @@ public class FloatField<T> extends ObjectField<T, Float> {
     }
 
     public FloatField(@Nonnull final Class<T> clazz, final float defaultValue, @Nonnull final String... fieldName) {
-        super(clazz, defaultValue, fieldName);
+        super(clazz, () -> defaultValue, fieldName);
     }
 }

@@ -120,6 +120,7 @@ public final class Config {
         public static class Sound {
 
             private final BooleanValue enableEnhancedSounds;
+            private final BooleanValue enableOcclusionCalcs;
             private final BooleanValue muteInBackground;
             private final IntValue cullInterval;
             private final IntValue backgroundThreadWorkers;
@@ -128,6 +129,7 @@ public final class Config {
             private final ConfigValue<List<? extends String>> startupSoundList;
 
             private boolean _enableEnhancedSounds;
+            private boolean _enableOcclusionCalcs;
             private boolean _muteInBackground;
             private int _cullInterval;
             private int _backgroundThreadWorkers;
@@ -144,6 +146,11 @@ public final class Config {
                         .comment("Enable sound reverb and filtering")
                         .translation("sndctrl.cfg.sound.EnhancedSounds")
                         .define("Enable Enhanced Sounds", true);
+
+                this.enableOcclusionCalcs = builder
+                        .comment("Enable sound occlusion calculations (sound muffling when positioned behind blocks)")
+                        .translation("sndctrl.cfg.sound.Occlusion")
+                        .define("Enable Sound Occlusion Calculations", true);
 
                 this.enhancedWeather = builder
                         .worldRestart()
@@ -183,6 +190,7 @@ public final class Config {
             void update() {
                 this._backgroundThreadWorkers = this.backgroundThreadWorkers.get();
                 this._enableEnhancedSounds = this.enableEnhancedSounds.get();
+                this._enableOcclusionCalcs = this.enableOcclusionCalcs.get();
                 this._cullInterval = this.cullInterval.get();
                 this._enhancedWeather = this.enhancedWeather.get();
                 this._individualSounds = this.individualSounds.get().stream().map(Object::toString).collect(Collectors.toList());
@@ -196,6 +204,10 @@ public final class Config {
 
             public boolean get_enableEnhancedSounds() {
                 return this._enableEnhancedSounds;
+            }
+
+            public boolean get_enableOcclusionCalcs() {
+                return this._enableOcclusionCalcs;
             }
 
             public int get_cullInterval() {

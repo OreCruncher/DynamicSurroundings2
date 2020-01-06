@@ -9,6 +9,8 @@
 	"sndctrl.cfg.sound.tooltip": "General options for defining sound effects",
 	"sndctrl.cfg.sound.EnhancedSounds": "Enable Enhanced Sounds",
 	"sndctrl.cfg.sound.EnhancedSounds.tooltip": "Enable sound reverb and filtering",
+	"sndctrl.cfg.sound.Occlusion": "Enable Sound Occlusion Calculations",
+	"sndctrl.cfg.sound.Occlusion.tooltip": "Enable sound occlusion calculations (sound muffling when positioned behind blocks)",
 	"sndctrl.cfg.sound.EnhancedWeather": "Enable Enhanced Weather Sounds",
 	"sndctrl.cfg.sound.EnhancedWeather.tooltip": "Enable enhanced sounds for weather effects",
 	"sndctrl.cfg.sound.Individual": "Individual Sound Configuration",

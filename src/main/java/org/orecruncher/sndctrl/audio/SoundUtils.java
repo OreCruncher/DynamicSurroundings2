@@ -160,26 +160,30 @@ public final class SoundUtils {
 
             boolean hasFX = false;
             if (Config.CLIENT.sound.get_enableEnhancedSounds()) {
+                LOGGER.info("Enhanced sounds are enabled.  Will perform sound engine reconfiguration.");
                 final ALCCapabilities deviceCaps = ALC.createCapabilities(device);
                 hasFX = deviceCaps.ALC_EXT_EFX;
-            }
 
-            if (hasFX) {
-                // Using 4 aux slots instead of the default 2
-                final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
-                final long ctx = ALC10.alcCreateContext(device, attribs);
-                ALC10.alcMakeContextCurrent(ctx);
+                if (!hasFX) {
+                    LOGGER.warn("EFX audio extensions not available for the current sound device!");
+                } else {
+                    // Using 4 aux slots instead of the default 2
+                    final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
+                    final long ctx = ALC10.alcCreateContext(device, attribs);
+                    ALC10.alcMakeContextCurrent(ctx);
 
-                // Have to renable since we reset the context
-                AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
+                    // Have to renable since we reset the context
+                    AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
+                }
             } else {
-                LOGGER.warn("EFX audio extensions not found on the current device or enhanced sounds not enabled.");
+                LOGGER.warn("Enhanced sounds are not enabled.  No fancy sounds for you!");
             }
 
             // Calculate the number of source slots available
             MAX_SOUNDS = ALC11.alcGetInteger(device, ALC11.ALC_MONO_SOURCES);
             SOUND_LIMIT = MAX_SOUNDS - 10;
 
+            // Do this last because it is dependent on the sound calculations
             if (hasFX)
                 SoundFXProcessor.initialize();
 

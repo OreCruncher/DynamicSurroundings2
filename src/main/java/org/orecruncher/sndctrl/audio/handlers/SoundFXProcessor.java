@@ -150,12 +150,18 @@ public final class SoundFXProcessor {
     }
 
     public static void deinitialize() {
-        isAvailable = false;
-        soundProcessor.stop();
-        Arrays.fill(sources, null);
-        soundProcessor = null;
-        sources = null;
-        Effects.deinitialize();
+        if (isAvailable()) {
+            isAvailable = false;
+            if (soundProcessor != null) {
+                soundProcessor.stop();
+                soundProcessor = null;
+            }
+            if (sources != null) {
+                Arrays.fill(sources, null);
+                sources = null;
+            }
+            Effects.deinitialize();
+        }
     }
 
     /**

@@ -59,7 +59,7 @@ public final class EntityEffectLibrary {
 		final ObjectArray<AbstractEntityEffect> result = new ObjectArray<>(4);
 		entityEffectfactoryHandlers.forEach(h -> {
 			if (h.appliesTo(entity))
-				result.addAll(h.get(entity));
+				result.add(h.get(entity));
 		});
 		return result;
 	}
@@ -80,7 +80,7 @@ public final class EntityEffectLibrary {
 
 		boolean appliesTo(@Nonnull final Entity entity);
 
-		List<AbstractEntityEffect> get(@Nonnull final Entity entity);
+		AbstractEntityEffect get(@Nonnull final Entity entity);
 	}
 
 }

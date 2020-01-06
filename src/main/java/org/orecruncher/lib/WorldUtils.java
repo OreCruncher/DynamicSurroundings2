@@ -31,11 +31,27 @@ import org.orecruncher.sndctrl.misc.ModEnvironment;
 import sereneseasons.season.SeasonHooks;
 
 import javax.annotation.Nonnull;
-import java.util.function.BiFunction;
 
 public final class WorldUtils {
 
-    private static final BiFunction<World, BlockPos, Float> TEMP;
+    /**
+     * Temperatures LESS than this value are considered cold temperatures.
+     */
+    public static final float COLD_THRESHOLD = 0.2F;
+
+    /**
+     * Temperatures LESS than this value are considered cold enough for snow.
+     */
+    public static final float SNOW_THRESHOLD = 0.15F;
+
+    /**
+     * SereneSeasons support to obtain the temperature at a specific block location.
+     */
+    private interface ITemperatureHandler {
+        float getTemp(@Nonnull final World world, @Nonnull final BlockPos pos);
+    }
+
+    private static final ITemperatureHandler TEMP;
 
     static {
         if (ModEnvironment.SereneSeasons.isLoaded())
@@ -53,15 +69,38 @@ public final class WorldUtils {
         return new BlockPos(pos.getX(), world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ()), pos.getZ());
     }
 
+    /**
+     * Gets the temperature value for the given BlockPos in the world.
+     */
     public static float getTemperatureAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
-        return TEMP.apply(world, pos);
+        return TEMP.getTemp(world, pos);
     }
 
+    /**
+     * Determines if the temperature value is considered a cold temperature.
+     */
+    public static boolean isColdTemperature(final float temp) {
+        return temp < COLD_THRESHOLD;
+    }
+
+    /**
+     * Determines if the temperature value is considered cold enough for snow.
+     */
+    public static boolean isSnowTemperature(final float temp) {
+        return temp < SNOW_THRESHOLD;
+    }
+
+    /**
+     * Determines if the side of the block at the specified position is considered solid.
+     */
     public static boolean isSolid(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final Direction dir) {
         final BlockState state = world.getBlockState(pos);
         return Block.doesSideFillSquare(state.getCollisionShape(world, pos, ISelectionContext.dummy()),dir);
     }
 
+    /**
+     * Determines if the top side of the block at the specified position is considered solid.
+     */
     public static boolean isTopSolid(@Nonnull final World world, @Nonnull final BlockPos pos) {
         return isSolid(world, pos, Direction.UP);
     }
@@ -69,10 +108,6 @@ public final class WorldUtils {
     /**
      * Gets the precipitation currently falling at the specified location.  It takes into account temperature and the
      * like.
-     *
-     * @param world World where the location is being checked
-     * @param pos   Position to check
-     * @return Enum value indicating the precipitation that is currently falling.
      */
     public static Biome.RainType getCurrentPrecipitationAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
         if (!world.isRaining()) {
@@ -94,7 +129,7 @@ public final class WorldUtils {
 
         // Use the temperature of the biome to get whether it is raining or snowing
         final float temp = getTemperatureAt(world, pos);
-        return temp < 0.15F ? Biome.RainType.SNOW : Biome.RainType.RAIN;
+        return isSnowTemperature(temp) ? Biome.RainType.SNOW : Biome.RainType.RAIN;
     }
 
 }

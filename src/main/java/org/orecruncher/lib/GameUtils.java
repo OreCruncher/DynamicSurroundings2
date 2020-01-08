@@ -75,4 +75,14 @@ public final class GameUtils {
     public static boolean isInGame() {
         return getWorld() != null && getPlayer() != null;
     }
+
+    @OnlyIn(Dist.CLIENT)
+    public static boolean isThirdPersonView() {
+        return getGameSettings().thirdPersonView == 2;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static boolean isFirstPersonView() {
+        return getGameSettings().thirdPersonView == 0;
+    }
 }

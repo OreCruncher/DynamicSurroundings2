@@ -106,6 +106,14 @@ public final class WorldUtils {
     }
 
     /**
+     * Determines if the block at the specified location is solid.
+     */
+    public static boolean isBlockSolid(@Nonnull final World world, @Nonnull final BlockPos pos) {
+        final BlockState state = world.getBlockState(pos);
+        return state.isSolid();
+    }
+
+    /**
      * Gets the precipitation currently falling at the specified location.  It takes into account temperature and the
      * like.
      */

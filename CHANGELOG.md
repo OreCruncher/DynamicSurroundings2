@@ -1,3 +1,16 @@
+### SoundControl-1.14.4-0.0.4.0
+**Requirements**
+* Forge 1.14.4-28.1.96+
+
+**What's New**
+* Config option to disable sound occlusion tracing.  In other words, you can now turn off sound muffling if the sound is positioned behind blocks.
+
+**Fixes**
+* NPE when changing mipmap levels when enhanced sounds not enabled
+
+**Changes**
+* Library work to support Mob Effects
+
 ### SoundControl-1.14.4-0.0.3.0
 **Requirements**
 * Forge 1.14.4-28.1.96+

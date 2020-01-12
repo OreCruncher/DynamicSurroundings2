@@ -231,9 +231,9 @@ public final class AudioEngine {
      *
      * @param event Event that was raised
      */
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onClientTick(@Nonnull final TickEvent.ClientTickEvent event) {
-        if (event.side != LogicalSide.CLIENT || event.phase != Phase.END)
+        if (event.side != LogicalSide.CLIENT || event.phase != Phase.START)
             return;
 
         final Map<ISound, Integer> delayedSounds = SoundUtils.getDelayedSounds();

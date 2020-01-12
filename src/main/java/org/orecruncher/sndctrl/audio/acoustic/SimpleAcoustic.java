@@ -50,7 +50,7 @@ public class SimpleAcoustic implements IAcoustic {
     }
 
     public SimpleAcoustic(@Nonnull final ResourceLocation name, @Nonnull final SoundEvent evt) {
-        this(name, new AcousticFactory(SoundBuilder.builder(evt, Category.NEUTRAL)));
+        this(name, new AcousticFactory(SoundBuilder.builder(evt)));
     }
 
     public SimpleAcoustic(@Nonnull final ResourceLocation name, @Nonnull final IAcousticFactory factory) {

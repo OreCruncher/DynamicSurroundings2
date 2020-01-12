@@ -54,14 +54,13 @@ public class AcousticFactory implements IAcousticFactory {
     }
 
     /**
-     * Creates a sound instance for the MASTER category that is non-attenuated
+     * Creates a sound instance that is non-attenuated
      */
     @Override
     @Nonnull
     public ISoundInstance createSound() {
         final SoundBuilder copy = new SoundBuilder(this.builder);
         return copy
-                .setCategory(Category.MASTER)
                 .setAttenuation(ISound.AttenuationType.NONE)
                 .setPosition(Vec3d.ZERO).build();
     }

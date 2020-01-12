@@ -1,5 +1,6 @@
 {
   "blockstate": "transformers/blockstate.js",
   "soundsource": "transformers/soundsource.js",
-  "soundengine": "transformers/soundengine.js"
+  "soundengine": "transformers/soundengine.js",
+  "clientworld": "transformers/clientworld.js"
 }

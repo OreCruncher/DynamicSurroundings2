@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.orecruncher.lib.effects.EntityEffectHandler;
 import org.orecruncher.lib.fml.ConfigUtils;
@@ -64,6 +65,7 @@ public final class SoundControl {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupComplete);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         MinecraftForge.EVENT_BUS.register(this);
 
         // Initialize our configuration
@@ -80,6 +82,10 @@ public final class SoundControl {
         SoundLibrary.initialize();
         EntityEffectLibrary.initialize();
         EntityEffectHandler.initialize();
+    }
+
+    private void enqueueIMC(final InterModEnqueueEvent event) {
+
     }
 
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {

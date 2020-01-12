@@ -18,8 +18,11 @@
 
 package org.orecruncher.lib;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Array;
 import java.util.Optional;
 
 public final class Utilities {
@@ -31,7 +34,7 @@ public final class Utilities {
      * specified, or a non-null reference could not be found, an exception will be thrown.
      *
      * @param objs Object references to evaluate
-     * @param <T> Type of object
+     * @param <T>  Type of object
      * @return Reference to the first non-null reference in the parameter list.
      */
     @SafeVarargs
@@ -47,5 +50,34 @@ public final class Utilities {
     @Nonnull
     public static <S, T> Optional<T> safeCast(@Nullable final S candidate, @Nonnull final Class<T> target) {
         return target.isInstance(candidate) ? Optional.of(target.cast(candidate)) : Optional.empty();
+    }
+
+    public static int[] splitToInts(@Nonnull final String str, final char splitChar) {
+
+        final String[] tokens = StringUtils.split(str, splitChar);
+        if (tokens == null || tokens.length == 0)
+            return new int[0];
+
+        final int[] result = new int[tokens.length];
+        for (int i = 0; i < tokens.length; i++) {
+            result[i] = Integer.parseInt(tokens[i]);
+        }
+
+        return result;
+    }
+
+    @Nonnull
+    public static <T> T[] append(@Nonnull final T[] a, @Nullable final T b) {
+
+        if (b == null)
+            return a;
+
+        final int aLen = a.length;
+
+        @SuppressWarnings("unchecked") final T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + 1);
+        System.arraycopy(a, 0, c, 0, aLen);
+        c[aLen] = b;
+
+        return c;
     }
 }

@@ -18,12 +18,14 @@
 
 package org.orecruncher.lib.fml;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModContainer;
@@ -40,6 +42,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @SuppressWarnings("unused")
 public final class ForgeUtils {
@@ -137,6 +140,19 @@ public final class ForgeUtils {
         }
 
         return results;
+    }
+
+    @Nonnull
+    public static Collection<Biome> getBiomes() {
+        return ForgeRegistries.BIOMES.getValues();
+    }
+
+    @Nonnull
+    public static Collection<BlockState> getBlockStates() {
+        return StreamSupport.stream(ForgeRegistries.BLOCKS.spliterator(), false)
+                .map(block -> block.getStateContainer().getValidStates())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
 }

@@ -21,17 +21,18 @@ package org.orecruncher.lib.scripting.sets;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
 import javax.annotation.Nonnull;
 
-public class WeatherVariableSet extends VariableSet<IWorldVariables> implements IWorldVariables {
+public class WeatherVariables extends VariableSet<IWorldVariables> implements IWorldVariables {
 
     private final LazyVariable<Float> temperature = new LazyVariable<>(() -> {
         if (GameUtils.isInGame()) {
             final World world = GameUtils.getWorld();
             final BlockPos pos = GameUtils.getPlayer().getPosition();
-            return world.getBiome(pos).getTemperature(pos);
+            return WorldUtils.getTemperatureAt(world, pos);
         }
         return 0F;
     });
@@ -39,7 +40,7 @@ public class WeatherVariableSet extends VariableSet<IWorldVariables> implements 
     private boolean isThundering;
     private float rainFall;
 
-    public WeatherVariableSet() {
+    public WeatherVariables() {
         super("weather");
     }
 

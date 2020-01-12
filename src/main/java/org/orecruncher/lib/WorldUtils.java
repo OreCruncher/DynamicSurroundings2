@@ -130,7 +130,7 @@ public final class WorldUtils {
             return Biome.RainType.NONE;
 
         // Is there a block above that is blocking the rainfall?
-        final BlockPos p = world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
+        final BlockPos p = getPrecipitationHeight(world, pos);
         if (p.getY() > pos.getY()) {
             return Biome.RainType.NONE;
         }
@@ -138,6 +138,11 @@ public final class WorldUtils {
         // Use the temperature of the biome to get whether it is raining or snowing
         final float temp = getTemperatureAt(world, pos);
         return isSnowTemperature(temp) ? Biome.RainType.SNOW : Biome.RainType.RAIN;
+    }
+
+    @Nonnull
+    public static BlockPos getPrecipitationHeight(@Nonnull final World world, @Nonnull final BlockPos pos) {
+        return world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
     }
 
 }

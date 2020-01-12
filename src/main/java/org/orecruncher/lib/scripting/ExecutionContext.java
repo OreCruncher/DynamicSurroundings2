@@ -25,6 +25,7 @@ import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.script.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +66,10 @@ public final class ExecutionContext {
         this.engine.put("lib", new LibraryFunctions());
     }
 
+    public void put(@Nonnull final String name, @Nullable final Object obj) {
+        this.engine.put(name, obj);
+    }
+
     public void add(@Nonnull final VariableSet<?> varSet) {
         if (this.engine.get(varSet.getName()) != null)
             throw new IllegalStateException(String.format("Variable set '%s' already defined!", varSet.getName()));
@@ -97,7 +102,8 @@ public final class ExecutionContext {
         }
 
         try {
-            return Optional.of(func.eval());
+            final Object result = func.eval();
+            return Optional.ofNullable(result);
         } catch (@Nonnull final Throwable t) {
             LOGGER.error(t, "Error execution script: %s", script);
             compiled.put(script, this.error);

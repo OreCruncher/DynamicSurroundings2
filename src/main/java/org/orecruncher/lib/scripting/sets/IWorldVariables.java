@@ -18,8 +18,7 @@
 
 package org.orecruncher.lib.scripting.sets;
 
-import net.minecraft.util.math.BlockPos;
-import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.WorldUtils;
 
 public interface IWorldVariables {
 
@@ -73,6 +72,15 @@ public interface IWorldVariables {
      * @return true if the current temperature conditions are frosty, false otherwise
      */
     default boolean isFrosty() {
-        return getTemperature() < 0.15F;
+        return WorldUtils.isColdTemperature(getTemperature());
+    }
+
+    /**
+     * Indicaets if the temperature at the player location is cold enough for water to freeze.
+     *
+     * @return true if the current temperature allows water freezing, false otherwise.
+     */
+    default boolean canWaterFreeze() {
+        return WorldUtils.isSnowTemperature(getTemperature());
     }
 }

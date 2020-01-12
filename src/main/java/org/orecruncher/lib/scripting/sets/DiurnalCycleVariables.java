@@ -24,7 +24,7 @@ import org.orecruncher.lib.scripting.VariableSet;
 
 import javax.annotation.Nonnull;
 
-public class DiurnalCycle extends VariableSet<IDiurnalCycle> implements IDiurnalCycle {
+public class DiurnalCycleVariables extends VariableSet<IDiurnalCycle> implements IDiurnalCycle {
 
     private final LazyVariable<Float> moonPhaseFactor = new LazyVariable<>(() -> GameUtils.isInGame() ? DayCycle.getMoonPhaseFactor(GameUtils.getWorld()) : 0F);
     private final LazyVariable<Float> celestialAngle = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getWorld().getCelestialAngle(0F) : 0F);
@@ -34,7 +34,7 @@ public class DiurnalCycle extends VariableSet<IDiurnalCycle> implements IDiurnal
     private boolean isSunrise;
     private boolean isSunset;
 
-    public DiurnalCycle() {
+    public DiurnalCycleVariables() {
         super("diurnal");
     }
 

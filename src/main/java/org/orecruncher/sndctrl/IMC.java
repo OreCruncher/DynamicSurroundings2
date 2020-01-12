@@ -19,11 +19,13 @@
 package org.orecruncher.sndctrl;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.orecruncher.lib.ClientBlockUpdateHandler;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
@@ -81,6 +83,11 @@ public final class IMC {
 
     private static void registerCompletionCallbackHandler(@Nonnull final InterModComms.IMCMessage msg) {
         Utilities.safeCast(msg.getMessageSupplier().get(), Runnable.class).ifPresent(callbacks::add);
+    }
+
+    private static void registerBlockUpdateCallbackHandler(@Nonnull final InterModComms.IMCMessage msg) {
+        //noinspection unchecked
+        ClientBlockUpdateHandler.registerCallback((Consumer<BlockPos>) msg.getMessageSupplier().get());
     }
 
     private static <T> void handle(@Nonnull final InterModComms.IMCMessage msg, @Nonnull final Class<T> clazz, @Nonnull final Consumer<T> handler) {
@@ -149,6 +156,14 @@ public final class IMC {
     }
 
     /**
+     * Register a callback method to be invoked on client side block state change
+     * @param callback Callback to invoke on block state change
+     */
+    public static void registerBlockUpdateCallback(@Nonnull final Consumer<BlockPos> callback) {
+        Methods.REGISTER_BLOCKUPDATE_CALLBACK.send(() -> callback);
+    }
+
+    /**
      * Called by the startup routine to process any callbacks that were posted.  Not to be called by other mods!
      */
     public static void processCompletions() {
@@ -163,7 +178,8 @@ public final class IMC {
         REGISTER_ACOUSTIC_FILE(IMC::registerAcousticFileHandler),
         REGISTER_SOUND_FILE(IMC::registerSoundFileHandler),
         REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler),
-        REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler);
+        REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler),
+        REGISTER_BLOCKUPDATE_CALLBACK(IMC::registerBlockUpdateCallbackHandler);
 
         private final Consumer<InterModComms.IMCMessage> handler;
 

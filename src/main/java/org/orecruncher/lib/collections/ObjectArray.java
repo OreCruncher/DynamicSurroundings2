@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 
 public class ObjectArray<T> implements Collection<T> {
 
-    private static final int DEFAULT_SIZE = 16;
+    private static final int DEFAULT_SIZE = 8;
 
     protected Object[] data;
     protected int insertionIdx;
@@ -38,6 +38,16 @@ public class ObjectArray<T> implements Collection<T> {
 
     public ObjectArray(final int size) {
         this.data = new Object[size];
+    }
+
+    public ObjectArray(@Nonnull final ObjectArray<T> input) {
+        this.data = Arrays.copyOf(input.data, input.size());
+        this.insertionIdx = input.insertionIdx;
+    }
+
+    public ObjectArray(@Nonnull final T[] input) {
+        this.data = Arrays.copyOf(input, input.length);
+        this.insertionIdx = input.length;
     }
 
     private void resize() {
@@ -126,9 +136,6 @@ public class ObjectArray<T> implements Collection<T> {
 
     @Override
     public boolean add(@Nonnull final T e) {
-        if (e == null)
-            return false;
-
         if (this.data.length == this.insertionIdx)
             resize();
 
@@ -162,14 +169,13 @@ public class ObjectArray<T> implements Collection<T> {
 
     public boolean addAll(@Nonnull final T[] list) {
         boolean result = false;
-        for (int i = 0; i < list.length; i++)
-            result |= this.add(list[i]);
+        for (T t : list) result |= this.add(t);
         return result;
     }
 
     @Override
     public boolean removeAll(@Nonnull final Collection<?> c) {
-        return this.removeIf(entry -> c.contains(entry));
+        return this.removeIf(c::contains);
     }
 
     @Override

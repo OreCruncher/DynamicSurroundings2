@@ -18,6 +18,10 @@
 
 package org.orecruncher.lib.scripting.sets;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+@OnlyIn(Dist.CLIENT)
 public interface IPlayerVariables {
 
     boolean isBurning();
@@ -57,5 +61,13 @@ public interface IPlayerVariables {
     float getY();
 
     float getZ();
+
+    default boolean isHurt() {
+        return false;
+    }
+
+    default boolean isHungry() {
+        return false;
+    }
 
 }

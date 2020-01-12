@@ -80,7 +80,7 @@ public final class BlockStateMatcherMap<T> implements Map<BlockStateMatcher, T> 
     @Override
     @Nullable
     public T get(Object key) {
-        return get((BlockState) key);
+        return this.map.get(key);
     }
 
     @Override

@@ -21,6 +21,7 @@ package org.orecruncher.lib.events;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.Event;
+import org.orecruncher.lib.math.TimerEMA;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class DiagnosticEvent extends Event {
 
     private final List<String> left = new ArrayList<>();
     private final List<String> right = new ArrayList<>();
+    private final List<TimerEMA> timers = new ArrayList<>();
 
     public DiagnosticEvent() {}
 
@@ -44,12 +46,20 @@ public class DiagnosticEvent extends Event {
         return this.right;
     }
 
+    public Collection<TimerEMA> getTimers() {
+        return this.timers;
+    }
+
     public void addLeft(@Nonnull final String... msgs) {
         this.left.addAll(Arrays.asList(msgs));
     }
 
     public void addRight(@Nonnull final String... msgs) {
         this.right.addAll(Arrays.asList(msgs));
+    }
+
+    public void addTimer(@Nonnull final TimerEMA timer) {
+        this.timers.add(timer);
     }
 
 }

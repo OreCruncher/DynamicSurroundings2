@@ -23,6 +23,7 @@ import org.orecruncher.lib.random.XorShiftRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Random;
 
 /**
@@ -30,17 +31,28 @@ import java.util.Random;
  *
  * @param <T>
  */
-public class WeightTable<T> extends ObjectArray<WeightTable.IItem<? extends T>> {
+public class WeightTable<T> {
 
     protected static final Random RANDOM = XorShiftRandom.current();
 
+    protected final ObjectArray<IItem<T>> entries =  new ObjectArray<>();
     protected int totalWeight = 0;
 
     public WeightTable() {
     }
 
-    public boolean add(@Nonnull final T e, final int weight) {
-        return this.add(new IItem<T>() {
+    public WeightTable(@Nonnull final IItem<T>[] items) {
+        for (final IItem<T> i : items)
+            add(i);
+    }
+
+    public WeightTable(@Nonnull final Collection<? extends IItem<T>> input) {
+        for (final IItem<T> i : input)
+            add(i);
+    }
+
+    public void add(@Nonnull final T e, final int weight) {
+        add(new IItem<T>() {
             @Override
             public int getWeight() {
                 return weight;
@@ -53,13 +65,11 @@ public class WeightTable<T> extends ObjectArray<WeightTable.IItem<? extends T>> 
         });
     }
 
-    @Override
-    public boolean add(@Nonnull final WeightTable.IItem<? extends T> entry) {
-        this.totalWeight += entry.getWeight();
-        return super.add(entry);
+    public void add(@Nonnull final IItem<T> entry) {
+        entries.add(entry);
+        totalWeight += entry.getWeight();
     }
 
-    @SuppressWarnings("unchecked")
     @Nullable
     public T next() {
         if (this.totalWeight <= 0)
@@ -67,10 +77,10 @@ public class WeightTable<T> extends ObjectArray<WeightTable.IItem<? extends T>> 
 
         int targetWeight = RANDOM.nextInt(this.totalWeight);
 
-        WeightTable.IItem<T> selected = null;
+        IItem<T> selected = null;
         int i = -1;
         do {
-            selected = (WeightTable.IItem<T>) this.data[++i];
+            selected = entries.get(++i);
             targetWeight -= selected.getWeight();
         } while (targetWeight >= 0);
 

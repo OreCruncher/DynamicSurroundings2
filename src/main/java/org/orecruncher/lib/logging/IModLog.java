@@ -24,23 +24,34 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public interface IModLog {
-    void info(@Nonnull final String msg, @Nullable final Object... parms);
 
-    void info(@Nonnull final Supplier<String> message);
+    default void info(@Nonnull final String msg, @Nullable final Object... parms) { }
 
-    void warn(@Nonnull final String msg, @Nullable final Object... parms);
+    default void info(@Nonnull final Supplier<String> message) {
+        info(message.get());
+    }
 
-    void warn(@Nonnull final Supplier<String> message);
+    default void warn(@Nonnull final String msg, @Nullable final Object... parms) { }
 
-    void debug(@Nonnull final String msg, @Nullable final Object... parms);
+    default void warn(@Nonnull final Supplier<String> message) {
+        warn(message.get());
+    }
 
-    void debug(@Nonnull final Supplier<String> message);
+    default void debug(@Nonnull final String msg, @Nullable final Object... parms) { }
 
-    void debug(final int mask, @Nonnull final String msg, @Nullable final Object... parms);
+    default void debug(@Nonnull final Supplier<String> message) {
+        debug(message.get());
+    }
 
-    void debug(final int mask, @Nonnull final Supplier<String> message);
+    default void debug(final int mask, @Nonnull final String msg, @Nullable final Object... parms) { }
 
-    void error(@Nonnull final Throwable e, @Nonnull final String msg, @Nullable final Object... parms);
+    default void debug(final int mask, @Nonnull final Supplier<String> message) {
+        debug(message.get());
+    }
 
-    void error(@Nonnull final Throwable e, @Nonnull final Supplier<String> message);
+    default void error(@Nonnull final Throwable e, @Nonnull final String msg, @Nullable final Object... parms) { }
+
+    default void error(@Nonnull final Throwable e, @Nonnull final Supplier<String> message) {
+        error(e, message.get());
+    }
 }

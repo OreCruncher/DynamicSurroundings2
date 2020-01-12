@@ -25,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.audio.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import java.util.IdentityHashMap;
@@ -80,6 +81,11 @@ public class EventSelectorAcoustic implements IAcoustic {
     @Override
     public void playBackground(@Nonnull final AcousticEvent event) {
         resolve(event).ifPresent(IAcoustic::playBackground);
+    }
+
+    @Override
+    public ISoundInstance getSound() {
+        return resolve(AcousticEvent.NONE).map(IAcoustic::getSound).orElse(null);
     }
 
     @Nonnull

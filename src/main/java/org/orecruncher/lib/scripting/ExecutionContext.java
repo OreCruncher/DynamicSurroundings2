@@ -71,11 +71,11 @@ public final class ExecutionContext {
     }
 
     public void add(@Nonnull final VariableSet<?> varSet) {
-        if (this.engine.get(varSet.getName()) != null)
-            throw new IllegalStateException(String.format("Variable set '%s' already defined!", varSet.getName()));
+        if (this.engine.get(varSet.getSetName()) != null)
+            throw new IllegalStateException(String.format("Variable set '%s' already defined!", varSet.getSetName()));
 
         this.variables.add(varSet);
-        this.engine.put(varSet.getName(), varSet.getInterface());
+        this.engine.put(varSet.getSetName(), varSet.getInterface());
     }
 
     public String getName() {

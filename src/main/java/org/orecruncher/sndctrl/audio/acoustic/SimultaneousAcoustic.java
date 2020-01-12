@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.sndctrl.audio.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -85,6 +86,13 @@ public class SimultaneousAcoustic implements IAcoustic {
     public void playBackground(@Nonnull final AcousticEvent event) {
         for (final IAcoustic a : this.acoustics)
             a.playBackground(event);
+    }
+
+    @Override
+    public ISoundInstance getSound() {
+        if (this.acoustics.size() > 0)
+            return this.acoustics.get(0).getSound();
+        return null;
     }
 
     @Override

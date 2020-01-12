@@ -251,23 +251,24 @@ public final class AudioEngine {
             // Minecraft sound engine will not know what we are talking about.
             final ISound aggregate = getActualSound(sound);
             final SoundState currentState = sound.getState();
+            final boolean isPlaying = playing.containsKey(aggregate);
 
             switch (currentState) {
                 case DELAYED:
                     // The sound play is delayed. Check to see if Minecraft transitioned it's state.
                     if (!delayedSounds.containsKey(aggregate)) {
-                        sound.setState(playing.containsKey(aggregate) ? SoundState.PLAYING : SoundState.DONE);
+                        sound.setState(isPlaying ? SoundState.PLAYING : SoundState.DONE);
                     }
                     break;
                 case STOPPING:
-                    if (!playing.containsKey(aggregate)) {
+                    if (!isPlaying) {
                         sound.setState(SoundState.DONE);
                     }
                     break;
                 case PLAYING:
                     // The sound is playing. Check to see if the Minecraft sound engine transitioned to a
                     // different state.
-                    if (!playing.containsKey(aggregate)) {
+                    if (!isPlaying) {
                         sound.setState(delayedSounds.containsKey(aggregate) ? SoundState.DELAYED : SoundState.DONE);
                     }
                     break;
@@ -288,7 +289,6 @@ public final class AudioEngine {
             diagnostics.add(String.format(FMT_DBG_SOUND_SYSTEM, SoundUtils.getTotalPlaying(), SoundUtils.getMaxSounds()));
             diagnostics.add(String.format(FMT_DBG_TRACKED, playingSounds.size()));
 
-            //@formatter:off
             playing.keySet().stream()
                     .map(s -> s.getSound().getSoundLocation())
                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
@@ -296,7 +296,6 @@ public final class AudioEngine {
                     .map(e -> String.format(FMT_DBG_SOUND, e.getKey().toString(), e.getValue()))
                     .sorted()
                     .forEach(diagnostics::add);
-            //@formatter:on
         } else if (diagnostics.size() > 0) {
             diagnostics = ImmutableList.of();
         }

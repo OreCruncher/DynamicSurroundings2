@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.audio.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
@@ -71,6 +72,11 @@ public final class NullAcoustic implements IAcoustic {
     @Override
     public void playBackground(@Nonnull final AcousticEvent event) {
 
+    }
+
+    @Override
+    public ISoundInstance getSound() {
+        return null;
     }
 
     @Override

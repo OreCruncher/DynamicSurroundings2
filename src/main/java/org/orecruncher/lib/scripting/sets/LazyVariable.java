@@ -18,6 +18,9 @@
 
 package org.orecruncher.lib.scripting.sets;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
@@ -27,6 +30,7 @@ import java.util.function.Supplier;
  *
  * @param <T> Type of value that is cached
  */
+@OnlyIn(Dist.CLIENT)
 public final class LazyVariable<T> {
 
     @Nonnull

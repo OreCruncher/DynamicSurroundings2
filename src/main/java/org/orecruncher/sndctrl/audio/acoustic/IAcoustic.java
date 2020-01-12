@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.audio.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
@@ -81,4 +82,9 @@ public interface IAcoustic {
     }
 
     void playBackground(@Nonnull final AcousticEvent event);
+
+    /**
+     * Gets a raw sound instance to be managed by the caller
+     */
+    ISoundInstance getSound();
 }

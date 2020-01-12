@@ -20,6 +20,8 @@ package org.orecruncher.lib.scripting.sets;
 
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
@@ -28,12 +30,13 @@ import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@OnlyIn(Dist.CLIENT)
 public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBiomeVariables {
 
     private Biome biome;
     private final LazyVariable<Set<BiomeDictionary.Type>> biomeTraits = new LazyVariable<>(() -> BiomeDictionary.getTypes(this.biome));
-    private final LazyVariable<Set<String>> biomeTraitNames = new LazyVariable<>(() -> this.biomeTraits.get().stream().map(t -> t.getName()).collect(Collectors.toSet()));
-    private final LazyVariable<String> traits = new LazyVariable<>(() -> this.biomeTraitNames.get().stream().collect(Collectors.joining(" ")));
+    private final LazyVariable<Set<String>> biomeTraitNames = new LazyVariable<>(() -> this.biomeTraits.get().stream().map(BiomeDictionary.Type::getName).collect(Collectors.toSet()));
+    private final LazyVariable<String> traits = new LazyVariable<>(() -> String.join(" ", this.biomeTraitNames.get()));
     private final LazyVariable<String> name = new LazyVariable<>(() -> this.biome.getDisplayName().getFormattedText());
     private final LazyVariable<String> modid = new LazyVariable<>(() -> this.biome.getRegistryName().getNamespace());
     private final LazyVariable<Float> rainfall = new LazyVariable<>(() -> this.biome.getDownfall());
@@ -87,6 +90,12 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
     @Override
     public String getModId() {
         return this.modid.get();
+    }
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return this.name.get();
     }
 
     @Override

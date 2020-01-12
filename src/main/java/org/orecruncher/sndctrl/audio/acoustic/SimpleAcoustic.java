@@ -88,6 +88,11 @@ public class SimpleAcoustic implements IAcoustic {
         play(this.factory.createBackgroundSound());
     }
 
+    @Override
+    public ISoundInstance getSound() {
+        return this.factory.createSound();
+    }
+
     protected void play(@Nonnull final ISoundInstance sound) {
         AudioEngine.play(sound);
     }

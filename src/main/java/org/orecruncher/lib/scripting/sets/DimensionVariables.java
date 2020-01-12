@@ -19,11 +19,14 @@
 package org.orecruncher.lib.scripting.sets;
 
 import net.minecraft.world.dimension.Dimension;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
 import javax.annotation.Nonnull;
 
+@OnlyIn(Dist.CLIENT)
 public class DimensionVariables extends VariableSet<IDimensionVariables> implements IDimensionVariables {
 
     private int id;

@@ -27,6 +27,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.random.XorShiftRandom;
+import org.orecruncher.sndctrl.audio.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -100,6 +101,11 @@ public class ProbabilityAcoustic implements IAcoustic {
     @Override
     public void playBackground(@Nonnull final AcousticEvent event) {
         select().ifPresent(a -> a.playBackground(event));
+    }
+
+    @Override
+    public ISoundInstance getSound() {
+        return select().map(IAcoustic::getSound).orElse(null);
     }
 
     @Override

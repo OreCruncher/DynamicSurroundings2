@@ -38,7 +38,7 @@ public abstract class VariableSet<T> {
     }
 
     @Nonnull
-    public String getName() {
+    public String getSetName() {
         return this.setName;
     }
 

@@ -18,9 +18,11 @@
 
 package org.orecruncher.sndctrl.audio;
 
+import com.google.common.base.MoreObjects;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.math.MathStuff;
 
@@ -49,18 +51,17 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
 
         this.fadeScale = DONE_FADE_THRESHOLD * 2;
         this.fadeScaleTarget = 1F;
-        this.lastTick = TickCounter.getTickCount() + 1;
+        this.lastTick = TickCounter.getTickCount();
     }
 
     @Override
     public boolean canRepeat() {
-        return !isDonePlaying() && super.canRepeat();
+        return !isDonePlaying();
     }
 
     @Override
-    public boolean isGlobal() {
-        // Background sounds are always global
-        return true;
+    public int getRepeatDelay() {
+        return 0;
     }
 
     @Override
@@ -70,20 +71,17 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
 
     @Override
     public float getX() {
-        // Always 0
-        return 0;
+        return (float) GameUtils.getPlayer().posX;
     }
 
     @Override
     public float getY() {
-        // Always 0
-        return 0;
+        return (float) GameUtils.getPlayer().posY+ 32;
     }
 
     @Override
     public float getZ() {
-        // Always 0
-        return 0;
+        return (float) GameUtils.getPlayer().posZ;
     }
 
     public void fade() {
@@ -113,12 +111,18 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
         this.sound.setPlayDelay(delay);
     }
 
+    @Nonnull
+    @Override
+    public AttenuationType getAttenuationType() {
+        return AttenuationType.NONE;
+    }
+
     @Override
     public void tick() {
 
         // If we are being ticked again, dont process
         final long tickDelta = TickCounter.getTickCount() - this.lastTick;
-        if (tickDelta == 0)
+        if (tickDelta < 1)
             return;
 
         super.tick();
@@ -157,4 +161,18 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
     public void setFadeScaleTarget(final float scale) {
         this.fadeScaleTarget = MathStuff.clamp1(scale);
     }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .addValue(getSoundLocation().toString())
+                .addValue(getSoundCategory().toString())
+                .addValue(getState().toString())
+                .add("v", getVolume())
+                .add("p", getPitch())
+                .add("f", this.fadeScale)
+                .toString();
+    }
+
 }

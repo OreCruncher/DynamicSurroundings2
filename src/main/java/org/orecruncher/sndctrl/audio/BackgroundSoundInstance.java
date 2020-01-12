@@ -56,7 +56,9 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
 
     @Override
     public boolean canRepeat() {
-        return !isDonePlaying();
+        // Can't loop streaming sounds too well.  Minecraft's new engine repeats what is buffered, and it has a small
+        // amount of buffers.
+        return false;
     }
 
     @Override

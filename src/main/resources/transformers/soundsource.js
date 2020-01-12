@@ -80,6 +80,13 @@ function initializeCoreMod()
                 log("Hooked SoundSource.playBuffer()");
 
 /*
+                method = findMethod(classNode, SOURCE_AUDIO_STREAM);
+                var target = ASM.findFirstInstruction(method, Opcodes.ICONST_4);
+                method.instructions.set(target, new VarInsnNode(Opcodes.BIPUSH, 32));
+                log("Changed from 4 buffers to 8 in SoundSource");
+                */
+
+/*
                 // Hook for doing mono conversion on streams.  Not that it is needed but leaving in case so I don't
                 // have to remember how to do it. :)
                 var audioFormat = ASM.buildMethodCall(

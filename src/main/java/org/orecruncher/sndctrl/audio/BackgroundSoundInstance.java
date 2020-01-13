@@ -55,10 +55,16 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
     }
 
     @Override
+    public boolean isGlobal() {
+        return true;
+    }
+
+    @Override
     public boolean canRepeat() {
-        // Can't loop streaming sounds too well.  Minecraft's new engine repeats what is buffered, and it has a small
-        // amount of buffers.
-        return false;
+        // ASM is used to increase the buffer size 4x.  Reason is the loop code in the sound engine loops on cached
+        // buffers, meaning the entire sound has to be loaded.  If for some reason this breaks you will get a choppy
+        // termination before restarting the loop.
+        return true;
     }
 
     @Override
@@ -73,17 +79,17 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
 
     @Override
     public float getX() {
-        return (float) GameUtils.getPlayer().posX;
+        return 0;
     }
 
     @Override
     public float getY() {
-        return (float) GameUtils.getPlayer().posY+ 32;
+        return 0;
     }
 
     @Override
     public float getZ() {
-        return (float) GameUtils.getPlayer().posZ;
+        return 0;
     }
 
     public void fade() {

@@ -5,6 +5,8 @@ var InsnList = Java.type('org.objectweb.asm.tree.InsnList');
 var VarInsnNode = Java.type('org.objectweb.asm.tree.VarInsnNode');
 var FieldInsnNode = Java.type('org.objectweb.asm.tree.FieldInsnNode');
 var FieldNode = Java.type('org.objectweb.asm.tree.FieldNode');
+var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode');
+var LdcInsnNode = Java.type('org.objectweb.asm.tree.LdcInsnNode');
 
 var SOURCE_PLAY = ASM.mapMethod("func_216438_c");
 var SOURCE_TICK = ASM.mapMethod("func_216434_i");
@@ -12,6 +14,7 @@ var SOURCE_STOP = ASM.mapMethod("func_216436_b");
 var SOURCE_AUDIO_STREAM = ASM.mapMethod("func_216433_a");
 var FIELD_AUDIO_STREAM = ASM.mapField("field_216444_e");
 var SOURCE_PLAY_BUFFER = ASM.mapMethod("func_216429_a");
+var BUFFER_SIZE = ASM.mapMethod("func_216417_a");
 
 function log(message)
 {
@@ -79,12 +82,14 @@ function initializeCoreMod()
                 method.instructions.insert(newInstructions);
                 log("Hooked SoundSource.playBuffer()");
 
-/*
-                method = findMethod(classNode, SOURCE_AUDIO_STREAM);
-                var target = ASM.findFirstInstruction(method, Opcodes.ICONST_4);
-                method.instructions.set(target, new VarInsnNode(Opcodes.BIPUSH, 32));
-                log("Changed from 4 buffers to 8 in SoundSource");
-                */
+                newInstructions = new InsnList();
+                newInstructions.add(new LdcInsnNode(16));
+                newInstructions.add(new InsnNode(Opcodes.IMUL));
+
+                method = findMethod(classNode, BUFFER_SIZE);
+                var theReturn = ASM.findFirstInstruction(method, Opcodes.IRETURN);
+                method.instructions.insertBefore(theReturn, newInstructions);
+                log("Hooked SoundSource.bufferSize()");
 
 /*
                 // Hook for doing mono conversion on streams.  Not that it is needed but leaving in case so I don't

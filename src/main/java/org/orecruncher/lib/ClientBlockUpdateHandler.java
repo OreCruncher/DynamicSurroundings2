@@ -23,18 +23,17 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.orecruncher.lib.events.BlockUpdateEvent;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ClientBlockUpdateHandler {
@@ -43,27 +42,19 @@ public final class ClientBlockUpdateHandler {
     }
 
     private static final Set<BlockPos> updates = new ObjectOpenHashSet<>(64);
-    private static final List<Consumer<BlockPos>> callbackHandlers = new ArrayList<>();
 
+    // Callback that is inserted into ClientWorld processing via ASM
     public static void blockUpdateCallback(@Nonnull final ClientWorld world, @Nonnull final BlockPos pos, @Nonnull final BlockState state) {
-        if (callbackHandlers.size() > 0) {
-            updates.add(pos);
-        }
-    }
-
-    public static void registerCallback(@Nonnull final Consumer<BlockPos> callback) {
-        callbackHandlers.add(callback);
+        updates.add(pos);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onClientTick(@Nonnull final TickEvent.ClientTickEvent event) {
-
-        if(callbackHandlers.size() > 0) {
-            for (final BlockPos pos : updates)
-                callbackHandlers.forEach(h -> h.accept(pos));
+        if (updates.size() > 0) {
+            final BlockUpdateEvent evt = new BlockUpdateEvent(updates);
+            MinecraftForge.EVENT_BUS.post(evt);
+            updates.clear();
         }
-
-        updates.clear();
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

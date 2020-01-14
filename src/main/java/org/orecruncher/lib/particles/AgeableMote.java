@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.particles;
 
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -30,7 +31,7 @@ public abstract class AgeableMote extends Mote {
     protected int age;
     protected int maxAge;
 
-    protected AgeableMote(@Nonnull final World world, final double x, final double y, final double z) {
+    protected AgeableMote(@Nonnull final IWorldReader world, final double x, final double y, final double z) {
         super(world, x, y, z);
         this.age = 0;
     }

@@ -21,9 +21,8 @@ package org.orecruncher.lib.particles;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -32,7 +31,7 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public abstract class Mote implements IParticleMote {
 
-    protected final World world;
+    protected final IWorldReader world;
 
     protected boolean isAlive = true;
     protected double posX;
@@ -48,7 +47,7 @@ public abstract class Mote implements IParticleMote {
     protected int blue;
     protected int alpha;
 
-    public Mote(@Nonnull final World world, final double x, final double y, final double z) {
+    public Mote(@Nonnull final IWorldReader world, final double x, final double y, final double z) {
         this.world = world;
         setPosition(x, y, z);
         configureColor();

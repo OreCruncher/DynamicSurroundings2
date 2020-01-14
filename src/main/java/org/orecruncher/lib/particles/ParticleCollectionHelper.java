@@ -18,7 +18,7 @@
 
 package org.orecruncher.lib.particles;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -31,20 +31,20 @@ public class ParticleCollectionHelper {
 
     protected final String name;
     protected final ParticleCollection.ICollectionFactory factory;
-    protected final ResourceLocation texture;
+    protected final IParticleRenderType renderType;
 
     // Weak reference because the particle could be evicted from Minecraft's
     // particle manager for some reason.
     protected WeakReference<ParticleCollection> collection;
 
-    public ParticleCollectionHelper(@Nonnull final String name, @Nonnull final ResourceLocation texture) {
-        this(name, ParticleCollection.FACTORY, texture);
+    public ParticleCollectionHelper(@Nonnull final String name, @Nonnull final IParticleRenderType renderType) {
+        this(name, ParticleCollection.FACTORY, renderType);
     }
 
     public ParticleCollectionHelper(@Nonnull final String name, @Nonnull final ParticleCollection.ICollectionFactory factory,
-                                    @Nonnull final ResourceLocation texture) {
+                                    @Nonnull final IParticleRenderType renderType) {
         this.name = name;
-        this.texture = texture;
+        this.renderType = renderType;
         this.factory = factory;
     }
 
@@ -57,7 +57,7 @@ public class ParticleCollectionHelper {
     public ParticleCollection get() {
         ParticleCollection pc = this.collection != null ? this.collection.get() : null;
         if (pc == null || !pc.isAlive() || pc.shouldDie()) {
-            pc = this.factory.create(GameUtils.getWorld(), this.texture);
+            pc = this.factory.create(GameUtils.getWorld(), this.renderType);
             this.collection = new WeakReference<>(pc);
             GameUtils.getMC().particles.addEffect(pc);
         }

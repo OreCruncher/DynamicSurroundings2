@@ -93,7 +93,7 @@ public final class WorldUtils {
     /**
      * Determines if the side of the block at the specified position is considered solid.
      */
-    public static boolean isSolid(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final Direction dir) {
+    public static boolean isSolid(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos, @Nonnull final Direction dir) {
         final BlockState state = world.getBlockState(pos);
         return Block.doesSideFillSquare(state.getCollisionShape(world, pos, ISelectionContext.dummy()),dir);
     }
@@ -101,14 +101,14 @@ public final class WorldUtils {
     /**
      * Determines if the top side of the block at the specified position is considered solid.
      */
-    public static boolean isTopSolid(@Nonnull final World world, @Nonnull final BlockPos pos) {
+    public static boolean isTopSolid(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
         return isSolid(world, pos, Direction.UP);
     }
 
     /**
      * Determines if the block at the specified location is solid.
      */
-    public static boolean isBlockSolid(@Nonnull final World world, @Nonnull final BlockPos pos) {
+    public static boolean isBlockSolid(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
         final BlockState state = world.getBlockState(pos);
         return state.isSolid();
     }
@@ -117,8 +117,8 @@ public final class WorldUtils {
      * Gets the precipitation currently falling at the specified location.  It takes into account temperature and the
      * like.
      */
-    public static Biome.RainType getCurrentPrecipitationAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
-        if (!world.isRaining()) {
+    public static Biome.RainType getCurrentPrecipitationAt(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
+        if (!((World) world).isRaining()) {
             // Not currently raining
             return Biome.RainType.NONE;
         }
@@ -136,12 +136,12 @@ public final class WorldUtils {
         }
 
         // Use the temperature of the biome to get whether it is raining or snowing
-        final float temp = getTemperatureAt(world, pos);
+        final float temp = getTemperatureAt((World) world, pos);
         return isSnowTemperature(temp) ? Biome.RainType.SNOW : Biome.RainType.RAIN;
     }
 
     @Nonnull
-    public static BlockPos getPrecipitationHeight(@Nonnull final World world, @Nonnull final BlockPos pos) {
+    public static BlockPos getPrecipitationHeight(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
         return world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
     }
 

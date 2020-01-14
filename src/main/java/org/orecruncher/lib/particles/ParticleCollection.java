@@ -18,29 +18,26 @@
 
 package org.orecruncher.lib.particles;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL11;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.collections.ObjectArray;
-import org.orecruncher.lib.opengl.OpenGlState;
 
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 @OnlyIn(Dist.CLIENT)
-public class ParticleCollection  extends BaseParticle {
+public class ParticleCollection extends BaseParticle {
 
+    public static final ICollectionFactory FACTORY = ParticleCollection::new;
+    protected static final int MAX_PARTICLES = 4000;
+    protected static final int ALLOCATION_SIZE = 128;
+    protected static final int TICK_GRACE = 2;
     /**
      * Predicate used to update a mote and return whether it is dead or not.
      */
@@ -48,22 +45,15 @@ public class ParticleCollection  extends BaseParticle {
         mote.tick();
         return !mote.isAlive();
     };
-
-    protected static final int MAX_PARTICLES = 4000;
-    protected static final int ALLOCATION_SIZE = 128;
-    protected static final int TICK_GRACE = 2;
-
     protected final ObjectArray<IParticleMote> myParticles = new ObjectArray<>(ALLOCATION_SIZE);
-    protected final ResourceLocation texture;
-
+    protected final IParticleRenderType renderType;
     protected long lastTickUpdate;
-    protected OpenGlState glState;
 
-    public ParticleCollection(@Nonnull final World world, @Nonnull final ResourceLocation tex) {
+    public ParticleCollection(@Nonnull final World world, @Nonnull final IParticleRenderType renderType) {
         super(world, 0, 0, 0);
 
         this.canCollide = false;
-        this.texture = tex;
+        this.renderType = renderType;
         this.lastTickUpdate = TickCounter.getTickCount();
     }
 
@@ -77,10 +67,6 @@ public class ParticleCollection  extends BaseParticle {
             return true;
         }
         return false;
-    }
-
-    public ObjectArray<IParticleMote> getParticles() {
-        return this.myParticles;
     }
 
     public int size() {
@@ -97,7 +83,7 @@ public class ParticleCollection  extends BaseParticle {
         if (!isAlive())
             return;
 
-        this.lastTickUpdate =TickCounter.getTickCount();
+        this.lastTickUpdate = TickCounter.getTickCount();
 
         // Update state and remove the dead ones
         this.myParticles.removeIf(UPDATE_REMOVE);
@@ -107,49 +93,19 @@ public class ParticleCollection  extends BaseParticle {
         }
     }
 
-    @Nonnull
-    protected VertexFormat getVertexFormat() {
-        return DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP;
-    }
-
     @Override
     public void renderParticle(@Nonnull final BufferBuilder buffer, @Nonnull final ActiveRenderInfo info, final float partialTicks,
                                final float rotX, final float rotZ, final float rotYZ, final float rotXY, final float rotXZ) {
-
         if (this.myParticles.size() == 0)
             return;
-
-        bindTexture(this.texture);
-        preRender();
-
-        buffer.begin(GL11.GL_QUADS, getVertexFormat());
         for (int i = 0; i < this.myParticles.size(); i++)
             this.myParticles.get(i).render(buffer, info, partialTicks, rotX, rotZ, rotYZ, rotXY, rotXZ);
-        Tessellator.getInstance().draw();
-
-        postRender();
     }
 
     @Override
+    @Nonnull
     public IParticleRenderType getRenderType() {
-        return IParticleRenderType.CUSTOM;
-    }
-
-    protected boolean enableLighting() {
-        return false;
-    }
-
-    protected void preRender() {
-        this.glState = OpenGlState.push();
-        if (enableLighting())
-            GlStateManager.enableLighting();
-        else
-            GlStateManager.disableLighting();
-    }
-
-    protected void postRender() {
-        OpenGlState.pop(this.glState);
-        this.glState = null;
+        return this.renderType;
     }
 
     /**
@@ -157,9 +113,7 @@ public class ParticleCollection  extends BaseParticle {
      * ParticleCollections manager.
      */
     public interface ICollectionFactory {
-        ParticleCollection create(@Nonnull final World world, @Nonnull final ResourceLocation texture);
+        ParticleCollection create(@Nonnull final World world, @Nonnull final IParticleRenderType renderType);
     }
-
-    public static final ICollectionFactory FACTORY = ParticleCollection::new;
 
 }

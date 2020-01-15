@@ -25,8 +25,6 @@ import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.world.World;
-
 /**
  * A particle that is capable of moving it's position in the world.
  */

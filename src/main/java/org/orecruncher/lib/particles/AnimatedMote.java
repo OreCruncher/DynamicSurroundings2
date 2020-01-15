@@ -24,9 +24,11 @@ import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.random.XorShiftRandom;
 
 import java.util.Random;
@@ -58,6 +60,10 @@ public abstract class AnimatedMote extends MotionMote {
 	 */
 	protected boolean fadingColor;
 
+	protected float dRed;
+	protected float dGreen;
+	protected float dBlue;
+
 	protected double xAcceleration;
 	protected double yAcceleration;
 	protected double zAcceleration;
@@ -77,21 +83,39 @@ public abstract class AnimatedMote extends MotionMote {
 	}
 
 	public void setColor(final int rgb) {
-		this.red = ((rgb & 16711680) >> 16);
-		this.green = ((rgb & 65280) >> 8);
-		this.blue = (rgb & 255);
-		this.alpha = 255;
+		this.red = ((rgb & 16711680) >> 16) / 255F;
+		this.green = ((rgb & 65280) >> 8) / 255F;
+		this.blue = (rgb & 255) / 255F;
+		this.alpha = 0.99F;
 	}
 
-	/**
-	 * sets a color for the particle to drift toward (20% closer each tick, never
-	 * actually getting very close)
-	 */
+	public void setColor(@Nonnull final Color color) {
+		this.red = color.red();
+		this.green = color.green();
+		this.blue = color.blue();
+		this.alpha = 0.99F;
+	}
+
 	public void setColorFade(final int rgb) {
 		this.fadeTargetRed = ((rgb & 16711680) >> 16) / 255.0F;
 		this.fadeTargetGreen = ((rgb & 65280) >> 8) / 255.0F;
 		this.fadeTargetBlue = (rgb & 255) / 255.0F;
 		this.fadingColor = true;
+		lerpColors();
+	}
+
+	public void setColorFade(@Nonnull final Color color) {
+		this.fadeTargetRed = color.red();
+		this.fadeTargetGreen = color.green();
+		this.fadeTargetBlue = color.blue();
+		lerpColors();
+	}
+
+	private void lerpColors() {
+		final float scaling = 1 / (float) this.maxAge;
+		this.dRed = MathHelper.lerp(scaling, this.red, this.fadeTargetRed);
+		this.dGreen = MathHelper.lerp(scaling, this.green, this.fadeTargetGreen);
+		this.dBlue = MathHelper.lerp(scaling, this.blue, this.fadeTargetBlue);
 	}
 
 	@Override
@@ -115,12 +139,12 @@ public abstract class AnimatedMote extends MotionMote {
 		if (isAlive()) {
 
 			if (this.age > this.maxAge / 2) {
-				this.alpha = (int) ((1.0F - ((float) this.age - (float) (this.maxAge / 2)) / this.maxAge) * 255);
+				this.alpha = (int) ((1.0F - ((float) this.age - (float) (this.maxAge / 2)) / this.maxAge) * 254);
 
 				if (this.fadingColor) {
-					this.red += (this.fadeTargetRed - this.red) * 0.2F;
-					this.green += (this.fadeTargetGreen - this.green) * 0.2F;
-					this.blue += (this.fadeTargetBlue - this.blue) * 0.2F;
+					this.red += this.dRed;
+					this.green += this.dGreen;
+					this.blue += this.dBlue;
 				}
 			}
 

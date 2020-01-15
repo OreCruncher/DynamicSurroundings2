@@ -42,10 +42,10 @@ public abstract class Mote implements IParticleMote {
     protected int slX16;
     protected int blX16;
 
-    protected int red;
-    protected int green;
-    protected int blue;
-    protected int alpha;
+    protected float red;
+    protected float green;
+    protected float blue;
+    protected float alpha;
 
     public Mote(@Nonnull final IWorldReader world, final double x, final double y, final double z) {
         this.world = world;
@@ -61,7 +61,7 @@ public abstract class Mote implements IParticleMote {
     }
 
     public void configureColor() {
-        this.red = this.green = this.blue = this.alpha = 255;
+        this.red = this.green = this.blue = this.alpha = 1F;
     }
 
     @Override

@@ -89,9 +89,9 @@ public class SimultaneousAcoustic implements IAcoustic {
     }
 
     @Override
-    public ISoundInstance getSound() {
+    public IAcousticFactory getFactory() {
         if (this.acoustics.size() > 0)
-            return this.acoustics.get(0).getSound();
+            return this.acoustics.get(0).getFactory();
         return null;
     }
 

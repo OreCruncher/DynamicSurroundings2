@@ -89,8 +89,8 @@ public class SimpleAcoustic implements IAcoustic {
     }
 
     @Override
-    public ISoundInstance getSound() {
-        return this.factory.createSound();
+    public IAcousticFactory getFactory() {
+        return this.factory;
     }
 
     protected void play(@Nonnull final ISoundInstance sound) {

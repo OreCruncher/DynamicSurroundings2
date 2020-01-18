@@ -22,6 +22,7 @@ import com.google.common.base.MoreObjects;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.audio.*;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.*;
@@ -113,6 +114,19 @@ public final class SoundUtils {
     public static boolean isSoundVolumeBlocked(@Nonnull final ISound sound) {
         Objects.requireNonNull(sound);
         return getMasterGain() <= 0F || (!sound.canBeSilent() && sound.getVolume() <= 0F);
+    }
+
+    /**
+     * Determines if a sound is in range of a listener based on the sounds attenuation distance.
+     *
+     * @param listener Location of the listener
+     * @param sound The sound that is to be evaluated
+     * @return true if the sound is within the attenuation distance; false otherwise
+     */
+    public static boolean inRange(@Nonnull final Vec3d listener, @Nonnull final ISound sound) {
+        int distSq = sound.getSound().getAttenuationDistance();
+        distSq *= distSq;
+        return listener.squareDistanceTo(sound.getX(), sound.getY(), sound.getZ()) <= distSq;
     }
 
     /**

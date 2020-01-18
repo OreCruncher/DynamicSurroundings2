@@ -21,10 +21,8 @@ package org.orecruncher.sndctrl.audio;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.*;
 import net.minecraft.client.audio.ChannelManager.Entry;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.ISoundEventListener;
-import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -59,7 +57,7 @@ import java.util.stream.Collectors;
 public final class AudioEngine {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(AudioEngine.class);
     private static final String FMT_DBG_SOUND_SYSTEM = TextFormatting.AQUA + "SoundSystem: %d/%d";
-    private static final String FMT_DBG_TRACKED = TextFormatting.AQUA + "Tracked: %d";
+    private static final String FMT_DBG_TRACKED = TextFormatting.AQUA + "AudioEngine: %d";
     private static final String FMT_DBG_SOUND = TextFormatting.GOLD + "%s: %d";
     private static final Reference2ObjectOpenHashMap<ISoundInstance, Consumer<ISoundInstance>> playingSounds = new Reference2ObjectOpenHashMap<>(256);
     private static final Consumer<ISoundInstance> DEFAULT_CALLBACK = s -> {
@@ -87,7 +85,8 @@ public final class AudioEngine {
         if (state != SoundState.STOPPING && !state.isTerminal()) {
             // Tell Minecraft to stop the sound.  Termination will be detected in the client tick handler.
             sound.setState(SoundState.STOPPING);
-            GameUtils.getSoundHander().stop(getActualSound(sound));
+            final ISound actualSound = getActualSound(sound);
+            GameUtils.getSoundHander().stop(actualSound);
         }
     }
 

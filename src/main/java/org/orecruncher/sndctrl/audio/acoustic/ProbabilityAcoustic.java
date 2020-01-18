@@ -104,8 +104,8 @@ public class ProbabilityAcoustic implements IAcoustic {
     }
 
     @Override
-    public ISoundInstance getSound() {
-        return select().map(IAcoustic::getSound).orElse(null);
+    public IAcousticFactory getFactory() {
+        return select().map(IAcoustic::getFactory).orElse(null);
     }
 
     @Override

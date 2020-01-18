@@ -19,10 +19,8 @@
 package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.math.MathStuff;
 
@@ -35,7 +33,7 @@ import javax.annotation.Nonnull;
  */
 @SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
-public final class BackgroundSoundInstance extends WrappedSoundInstance {
+public final class BackgroundSoundInstance extends LoopingSoundInstance {
 
     private static final float DONE_FADE_THRESHOLD = 0.00001F;
     private static final float FADE_AMOUNT = 0.02F;
@@ -57,19 +55,6 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
     @Override
     public boolean isGlobal() {
         return true;
-    }
-
-    @Override
-    public boolean canRepeat() {
-        // ASM is used to increase the buffer size 4x.  Reason is the loop code in the sound engine loops on cached
-        // buffers, meaning the entire sound has to be loaded.  If for some reason this breaks you will get a choppy
-        // termination before restarting the loop.
-        return true;
-    }
-
-    @Override
-    public int getRepeatDelay() {
-        return 0;
     }
 
     @Override
@@ -107,16 +92,6 @@ public final class BackgroundSoundInstance extends WrappedSoundInstance {
     @Override
     public boolean isDonePlaying() {
         return this.isDonePlaying || super.isDonePlaying();
-    }
-
-    @Override
-    public int getPlayDelay() {
-        return this.sound.getPlayDelay();
-    }
-
-    @Override
-    public void setPlayDelay(final int delay) {
-        this.sound.setPlayDelay(delay);
     }
 
     @Nonnull

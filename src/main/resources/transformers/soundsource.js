@@ -91,27 +91,6 @@ function initializeCoreMod()
                 method.instructions.insertBefore(theReturn, newInstructions);
                 log("Hooked SoundSource.bufferSize()");
 
-/*
-                // Hook for doing mono conversion on streams.  Not that it is needed but leaving in case so I don't
-                // have to remember how to do it. :)
-                var audioFormat = ASM.buildMethodCall(
-                    "org/orecruncher/sndctrl/audio/Conversion",
-                    "convert",
-                    "(Lnet/minecraft/client/audio/IAudioStream;)Lnet/minecraft/client/audio/IAudioStream;",
-                    ASM.MethodType.STATIC
-                );
-
-                var newInstructions = new InsnList();
-                newInstructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                newInstructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                newInstructions.add(audioFormat);
-                newInstructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/audio/SoundSource", FIELD_AUDIO_STREAM, "Lnet/minecraft/client/audio/IAudioStream;"));
-
-                var method = findMethod(classNode, SOURCE_AUDIO_STREAM);
-                var insertPoint = ASM.findFirstInstructionAfter(method, Opcodes.PUTFIELD, 0);
-                method.instructions.insert(insertPoint, newInstructions);
-                log("Hooked SoundSource.attach()");
-*/
                 return classNode;
             }
         }

@@ -214,6 +214,17 @@ public final class SoundFXProcessor {
     }
 
     /**
+     * Injected into SoundSource replacing existing routine
+     *
+     * @param source The sound source that is being checked
+     * @return true if the sound is considered playing; false otherwise
+     */
+    public static boolean isPlaying(@Nonnull final SoundSource source) {
+        final int state = source.func_216428_j();
+        return /*state == AL10.AL_INITIAL ||*/ state == AL10.AL_PLAYING;
+    }
+
+    /**
      * Injected into SoundSource and will be invoked when a non-streaming sound data stream is attached to the
      * SoundSource.  Take the opportunity to convert the audio stream into mono format if needed.
      *

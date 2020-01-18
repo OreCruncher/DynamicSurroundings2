@@ -97,7 +97,7 @@ public final class Conversion {
         // Patch up the old object
         buffer.field_216476_b = monoformat;
         buffer.field_216475_a.rewind();
-        buffer.field_216475_a.limit(buffer.field_216475_a.limit() >> 1);
+        buffer.field_216475_a.limit(sourceLength >> 1);
         return buffer;
     }
 

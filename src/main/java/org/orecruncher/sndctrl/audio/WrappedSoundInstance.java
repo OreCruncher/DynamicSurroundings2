@@ -26,12 +26,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.Utilities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Base class for special sounds that aggregate the true sound being played.
@@ -42,12 +40,8 @@ public abstract class WrappedSoundInstance implements ISoundInstance, ITickableS
     @Nonnull
     protected final ISoundInstance sound;
 
-    @Nonnull
-    private final Optional<ITickableSound> tickable;
-
     protected WrappedSoundInstance(@Nonnull final ISoundInstance sound) {
         this.sound = Objects.requireNonNull(sound);
-        this.tickable = Utilities.safeCast(this.sound, ITickableSound.class);
     }
 
     @Override
@@ -57,7 +51,8 @@ public abstract class WrappedSoundInstance implements ISoundInstance, ITickableS
 
     @Override
     public void tick() {
-        this.tickable.ifPresent(ITickableSound::tick);
+        if (this.sound instanceof ITickableSound)
+            ((ITickableSound) this.sound).tick();
     }
 
     @Nonnull

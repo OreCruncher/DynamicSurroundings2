@@ -84,7 +84,7 @@ public interface IAcoustic {
     void playBackground(@Nonnull final AcousticEvent event);
 
     /**
-     * Gets a raw sound instance to be managed by the caller
+     * Obtains the underlying factory for creating sounds.
      */
-    ISoundInstance getSound();
+    IAcousticFactory getFactory();
 }

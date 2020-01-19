@@ -25,6 +25,7 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.math.TimerEMA;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 
 @OnlyIn(Dist.CLIENT)
@@ -86,7 +87,8 @@ final class ParticleCollectionHelper implements IParticleCollection {
         }
     }
 
-    public TimerEMA getRenderTimer() {
+    @Nullable
+    TimerEMA getRenderTimer() {
         final ParticleCollection pc = this.collection != null ? this.collection.get() : null;
         return pc != null ? pc.getRenderTimer() : null;
     }

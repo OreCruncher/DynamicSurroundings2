@@ -54,7 +54,7 @@ public class ParticleRenderType implements IParticleRenderType {
     }
 
     @Override
-    public void finishRender(Tessellator tessellator) {
+    public void finishRender(@Nonnull final Tessellator tessellator) {
         tessellator.draw();
     }
 

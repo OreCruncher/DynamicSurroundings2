@@ -40,9 +40,12 @@ public final class CollectionManager {
 
     private static final ObjectArray<ParticleCollectionHelper> helpers = new ObjectArray<>();
 
+    @Nonnull
     public static IParticleCollection create(@Nonnull final String name, @Nonnull final IParticleRenderType renderType) {
         final ParticleCollectionHelper helper = new ParticleCollectionHelper(name, renderType);
-        helpers.add(helper);
+        synchronized (helpers) {
+            helpers.add(helper);
+        }
         return helper;
     }
 

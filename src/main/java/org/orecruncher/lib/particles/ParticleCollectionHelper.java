@@ -22,12 +22,13 @@ import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.math.TimerEMA;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 
 @OnlyIn(Dist.CLIENT)
-public class ParticleCollectionHelper {
+final class ParticleCollectionHelper implements IParticleCollection {
 
     protected final String name;
     protected final ParticleCollection.ICollectionFactory factory;
@@ -48,28 +49,46 @@ public class ParticleCollectionHelper {
         this.factory = factory;
     }
 
+    @Override
     @Nonnull
     public String name() {
         return this.name;
     }
 
     @Nonnull
-    public ParticleCollection get() {
+    private ParticleCollection get() {
         ParticleCollection pc = this.collection != null ? this.collection.get() : null;
         if (pc == null || !pc.isAlive() || pc.shouldDie()) {
-            pc = this.factory.create(GameUtils.getWorld(), this.renderType);
+            pc = this.factory.create(this.name, GameUtils.getWorld(), this.renderType);
             this.collection = new WeakReference<>(pc);
             GameUtils.getMC().particles.addEffect(pc);
         }
         return pc;
     }
 
-    public void clear() {
+    @Override
+    public void add(@Nonnull final IParticleMote mote) {
+        final ParticleCollection pc = get();
+        if (pc.canFit())
+            pc.addParticle(mote);
+    }
+
+    @Override
+    public boolean canFit() {
+        return get().canFit();
+    }
+
+    void clear() {
         final ParticleCollection pc = this.collection != null ? this.collection.get() : null;
         if (pc != null) {
             pc.setExpired();
             this.collection = null;
         }
+    }
+
+    public TimerEMA getRenderTimer() {
+        final ParticleCollection pc = this.collection != null ? this.collection.get() : null;
+        return pc != null ? pc.getRenderTimer() : null;
     }
 
     @Override

@@ -35,6 +35,7 @@ public class DiagnosticEvent extends Event {
     private final List<String> left = new ArrayList<>();
     private final List<String> right = new ArrayList<>();
     private final List<TimerEMA> timers = new ArrayList<>();
+    private final List<TimerEMA> renderTimers = new ArrayList<>();
 
     public DiagnosticEvent() {}
 
@@ -50,6 +51,10 @@ public class DiagnosticEvent extends Event {
         return this.timers;
     }
 
+    public Collection<TimerEMA> getRenderTimers() {
+        return this.renderTimers;
+    }
+
     public void addLeft(@Nonnull final String... msgs) {
         this.left.addAll(Arrays.asList(msgs));
     }
@@ -60,6 +65,10 @@ public class DiagnosticEvent extends Event {
 
     public void addTimer(@Nonnull final TimerEMA timer) {
         this.timers.add(timer);
+    }
+
+    public void addRenderTimer(@Nonnull final TimerEMA timer) {
+        this.renderTimers.add(timer);
     }
 
 }

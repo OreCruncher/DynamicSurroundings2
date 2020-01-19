@@ -16,31 +16,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib.math;
+package org.orecruncher.lib.particles;
+
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-/**
- * Specialization of the EMA based on measuring time. The time unit it expects
- * to deal with is nanoseconds.
- */
-public class TimerEMA extends EMA {
+@OnlyIn(Dist.CLIENT)
+public interface IParticleCollection {
 
-    public TimerEMA(@Nonnull final String name) {
-        super(name);
-    }
+    String name();
 
-    public TimerEMA(@Nonnull final String name, final int periods) {
-        super(name, periods);
-    }
+    boolean canFit();
 
-    public double getMSecs() {
-        return super.get() / 1000000;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s:%7.3fms", name(), getMSecs());
-    }
-
+    void add(@Nonnull final IParticleMote mote);
 }

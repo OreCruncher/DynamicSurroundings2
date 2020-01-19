@@ -27,6 +27,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.lib.events.DiagnosticEvent;
+import org.orecruncher.lib.math.LoggingTimerEMA;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.math.TimerEMA;
 import org.orecruncher.sndctrl.SoundControl;
@@ -42,7 +43,7 @@ public final class Diagnostics {
 
     private static final TimerEMA clientTick = new TimerEMA("Client Tick");
     private static final TimerEMA lastTick = new TimerEMA("Last Tick");
-    private static final TimerEMA diagnostics = new TimerEMA("Diagnostics");
+    private static final LoggingTimerEMA diagnostics = new LoggingTimerEMA("Diagnostics");
     private static long lastTickMark = -1;
     private static long timeMark = 0;
     private static float tps = 0;
@@ -75,7 +76,8 @@ public final class Diagnostics {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onClientTick(@Nonnull final TickEvent.ClientTickEvent event) {
         if (GameUtils.displayDebug()) {
-            final long start = System.nanoTime();
+            diagnostics.begin();
+
             if (clock == null)
                 clock = new MinecraftClock();
 
@@ -99,7 +101,12 @@ public final class Diagnostics {
                     evt.getRight().add(TextFormatting.GREEN + timer.toString());
             }
 
-            diagnostics.update(System.nanoTime() - start);
+            if (!lastEvent.getRenderTimers().isEmpty()) {
+                for (final TimerEMA timer : lastEvent.getRenderTimers())
+                    evt.getRight().add(TextFormatting.AQUA + timer.toString());
+            }
+
+            diagnostics.end();
         }
     }
 

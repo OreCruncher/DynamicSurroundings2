@@ -310,7 +310,7 @@ public final class AudioEngine {
         });
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onGatherText(@Nonnull final DiagnosticEvent event) {
         if (!diagnostics.isEmpty()) {
             event.getLeft().addAll(diagnostics);

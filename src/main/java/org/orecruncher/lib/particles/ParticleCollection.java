@@ -27,12 +27,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.lib.math.LoggingTimerEMA;
+import org.orecruncher.lib.math.TimerEMA;
 
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 @OnlyIn(Dist.CLIENT)
-public class ParticleCollection extends BaseParticle {
+final class ParticleCollection extends BaseParticle {
 
     public static final ICollectionFactory FACTORY = ParticleCollection::new;
     protected static final int MAX_PARTICLES = 4000;
@@ -45,15 +47,18 @@ public class ParticleCollection extends BaseParticle {
         mote.tick();
         return !mote.isAlive();
     };
+
+    protected final LoggingTimerEMA render;
     protected final ObjectArray<IParticleMote> myParticles = new ObjectArray<>(ALLOCATION_SIZE);
     protected final IParticleRenderType renderType;
     protected long lastTickUpdate;
 
-    public ParticleCollection(@Nonnull final World world, @Nonnull final IParticleRenderType renderType) {
+    ParticleCollection(@Nonnull final String name, @Nonnull final World world, @Nonnull final IParticleRenderType renderType) {
         super(world, 0, 0, 0);
 
         this.canCollide = false;
         this.renderType = renderType;
+        this.render = new LoggingTimerEMA("Particles " + name);
         this.lastTickUpdate = TickCounter.getTickCount();
     }
 
@@ -71,6 +76,10 @@ public class ParticleCollection extends BaseParticle {
 
     public int size() {
         return this.myParticles.size();
+    }
+
+    public TimerEMA getRenderTimer() {
+        return this.render;
     }
 
     public boolean shouldDie() {
@@ -96,10 +105,10 @@ public class ParticleCollection extends BaseParticle {
     @Override
     public void renderParticle(@Nonnull final BufferBuilder buffer, @Nonnull final ActiveRenderInfo info, final float partialTicks,
                                final float rotX, final float rotZ, final float rotYZ, final float rotXY, final float rotXZ) {
-        if (this.myParticles.size() == 0)
-            return;
-        for (int i = 0; i < this.myParticles.size(); i++)
-            this.myParticles.get(i).render(buffer, info, partialTicks, rotX, rotZ, rotYZ, rotXY, rotXZ);
+        this.render.begin();
+        for (final IParticleMote mote : this.myParticles)
+            mote.render(buffer, info, partialTicks, rotX, rotZ, rotYZ, rotXY, rotXZ);
+        this.render.end();
     }
 
     @Override
@@ -113,7 +122,7 @@ public class ParticleCollection extends BaseParticle {
      * ParticleCollections manager.
      */
     public interface ICollectionFactory {
-        ParticleCollection create(@Nonnull final World world, @Nonnull final IParticleRenderType renderType);
+        ParticleCollection create(@Nonnull final String name, @Nonnull final World world, @Nonnull final IParticleRenderType renderType);
     }
 
 }

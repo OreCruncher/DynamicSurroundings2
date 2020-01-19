@@ -20,27 +20,24 @@ package org.orecruncher.lib.math;
 
 import javax.annotation.Nonnull;
 
-/**
- * Specialization of the EMA based on measuring time. The time unit it expects
- * to deal with is nanoseconds.
- */
-public class TimerEMA extends EMA {
+public class LoggingTimerEMA extends TimerEMA {
 
-    public TimerEMA(@Nonnull final String name) {
+    private long timeMark;
+
+    public LoggingTimerEMA(@Nonnull final String name) {
         super(name);
     }
 
-    public TimerEMA(@Nonnull final String name, final int periods) {
+    public LoggingTimerEMA(@Nonnull final String name, final int periods) {
         super(name, periods);
     }
 
-    public double getMSecs() {
-        return super.get() / 1000000;
+    public void begin() {
+        this.timeMark = System.nanoTime();
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s:%7.3fms", name(), getMSecs());
+    public void end() {
+        this.update(System.nanoTime() - this.timeMark);
     }
 
 }

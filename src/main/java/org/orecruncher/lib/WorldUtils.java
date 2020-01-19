@@ -25,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import org.orecruncher.sndctrl.misc.ModEnvironment;
@@ -143,6 +144,10 @@ public final class WorldUtils {
     @Nonnull
     public static BlockPos getPrecipitationHeight(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
         return world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
+    }
+
+    public static boolean hasVoidPartiles(@Nonnull final World world) {
+        return world.getWorldType() != WorldType.FLAT && world.getDimension().hasSkyLight();
     }
 
 }

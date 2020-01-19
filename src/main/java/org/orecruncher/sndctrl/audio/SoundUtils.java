@@ -121,12 +121,17 @@ public final class SoundUtils {
      *
      * @param listener Location of the listener
      * @param sound The sound that is to be evaluated
+     * @param pad Additional distance to add when evaluating
      * @return true if the sound is within the attenuation distance; false otherwise
      */
-    public static boolean inRange(@Nonnull final Vec3d listener, @Nonnull final ISound sound) {
-        int distSq = sound.getSound().getAttenuationDistance();
+    public static boolean inRange(@Nonnull final Vec3d listener, @Nonnull final ISound sound, final int pad) {
+        int distSq = sound.getSound().getAttenuationDistance() + pad;
         distSq *= distSq;
         return listener.squareDistanceTo(sound.getX(), sound.getY(), sound.getZ()) <= distSq;
+    }
+
+    public static boolean inRange(@Nonnull final Vec3d listener, @Nonnull final ISound sound) {
+        return inRange(listener, sound, 0);
     }
 
     /**

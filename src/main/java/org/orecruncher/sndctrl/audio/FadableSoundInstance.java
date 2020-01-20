@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class FadableSoundInstance extends WrappedSoundInstance {
 
-    private static final float DONE_FADE_THRESHOLD = 0.00001F;
+    private static final float INITIAL_FADE = 0.00002F;
     private static final float FADE_AMOUNT = 0.02F;
 
     private boolean isFading;
@@ -41,7 +41,7 @@ public class FadableSoundInstance extends WrappedSoundInstance {
     public FadableSoundInstance(@Nonnull final ISoundInstance sound) {
         super(sound);
 
-        this.fadeScale = DONE_FADE_THRESHOLD * 2;
+        this.fadeScale = INITIAL_FADE;
         this.fadeScaleTarget = 1F;
         this.lastTick = TickCounter.getTickCount();
     }
@@ -105,11 +105,9 @@ public class FadableSoundInstance extends WrappedSoundInstance {
         // Clamp it so we are valid
         this.fadeScale = MathStuff.clamp1(this.fadeScale);
 
-        // If the fadeScale amount is beneath our low end threshold the sound
-        // is effectively done.
-        if (this.fadeScale < DONE_FADE_THRESHOLD) {
+        // Do the float compare.  Takes into account epsilon.
+        if (Float.compare(this.fadeScale, 0) == 0) {
             this.isDonePlaying = true;
-            this.fadeScale = 0F;
         }
     }
 

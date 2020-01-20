@@ -83,10 +83,16 @@ public final class AudioEngine {
         final SoundState state = sound.getState();
 
         if (state != SoundState.STOPPING && !state.isTerminal()) {
-            // Tell Minecraft to stop the sound.  Termination will be detected in the client tick handler.
-            sound.setState(SoundState.STOPPING);
             final ISound actualSound = getActualSound(sound);
-            GameUtils.getSoundHander().stop(actualSound);
+            if (state == SoundState.DELAYED) {
+                // Delayed sounds are held in a separate queue in the engine thus there is nothing to stop.
+                sound.setState(SoundState.DONE);
+                SoundUtils.getDelayedSounds().remove(actualSound);
+            } else {
+                // Tell Minecraft to stop the sound.  Termination will be detected in the client tick handler.
+                sound.setState(SoundState.STOPPING);
+                GameUtils.getSoundHander().stop(actualSound);
+            }
         }
     }
 

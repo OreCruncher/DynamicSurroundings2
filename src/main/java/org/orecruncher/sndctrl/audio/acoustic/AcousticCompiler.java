@@ -93,6 +93,13 @@ public final class AcousticCompiler {
         return defaultValue;
     }
 
+    private static boolean getBoolSetting(@Nonnull final String name, @Nonnull final JsonObject obj, final boolean defaultValue) {
+        if (obj.has(name)) {
+            return obj.get(name).getAsBoolean();
+        }
+        return defaultValue;
+    }
+
     public void setVolumeRange(final float min, final float max) {
         this.minVolume = min;
         this.maxVolume = max;
@@ -356,6 +363,20 @@ public final class AcousticCompiler {
             builder.setVolumeRange(volMin, volMax);
         }
 
+        final boolean repeat = getBoolSetting(Constants.REPEATABLE, obj, false);
+        if (repeat) {
+            if (obj.has(Constants.REPEAT_DELAY)) {
+                builder.setRepeatDelay(getIntSetting(Constants.REPEAT_DELAY, obj, 0));
+            } else {
+                int delayMin = getIntSetting(Constants.MIN_REPEAT_DELAY, obj, 0);
+                int delayMax = getIntSetting(Constants.MAX_REPEAT_DELAY, obj, 0);
+                builder.setRepeateDelayRange(delayMin, delayMax);
+            }
+        }
+
+        final boolean global = getBoolSetting(Constants.GLOBAL, obj, false);
+        builder.setGlobal(global);
+
         return builder;
     }
 
@@ -387,6 +408,11 @@ public final class AcousticCompiler {
         public static final String MIN_DELAY = "delay_min";
         public static final String MAX_DELAY = "delay_max";
         public static final String DELAY = "delay";
+        public static final String REPEATABLE = "repeatable";
+        public static final String REPEAT_DELAY = "repeat_delay";
+        public static final String MIN_REPEAT_DELAY = "repeat_delay_min";
+        public static final String MAX_REPEAT_DELAY = "repeat_delay_max";
+        public static final String GLOBAL = "global";
         public static final String ARRAY = "array";
     }
 }

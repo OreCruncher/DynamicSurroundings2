@@ -18,11 +18,8 @@
 
 package org.orecruncher.sndctrl.audio;
 
-import com.google.common.base.MoreObjects;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.TickCounter;
-import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
 
@@ -31,35 +28,16 @@ import javax.annotation.Nonnull;
  * of Minecraft.  The difference here is that the volume can fade in and out.  Used by Dynamic Surroundings
  * to scale background sound volumes based on biome distribution.
  */
-@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
-public final class BackgroundSoundInstance extends LoopingSoundInstance {
-
-    private static final float DONE_FADE_THRESHOLD = 0.00001F;
-    private static final float FADE_AMOUNT = 0.02F;
-
-    private boolean isFading;
-    private float fadeScale;
-    private float fadeScaleTarget;
-    private boolean isDonePlaying;
-    private long lastTick;
+public class BackgroundSoundInstance extends FadableSoundInstance {
 
     public BackgroundSoundInstance(@Nonnull final ISoundInstance sound) {
         super(sound);
-
-        this.fadeScale = DONE_FADE_THRESHOLD * 2;
-        this.fadeScaleTarget = 1F;
-        this.lastTick = TickCounter.getTickCount();
     }
 
     @Override
     public boolean isGlobal() {
         return true;
-    }
-
-    @Override
-    public float getVolume() {
-        return super.getVolume() * this.fadeScale;
     }
 
     @Override
@@ -77,85 +55,10 @@ public final class BackgroundSoundInstance extends LoopingSoundInstance {
         return 0;
     }
 
-    public void fade() {
-        this.isFading = true;
-    }
-
-    public void unfade() {
-        this.isFading = false;
-    }
-
-    public boolean isFading() {
-        return this.isFading;
-    }
-
-    @Override
-    public boolean isDonePlaying() {
-        return this.isDonePlaying || super.isDonePlaying();
-    }
-
     @Nonnull
     @Override
     public AttenuationType getAttenuationType() {
         return AttenuationType.NONE;
-    }
-
-    @Override
-    public void tick() {
-
-        // If we are being ticked again, dont process
-        final long tickDelta = TickCounter.getTickCount() - this.lastTick;
-        if (tickDelta < 1)
-            return;
-
-        super.tick();
-
-        // If we are done playing just return
-        if (isDonePlaying())
-            return;
-
-        // Update our last tick amount
-        this.lastTick = TickCounter.getTickCount();
-
-        // Adjust the fadeScale so it moves to the proper value.
-        if ((this.fadeScale < this.fadeScaleTarget) && !isFading())
-            this.fadeScale += FADE_AMOUNT * tickDelta;
-        else if (isFading() || this.fadeScale > this.fadeScaleTarget) {
-            this.fadeScale -= FADE_AMOUNT * tickDelta;
-        }
-
-        // Clamp it so we are valid
-        this.fadeScale = MathStuff.clamp1(this.fadeScale);
-
-        // If the fadeScale amount is beneath our low end threshold the sound
-        // is effectively done.
-        if (this.fadeScale < DONE_FADE_THRESHOLD) {
-            this.isDonePlaying = true;
-            this.fadeScale = 0F;
-        }
-    }
-
-    /**
-     * Set's the fade scale target.  The volume of the sound will drift up/down to this scale factor
-     * over time.
-     *
-     * @param scale Value between 0F and 1F inclusive.
-     */
-    public void setFadeScaleTarget(final float scale) {
-        this.fadeScaleTarget = MathStuff.clamp1(scale);
-    }
-
-    @Override
-    @Nonnull
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .addValue(getSoundLocation().toString())
-                .addValue(getSoundCategory().toString())
-                .addValue(getState().toString())
-                .add("v", getVolume())
-                .add("p", getPitch())
-                .add("f", this.fadeScale)
-                .toString();
     }
 
 }

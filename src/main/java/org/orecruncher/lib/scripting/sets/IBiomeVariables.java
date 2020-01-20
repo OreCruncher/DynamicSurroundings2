@@ -30,6 +30,8 @@ public interface IBiomeVariables {
 
     String getModId();
 
+    String getId();
+
     float getRainfall();
 
     float getTemperature();

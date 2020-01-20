@@ -21,6 +21,7 @@ package org.orecruncher.lib.scripting.sets;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
@@ -49,7 +50,7 @@ public class DimensionVariables extends VariableSet<IDimensionVariables> impleme
             final Dimension dim = GameUtils.getWorld().getDimension();
             this.id = dim.getType().getId();
             this.hasSky = dim.hasSkyLight();
-            this.name = GameUtils.getWorld().getProviderName();
+            this.name = dim.getType().getRegistryName().toString();
         } else {
             this.id = 0;
             this.hasSky = false;

@@ -39,6 +39,7 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
     private final LazyVariable<String> traits = new LazyVariable<>(() -> String.join(" ", this.biomeTraitNames.get()));
     private final LazyVariable<String> name = new LazyVariable<>(() -> this.biome.getDisplayName().getFormattedText());
     private final LazyVariable<String> modid = new LazyVariable<>(() -> this.biome.getRegistryName().getNamespace());
+    private final LazyVariable<String> id = new LazyVariable<>(() -> this.biome.getRegistryName().toString());
     private final LazyVariable<Float> rainfall = new LazyVariable<>(() -> this.biome.getDownfall());
     private final LazyVariable<Float> temperature = new LazyVariable<>(() -> this.biome.getDefaultTemperature());
     private final LazyVariable<String> category = new LazyVariable<>(() -> this.biome.getCategory().getName());
@@ -76,6 +77,7 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
             this.biome = newBiome;
             this.name.reset();
             this.modid.reset();
+            this.id.reset();
             this.rainfall.reset();
             this.temperature.reset();
             this.category.reset();
@@ -90,6 +92,11 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
     @Override
     public String getModId() {
         return this.modid.get();
+    }
+
+    @Override
+    public String getId() {
+        return this.id.get();
     }
 
     @Nonnull

@@ -62,12 +62,13 @@ public enum DayCycle {
         if (world.getDimension().isNether() || !world.getDimension().hasSkyLight())
             return DayCycle.NO_SKY;
 
-        final float brFactor = world.getDimension().getSunBrightness(1.0f);
-        if (brFactor > 0.68f)   // 0.6F on 0-1 scale
+        final float brFactor = world.getDimension().getSunBrightness(1.0F);
+        if (brFactor > 0.68F)   // 0.6F on 0-1 scale
             return DayCycle.DAYTIME;
-        if (brFactor < 0.3f)    // 0 on 0-1 scale
+        if (brFactor < 0.3F)    // 0 on 0-1 scale
             return DayCycle.NIGHTTIME;
-        if (MathStuff.sin(world.getCelestialAngle(1.0f)) > 0.0)
+        final float angle = world.getCelestialAngle(0F);
+        if (angle < 0.744F)
             return DayCycle.SUNSET;
         return DayCycle.SUNRISE;
     }

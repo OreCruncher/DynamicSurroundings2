@@ -77,6 +77,10 @@ public final class Conversion {
                 bigendian);
 
         final ByteBuffer source = buffer.field_216475_a;
+        if (source == null) {
+            return buffer;
+        }
+
         final int sourceLength = source.limit();
         final int skip = format.getFrameSize();
         for (int i = 0; i < sourceLength; i += skip) {
@@ -93,7 +97,6 @@ public final class Conversion {
                 source.putShort(targetIdx, (short) v);
             }
         }
-
         // Patch up the old object
         buffer.field_216476_b = monoformat;
         buffer.field_216475_a.rewind();

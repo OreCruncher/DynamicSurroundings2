@@ -76,9 +76,7 @@ public final class BlockPosUtil {
     public static boolean contains(@Nonnull final BlockPos test, @Nonnull final BlockPos min,
                                    @Nonnull final BlockPos max) {
         return test.getX() >= min.getX() && test.getX() <= max.getX()
-                //
                 && test.getY() >= min.getY() && test.getY() <= max.getY()
-                //
                 && test.getZ() >= min.getZ() && test.getZ() <= max.getZ();
     }
 
@@ -97,52 +95,58 @@ public final class BlockPosUtil {
     public static boolean notContains(@Nonnull final BlockPos test, @Nonnull final BlockPos min,
                                       @Nonnull final BlockPos max) {
         return test.getX() < min.getX() || test.getX() > max.getX()
-                //
                 || test.getY() < min.getY() || test.getY() > max.getY()
-                //
                 || test.getZ() < min.getZ() || test.getZ() > max.getZ();
     }
 
     /**
-     * Like getAllInBox but reuses a single MutableBlockPos instead. If this method
-     * is used, the resulting BlockPos instances can only be used inside the
-     * iteration loop.
-     * <p>
-     * NOTE: This is similar to the logic in Forge. Difference is that it favors
-     * iterating along the Y axis first before X/Z. Goal is to maximize chunk
-     * caching for area scanning.
+     * Like getAllInBox but changes the order in which the axis is scanned.  Inside a chunk the data is stored as an
+     * array.  The iteration favors moving along the x axis, followed by z, and then y.  In general this will cause
+     * the chunk array to be scanned in a linear fashion.
      */
-    public static Iterable<BlockPos.MutableBlockPos> getAllInBoxMutable(BlockPos from, BlockPos to) {
-        final BlockPos blockpos = createMinPoint(from, to);
-        final BlockPos blockpos1 = createMaxPoint(from, to);
+    public static Iterable<BlockPos.MutableBlockPos> getAllInBoxMutable(@Nonnull final BlockPos from, @Nonnull final BlockPos to) {
+        final BlockPos minPos = createMinPoint(from, to);
+        final BlockPos maxPos = createMaxPoint(from, to);
         return () -> new AbstractIterator<BlockPos.MutableBlockPos>() {
-            private BlockPos.MutableBlockPos theBlockPos;
+
+            private final int minX = minPos.getX();
+            private final int minY = minPos.getY();
+            private final int minZ = minPos.getZ();
+            private final int maxX = maxPos.getX();
+            private final int maxY = maxPos.getY();
+            private final int maxZ = maxPos.getZ();
+
+            private BlockPos.MutableBlockPos currentPos;
+            private int currentX = minX;
+            private int currentY = minY;
+            private int currentZ = minZ;
+
+            private boolean isEndFinished() {
+                return currentX == maxX && currentY == maxY && currentZ == maxZ;
+            }
 
             @Override
             protected BlockPos.MutableBlockPos computeNext() {
-                if (this.theBlockPos == null) {
-                    this.theBlockPos = new BlockPos.MutableBlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-                    return this.theBlockPos;
-                } else if (this.theBlockPos.equals(blockpos1)) {
+                if (this.currentPos == null) {
+                    this.currentPos = new BlockPos.MutableBlockPos(minX, minY, minZ);
+                    return this.currentPos;
+                } else if (isEndFinished()) {
                     return endOfData();
                 } else {
-                    int i = this.theBlockPos.getX();
-                    int j = this.theBlockPos.getY();
-                    int k = this.theBlockPos.getZ();
 
-                    if (j < blockpos1.getY()) {
-                        ++j;
-                    } else if (i < blockpos1.getX()) {
-                        j = blockpos.getY();
-                        ++i;
-                    } else if (k < blockpos1.getZ()) {
-                        i = blockpos.getX();
-                        j = blockpos.getY();
-                        ++k;
+                    if (currentX < maxX) {
+                        currentX++;
+                    } else if (currentZ < maxZ) {
+                        currentX = minX;
+                        currentZ++;
+                    } else if (currentY < maxY) {
+                        currentX = minX;
+                        currentZ = minZ;
+                        currentY++;
                     }
 
-                    this.theBlockPos.setPos(i, j, k);
-                    return this.theBlockPos;
+                    this.currentPos.setPos(currentX, currentY, currentZ);
+                    return this.currentPos;
                 }
             }
         };

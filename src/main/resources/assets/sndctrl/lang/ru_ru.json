@@ -42,6 +42,15 @@
 	"sndctrl.format.Sunrise": "Рассвет",
 	"sndctrl.format.Sunset": "Закат",
 	"sndctrl.format.Daytime": "День",
-	"sndctrl.format.Nighttime": "Ночь"
+	"sndctrl.format.Nighttime": "Ночь",
+	"sndctrl.season.format": "%1$s %2$s",
+	"sndctrl.season.noseason": "Нет сизона",
+	"sndctrl.season.spring": "Весна",
+	"sndctrl.season.summer": "Лето",
+	"sndctrl.season.autumn": "Осень",
+	"sndctrl.season.winter": "Зима",
+	"sndctrl.season.early": "Начало",
+	"sndctrl.season.mid": "Середина",
+	"sndctrl.season.late": "Конец"
 
 }

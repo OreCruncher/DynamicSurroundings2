@@ -42,5 +42,15 @@
 	"sndctrl.format.Sunrise": "Sunrise",
 	"sndctrl.format.Sunset": "Sunset",
 	"sndctrl.format.Daytime": "Daytime",
-	"sndctrl.format.Nighttime": "Nighttime"
+	"sndctrl.format.Nighttime": "Nighttime",
+	"sndctrl.season.format": "%1$s %2$s",
+	"sndctrl.season.noseason": "No Season",
+	"sndctrl.season.spring": "Spring",
+	"sndctrl.season.summer": "Summer",
+	"sndctrl.season.autumn": "Autumn",
+	"sndctrl.season.winter": "Winter",
+	"sndctrl.season.early": "Early",
+	"sndctrl.season.mid": "Mid",
+	"sndctrl.season.late": "Late"
+
 }

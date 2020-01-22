@@ -1,6 +1,7 @@
 {
   "occlusions": {
-    "#minecraft:wool": 4
+    "#minecraft:wool": 4,
+    "#forge:netherrack": 0.7
   },
   "reflectivity": {
     "+PORTAL": 0.95,
@@ -44,7 +45,8 @@
     "+DRAGON_EGG": 0.95,
     "+CAKE": 0,
     "#minecraft:logs": 0.7,
-    "#minecraft:planks": 0.7
+    "#minecraft:planks": 0.7,
+    "#forge:netherrack": 0.5
   },
   "fluid": {
     "minecraft:water": 0.6,

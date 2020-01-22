@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
@@ -48,6 +49,7 @@ public final class ClientBlockUpdateHandler {
     private static final int TICK_OFFSET = 10;
     private static final LoggingTimerEMA timer = new LoggingTimerEMA("Block Updates");
     private static final Queue<Pair<Integer, BlockPos>> updates = new LinkedList<>();
+    private static final Set<BlockPos> toSend = new ObjectOpenHashSet<>();
     private static int interval = 0;
 
     // Callback that is inserted into ClientWorld processing via ASM
@@ -57,19 +59,26 @@ public final class ClientBlockUpdateHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onClientTick(@Nonnull final TickEvent.ClientTickEvent event) {
-        timer.begin();
-        final List<BlockPos> toSend = new ArrayList<>();
+        try {
+            timer.begin();
 
-        while (!updates.isEmpty() && updates.peek().getKey() <= interval) {
-            toSend.add(updates.poll().getValue());
-        }
+            if (updates.isEmpty())
+                return;
 
-        if (toSend.size() > 0) {
-            final BlockUpdateEvent evt = new BlockUpdateEvent(toSend);
-            MinecraftForge.EVENT_BUS.post(evt);
+            toSend.clear();
+
+            while (!updates.isEmpty() && updates.peek().getKey() <= interval) {
+                toSend.add(updates.poll().getValue());
+            }
+
+            if (toSend.size() > 0) {
+                final BlockUpdateEvent evt = new BlockUpdateEvent(toSend);
+                MinecraftForge.EVENT_BUS.post(evt);
+            }
+        } finally {
+            interval++;
+            timer.end();
         }
-        interval++;
-        timer.end();
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

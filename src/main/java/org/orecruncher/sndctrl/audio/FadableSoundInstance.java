@@ -23,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.math.MathStuff;
+import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 
 import javax.annotation.Nonnull;
 

@@ -29,6 +29,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
+import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;

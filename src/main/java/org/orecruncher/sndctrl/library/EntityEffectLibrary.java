@@ -18,18 +18,16 @@
 
 package org.orecruncher.sndctrl.library;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
 import org.orecruncher.lib.collections.ObjectArray;
-import org.orecruncher.lib.effects.AbstractEntityEffect;
+import org.orecruncher.sndctrl.api.effects.AbstractEntityEffect;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
 
 @OnlyIn(Dist.CLIENT)
 public final class EntityEffectLibrary {
@@ -71,16 +69,8 @@ public final class EntityEffectLibrary {
 	 *
 	 * @param handler Factory handler to register with the system
 	 */
-	public static void register(@Nonnull final EntityEffectLibrary.IEntityEffectFactoryHandler handler) {
+	public static void register(@Nonnull final IEntityEffectFactoryHandler handler) {
 		entityEffectfactoryHandlers.add(handler);
-	}
-
-	public interface IEntityEffectFactoryHandler {
-		ResourceLocation getName();
-
-		boolean appliesTo(@Nonnull final Entity entity);
-
-		AbstractEntityEffect get(@Nonnull final Entity entity);
 	}
 
 }

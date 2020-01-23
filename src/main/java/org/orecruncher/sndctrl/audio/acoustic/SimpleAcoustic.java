@@ -26,9 +26,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
+import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
+import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import org.orecruncher.sndctrl.audio.AudioEngine;
-import org.orecruncher.sndctrl.audio.Category;
-import org.orecruncher.sndctrl.audio.ISoundInstance;
+import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 import org.orecruncher.sndctrl.audio.SoundBuilder;
 
 import javax.annotation.Nonnull;

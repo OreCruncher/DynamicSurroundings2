@@ -31,8 +31,10 @@ import org.orecruncher.lib.effects.EntityEffectHandler;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
+import org.orecruncher.sndctrl.api.IMC;
 import org.orecruncher.sndctrl.audio.AudioEngine;
 import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
+import org.orecruncher.sndctrl.audio.handlers.SoundProcessor;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
@@ -85,7 +87,8 @@ public final class SoundControl {
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-
+        // Not strictly needed but serves as a quick sanity test
+        IMC.registerVolumeScaleCallback(SoundProcessor::getVolumeScale);
     }
 
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {

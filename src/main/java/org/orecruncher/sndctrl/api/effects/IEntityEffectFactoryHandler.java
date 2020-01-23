@@ -16,22 +16,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio;
+package org.orecruncher.sndctrl.api.effects;
 
-import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public interface ISoundCategory {
-    String getName();
+public interface IEntityEffectFactoryHandler {
+    ResourceLocation getName();
 
-    float getVolumeScale();
+    boolean appliesTo(@Nonnull final Entity entity);
 
-    @Nonnull
-    default SoundCategory getRealCategory() {
-        return SoundCategory.NEUTRAL;
-    }
+    AbstractEntityEffect get(@Nonnull final Entity entity);
 }

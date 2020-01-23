@@ -16,11 +16,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio;
+package org.orecruncher.sndctrl.api.acoustics;
 
 import net.minecraft.client.audio.ISound;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
+import org.orecruncher.sndctrl.audio.SoundState;
 
 import javax.annotation.Nonnull;
 

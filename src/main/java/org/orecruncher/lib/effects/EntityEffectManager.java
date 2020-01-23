@@ -36,6 +36,8 @@ import org.orecruncher.lib.collections.ObjectArray;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.Entity;
+import org.orecruncher.sndctrl.api.effects.AbstractEntityEffect;
+import org.orecruncher.sndctrl.api.effects.IEntityEffectManager;
 
 /**
  * An EntityEffectManager is responsible for managing the effects that are

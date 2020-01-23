@@ -23,6 +23,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
 import org.orecruncher.sndctrl.audio.handlers.MusicFader;
 
 import javax.annotation.Nonnull;

@@ -26,7 +26,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.audio.ISoundInstance;
+import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
+import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
+import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 
 import javax.annotation.Nonnull;
 

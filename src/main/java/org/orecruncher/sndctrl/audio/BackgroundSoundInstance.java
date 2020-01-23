@@ -20,6 +20,7 @@ package org.orecruncher.sndctrl.audio;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 
 import javax.annotation.Nonnull;
 

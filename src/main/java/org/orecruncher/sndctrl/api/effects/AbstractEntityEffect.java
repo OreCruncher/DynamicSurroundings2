@@ -16,11 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib.effects;
+package org.orecruncher.sndctrl.api.effects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.Resource;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.client.particle.Particle;
@@ -36,7 +35,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public abstract class AbstractEntityEffect {
 
-	private EntityEffectManager manager;
+	private IEntityEffectManager manager;
 	private final ResourceLocation name;
 
 	/**
@@ -72,7 +71,7 @@ public abstract class AbstractEntityEffect {
 	 * EntityEffectHandler. Override this method to perform any initialization
 	 * specific to the EntityEffect. Remember to call the super class!
 	 */
-	public void intitialize(@Nonnull final EntityEffectManager manager) {
+	public void intitialize(@Nonnull final IEntityEffectManager manager) {
 		this.manager = manager;
 	}
 

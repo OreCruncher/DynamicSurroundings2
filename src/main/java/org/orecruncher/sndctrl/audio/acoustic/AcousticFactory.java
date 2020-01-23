@@ -25,9 +25,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.XorShiftRandom;
+import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import org.orecruncher.sndctrl.audio.BackgroundSoundInstance;
 import org.orecruncher.sndctrl.audio.Category;
-import org.orecruncher.sndctrl.audio.ISoundInstance;
+import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 import org.orecruncher.sndctrl.audio.SoundBuilder;
 
 import javax.annotation.Nonnull;

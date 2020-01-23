@@ -16,32 +16,22 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib.effects;
+package org.orecruncher.sndctrl.api.acoustics;
 
-import net.minecraft.client.particle.Particle;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public interface IEntityEffectManager {
+public interface ISoundCategory {
+    String getName();
 
-    boolean isActive();
+    float getVolumeScale();
 
-    Entity getEntity();
-
-    boolean isEntityAlive();
-
-    double rangeToPlayerSq();
-
-    boolean isFirstPersonView();
-
-    void addParticle(@Nonnull final Particle particle);
-
-    boolean isActivePlayer(@Nonnull final Entity player);
-
-    PlayerEntity thePlayer();
+    @Nonnull
+    default SoundCategory getRealCategory() {
+        return SoundCategory.NEUTRAL;
+    }
 }

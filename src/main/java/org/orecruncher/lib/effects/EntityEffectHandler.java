@@ -31,6 +31,7 @@ import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
 import org.orecruncher.lib.effects.entity.IEntityFX;
+import org.orecruncher.sndctrl.api.effects.AbstractEntityEffect;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 
 import javax.annotation.Nonnull;

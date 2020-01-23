@@ -16,20 +16,32 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio;
+package org.orecruncher.sndctrl.api.effects;
 
-import net.minecraft.client.audio.ISound;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public interface IProxySound {
+public interface IEntityEffectManager {
 
-    @Nonnull
-    ISound getTrueSound();
+    boolean isActive();
 
-    @Nonnull
-    ISoundInstance getOriginalSound();
+    Entity getEntity();
+
+    boolean isEntityAlive();
+
+    double rangeToPlayerSq();
+
+    boolean isFirstPersonView();
+
+    void addParticle(@Nonnull final Particle particle);
+
+    boolean isActivePlayer(@Nonnull final Entity player);
+
+    PlayerEntity thePlayer();
 }

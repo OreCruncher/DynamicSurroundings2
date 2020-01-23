@@ -25,13 +25,15 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
+import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.audio.Category;
-import org.orecruncher.sndctrl.audio.ISoundCategory;
-import org.orecruncher.sndctrl.audio.ISoundInstance;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
+import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Handler that calculates an effective volume for a given sound based on
@@ -39,8 +41,32 @@ import java.util.Optional;
  */
 @OnlyIn(Dist.CLIENT)
 public final class SoundVolumeEvaluator {
+
+    // Callbacks from other mods where volume can be scaled.  Goal is to get mods to use this callback rather than
+    // replacing the sound during sound play.
+    private static final ObjectArray<Function<ISound, Float>> volumeScaleCallbacks = new ObjectArray<>();
+
     private SoundVolumeEvaluator() {
     }
+
+    public static void register(@Nonnull final Function<ISound, Float> callback) {
+        volumeScaleCallbacks.add(callback);
+    }
+
+    private static float getVolumeScaleFromMods(@Nonnull final ISound sound) {
+        float result = 1F; //SoundProcessor.getVolumeScale(sound);
+        for (final Function<ISound, Float> callback : volumeScaleCallbacks) {
+            try {
+                result = MathStuff.min(result, callback.apply(sound));
+                if (result == 0F)
+                    break;
+            } catch (@Nonnull final Throwable ignore) {
+            }
+        }
+
+        return result;
+    }
+
 
     private static float getCategoryVolumeScale(@Nonnull final ISound sound) {
         final Optional<ISoundInstance> si = Utilities.safeCast(sound, ISoundInstance.class);
@@ -59,7 +85,7 @@ public final class SoundVolumeEvaluator {
      */
     public static float getClampedVolume(@Nonnull final ISound sound) {
         Preconditions.checkNotNull(sound);
-        float volume = SoundProcessor.getVolumeScale(sound)
+        float volume = getVolumeScaleFromMods(sound)
                 * getCategoryVolumeScale(sound)
                 * sound.getVolume();
         return MathStuff.clamp1(volume);

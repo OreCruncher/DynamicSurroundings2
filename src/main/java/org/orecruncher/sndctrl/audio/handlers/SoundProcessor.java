@@ -114,7 +114,7 @@ public final class SoundProcessor {
         return volumeControl.getFloat(Objects.requireNonNull(sound));
     }
 
-    static float getVolumeScale(@Nonnull final ISound sound) {
+    public static float getVolumeScale(@Nonnull final ISound sound) {
         return getVolumeScale(Objects.requireNonNull(sound).getSoundLocation());
     }
 

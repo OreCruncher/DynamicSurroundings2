@@ -61,6 +61,12 @@ public enum SoundState {
      */
     BLOCKED(false, true),
     /**
+     * The sound instance was replaced by another mod via the Forge hooks.  Mods that do volume scaling due to
+     * their game mechanics (blocks, items, etc.) recreate the sound with the adjusted parameters.  This is why
+     * SoundControl uses ASM to do volume scaling - the originating mod isn't aware that it is happening.
+     */
+    REPLACED(false, true),
+    /**
      * There was an error of some sort playing the sound.
      */
     ERROR(false, true);

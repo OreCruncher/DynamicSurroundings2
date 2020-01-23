@@ -23,7 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.XorShiftRandom;
-import org.orecruncher.sndctrl.audio.ISoundInstance;
+import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import java.util.Random;

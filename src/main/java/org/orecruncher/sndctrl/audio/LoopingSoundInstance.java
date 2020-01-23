@@ -22,6 +22,7 @@ import com.google.common.base.MoreObjects;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
@@ -42,7 +43,7 @@ public class LoopingSoundInstance extends WrappedSoundInstance {
 
     @Override
     public boolean canRepeat() {
-        // ASM is used to increase the buffer size 4x.  Reason is the loop code in the sound engine loops on cached
+        // ASM is used to increase the buffer size 16x.  Reason is the loop code in the sound engine loops on cached
         // buffers, meaning the entire sound has to be loaded.  If for some reason this breaks you will get a choppy
         // termination before restarting the loop.
         return true;

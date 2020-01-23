@@ -29,7 +29,7 @@ import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.audio.ISoundCategory;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundMetadata;
 import org.orecruncher.sndctrl.library.config.SoundMetadataConfig;
 

@@ -27,8 +27,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.JsonUtils;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
+import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.audio.Category;
-import org.orecruncher.sndctrl.audio.ISoundCategory;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundBuilder;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
@@ -158,22 +160,6 @@ public final class AcousticCompiler {
                 dispatch(kvp).ifPresent(result::add);
             } catch (@Nonnull final Throwable t) {
                 SoundControl.LOGGER.error(t, "Unable to parse map acoustic '%s'='%s'", kvp.getKey(), kvp.getValue().toString());
-            }
-        }
-        return result;
-    }
-
-    @Nonnull
-    private List<IAcoustic> generateFromList(@Nonnull final JsonObject obj) {
-        final List<IAcoustic> result = new ArrayList<>();
-        final JsonArray array = obj.getAsJsonArray(Constants.ARRAY);
-        if (array != null) {
-            for (final JsonElement e : array) {
-                try {
-                    dispatch(new AbstractMap.SimpleEntry<>("", e)).ifPresent(result::add);
-                } catch (@Nonnull final Throwable t) {
-                    SoundControl.LOGGER.error(t, "Unable to parse array acoustic '%s'", e.toString());
-                }
             }
         }
         return result;

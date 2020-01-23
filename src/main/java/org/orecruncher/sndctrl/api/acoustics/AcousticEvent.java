@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio.acoustic;
+package org.orecruncher.sndctrl.api.acoustics;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.util.ResourceLocation;

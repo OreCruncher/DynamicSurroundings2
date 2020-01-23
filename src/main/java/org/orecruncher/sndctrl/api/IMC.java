@@ -16,8 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl;
+package org.orecruncher.sndctrl.api;
 
+import net.minecraft.client.audio.ISound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.InterModComms;
@@ -27,15 +28,19 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
+import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
 import org.orecruncher.sndctrl.audio.Category;
-import org.orecruncher.sndctrl.audio.ISoundCategory;
-import org.orecruncher.sndctrl.audio.acoustic.AcousticEvent;
+import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
+import org.orecruncher.sndctrl.audio.handlers.SoundVolumeEvaluator;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -76,11 +81,15 @@ public final class IMC {
     }
 
     private static void registerEffectFactoryHandlerHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        handle(msg, EntityEffectLibrary.IEntityEffectFactoryHandler.class, EntityEffectLibrary::register);
+        handle(msg, IEntityEffectFactoryHandler.class, EntityEffectLibrary::register);
     }
 
     private static void registerCompletionCallbackHandler(@Nonnull final InterModComms.IMCMessage msg) {
         Utilities.safeCast(msg.getMessageSupplier().get(), Runnable.class).ifPresent(callbacks::add);
+    }
+
+    private static void registerVolumeScaleCallbackHandler(@Nonnull final InterModComms.IMCMessage msg) {
+        Utilities.safeCast(msg.getMessageSupplier().get(), Function.class).ifPresent(SoundVolumeEvaluator::register);
     }
 
     private static <T> void handle(@Nonnull final InterModComms.IMCMessage msg, @Nonnull final Class<T> clazz, @Nonnull final Consumer<T> handler) {
@@ -133,8 +142,8 @@ public final class IMC {
      *
      * @param handler Effect handler to register
      */
-    public static void registerEffectFactoryHandler(@Nonnull final EntityEffectLibrary.IEntityEffectFactoryHandler... handler) {
-        for (final EntityEffectLibrary.IEntityEffectFactoryHandler h : handler)
+    public static void registerEffectFactoryHandler(@Nonnull final IEntityEffectFactoryHandler... handler) {
+        for (final IEntityEffectFactoryHandler h : handler)
             Methods.REGISTER_EFFECT_FACTORY_HANDLER.send(() -> h);
     }
 
@@ -146,6 +155,10 @@ public final class IMC {
     public static void registerCompletionCallback(@Nonnull final Runnable... callback) {
         for (final Runnable r : callback)
             Methods.REGISTER_COMPLETION_CALLBACK.send(() -> r);
+    }
+
+    public static void registerVolumeScaleCallback(@Nonnull final Function<ISound, Float> callback) {
+        Methods.REGISTER_VOLUME_SCALE_CALLBACK.send(() -> callback);
     }
 
     /**
@@ -163,7 +176,8 @@ public final class IMC {
         REGISTER_ACOUSTIC_FILE(IMC::registerAcousticFileHandler),
         REGISTER_SOUND_FILE(IMC::registerSoundFileHandler),
         REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler),
-        REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler);
+        REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler),
+        REGISTER_VOLUME_SCALE_CALLBACK(IMC::registerVolumeScaleCallbackHandler);
 
         private final Consumer<InterModComms.IMCMessage> handler;
 

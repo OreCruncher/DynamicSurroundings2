@@ -91,7 +91,7 @@ public final class SoundEventHandling {
         if (event.side != LogicalSide.CLIENT || event.phase == TickEvent.Phase.END)
             return;
 
-        if (Config.CLIENT.sound.get_muteInBackground()) {
+        if (handleMute()) {
             final boolean active = GameUtils.getMC().isGameFocused();
             final boolean muted = isMuted();
             if (active && muted) {
@@ -102,6 +102,10 @@ public final class SoundEventHandling {
                 LOGGER.debug("Muting sounds");
             }
         }
+    }
+
+    private static boolean handleMute() {
+        return Config.CLIENT.sound.get_muteInBackground() && GameUtils.getSoundHander().sndManager.loaded;
     }
 
     private static boolean isMuted() {

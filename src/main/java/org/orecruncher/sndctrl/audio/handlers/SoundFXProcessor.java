@@ -35,7 +35,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.lwjgl.openal.AL10;
-import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
@@ -45,7 +44,6 @@ import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.Conversion;
 import org.orecruncher.sndctrl.audio.SoundUtils;
-import org.orecruncher.sndctrl.events.AudioEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -271,17 +269,6 @@ public final class SoundFXProcessor {
         } catch (@Nonnull final Throwable t) {
             LOGGER.error(t, "Error in SoundContext ForkJoinPool");
         }
-    }
-
-    /**
-     * Invoked when the client wants to know the current rain strength.
-     *
-     * @param event Event trigger in question.
-     */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onPrecipitationStrength(@Nonnull final AudioEvent.PrecipitationStrengthEvent event) {
-        event.setStrength(GameUtils.getWorld().rainingStrength);
-        event.setCanceled(true);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

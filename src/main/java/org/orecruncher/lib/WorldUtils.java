@@ -52,13 +52,21 @@ public final class WorldUtils {
         float getTemp(@Nonnull final World world, @Nonnull final BlockPos pos);
     }
 
+    private interface IRainStrengthHandler {
+        float getRainStrength(@Nonnull final World world, final float partialTicks);
+    }
+
     private static final ITemperatureHandler TEMP;
+    private static final IRainStrengthHandler RAINSTRENGTH;
 
     static {
         if (ModEnvironment.SereneSeasons.isLoaded())
             TEMP = (world, pos) -> SeasonHooks.getBiomeTemperature(world, world.getBiome(pos), pos);
         else
             TEMP = (world, pos) -> world.getBiome(pos).getTemperature(pos);
+
+        // Place holder for future
+        RAINSTRENGTH = World::getRainStrength;
     }
 
     private WorldUtils() {
@@ -119,7 +127,7 @@ public final class WorldUtils {
      * like.
      */
     public static Biome.RainType getCurrentPrecipitationAt(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
-        if (!((World) world).isRaining()) {
+        if (!isRaining((World) world)) {
             // Not currently raining
             return Biome.RainType.NONE;
         }
@@ -139,6 +147,14 @@ public final class WorldUtils {
         // Use the temperature of the biome to get whether it is raining or snowing
         final float temp = getTemperatureAt((World) world, pos);
         return isSnowTemperature(temp) ? Biome.RainType.SNOW : Biome.RainType.RAIN;
+    }
+
+    public static float getRainStrength(@Nonnull final World world, final float partialTicks) {
+        return RAINSTRENGTH.getRainStrength(world, partialTicks);
+    }
+
+    public static boolean isRaining(@Nonnull final World world) {
+        return getRainStrength(world, 1F) > 0;
     }
 
     @Nonnull

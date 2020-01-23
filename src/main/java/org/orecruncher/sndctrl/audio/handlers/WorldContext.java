@@ -29,6 +29,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.events.AudioEvent;
 
@@ -104,9 +105,7 @@ public final class WorldContext {
                 this.auralDampening = 0;
 
             // Get our current rain strength.
-            final AudioEvent.PrecipitationStrengthEvent evt = new AudioEvent.PrecipitationStrengthEvent(this.world);
-            MinecraftForge.EVENT_BUS.post(evt);
-            this.precipitationStrength = evt.getStrength();
+            this.precipitationStrength = WorldUtils.getRainStrength(this.world, 1F);
             this.mc = Minecraft.getInstance();
         } else {
             this.mc = null;

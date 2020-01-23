@@ -18,14 +18,10 @@
 
 package org.orecruncher.sndctrl.events;
 
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import org.orecruncher.lib.math.MathStuff;
-
-import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
@@ -42,34 +38,6 @@ public class AudioEvent extends Event {
     @Cancelable
     public final static class MusicFadeAudioEvent extends AudioEvent {
         public MusicFadeAudioEvent() {
-        }
-    }
-
-    /**
-     * Raised by the sound system when getting information related to the current rain
-     * strength.
-     */
-    @Cancelable
-    public final static class PrecipitationStrengthEvent extends AudioEvent {
-        @Nonnull
-        private final World world;
-        private float strength;
-
-        public PrecipitationStrengthEvent(@Nonnull final World world) {
-            this.world = world;
-        }
-
-        @Nonnull
-        public World getWorld() {
-            return this.world;
-        }
-
-        public float getStrength() {
-            return this.strength;
-        }
-
-        public void setStrength(final float str) {
-            this.strength = MathStuff.clamp1(str);
         }
     }
 

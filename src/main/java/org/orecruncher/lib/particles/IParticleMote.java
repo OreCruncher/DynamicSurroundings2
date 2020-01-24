@@ -20,7 +20,6 @@ package org.orecruncher.lib.particles;
 
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -36,8 +35,6 @@ public interface IParticleMote {
 
     /**
      * Kills a mote. It will stop displaying and be released from collections.
-     *
-     * @return
      */
     void kill();
 

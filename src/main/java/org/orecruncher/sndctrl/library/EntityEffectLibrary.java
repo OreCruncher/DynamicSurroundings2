@@ -20,9 +20,9 @@ package org.orecruncher.sndctrl.library;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraft.entity.Entity;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.sndctrl.api.effects.AbstractEntityEffect;
 import org.orecruncher.sndctrl.Config;
@@ -53,7 +53,7 @@ public final class EntityEffectLibrary {
 	}
 
 	@Nonnull
-	public static ObjectArray<AbstractEntityEffect> getEffects(@Nonnull final Entity entity) {
+	public static ObjectArray<AbstractEntityEffect> getEffects(@Nonnull final LivingEntity entity) {
 		final ObjectArray<AbstractEntityEffect> result = new ObjectArray<>();
 		entityEffectfactoryHandlers.forEach(h -> {
 			if (h.appliesTo(entity))

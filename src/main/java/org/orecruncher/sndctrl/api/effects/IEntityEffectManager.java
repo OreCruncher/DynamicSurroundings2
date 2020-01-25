@@ -19,7 +19,7 @@
 package org.orecruncher.sndctrl.api.effects;
 
 import net.minecraft.client.particle.Particle;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -31,7 +31,8 @@ public interface IEntityEffectManager {
 
     boolean isActive();
 
-    Entity getEntity();
+    @Nonnull
+    LivingEntity getEntity();
 
     boolean isEntityAlive();
 
@@ -41,7 +42,8 @@ public interface IEntityEffectManager {
 
     void addParticle(@Nonnull final Particle particle);
 
-    boolean isActivePlayer(@Nonnull final Entity player);
+    boolean isActivePlayer(@Nonnull final LivingEntity player);
 
+    @Nonnull
     PlayerEntity thePlayer();
 }

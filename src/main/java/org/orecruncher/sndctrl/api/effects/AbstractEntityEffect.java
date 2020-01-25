@@ -19,15 +19,16 @@
 package org.orecruncher.sndctrl.api.effects;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
+import org.orecruncher.sndctrl.library.AcousticLibrary;
 
 /**
  * Interface for an effect.
@@ -61,8 +62,8 @@ public abstract class AbstractEntityEffect {
 	 *
 	 * @return Entity associated with the effect, null otherwise
 	 */
-	@Nullable
-	public Entity getEntity() {
+	@Nonnull
+	public LivingEntity getEntity() {
 		return this.manager.getEntity();
 	}
 
@@ -121,7 +122,7 @@ public abstract class AbstractEntityEffect {
 	 * @param entity The Entity to evaluate
 	 * @return true if the Entity is the current player, false otherwise
 	 */
-	public boolean isActivePlayer(@Nonnull final Entity entity) {
+	public boolean isActivePlayer(@Nonnull final LivingEntity entity) {
 		return this.manager.isActivePlayer(entity);
 	}
 
@@ -133,6 +134,17 @@ public abstract class AbstractEntityEffect {
 	@Nonnull
 	public PlayerEntity thePlayer() {
 		return this.manager.thePlayer();
+	}
+
+	/**
+	 * Obtains the acoustic associated with the specified acoustic ID
+	 *
+	 * @param acousticId ID fo the acoustic to obtain
+	 * @return Reference to the specified acoustic
+	 */
+	@Nonnull
+	public IAcoustic resolveAcoustic(@Nonnull final ResourceLocation acousticId) {
+		return AcousticLibrary.resolve(acousticId);
 	}
 
 	@Override

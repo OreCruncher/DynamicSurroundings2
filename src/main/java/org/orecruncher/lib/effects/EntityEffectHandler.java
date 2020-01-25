@@ -19,6 +19,7 @@
 package org.orecruncher.lib.effects;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -62,14 +63,13 @@ public final class EntityEffectHandler {
      * @return An EntityEffectHandler for the Entity
      */
     @Nonnull
-    private static Optional<EntityEffectManager> create(@Nonnull final Entity entity) {
+    private static Optional<EntityEffectManager> create(@Nonnull final LivingEntity entity) {
         final ObjectArray<AbstractEntityEffect> effectToApply = EntityEffectLibrary.getEffects(entity);
         final EntityEffectManager result;
         if (effectToApply.size() > 0) {
             result = new EntityEffectManager(entity, effectToApply);
         } else {
-            // No effects. Return a dummy handler.
-            result = new EntityEffectManager.Dummy(entity);
+            result = new EntityEffectManager(entity);
         }
 
         return Optional.of(result);
@@ -77,7 +77,7 @@ public final class EntityEffectHandler {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onLivingUpdate(@Nonnull final LivingEvent.LivingUpdateEvent event) {
-        final Entity entity = event.getEntity();
+        final LivingEntity entity = event.getEntityLiving();
         if (entity == null || !entity.getEntityWorld().isRemote)
             return;
 

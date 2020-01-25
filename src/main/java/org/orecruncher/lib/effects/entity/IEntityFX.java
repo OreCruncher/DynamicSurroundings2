@@ -29,6 +29,7 @@ public interface IEntityFX {
 
 	void set(@Nullable final EntityEffectManager handler);
 
+	@Nullable
 	EntityEffectManager get();
 
 	default void clear() {

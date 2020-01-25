@@ -31,7 +31,7 @@ public class EntityFXData implements IEntityFX {
 	protected EntityEffectManager handler;
 
 	@Override
-	public void set(@Nullable EntityEffectManager handler) {
+	public void set(@Nullable final EntityEffectManager handler) {
 		this.handler = handler;
 	}
 

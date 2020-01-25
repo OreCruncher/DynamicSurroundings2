@@ -18,15 +18,14 @@
 
 package org.orecruncher.lib.effects;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,7 +34,6 @@ import org.orecruncher.lib.collections.ObjectArray;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.entity.Entity;
 import org.orecruncher.sndctrl.api.effects.AbstractEntityEffect;
 import org.orecruncher.sndctrl.api.effects.IEntityEffectManager;
 
@@ -46,19 +44,21 @@ import org.orecruncher.sndctrl.api.effects.IEntityEffectManager;
 @OnlyIn(Dist.CLIENT)
 public class EntityEffectManager implements IEntityEffectManager {
 
-	protected final WeakReference<Entity> subject;
+	private static final List<String> DUMMY_EFFECTS = ImmutableList.of("Dummy EffectHandler");
+	private static final List<String> NO_EFFECTS = ImmutableList.of("No Effects");
 
+	protected final LivingEntity subject;
 	protected final ObjectArray<AbstractEntityEffect> activeEffects;
 	protected boolean isActive = true;
 	protected double rangeToPlayer;
 
-	public EntityEffectManager(@Nonnull final Entity entity) {
-		this.subject = new WeakReference<>(entity);
+	public EntityEffectManager(@Nonnull final LivingEntity entity) {
+		this.subject = entity;
 		this.activeEffects = null;
 	}
 
-	public EntityEffectManager(@Nonnull final Entity entity, @Nonnull final ObjectArray<AbstractEntityEffect> effects) {
-		this.subject = new WeakReference<>(entity);
+	public EntityEffectManager(@Nonnull final LivingEntity entity, @Nonnull final ObjectArray<AbstractEntityEffect> effects) {
+		this.subject = entity;
 		this.activeEffects = effects;
 		for (final AbstractEntityEffect ee : this.activeEffects)
 			ee.intitialize(this);
@@ -71,17 +71,12 @@ public class EntityEffectManager implements IEntityEffectManager {
 	public void update() {
 		if (!isActive())
 			return;
-
 		this.isActive = isEntityAlive();
-		final Entity entity = this.subject.get();
-		if (entity != null) {
-			this.rangeToPlayer = entity.getDistanceSq(thePlayer());
-
-			for (int i = 0; i < this.activeEffects.size(); i++) {
-				final AbstractEntityEffect e = this.activeEffects.get(i);
-				if (this.isActive || e.receiveLastCall())
-					e.update();
-			}
+		if (this.activeEffects != null) {
+			this.rangeToPlayer = this.subject.getDistanceSq(thePlayer());
+			for (final AbstractEntityEffect eff : this.activeEffects)
+				if (this.isActive || eff.receiveLastCall())
+					eff.update();
 		}
 	}
 
@@ -91,18 +86,9 @@ public class EntityEffectManager implements IEntityEffectManager {
 	 */
 	public void die() {
 		this.isActive = false;
-		for (final AbstractEntityEffect e : this.activeEffects)
-			e.die();
-	}
-
-	/**
-	 * Used for metric collection to distinguish between active handlers and
-	 * dummies.
-	 *
-	 * @return true if it is an active handler, false for a dummy
-	 */
-	public boolean isDummy() {
-		return false;
+		if (this.activeEffects != null)
+			for (final AbstractEntityEffect e : this.activeEffects)
+				e.die();
 	}
 
 	/**
@@ -112,14 +98,11 @@ public class EntityEffectManager implements IEntityEffectManager {
 	 */
 	@Nonnull
 	public List<String> getAttachedEffects() {
-		final List<String> result = new ArrayList<>();
-		if (this.activeEffects.size() == 0) {
-			result.add("No effects");
-		} else {
-			for (final AbstractEntityEffect e : this.activeEffects)
-				result.add(e.toString());
-		}
-		return result;
+		if (this.activeEffects == null)
+			return DUMMY_EFFECTS;
+		if (this.activeEffects.size() == 0)
+			return NO_EFFECTS;
+		return this.activeEffects.stream().map(AbstractEntityEffect::toString).collect(Collectors.toList());
 	}
 
 	/**
@@ -127,9 +110,9 @@ public class EntityEffectManager implements IEntityEffectManager {
 	 *
 	 * @return Entity if present, null otherwise
 	 */
-	@Nullable
-	public Entity getEntity() {
-		return this.subject.get();
+	@Nonnull
+	public LivingEntity getEntity() {
+		return this.subject;
 	}
 
 	/**
@@ -144,8 +127,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 
 	@Override
 	public boolean isEntityAlive() {
-		final Entity entity = this.subject.get();
-		return entity != null && entity.isAlive();
+		return this.subject.isAlive();
 	}
 
 	/**
@@ -186,7 +168,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 	 * @return true if the Entity is the current player, false otherwise
 	 */
 	@Override
-	public boolean isActivePlayer(@Nonnull final Entity player) {
+	public boolean isActivePlayer(@Nonnull final LivingEntity player) {
 		final PlayerEntity ep = thePlayer();
 		return ep.getEntityId() == player.getEntityId();
 	}
@@ -201,35 +183,5 @@ public class EntityEffectManager implements IEntityEffectManager {
 	public PlayerEntity thePlayer() {
 		return GameUtils.getPlayer();
 	}
-
-	/**
-	 * Dummy do nothing handler.
-	 */
-	public static class Dummy extends EntityEffectManager {
-		public Dummy(@Nonnull final Entity entity) {
-			super(entity);
-		}
-
-		@Override
-		public void update() {
-		}
-
-		@Override
-		public void die() {
-			this.isActive = false;
-		}
-
-		@Override
-		public boolean isDummy() {
-			return true;
-		}
-
-		@Nonnull
-		@Override
-		public List<String> getAttachedEffects() {
-			return ImmutableList.of("Dummy EffectHandler");
-		}
-	};
-
 
 }

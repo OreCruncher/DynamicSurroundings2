@@ -18,7 +18,6 @@
 
 package org.orecruncher.lib.blockstate;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -38,9 +37,6 @@ public final class BlockStateMatcher {
 
     public static final BlockStateMatcher AIR = new BlockStateMatcher(Blocks.AIR.getDefaultState());
 
-    // Universal empty property list for dedupe
-    private static final ImmutableMap<IProperty<?>, Comparable<?>> EMPTY = ImmutableMap.of();
-
     // All instances will have this defined
     @Nonnull
     protected final Block block;
@@ -48,21 +44,21 @@ public final class BlockStateMatcher {
     // Sometimes an exact match of state is needed. The state being compared
     // would have to match all these properties.
     @Nonnull
-    private final ImmutableMap<IProperty<?>, Comparable<?>> props;
+    private final BlockStateProperties props;
 
-    private BlockStateMatcher(@Nonnull final BlockState state) {
+    BlockStateMatcher(@Nonnull final BlockState state) {
         this(state.getBlock(), state.getValues());
     }
 
-    private BlockStateMatcher(@Nonnull final Block block) {
+    BlockStateMatcher(@Nonnull final Block block) {
         this.block = block;
-        this.props = EMPTY;
+        this.props = BlockStateProperties.NONE;
     }
 
-    private BlockStateMatcher(@Nonnull final Block block,
-                              @Nonnull final ImmutableMap<IProperty<?>, Comparable<?>> props) {
+    BlockStateMatcher(@Nonnull final Block block,
+                              @Nonnull final Map<IProperty<?>, Comparable<?>> props) {
         this.block = block;
-        this.props = props.size() > 0 ? props : EMPTY;
+        this.props = props.size() > 0 ? new BlockStateProperties(props) : BlockStateProperties.NONE;
     }
 
     @Nonnull
@@ -122,27 +118,13 @@ public final class BlockStateMatcher {
             }
         }
 
-        // If we have properties it will be a partial generic type match. Otherwise it will be an exact match
-        // on the default state.
-        if (props.size() > 0) {
-            return new BlockStateMatcher(defaultState.getBlock(), ImmutableMap.copyOf(props));
-        } else {
-            return new BlockStateMatcher(defaultState);
-        }
-
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nonnull
-    private static <T extends Comparable<T>> String getValue(@Nonnull final Block block, @Nonnull final String propName, @Nonnull final Object val) {
-        final IProperty<T> prop = (IProperty<T>) block.getStateContainer().getProperty(propName);
-        assert prop != null;
-        return prop.getName((T) val);
+        return new BlockStateMatcher(defaultState.getBlock(), props);
     }
 
     @Nonnull
     private static <T extends Comparable<T>> String getAllowedValues(@Nonnull final Block block, @Nonnull final String propName) {
-        @SuppressWarnings("unchecked") final IProperty<T> prop = (IProperty<T>) block.getStateContainer().getProperty(propName);
+        @SuppressWarnings("unchecked")
+        final IProperty<T> prop = (IProperty<T>) block.getStateContainer().getProperty(propName);
         if (prop != null) {
             return prop.getAllowedValues().stream().map(prop::getName).collect(Collectors.joining(","));
         }
@@ -160,7 +142,8 @@ public final class BlockStateMatcher {
 
     @Override
     public int hashCode() {
-        // All matchers for the same block map to the same hashcode
+        // Only do the block hash code.  Reason is that BlockStateMatcher does not honor the equality contract set
+        // forth by Object.  Equals can perform a partial match.
         return this.block.hashCode();
     }
 
@@ -168,26 +151,7 @@ public final class BlockStateMatcher {
     public boolean equals(final Object obj) {
         if (obj instanceof BlockStateMatcher) {
             final BlockStateMatcher m = (BlockStateMatcher) obj;
-            // If the block types don't match, there will be no match
-            if (this.block != m.block)
-                return false;
-
-            // If they are the same list then they are equal
-            if (this.props == m.props)
-                return true;
-
-            // If the other list is larger there isn't a way it's going
-            // to match us.
-            if (this.props.size() < m.props.size())
-                return false;
-
-            // Run 'em down doing compares
-            for (final Map.Entry<IProperty<?>, Comparable<?>> entry : m.props.entrySet()) {
-                final Comparable<?> v = this.props.get(entry.getKey());
-                if (v == null || !v.equals(entry.getValue()))
-                    return false;
-            }
-            return true;
+            return this.block == m.block && m.props.matches(this.props);
         }
         return false;
     }
@@ -195,16 +159,7 @@ public final class BlockStateMatcher {
     @Override
     @Nonnull
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(ForgeRegistries.BLOCKS.getKey(this.block));
-        if (!this.props.isEmpty()) {
-            final String txt = this.props.entrySet().stream()
-                    .map(e -> e.getKey().getName() + "=" + getValue(this.block, e.getKey().getName(), e.getValue()))
-                    .collect(Collectors.joining(","));
-            builder.append('[').append(txt).append(']');
-        }
-
-        return builder.toString();
+        return ForgeRegistries.BLOCKS.getKey(this.block) + this.props.getFormattedProperties();
     }
 
 }

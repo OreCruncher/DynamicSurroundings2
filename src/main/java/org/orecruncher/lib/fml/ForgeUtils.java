@@ -19,6 +19,7 @@
 package org.orecruncher.lib.fml;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.resources.ClientResourcePackInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -90,8 +91,14 @@ public final class ForgeUtils {
 
     @OnlyIn(Dist.CLIENT)
     @Nonnull
+    public static Collection<ClientResourcePackInfo> getEnabledResourcePacks() {
+        return GameUtils.getMC().getResourcePackList().getEnabledPacks();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Nonnull
     public static List<String> getResourcePackIdList() {
-        return GameUtils.getMC().getResourcePackList().getEnabledPacks()
+        return getEnabledResourcePacks()
                 .stream()
                 .flatMap(e -> e.getResourcePack().getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES).stream())
                 .collect(Collectors.toList());
@@ -127,13 +134,12 @@ public final class ForgeUtils {
         final Collection<EntityType<?>> f = ForgeRegistries.ENTITIES.getValues();
         for (final EntityType<?> et : f) {
             try {
-
-                // Code should work as it relates to Minecraft.  Should have a dummy world.
+                // May not work 100%.  Regular vanilla just needs a viable world reference to create.  Modded entities
+                // may behave differently.
                 final Entity entity = et.create(fake);
                 if (entity instanceof LivingEntity) {
                     results.put(et.getRegistryName(), entity.getClass());
                 }
-
             } catch (@Nonnull final Throwable t) {
                 Lib.LOGGER.warn("Unable to instantiate '%s'", et.getRegistryName().toString());
             }

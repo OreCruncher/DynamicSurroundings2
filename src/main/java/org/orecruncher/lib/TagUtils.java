@@ -21,7 +21,6 @@ package org.orecruncher.lib;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
-import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.SimpleReloadableResourceManager;
@@ -29,13 +28,24 @@ import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollection;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.lib.fml.ForgeUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
-import java.util.stream.Collectors;
 
+/**
+ * Utility functions for dealing with tags.  With the current implementation of Minecraft/Forge, tags are not 100%
+ * reliable until the client connects to the server.  The reason is that the tagging from the server is provided to
+ * the client with the thought that datapacks on the server could make tweaks to tagging.  However, this does nothing
+ * for mods that want to configure and do things based on collections similar to what was possible with the
+ * OreDictionary in prior versions.
+ *
+ * The following routines will gather the tag data directly from resources on the CLIENT which should be fine in the
+ * vast majority of cases.  If an authoritative source is needed use the Forge tag collections.
+ */
 @SuppressWarnings("unused")
 public final class TagUtils {
 
@@ -47,7 +57,7 @@ public final class TagUtils {
                         false,
                         "block");
 
-                return TagUtils.getBlockTagCollection(tags);
+                return TagUtils.getTagCollection(tags);
             }
     );
     private static final Singleton<TagCollection<Item>> itemTags = new Singleton<>(
@@ -58,7 +68,7 @@ public final class TagUtils {
                         false,
                         "item");
 
-                return TagUtils.getBlockTagCollection(tags);
+                return TagUtils.getTagCollection(tags);
             }
     );
 
@@ -72,17 +82,19 @@ public final class TagUtils {
      *
      * @return TagCollection for blocks
      */
-    private static <T> TagCollection<T> getBlockTagCollection(@Nonnull final TagCollection<T> tags) {
-        final SimpleReloadableResourceManager resourceManager = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA, Thread.currentThread());
-        final List<IResourcePack> list = GameUtils.getMC().getResourcePackList().getEnabledPacks().stream().map(ResourcePackInfo::getResourcePack).collect(Collectors.toList());
-
-        for (IResourcePack iresourcepack : list) {
-            resourceManager.addResourcePack(iresourcepack);
-        }
-
+    private static <T> TagCollection<T> getTagCollection(@Nonnull final TagCollection<T> tags) {
         try {
+
+            final SimpleReloadableResourceManager resourceManager = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA, Thread.currentThread());
+
+            ForgeUtils.getEnabledResourcePacks()
+                    .stream()
+                    .map(ResourcePackInfo::getResourcePack)
+                    .forEach(resourceManager::addResourcePack);
+
             final Map<ResourceLocation, Tag.Builder<T>> mapping = tags.reload(resourceManager, ForkJoinPool.commonPool()).get();
             tags.registerAll(mapping);
+
         } catch (@Nonnull final Throwable t) {
             Lib.LOGGER.error(t, "Unable to load tags!");
         }
@@ -92,9 +104,11 @@ public final class TagUtils {
 
     @Nonnull
     public static Collection<Tag<Block>> getBlockStateTags(@Nonnull final BlockState state) {
-        final List<Tag<Block>> tags = new ArrayList<>();
+        final ObjectArray<Tag<Block>> tags = new ObjectArray<>();
         for (final ResourceLocation res : state.getBlock().getTags()) {
-            tags.add(getBlockTag(res));
+            final Tag<Block> tag = getBlockTag(res);
+            if (tag != null)
+                tags.add(tag);
         }
         return tags;
     }

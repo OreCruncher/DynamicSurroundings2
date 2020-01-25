@@ -18,11 +18,12 @@
 
 package org.orecruncher.sndctrl.api.acoustics;
 
+import net.minecraft.client.audio.ITickableSound;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public interface IFadableSoundInstance extends ISoundInstance {
+public interface IFadableSoundInstance extends ISoundInstance, ITickableSound {
 
     void fade();
 
@@ -31,6 +32,4 @@ public interface IFadableSoundInstance extends ISoundInstance {
     boolean isFading();
 
     void setFadeVolume(final float v);
-
-    boolean isDonePlaying();
 }

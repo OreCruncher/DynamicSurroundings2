@@ -54,11 +54,12 @@ public final class EntityEffectLibrary {
 
 	@Nonnull
 	public static ObjectArray<AbstractEntityEffect> getEffects(@Nonnull final Entity entity) {
-		final ObjectArray<AbstractEntityEffect> result = new ObjectArray<>(4);
+		final ObjectArray<AbstractEntityEffect> result = new ObjectArray<>();
 		entityEffectfactoryHandlers.forEach(h -> {
 			if (h.appliesTo(entity))
 				result.add(h.get(entity));
 		});
+		result.trim();
 		return result;
 	}
 

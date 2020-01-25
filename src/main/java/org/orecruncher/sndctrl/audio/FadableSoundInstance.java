@@ -23,12 +23,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.math.MathStuff;
+import org.orecruncher.sndctrl.api.acoustics.IFadableSoundInstance;
 import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class FadableSoundInstance extends WrappedSoundInstance {
+public class FadableSoundInstance extends WrappedSoundInstance implements IFadableSoundInstance {
 
     private static final float INITIAL_FADE = 0.00002F;
     private static final float FADE_AMOUNT = 0.02F;
@@ -50,18 +51,6 @@ public class FadableSoundInstance extends WrappedSoundInstance {
     @Override
     public float getVolume() {
         return super.getVolume() * this.fadeScale;
-    }
-
-    public void fade() {
-        this.isFading = true;
-    }
-
-    public void unfade() {
-        this.isFading = false;
-    }
-
-    public boolean isFading() {
-        return this.isFading;
     }
 
     @Override
@@ -112,13 +101,29 @@ public class FadableSoundInstance extends WrappedSoundInstance {
         }
     }
 
+    @Override
+    public void fade() {
+        this.isFading = true;
+    }
+
+    @Override
+    public void unfade() {
+        this.isFading = false;
+    }
+
+    @Override
+    public boolean isFading() {
+        return this.isFading;
+    }
+
     /**
-     * Set's the fade scale target.  The volume of the sound will drift up/down to this scale factor
+     * Set's the fade scale target.  The volume of the sound will glide up/down to this volume
      * over time.
      *
      * @param scale Value between 0F and 1F inclusive.
      */
-    public void setFadeScaleTarget(final float scale) {
+    @Override
+    public void setFadeVolume(final float scale) {
         this.fadeScaleTarget = MathStuff.clamp1(scale);
     }
 

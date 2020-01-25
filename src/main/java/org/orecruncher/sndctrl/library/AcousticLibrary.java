@@ -124,6 +124,7 @@ public final class AcousticLibrary {
                 final SimultaneousAcoustic s = new SimultaneousAcoustic(acousticName);
                 for (final IAcoustic t : acoustics)
                     s.add(t);
+                s.trim();
                 result = s;
             }
         } else {

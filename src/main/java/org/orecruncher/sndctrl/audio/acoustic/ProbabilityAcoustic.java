@@ -25,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.lib.WeightTable;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
@@ -45,33 +45,24 @@ public class ProbabilityAcoustic implements IAcoustic {
     private static final Random RANDOM = XorShiftRandom.current();
 
     protected final ResourceLocation name;
-    protected final ObjectArray<Pair> acoustics = new ObjectArray<>();
-    protected int totalWeight;
+    protected final WeightTable<IAcoustic> table;
 
-    public ProbabilityAcoustic(@Nonnull final ResourceLocation name)
-    {
+    public ProbabilityAcoustic(@Nonnull final ResourceLocation name) {
         this.name = Objects.requireNonNull(name);
+        this.table = new WeightTable<>();
     }
 
     public void add(@Nonnull final IAcoustic acoustic, final int weight) {
-        this.totalWeight += weight;
-        this.acoustics.add(new Pair(acoustic, weight));
+        this.table.add(acoustic, weight);
+    }
+
+    public void trim() {
+        this.table.trim();
     }
 
     @Nonnull
     private Optional<IAcoustic> select() {
-        if (this.totalWeight <= 0)
-            return Optional.empty();
-
-        int i = this.acoustics.size();
-        if (i == 1)
-            return Optional.of(this.acoustics.get(0).acoustic);
-
-        int targetWeight = RANDOM.nextInt(this.totalWeight);
-
-        for (i = this.acoustics.size(); (targetWeight -= this.acoustics.get(i - 1).weight) >= 0; i--);
-
-        return Optional.of(this.acoustics.get(i - 1).acoustic);
+        return Optional.ofNullable(this.table.next());
     }
 
     @Override
@@ -112,16 +103,7 @@ public class ProbabilityAcoustic implements IAcoustic {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).addValue(getName().toString()).add("entries", this.acoustics.size()).toString();
+        return MoreObjects.toStringHelper(this).addValue(getName().toString()).add("entries", this.table.size()).toString();
     }
 
-    private static class Pair {
-        public final int weight;
-        public final IAcoustic acoustic;
-
-        public Pair(@Nonnull final IAcoustic a, final int weight) {
-            this.acoustic = a;
-            this.weight = weight;
-        }
-    }
 }

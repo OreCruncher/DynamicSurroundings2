@@ -42,7 +42,7 @@ public class SimultaneousAcoustic implements IAcoustic {
     @Nonnull
     private final ResourceLocation name;
     @Nonnull
-    private final ObjectArray<IAcoustic> acoustics = new ObjectArray<>(4);
+    private final ObjectArray<IAcoustic> acoustics = new ObjectArray<>();
 
     public SimultaneousAcoustic(@Nonnull final ResourceLocation name) {
         this.name = Objects.requireNonNull(name);
@@ -52,6 +52,10 @@ public class SimultaneousAcoustic implements IAcoustic {
         // Ignore null acoustics
         if (!(a instanceof NullAcoustic))
             this.acoustics.add(a);
+    }
+
+    public void trim() {
+        this.acoustics.trim();
     }
 
     @Override

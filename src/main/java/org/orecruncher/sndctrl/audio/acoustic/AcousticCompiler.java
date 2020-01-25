@@ -127,6 +127,7 @@ public final class AcousticCompiler {
 
         final SimultaneousAcoustic result = new SimultaneousAcoustic(new ResourceLocation(SoundControl.MOD_ID, "adhoc"));
         Arrays.stream(acoustics).forEach(result::add);
+        result.trim();
         return result;
     }
 
@@ -260,6 +261,7 @@ public final class AcousticCompiler {
             }
         }
 
+        acoustic.trim();
         return Optional.of(acoustic);
     }
 
@@ -288,6 +290,7 @@ public final class AcousticCompiler {
             }
         }
 
+        acoustic.trim();
         return Optional.of(acoustic);
     }
 

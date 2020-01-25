@@ -18,6 +18,10 @@
 
 package org.orecruncher.lib.collections;
 
+import net.minecraft.util.math.MathHelper;
+import org.apache.commons.lang3.ArrayUtils;
+import org.orecruncher.lib.math.MathStuff;
+
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +31,7 @@ import java.util.function.Predicate;
 
 public class ObjectArray<T> implements Collection<T> {
 
-    private static final int DEFAULT_SIZE = 8;
+    private static final int DEFAULT_SIZE = 4;
 
     protected Object[] data;
     protected int insertionIdx;
@@ -51,8 +55,10 @@ public class ObjectArray<T> implements Collection<T> {
     }
 
     private void resize() {
-        final Object[] t = new Object[this.data.length * 2];
-        System.arraycopy(this.data, 0, t, 0, this.data.length);
+        final int newSize = MathHelper.smallestEncompassingPowerOfTwo(MathStuff.max(this.data.length * 2, DEFAULT_SIZE));
+        final Object[] t = new Object[newSize];
+        if (this.data.length > 0)
+            System.arraycopy(this.data, 0, t, 0, this.data.length);
         this.data = t;
     }
 
@@ -80,7 +86,8 @@ public class ObjectArray<T> implements Collection<T> {
     public boolean removeIf(@Nonnull final Predicate<? super T> pred) {
         boolean result = false;
         for (int i = this.insertionIdx - 1; i >= 0; i--) {
-            if (pred.test((T) this.data[i])) {
+            final T t = (T) this.data[i];
+            if (pred.test(t)) {
                 result = true;
                 this.remove0(i);
             }
@@ -115,8 +122,11 @@ public class ObjectArray<T> implements Collection<T> {
     @Override
     @Nonnull
     public Object[] toArray() {
-        final Object[] result = new Object[this.insertionIdx];
-        System.arraycopy(this.data, 0, result, 0, this.insertionIdx);
+        Object[] result = ArrayUtils.EMPTY_OBJECT_ARRAY;
+        if (this.insertionIdx > 0) {
+            result = new Object[this.insertionIdx];
+            System.arraycopy(this.data, 0, result, 0, this.insertionIdx);
+        }
         return result;
     }
 
@@ -138,7 +148,6 @@ public class ObjectArray<T> implements Collection<T> {
     public boolean add(@Nonnull final T e) {
         if (this.data.length == this.insertionIdx)
             resize();
-
         this.data[this.insertionIdx++] = e;
         return true;
     }
@@ -162,14 +171,13 @@ public class ObjectArray<T> implements Collection<T> {
     @Override
     public boolean addAll(@Nonnull final Collection<? extends T> c) {
         boolean result = false;
-        for (final T element : c)
-            result |= this.add(element);
+        for (final T element : c) result |= this.add(element);
         return result;
     }
 
     public boolean addAll(@Nonnull final T[] list) {
         boolean result = false;
-        for (T t : list) result |= this.add(t);
+        for (final T t : list) result |= this.add(t);
         return result;
     }
 
@@ -181,6 +189,18 @@ public class ObjectArray<T> implements Collection<T> {
     @Override
     public boolean retainAll(@Nonnull final Collection<?> c) {
         return this.removeIf(entry -> !c.contains(entry));
+    }
+
+    public void trim() {
+        if (this.insertionIdx < this.data.length) {
+            if (this.insertionIdx == 0) {
+                this.data = ArrayUtils.EMPTY_OBJECT_ARRAY;
+            } else {
+                final Object[] t = new Object[this.insertionIdx];
+                System.arraycopy(this.data, 0, t, 0, this.insertionIdx);
+                this.data = t;
+            }
+        }
     }
 
     @Override

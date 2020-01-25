@@ -70,14 +70,21 @@ public class WeightTable<T> {
         totalWeight += entry.getWeight();
     }
 
+    public int size() {
+        return entries.size();
+    }
+
     @Nullable
     public T next() {
         if (this.totalWeight <= 0)
             return null;
 
+        if (this.entries.size() == 1)
+            return this.entries.get(0).getItem();
+
         int targetWeight = RANDOM.nextInt(this.totalWeight);
 
-        IItem<T> selected = null;
+        IItem<T> selected;
         int i = -1;
         do {
             selected = entries.get(++i);
@@ -85,6 +92,10 @@ public class WeightTable<T> {
         } while (targetWeight >= 0);
 
         return selected.getItem();
+    }
+
+    public void trim() {
+        this.entries.trim();
     }
 
     public interface IItem<T> {

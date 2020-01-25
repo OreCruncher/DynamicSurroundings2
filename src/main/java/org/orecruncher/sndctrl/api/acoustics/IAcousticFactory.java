@@ -62,6 +62,6 @@ public interface IAcousticFactory {
      * Creates a sound instance with no attenuation and is not affected by range or other sound effects.
      */
     @Nonnull
-    ISoundInstance createBackgroundSound();
+    IFadableSoundInstance createBackgroundSound();
 
 }

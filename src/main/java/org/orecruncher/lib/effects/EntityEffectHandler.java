@@ -21,6 +21,7 @@ package org.orecruncher.lib.effects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -28,6 +29,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.lib.events.DiagnosticEvent;
+import org.orecruncher.lib.math.LoggingTimerEMA;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
@@ -46,6 +49,9 @@ import java.util.Optional;
  */
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class EntityEffectHandler {
+
+    private static final LoggingTimerEMA timer = new LoggingTimerEMA("Entity Effect Update");
+    private static long nanos;
 
     private EntityEffectHandler() {
     }
@@ -78,26 +84,30 @@ public final class EntityEffectHandler {
     @SubscribeEvent(receiveCanceled = true)
     public static void onLivingUpdate(@Nonnull final LivingEvent.LivingUpdateEvent event) {
         final LivingEntity entity = event.getEntityLiving();
-        if (entity == null || !entity.getEntityWorld().isRemote)
-            return;
+        if (entity != null && entity.getEntityWorld().isRemote) {
 
-        entity.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent( cap -> {
-            final int effectDistSq = Config.CLIENT.effects.get_effectRange() * Config.CLIENT.effects.get_effectRange();
-            final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= effectDistSq;
-            final EntityEffectManager mgr = cap.get();
-            if (mgr != null && !inRange) {
-                cap.clear();
-            } else if (mgr == null && inRange && entity.isAlive()) {
-                cap.set(create(entity).get());
-            } else if (mgr != null) {
-                mgr.update();
-            }
-        });
+            final long start = System.nanoTime();
+
+            entity.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent(cap -> {
+                final int effectDistSq = Config.CLIENT.effects.get_effectRange() * Config.CLIENT.effects.get_effectRange();
+                final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= effectDistSq;
+                final EntityEffectManager mgr = cap.get();
+                if (mgr != null && !inRange) {
+                    cap.clear();
+                } else if (mgr == null && inRange && entity.isAlive()) {
+                    cap.set(create(entity).get());
+                } else if (mgr != null) {
+                    mgr.update();
+                }
+            });
+
+            nanos += System.nanoTime() - start;
+        }
     }
 
     private static void clearHandlers() {
         final Iterable<Entity> entities = GameUtils.getWorld().getAllEntities();
-        for (final Entity e: entities) {
+        for (final Entity e : entities) {
             e.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent(IEntityFX::clear);
         }
     }
@@ -110,9 +120,20 @@ public final class EntityEffectHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onEntityJoin(@Nonnull final EntityJoinWorldEvent event) {
         if (event.getWorld().isRemote) {
-           if (GameUtils.getPlayer() == event.getEntity())
-               clearHandlers();
+            if (GameUtils.getPlayer() == event.getEntity())
+                clearHandlers();
         }
+    }
+
+    @SubscribeEvent
+    public static void onClientTick(@Nonnull final TickEvent.ClientTickEvent event) {
+        timer.update(nanos);
+        nanos = 0;
+    }
+
+    @SubscribeEvent
+    public static void onDiagnostics(@Nonnull final DiagnosticEvent event) {
+        event.getRenderTimers().add(timer);
     }
 
 }

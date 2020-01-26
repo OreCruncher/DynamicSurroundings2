@@ -24,7 +24,7 @@ import org.orecruncher.lib.Lib;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 @SuppressWarnings("unused")
 public class ObjectField<T, R> {
@@ -37,6 +37,10 @@ public class ObjectField<T, R> {
     private final String fieldName;
     @Nonnull
     private final Supplier<R> defaultValue;
+    @Nonnull
+    private final Function<T, R> getter;
+    @Nonnull
+    private final BiConsumer<T, R> setter;
 
     public ObjectField(@Nonnull final String className, @Nonnull final Supplier<R> defaultValue, @Nonnull final String... fieldName) {
         Preconditions.checkNotNull(defaultValue);
@@ -49,6 +53,11 @@ public class ObjectField<T, R> {
 
         if (isNotAvailable()) {
             Lib.LOGGER.warn("Unable to locate field [%s::%s]", this.className, this.fieldName);
+            this.getter = obj -> defaultValue.get();
+            this.setter = (obj, v) -> {};
+        } else {
+            this.getter = this::getImpl;
+            this.setter = this::setImpl;
         }
     }
 
@@ -63,6 +72,11 @@ public class ObjectField<T, R> {
 
         if (isNotAvailable()) {
             Lib.LOGGER.warn("Unable to locate field [%s::%s]", this.className, this.fieldName);
+            this.getter = obj -> defaultValue.get();
+            this.setter = (obj, v) -> {};
+        } else {
+            this.getter = this::getImpl;
+            this.setter = this::setImpl;
         }
     }
 
@@ -70,11 +84,12 @@ public class ObjectField<T, R> {
         return this.field == null;
     }
 
-    @SuppressWarnings("unchecked")
     public R get(@Nonnull T obj) {
-        if (isNotAvailable())
-            return this.defaultValue.get();
+        return this.getter.apply(obj);
+    }
 
+    @SuppressWarnings("unchecked")
+    private R getImpl(@Nonnull T obj) {
         try {
             return (R) this.field.get(obj);
         } catch (@Nonnull final Throwable ignored) {
@@ -83,7 +98,10 @@ public class ObjectField<T, R> {
     }
 
     public void set(@Nonnull T obj, @Nonnull R value) {
-        check();
+        this.setter.accept(obj, value);
+    }
+
+    private void setImpl(@Nonnull T obj, @Nonnull R value) {
         try {
             this.field.set(obj, value);
         } catch (@Nonnull final Throwable ignored) {

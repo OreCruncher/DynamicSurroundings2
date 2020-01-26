@@ -26,7 +26,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WeightTable;
-import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
@@ -34,15 +33,12 @@ import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
 
 /**
  * Plays a random acoustic from a weighted list of selections.
  */
 @OnlyIn(Dist.CLIENT)
 public class ProbabilityAcoustic implements IAcoustic {
-
-    private static final Random RANDOM = XorShiftRandom.current();
 
     protected final ResourceLocation name;
     protected final WeightTable<IAcoustic> table;

@@ -27,7 +27,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.effects.EntityEffectHandler;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
@@ -104,9 +103,6 @@ public final class SoundControl {
         // Initialize after.  Reason is that a mod could override a regular sound with a complex
         // acoustic, so we only want to create a SimpleAcoustic if it does not exist in the map.
         AcousticLibrary.initialize();
-
-        final BlockStateMatcher matcher = BlockStateMatcher.create("minecraft:grass_block[snowy=false]");
-        int x = 0;
     }
 
     @SubscribeEvent

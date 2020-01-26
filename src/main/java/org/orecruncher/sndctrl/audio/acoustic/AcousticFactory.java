@@ -23,7 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.random.XorShiftRandom;
+import org.orecruncher.lib.random.LCGRandom;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import org.orecruncher.sndctrl.api.acoustics.IFadableSoundInstance;
 import org.orecruncher.sndctrl.audio.BackgroundSoundInstance;
@@ -31,7 +31,6 @@ import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 import org.orecruncher.sndctrl.audio.SoundBuilder;
 
 import javax.annotation.Nonnull;
-import java.util.Random;
 
 /**
  * Helper that creates sound instances using a SoundBuilder, but tweaks based on the circumstances requested.
@@ -40,7 +39,7 @@ import java.util.Random;
 public class AcousticFactory implements IAcousticFactory {
 
     private static final int SOUND_RANGE = 12;
-    private static final Random RANDOM = XorShiftRandom.current();
+    private static final LCGRandom RANDOM = new LCGRandom();
 
     @Nonnull
     private final SoundBuilder builder;

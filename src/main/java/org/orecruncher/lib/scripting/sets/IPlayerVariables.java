@@ -24,6 +24,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public interface IPlayerVariables {
 
+    boolean isCreative();
+
     boolean isBurning();
 
     boolean isSuffocating();
@@ -56,11 +58,15 @@ public interface IPlayerVariables {
 
     float getMaxHealth();
 
-    float getX();
+    float getFoodLevel();
 
-    float getY();
+    float getFoodSaturationLevel();
 
-    float getZ();
+    double getX();
+
+    double getY();
+
+    double getZ();
 
     default boolean isHurt() {
         return false;

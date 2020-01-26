@@ -56,6 +56,7 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
         }
         return false;
     });
+    private boolean isCreative;
     private boolean isBurning;
     private boolean isFlying;
     private boolean isSprintnig;
@@ -69,9 +70,11 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
     private boolean isMoving;
     private float health;
     private float maxHealth;
-    private float x;
-    private float y;
-    private float z;
+    private float foodLevel;
+    private float foodSaturationLevel;
+    private double x;
+    private double y;
+    private double z;
 
     public PlayerVariables() {
         super("player");
@@ -84,6 +87,7 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
             final PlayerEntity player = GameUtils.getPlayer();
             assert player != null;
 
+            this.isCreative = player.isCreative();
             this.isBurning = player.isBurning();
             this.isFlying = player.isAirBorne;
             this.isSprintnig = player.isSprinting();
@@ -97,12 +101,15 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
             this.isMoving = player.distanceWalkedModified != player.prevDistanceWalkedModified;
             this.health = player.getHealth();
             this.maxHealth = player.getMaxHealth();
-            this.x = (float) player.posX;
-            this.y = (float) player.posY;
-            this.z = (float) player.posZ;
+            this.foodLevel = player.getFoodStats().getFoodLevel();
+            this.foodSaturationLevel = player.getFoodStats().getSaturationLevel();
+            this.x = player.posX;
+            this.y = player.posY;
+            this.z = player.posZ;
 
         } else {
 
+            this.isCreative = false;
             this.isBurning = false;
             this.isFlying = false;
             this.isSprintnig = false;
@@ -113,8 +120,10 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
             this.isWet = false;
             this.isRiding = false;
             this.isOnGround = false;
-            this.health = 0;
-            this.maxHealth = 0;
+            this.health = 20F;
+            this.maxHealth = 20F;
+            this.foodLevel = 20F;
+            this.foodSaturationLevel = 20F;
             this.x = 0;
             this.y = 0;
             this.z = 0;
@@ -131,6 +140,11 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
     @Override
     public IPlayerVariables getInterface() {
         return this;
+    }
+
+    @Override
+    public boolean isCreative() {
+        return this.isCreative;
     }
 
     @Override
@@ -214,17 +228,27 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
     }
 
     @Override
-    public float getX() {
+    public float getFoodLevel() {
+        return this.foodLevel;
+    }
+
+    @Override
+    public float getFoodSaturationLevel() {
+        return this.foodSaturationLevel;
+    }
+
+    @Override
+    public double getX() {
         return this.x;
     }
 
     @Override
-    public float getY() {
+    public double getY() {
         return this.y;
     }
 
     @Override
-    public float getZ() {
+    public double getZ() {
         return this.z;
     }
 }

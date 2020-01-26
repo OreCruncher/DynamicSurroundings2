@@ -29,7 +29,7 @@ import org.orecruncher.lib.scripting.VariableSet;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class WeatherVariables extends VariableSet<IWorldVariables> implements IWorldVariables {
+public class WeatherVariables extends VariableSet<IWeatherVariables> implements IWeatherVariables {
 
     private final LazyVariable<Float> temperature = new LazyVariable<>(() -> {
         if (GameUtils.isInGame()) {
@@ -41,7 +41,8 @@ public class WeatherVariables extends VariableSet<IWorldVariables> implements IW
     });
     private boolean isRaining;
     private boolean isThundering;
-    private float rainFall;
+    private float rainIntensity;
+    private float thunderIndensity;
 
     public WeatherVariables() {
         super("weather");
@@ -49,7 +50,7 @@ public class WeatherVariables extends VariableSet<IWorldVariables> implements IW
 
     @Nonnull
     @Override
-    public IWorldVariables getInterface() {
+    public IWeatherVariables getInterface() {
         return this;
     }
 
@@ -57,13 +58,15 @@ public class WeatherVariables extends VariableSet<IWorldVariables> implements IW
     public void update() {
         if (GameUtils.isInGame()) {
             final World world = GameUtils.getWorld();
-            this.isRaining = world.isRaining();
-            this.isThundering = world.isThundering();
-            this.rainFall = world.getRainStrength(1F);
+            this.rainIntensity = WorldUtils.getRainStrength(world, 1F);
+            this.thunderIndensity = WorldUtils.getThunderStrength(world, 1F);
+            this.isRaining = WorldUtils.isRaining(world);
+            this.isThundering = WorldUtils.isThundering(world);
         } else {
+            this.rainIntensity = 0F;
+            this.thunderIndensity = 0F;
             this.isRaining = false;
             this.isThundering = false;
-            this.rainFall = 0F;
         }
         this.temperature.reset();
     }
@@ -79,8 +82,13 @@ public class WeatherVariables extends VariableSet<IWorldVariables> implements IW
     }
 
     @Override
-    public float getRainFall() {
-        return this.rainFall;
+    public float getRainIntensity() {
+        return this.rainIntensity;
+    }
+
+    @Override
+    public float getThunderIntensity() {
+        return this.thunderIndensity;
     }
 
     @Override

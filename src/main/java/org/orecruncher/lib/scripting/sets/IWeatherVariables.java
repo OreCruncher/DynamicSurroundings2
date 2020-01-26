@@ -23,7 +23,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WorldUtils;
 
 @OnlyIn(Dist.CLIENT)
-public interface IWorldVariables {
+public interface IWeatherVariables {
 
     /**
      * Is it currently raining in the player world
@@ -59,9 +59,17 @@ public interface IWorldVariables {
 
     /**
      * Get the current rain intensity
-     * @return
+     *
+     * @return 0 - 1
      */
-    float getRainFall();
+    float getRainIntensity();
+
+    /**
+     * Get the current thunder intensity
+     *
+     * @return 0 - 1
+     */
+    float getThunderIntensity();
 
     /**
      * Gets the temperature at the current player location

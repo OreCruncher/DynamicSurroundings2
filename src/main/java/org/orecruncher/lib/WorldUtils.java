@@ -52,12 +52,25 @@ public final class WorldUtils {
         float getTemp(@Nonnull final World world, @Nonnull final BlockPos pos);
     }
 
-    private interface IRainStrengthHandler {
-        float getRainStrength(@Nonnull final World world, final float partialTicks);
+    /**
+     * Weather support to obtain current rain/thunder strength client side
+     */
+    private interface IWeatherStrength {
+        float getStrength(@Nonnull final World world, final float partialTicks);
+    }
+
+    /**
+     * Weather support to determine if an aspect of weather is occuring.
+     */
+    private interface IWeatherAspect {
+        boolean isOccuring(@Nonnull final World world);
     }
 
     private static final ITemperatureHandler TEMP;
-    private static final IRainStrengthHandler RAINSTRENGTH;
+    private static final IWeatherStrength RAIN_STRENGTH;
+    private static final IWeatherStrength THUNDER_STRENGTH;
+    private static final IWeatherAspect RAIN_OCCURING;
+    private static final IWeatherAspect THUNDER_OCCURING;
 
     static {
         if (ModEnvironment.SereneSeasons.isLoaded())
@@ -66,7 +79,10 @@ public final class WorldUtils {
             TEMP = (world, pos) -> world.getBiome(pos).getTemperature(pos);
 
         // Place holder for future
-        RAINSTRENGTH = World::getRainStrength;
+        RAIN_STRENGTH = World::getRainStrength;
+        RAIN_OCCURING = World::isRaining;
+        THUNDER_STRENGTH = World::getThunderStrength;
+        THUNDER_OCCURING = World::isThundering;
     }
 
     private WorldUtils() {
@@ -150,11 +166,19 @@ public final class WorldUtils {
     }
 
     public static float getRainStrength(@Nonnull final World world, final float partialTicks) {
-        return RAINSTRENGTH.getRainStrength(world, partialTicks);
+        return RAIN_STRENGTH.getStrength(world, partialTicks);
+    }
+
+    public static float getThunderStrength(@Nonnull final World world, final float partialTicks) {
+        return THUNDER_STRENGTH.getStrength(world, partialTicks);
     }
 
     public static boolean isRaining(@Nonnull final World world) {
-        return getRainStrength(world, 1F) > 0;
+        return RAIN_OCCURING.isOccuring(world);
+    }
+
+    public static boolean isThundering(@Nonnull final World world) {
+        return THUNDER_OCCURING.isOccuring(world);
     }
 
     @Nonnull

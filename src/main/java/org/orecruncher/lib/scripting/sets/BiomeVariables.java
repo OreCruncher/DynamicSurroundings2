@@ -40,8 +40,6 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
     private final LazyVariable<String> name = new LazyVariable<>(() -> this.biome.getDisplayName().getFormattedText());
     private final LazyVariable<String> modid = new LazyVariable<>(() -> this.biome.getRegistryName().getNamespace());
     private final LazyVariable<String> id = new LazyVariable<>(() -> this.biome.getRegistryName().toString());
-    private final LazyVariable<Float> rainfall = new LazyVariable<>(() -> this.biome.getDownfall());
-    private final LazyVariable<Float> temperature = new LazyVariable<>(() -> this.biome.getDefaultTemperature());
     private final LazyVariable<String> category = new LazyVariable<>(() -> this.biome.getCategory().getName());
     private final LazyVariable<String> rainType = new LazyVariable<>(() -> this.biome.getPrecipitation().getName());
     private final LazyVariable<String> temp = new LazyVariable<>(() -> this.biome.getTempCategory().getName());
@@ -78,8 +76,6 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
             this.name.reset();
             this.modid.reset();
             this.id.reset();
-            this.rainfall.reset();
-            this.temperature.reset();
             this.category.reset();
             this.rainType.reset();
             this.temp.reset();
@@ -107,12 +103,12 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
 
     @Override
     public float getRainfall() {
-        return this.rainfall.get();
+        return this.biome.getDownfall();
     }
 
     @Override
     public float getTemperature() {
-        return this.temperature.get();
+        return this.biome.getDefaultTemperature();
     }
 
     @Override

@@ -41,12 +41,12 @@ public abstract class AgeableMote extends Mote {
     }
 
     @Override
-    public void tick() {
+    public boolean tick() {
 
         // The mote reached it's life expectancy
         if (advanceAge())
             kill();
 
-        super.tick();
+        return super.tick();
     }
 }

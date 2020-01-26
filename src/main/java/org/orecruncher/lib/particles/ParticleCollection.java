@@ -43,10 +43,7 @@ final class ParticleCollection extends BaseParticle {
     /**
      * Predicate used to update a mote and return whether it is dead or not.
      */
-    private static final Predicate<IParticleMote> UPDATE_REMOVE = mote -> {
-        mote.tick();
-        return !mote.isAlive();
-    };
+    private static final Predicate<IParticleMote> UPDATE_REMOVE = mote -> !mote.tick();
 
     protected final LoggingTimerEMA render;
     protected final ObjectArray<IParticleMote> myParticles = new ObjectArray<>(ALLOCATION_SIZE);
@@ -66,12 +63,10 @@ final class ParticleCollection extends BaseParticle {
         return this.myParticles.size() < MAX_PARTICLES;
     }
 
-    public boolean addParticle(@Nonnull final IParticleMote mote) {
+    public void addParticle(@Nonnull final IParticleMote mote) {
         if (canFit()) {
             this.myParticles.add(mote);
-            return true;
         }
-        return false;
     }
 
     public int size() {

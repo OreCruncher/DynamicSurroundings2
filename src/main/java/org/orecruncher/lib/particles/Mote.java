@@ -75,17 +75,18 @@ public abstract class Mote implements IParticleMote {
     }
 
     @Override
-    public void tick() {
-        if (!isAlive())
-            return;
-
-        update();
-
-        // The update() may have killed the mote
+    public boolean tick() {
         if (isAlive()) {
-            setPosition(this.posX, this.posY, this.posZ);
-            updateBrightness();
+
+            update();
+
+            // The update() may have killed the mote
+            if (isAlive()) {
+                setPosition(this.posX, this.posY, this.posZ);
+                updateBrightness();
+            }
         }
+        return isAlive();
     }
 
     protected void update() {
@@ -122,20 +123,14 @@ public abstract class Mote implements IParticleMote {
         return (float) (this.posZ - interpZ());
     }
 
-    protected void applyColor(@Nonnull final BufferBuilder buffer) {
-        buffer.color(this.red, this.green, this.blue, this.alpha);
-    }
-
-    protected void applyLightmap(@Nonnull final BufferBuilder buffer) {
-        buffer.lightmap(this.slX16, this.blX16);
-    }
-
     protected void drawVertex(final BufferBuilder buffer, final double x, final double y, final double z,
                               final double u, final double v) {
-        buffer.pos(x, y, z).tex(u, v);
-        applyColor(buffer);
-        applyLightmap(buffer);
-        buffer.endVertex();
+        buffer
+                .pos(x, y, z)
+                .tex(u, v)
+                .color(this.red, this.green, this.blue, this.alpha)
+                .lightmap(this.slX16, this.blX16)
+                .endVertex();
     }
 
     @Override

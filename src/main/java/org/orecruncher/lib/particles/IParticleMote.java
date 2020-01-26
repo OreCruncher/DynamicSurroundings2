@@ -40,8 +40,10 @@ public interface IParticleMote {
 
     /**
      * Causes the mote to update advancing it's state one tick.
+     *
+     * @return true if the particle has been ticked; false if it should die
      */
-    void tick();
+    boolean tick();
 
     /**
      * Causes the mote to render itself.

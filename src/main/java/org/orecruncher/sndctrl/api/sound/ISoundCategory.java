@@ -16,22 +16,22 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.api.acoustics;
+package org.orecruncher.sndctrl.api.sound;
 
-import net.minecraft.client.audio.ITickableSound;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+
 @OnlyIn(Dist.CLIENT)
-public interface IFadableSoundInstance extends ISoundInstance, ITickableSound {
+public interface ISoundCategory {
+    String getName();
 
-    void noFade();
+    float getVolumeScale();
 
-    void fade();
-
-    void unfade();
-
-    boolean isFading();
-
-    void setFadeVolume(final float v);
+    @Nonnull
+    default SoundCategory getRealCategory() {
+        return SoundCategory.NEUTRAL;
+    }
 }

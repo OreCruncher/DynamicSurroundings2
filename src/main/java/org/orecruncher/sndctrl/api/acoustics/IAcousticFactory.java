@@ -23,6 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 

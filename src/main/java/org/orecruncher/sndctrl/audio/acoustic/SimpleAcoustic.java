@@ -30,8 +30,7 @@ import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import org.orecruncher.sndctrl.audio.AudioEngine;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
-import org.orecruncher.sndctrl.audio.SoundBuilder;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -52,7 +51,7 @@ public class SimpleAcoustic implements IAcoustic {
     }
 
     public SimpleAcoustic(@Nonnull final ResourceLocation name, @Nonnull final SoundEvent evt) {
-        this(name, new AcousticFactory(SoundBuilder.builder(evt)));
+        this(name, new AcousticFactory(evt));
     }
 
     public SimpleAcoustic(@Nonnull final ResourceLocation name, @Nonnull final IAcousticFactory factory) {

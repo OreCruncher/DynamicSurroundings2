@@ -23,7 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

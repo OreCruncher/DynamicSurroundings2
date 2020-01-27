@@ -29,9 +29,8 @@ import org.orecruncher.lib.JsonUtils;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
-import org.orecruncher.sndctrl.audio.Category;
-import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
-import org.orecruncher.sndctrl.audio.SoundBuilder;
+import org.orecruncher.sndctrl.api.sound.Category;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
@@ -199,38 +198,36 @@ public final class AcousticCompiler {
 
         final ResourceLocation res = resolveResource(sound, null);
         final SoundEvent evt = SoundLibrary.getSound(res).orElseThrow(IllegalStateException::new);
-        final SoundBuilder builder = SoundBuilder.builder(evt);
-        return Optional.of(new SimpleAcoustic(res, new AcousticFactory(builder)));
+        final ISoundCategory cat = SoundLibrary.getSoundCategory(evt.getName(), Category.AMBIENT);
+        return Optional.of(new SimpleAcoustic(res, new AcousticFactory(evt, cat)));
     }
 
     @Nonnull
     private Optional<IAcoustic> simpleHandler(@Nonnull final Map.Entry<String, JsonElement> entry) throws AcousticException {
-        final SoundBuilder builder = create(entry.getValue().getAsJsonObject());
+        final AcousticFactory factory = create(entry.getValue().getAsJsonObject());
         final ResourceLocation acousticId;
 
         if (StringUtils.isNullOrEmpty(entry.getKey())) {
-            acousticId = builder.getResourceName();
+            acousticId = factory.getResourceName();
         } else {
             acousticId = resolveResource(entry.getKey(), null);
         }
 
-        final AcousticFactory factory = new AcousticFactory(builder);
         return Optional.of(new SimpleAcoustic(acousticId, factory));
     }
 
     @Nonnull
     private Optional<IAcoustic> delayedHandler(@Nonnull final Map.Entry<String, JsonElement> entry) throws AcousticException {
         final JsonObject obj = entry.getValue().getAsJsonObject();
-        final SoundBuilder builder = create(obj);
+        final AcousticFactory factory = create(obj);
         final ResourceLocation acousticId;
 
         if (StringUtils.isNullOrEmpty(entry.getKey())) {
-            acousticId = builder.getResourceName();
+            acousticId = factory.getResourceName();
         } else {
             acousticId = resolveResource(entry.getKey(), null);
         }
 
-        final AcousticFactory factory = new AcousticFactory(builder);
         final DelayedAcoustic da = new DelayedAcoustic(acousticId, factory);
 
         if (obj.has(Constants.DELAY)) {
@@ -314,7 +311,7 @@ public final class AcousticCompiler {
     }
 
     @Nonnull
-    private SoundBuilder create(@Nonnull final JsonObject obj) throws AcousticException {
+    private AcousticFactory create(@Nonnull final JsonObject obj) throws AcousticException {
         if (!obj.has(Constants.NAME))
             throw new AcousticException("Sound name property not found");
 
@@ -334,7 +331,8 @@ public final class AcousticCompiler {
             cat = SoundLibrary.getSoundCategory(res, Category.NEUTRAL);
         }
 
-        final SoundBuilder builder = SoundBuilder.builder(evt, cat);
+        final AcousticFactory builder = new AcousticFactory(evt);
+        builder.setCategory(cat);
 
         if (obj.has(Constants.PITCH)) {
             builder.setPitch(getFloatSetting(Constants.PITCH, obj, 1F));

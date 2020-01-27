@@ -16,14 +16,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio;
+package org.orecruncher.sndctrl.api.sound;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
-import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
 import org.orecruncher.sndctrl.audio.handlers.MusicFader;
 
 import javax.annotation.Nonnull;
@@ -81,16 +80,34 @@ public final class Category implements ISoundCategory {
         this.scaling = scale;
     }
 
+    /**
+     * Resolves an ISoundCategory instance based on the name supplied.
+     *
+     * @param name The name of the sound category to retrieve
+     * @return Instance of the named sound category if found; null otherwise
+     */
     @Nonnull
     public static Optional<ISoundCategory> getCategory(@Nonnull final String name) {
         return Optional.ofNullable(nameToCategory.get(name));
     }
 
+    /**
+     * Resolves an ISoundCategory based on the supplied Minecraft SoundCategory instance.
+     *
+     * @param cat The SoundCategory to retrieve
+     * @return Instance of the ISoundCategory that corresponds to the provided SoundCategory
+     */
     @Nonnull
     public static Optional<ISoundCategory> getCategory(@Nonnull final SoundCategory cat) {
         return Optional.of(categoryToNew.get(cat));
     }
 
+    /**
+     * Registers an ISoundCategory instance with the system.  DO NOT CALL THIS METHOD.  Use the IMC registration
+     * method if you need to register a sound category.  It handles it in a thread safe way.
+     *
+     * @param category The ISoundCategory instance to register
+     */
     public static void register(@Nonnull final ISoundCategory category) {
         nameToCategory.put(category.getName(), category);
     }

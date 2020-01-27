@@ -27,9 +27,9 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.math.MathStuff;
-import org.orecruncher.sndctrl.audio.Category;
-import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.Category;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;

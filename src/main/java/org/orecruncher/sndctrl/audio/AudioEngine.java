@@ -38,7 +38,7 @@ import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

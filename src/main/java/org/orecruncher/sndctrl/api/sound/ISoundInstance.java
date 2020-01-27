@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.api.acoustics;
+package org.orecruncher.sndctrl.api.sound;
 
 import net.minecraft.client.audio.ISound;
 import net.minecraftforge.api.distmarker.Dist;

@@ -16,11 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.audio;
+package org.orecruncher.sndctrl.api.sound;
 
 import net.minecraft.client.audio.ISound.AttenuationType;
 import net.minecraft.client.audio.LocatableSound;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -29,8 +28,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
-import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
+import org.orecruncher.sndctrl.audio.SoundInstance;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
@@ -42,7 +40,7 @@ import java.util.Random;
  */
 @SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
-public final class SoundBuilder {
+public class SoundBuilder {
 
     private static final Random RANDOM = XorShiftRandom.current();
     private static final float[] volumeDelta = {-0.2F, 0.0F, 0.0F, 0.2F, 0.2F, 0.2F};
@@ -89,7 +87,11 @@ public final class SoundBuilder {
         this.playDelay = builder.playDelay;
     }
 
-    private SoundBuilder(@Nonnull final SoundEvent evt, @Nonnull final ISoundCategory cat) {
+    protected SoundBuilder(@Nonnull final SoundEvent evt) {
+        this(evt, Category.NEUTRAL);
+    }
+
+    protected SoundBuilder(@Nonnull final SoundEvent evt, @Nonnull final ISoundCategory cat) {
         Objects.requireNonNull(evt);
         Objects.requireNonNull(cat);
 
@@ -292,7 +294,7 @@ public final class SoundBuilder {
     }
 
     @Nonnull
-    public ISoundInstance build() {
+    protected SoundInstance makeSound() {
         final SoundInstance sound = create(this.soundEvent, this.soundCategory);
         sound.setVolume(this.getVolume());
         sound.setPitch(this.getPitch());
@@ -312,9 +314,8 @@ public final class SoundBuilder {
     }
 
     @Nonnull
-    public ISoundInstance build(@Nonnull Entity entity) {
-        Objects.requireNonNull(entity);
-        return new EntitySoundInstance(entity, build());
+    public ISoundInstance build() {
+        return makeSound();
     }
 
 }

@@ -23,9 +23,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.math.MathStuff;
-import org.orecruncher.sndctrl.api.acoustics.IFadableSoundInstance;
-import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
@@ -89,7 +89,7 @@ public class FadableSoundInstance extends WrappedSoundInstance implements IFadab
         }
 
         // Clamp it so we are valid
-        this.fadeScale = MathStuff.clamp1(this.fadeScale);
+        this.fadeScale = MathStuff.clamp(this.fadeScale, 0, this.fadeScaleTarget);
 
         // Do the float compare.  Takes into account epsilon.
         if (Float.compare(this.fadeScale, 0) == 0) {

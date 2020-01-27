@@ -24,40 +24,37 @@ import net.minecraft.client.audio.LocatableSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
-@SuppressWarnings("unused")
 @OnlyIn(Dist.CLIENT)
 public class SoundInstance extends LocatableSound implements ISoundInstance {
 
-    private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-
     @Nonnull
-    private SoundState state = SoundState.NONE;
+    private SoundState state;
     @Nonnull
     private ISoundCategory category;
 
     private int playDelay;
 
-    SoundInstance(@Nonnull final SoundEvent event, @Nonnull final ISoundCategory cat) {
+    public SoundInstance(@Nonnull final SoundEvent event, @Nonnull final ISoundCategory cat) {
         this(event.getName(), cat);
     }
 
-    SoundInstance(@Nonnull final ResourceLocation soundResource, @Nonnull final ISoundCategory cat) {
+    public SoundInstance(@Nonnull final ResourceLocation soundResource, @Nonnull final ISoundCategory cat) {
         super(soundResource, cat.getRealCategory());
 
+        this.state = SoundState.NONE;
         this.category = cat;
         this.volume = 1F;
         this.pitch = 1F;
-        this.setPosition(0, 0, 0);
+        this.x = this.y = this.z = 0;
         this.repeat = false;
         this.repeatDelay = 0;
         this.attenuationType = ISound.AttenuationType.LINEAR;
@@ -91,7 +88,6 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.pos.setPos(x, y, z);
     }
 
     public void setPosition(@Nonnull final Vec3i pos) {

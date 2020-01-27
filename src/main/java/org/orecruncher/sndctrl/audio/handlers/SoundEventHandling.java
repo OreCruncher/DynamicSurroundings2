@@ -35,7 +35,7 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.api.acoustics.IFadableSoundInstance;
+import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
 import org.orecruncher.sndctrl.audio.*;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.library.AcousticLibrary;

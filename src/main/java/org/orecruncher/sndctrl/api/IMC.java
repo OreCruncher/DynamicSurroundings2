@@ -30,9 +30,9 @@ import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
-import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
-import org.orecruncher.sndctrl.audio.Category;
+import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.audio.handlers.SoundVolumeEvaluator;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
@@ -44,7 +44,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Helper interface used to register items with Sound Control using IMC.
+ * Helper interface used to register items with Sound Control using IMC.  Because of the parallel loading of Forge
+ * intermod communication outside of IMC can cause all types of difficulties.
  */
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class IMC {
@@ -149,6 +150,8 @@ public final class IMC {
 
     /**
      * Register a callback method to be invoked during completion processing.  Call may come back on a separate thread.
+     * This method is useful to prevent concurrent access by mods during setup when they need to access the acoustic
+     * library and such.
      *
      * @param callback  Callback to invoke on completion
      */
@@ -157,6 +160,16 @@ public final class IMC {
             Methods.REGISTER_COMPLETION_CALLBACK.send(() -> r);
     }
 
+    /**
+     * Registers a callback method that will be invoked during sound processing to determine the scaling factor to
+     * apply to a sound play.  Useful for mods that have blocks or devices that modify the player's sound experience
+     * without replacing the underlying sound in the sound engine out from under Sound Control.
+     *
+     * If multiple methods are registered, all will be invoked.  The factor that is applied is the lowest scale factor
+     * from all the methods.  They are not multiplied together.
+     *
+     * @param callback  Callback method for supplying a scale factor to apply when clamping the sound volume
+     */
     public static void registerVolumeScaleCallback(@Nonnull final Function<ISound, Float> callback) {
         Methods.REGISTER_VOLUME_SCALE_CALLBACK.send(() -> callback);
     }
@@ -165,8 +178,13 @@ public final class IMC {
      * Called by the startup routine to process any callbacks that were posted.  Not to be called by other mods!
      */
     public static void processCompletions() {
-        for (final Runnable r: callbacks)
-            r.run();
+        for (final Runnable r : callbacks) {
+            try {
+                r.run();
+            } catch (@Nonnull final Throwable t) {
+                LOGGER.error(t, "Error executing completion processing routine");
+            }
+        }
         callbacks.clear();
     }
 

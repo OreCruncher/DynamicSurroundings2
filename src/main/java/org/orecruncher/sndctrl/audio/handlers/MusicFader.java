@@ -32,7 +32,7 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.AudioEngine;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 import org.orecruncher.sndctrl.events.AudioEvent.MusicFadeAudioEvent;
 
 import javax.annotation.Nonnull;

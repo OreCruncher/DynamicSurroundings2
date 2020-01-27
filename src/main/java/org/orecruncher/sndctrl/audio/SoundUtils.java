@@ -30,7 +30,7 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 
 import javax.annotation.Nonnull;

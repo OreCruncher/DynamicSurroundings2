@@ -19,16 +19,21 @@
 package org.orecruncher.sndctrl.audio.acoustic;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.LCGRandom;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
-import org.orecruncher.sndctrl.api.acoustics.IFadableSoundInstance;
+import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.BackgroundSoundInstance;
-import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
-import org.orecruncher.sndctrl.audio.SoundBuilder;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.SoundBuilder;
+import org.orecruncher.sndctrl.api.sound.Category;
+import org.orecruncher.sndctrl.audio.EntitySoundInstance;
+import org.orecruncher.sndctrl.audio.SoundInstance;
 
 import javax.annotation.Nonnull;
 
@@ -36,16 +41,17 @@ import javax.annotation.Nonnull;
  * Helper that creates sound instances using a SoundBuilder, but tweaks based on the circumstances requested.
  */
 @OnlyIn(Dist.CLIENT)
-public class AcousticFactory implements IAcousticFactory {
+public class AcousticFactory extends SoundBuilder implements IAcousticFactory {
 
     private static final int SOUND_RANGE = 12;
     private static final LCGRandom RANDOM = new LCGRandom();
 
-    @Nonnull
-    private final SoundBuilder builder;
+    public AcousticFactory(@Nonnull final SoundEvent event) {
+        super(event, Category.AMBIENT);
+    }
 
-    public AcousticFactory(@Nonnull final SoundBuilder builder) {
-        this.builder = builder;
+    public AcousticFactory(@Nonnull final SoundEvent event, @Nonnull final ISoundCategory category) {
+        super(event, category);
     }
 
     private static float randomRange() {
@@ -67,7 +73,9 @@ public class AcousticFactory implements IAcousticFactory {
     @Override
     @Nonnull
     public ISoundInstance createSoundAt(@Nonnull final BlockPos pos) {
-        return this.builder.setPosition(pos).build();
+        final SoundInstance sound = makeSound();
+        sound.setPosition(pos);
+        return sound;
     }
 
     /**
@@ -76,7 +84,9 @@ public class AcousticFactory implements IAcousticFactory {
     @Override
     @Nonnull
     public ISoundInstance createSoundAt(@Nonnull final Vec3d pos) {
-        return this.builder.setPosition(pos).build();
+        final SoundInstance sound = makeSound();
+        sound.setPosition(pos);
+        return sound;
     }
 
     /**
@@ -85,11 +95,12 @@ public class AcousticFactory implements IAcousticFactory {
     @Override
     @Nonnull
     public ISoundInstance createSoundNear(@Nonnull final Entity entity) {
-        // TODO: Test with headphones!  May need adjustments to sound right if the sound is centered on the player.
         final float posX = (float) (entity.posX + randomRange());
         final float posY = (float) (entity.posY + entity.getEyeHeight() + randomRange());
         final float posZ = (float) (entity.posZ + randomRange());
-        return this.builder.setPosition(posX, posY, posZ).build();
+        final SoundInstance sound = makeSound();
+        sound.setPosition(posX, posY, posZ);
+        return sound;
     }
 
     /**
@@ -98,7 +109,7 @@ public class AcousticFactory implements IAcousticFactory {
     @Override
     @Nonnull
     public ISoundInstance attachSound(@Nonnull final Entity entity) {
-        return this.builder.build(entity);
+        return new EntitySoundInstance(entity, makeSound());
     }
 
     /**

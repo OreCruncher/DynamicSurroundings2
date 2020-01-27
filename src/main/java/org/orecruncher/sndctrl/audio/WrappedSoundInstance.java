@@ -37,13 +37,21 @@ import java.util.Objects;
  * Base class for special sounds that aggregate the true sound being played.
  */
 @OnlyIn(Dist.CLIENT)
-public abstract class WrappedSoundInstance implements ISoundInstance, ITickableSound {
+public class WrappedSoundInstance implements ISoundInstance, ITickableSound {
 
     @Nonnull
     protected final ISoundInstance sound;
+    @Nonnull
+    protected final ISoundCategory category;
 
-    protected WrappedSoundInstance(@Nonnull final ISoundInstance sound) {
+    public WrappedSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final ISoundCategory category) {
         this.sound = Objects.requireNonNull(sound);
+        this.category = Objects.requireNonNull(category);
+    }
+
+    public WrappedSoundInstance(@Nonnull final ISoundInstance sound) {
+        this.sound = Objects.requireNonNull(sound);
+        this.category = sound.getSoundCategory();
     }
 
     @Override
@@ -66,6 +74,16 @@ public abstract class WrappedSoundInstance implements ISoundInstance, ITickableS
     @Override
     public void setState(@Nonnull SoundState state) {
         this.sound.setState(state);
+    }
+
+    @Override
+    public int getPlayDelay() {
+        return this.sound.getPlayDelay();
+    }
+
+    @Override
+    public void setPlayDelay(int delay) {
+        this.sound.setPlayDelay(delay);
     }
 
     @Nonnull
@@ -95,7 +113,7 @@ public abstract class WrappedSoundInstance implements ISoundInstance, ITickableS
     @Nonnull
     @Override
     public ISoundCategory getSoundCategory() {
-        return this.sound.getSoundCategory();
+        return this.category;
     }
 
     @Override

@@ -20,6 +20,7 @@ package org.orecruncher.sndctrl.audio;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
 import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 
 import javax.annotation.Nonnull;
@@ -31,6 +32,10 @@ import javax.annotation.Nonnull;
  */
 @OnlyIn(Dist.CLIENT)
 public class BackgroundSoundInstance extends FadableSoundInstance {
+
+    public BackgroundSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final ISoundCategory category) {
+        super(sound, category);
+    }
 
     public BackgroundSoundInstance(@Nonnull final ISoundInstance sound) {
         super(sound);

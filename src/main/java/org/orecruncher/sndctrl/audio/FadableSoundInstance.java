@@ -24,6 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.api.acoustics.IFadableSoundInstance;
+import org.orecruncher.sndctrl.api.acoustics.ISoundCategory;
 import org.orecruncher.sndctrl.api.acoustics.ISoundInstance;
 
 import javax.annotation.Nonnull;
@@ -35,17 +36,22 @@ public class FadableSoundInstance extends WrappedSoundInstance implements IFadab
     private static final float FADE_AMOUNT = 0.02F;
 
     private boolean isFading;
-    private float fadeScale;
-    private float fadeScaleTarget;
+    private float fadeScale = INITIAL_FADE;
+    private float fadeScaleTarget = 1F;
     private boolean isDonePlaying;
-    private long lastTick;
+    private long lastTick = TickCounter.getTickCount();
+
+    public FadableSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final ISoundCategory category) {
+        super(sound, category);
+    }
 
     public FadableSoundInstance(@Nonnull final ISoundInstance sound) {
         super(sound);
+    }
 
-        this.fadeScale = INITIAL_FADE;
-        this.fadeScaleTarget = 1F;
-        this.lastTick = TickCounter.getTickCount();
+    public void noFade() {
+        this.isFading = false;
+        this.fadeScale = this.fadeScaleTarget;
     }
 
     @Override
@@ -56,16 +62,6 @@ public class FadableSoundInstance extends WrappedSoundInstance implements IFadab
     @Override
     public boolean isDonePlaying() {
         return this.isDonePlaying || super.isDonePlaying();
-    }
-
-    @Override
-    public int getPlayDelay() {
-        return this.sound.getPlayDelay();
-    }
-
-    @Override
-    public void setPlayDelay(final int delay) {
-        this.sound.setPlayDelay(delay);
     }
 
     @Override

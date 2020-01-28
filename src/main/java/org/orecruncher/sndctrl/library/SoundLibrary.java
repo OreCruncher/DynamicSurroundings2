@@ -48,7 +48,8 @@ import java.util.stream.Collectors;
  */
 @OnlyIn(Dist.CLIENT)
 public final class SoundLibrary {
-    public static final SoundEvent MISSING = new SoundEvent(new ResourceLocation(SoundControl.MOD_ID, "missing_sound"));
+    private static final ResourceLocation MISSING_RESOURCE = new ResourceLocation(SoundControl.MOD_ID, "missing_sound");
+    public static final SoundEvent MISSING = new SoundEvent(MISSING_RESOURCE);
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundLibrary.class);
     private static final Object2ObjectOpenHashMap<ResourceLocation, SoundEvent> myRegistry = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<ResourceLocation, SoundMetadata> soundMetadata = new Object2ObjectOpenHashMap<>();
@@ -102,7 +103,11 @@ public final class SoundLibrary {
     @Nonnull
     public static Optional<SoundEvent> getSound(@Nonnull final ResourceLocation sound) {
         Objects.requireNonNull(sound);
-        return Optional.of(myRegistry.get(sound));
+        final SoundEvent se = myRegistry.get(sound);
+        if (se == MISSING) {
+            SoundControl.LOGGER.warn("Unable to locate sound '%s'", sound.toString());
+        }
+        return Optional.of(se);
     }
 
     @Nonnull

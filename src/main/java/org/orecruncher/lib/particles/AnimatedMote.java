@@ -25,11 +25,9 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.random.XorShiftRandom;
 
@@ -121,7 +119,7 @@ public abstract class AnimatedMote extends MotionMote {
 	}
 
 	@Override
-	public void handleCollision(@Nonnull final Pair<Vec3d, Boolean> collision) {
+	public void handleCollision(@Nonnull final ParticleCollisionResult collision) {
 		this.motionX *= 0.699999988079071D;
 		this.motionZ *= 0.699999988079071D;
 	}

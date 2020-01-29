@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.fluid.IFluidState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -31,6 +32,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.system.CallbackI;
 
 /**
  * A particle that is capable of moving it's position in the world.
@@ -74,17 +76,23 @@ public abstract class MotionMote extends AgeableMote {
 		return (float) (MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - interpZ());
 	}
 
-	protected Pair<Vec3d, Boolean> detectCollision() {
+	protected ParticleCollisionResult detectCollision() {
 		final BlockState state = this.world.getBlockState(this.position);
 		if (state.getMaterial() == Material.AIR)
 			return null;
 		if (state.isSolid()) {
 			final VoxelShape shape = state.getCollisionShape(this.world, this.position, ISelectionContext.dummy());
 			if (!shape.isEmpty()) {
-				final double y = shape.getBoundingBox().maxY;
-				if (y >= this.posY) {
+				final double height = shape.getEnd(Direction.Axis.Y) + this.position.getY();
+				if (height >= this.posY) {
 					// Have a collision
-					return Pair.of(new Vec3d(this.posX, y, this.posZ), true);
+					return new ParticleCollisionResult(
+							this.world,
+							new Vec3d(this.posX, height, this.posZ),
+							state,
+							true,
+							null
+					);
 				}
 			}
 			// Hasn't collided yet
@@ -92,19 +100,26 @@ public abstract class MotionMote extends AgeableMote {
 		}
 
 		final IFluidState fluid = state.getFluidState();
-		if (!fluid.isEmpty() && fluid.isSource()) {
+		if (!fluid.isEmpty()) {
 			// Potential of collision with a liquid
 			final double height = fluid.getHeight() + this.position.getY();
 			if (height >= this.posY) {
-				// Hit the surface of water
-				return Pair.of(new Vec3d(this.posX, height, this.posZ), false);
+				// Hit the surface of liquid
+				final Vec3d pos = new Vec3d(this.posX, height, this.posZ);
+				return new ParticleCollisionResult(
+						this.world,
+						pos,
+						state,
+						false,
+						fluid
+				);
 			}
 		}
 
 		return null;
 	}
 
-	protected void handleCollision(@Nonnull final Pair<Vec3d, Boolean> collision) {
+	protected void handleCollision(@Nonnull final ParticleCollisionResult collision) {
 		kill();
 	}
 
@@ -122,7 +137,7 @@ public abstract class MotionMote extends AgeableMote {
 
 		this.position.setPos(this.posX, this.posY, this.posZ);
 
-		final Pair<Vec3d, Boolean> collision = detectCollision();
+		final ParticleCollisionResult collision = detectCollision();
 		if (collision != null) {
 			handleCollision(collision);
 		} else {

@@ -20,10 +20,17 @@ package org.orecruncher.lib.particles;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * A particle that is capable of moving it's position in the world.
@@ -67,11 +74,37 @@ public abstract class MotionMote extends AgeableMote {
 		return (float) (MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - interpZ());
 	}
 
-	protected boolean hasCollided() {
-		return this.world.getBlockState(this.position).getMaterial().isSolid();
+	protected Pair<Vec3d, Boolean> detectCollision() {
+		final BlockState state = this.world.getBlockState(this.position);
+		if (state.getMaterial() == Material.AIR)
+			return null;
+		if (state.isSolid()) {
+			final VoxelShape shape = state.getCollisionShape(this.world, this.position, ISelectionContext.dummy());
+			if (!shape.isEmpty()) {
+				final double y = shape.getBoundingBox().maxY;
+				if (y >= this.posY) {
+					// Have a collision
+					return Pair.of(new Vec3d(this.posX, y, this.posZ), true);
+				}
+			}
+			// Hasn't collided yet
+			return null;
+		}
+
+		final IFluidState fluid = state.getFluidState();
+		if (!fluid.isEmpty() && fluid.isSource()) {
+			// Potential of collision with a liquid
+			final double height = fluid.getHeight() + this.position.getY();
+			if (height >= this.posY) {
+				// Hit the surface of water
+				return Pair.of(new Vec3d(this.posX, height, this.posZ), false);
+			}
+		}
+
+		return null;
 	}
 
-	protected void handleCollision() {
+	protected void handleCollision(@Nonnull final Pair<Vec3d, Boolean> collision) {
 		kill();
 	}
 
@@ -89,8 +122,9 @@ public abstract class MotionMote extends AgeableMote {
 
 		this.position.setPos(this.posX, this.posY, this.posZ);
 
-		if (hasCollided()) {
-			handleCollision();
+		final Pair<Vec3d, Boolean> collision = detectCollision();
+		if (collision != null) {
+			handleCollision(collision);
 		} else {
 			this.motionX *= 0.9800000190734863D;
 			this.motionY *= 0.9800000190734863D;

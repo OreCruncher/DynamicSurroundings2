@@ -26,6 +26,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.JsonUtils;
+import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
@@ -114,6 +115,18 @@ public final class AcousticCompiler {
     public void setDelayRange(final int min, final int max) {
         this.minDelay = min;
         this.maxDelay = max;
+    }
+
+    @Nonnull
+    public static IAcoustic combine(@Nonnull final ObjectArray<IAcoustic> acoustics) {
+        if (acoustics.size() == 0)
+            return NullAcoustic.INSTANCE;
+        if (acoustics.size() == 1)
+            return acoustics.get(0);
+        final SimultaneousAcoustic result = new SimultaneousAcoustic(new ResourceLocation(SoundControl.MOD_ID, "adhoc"));
+        acoustics.forEach(result::add);
+        result.trim();
+        return result;
     }
 
     @Nonnull

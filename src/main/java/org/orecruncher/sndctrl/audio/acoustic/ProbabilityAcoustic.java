@@ -93,7 +93,7 @@ public class ProbabilityAcoustic implements IAcoustic {
     }
 
     @Override
-    public IAcousticFactory getFactory() {
+    public IAcousticFactory getFactory(@Nonnull final AcousticEvent event) {
         return select().map(IAcoustic::getFactory).orElse(null);
     }
 

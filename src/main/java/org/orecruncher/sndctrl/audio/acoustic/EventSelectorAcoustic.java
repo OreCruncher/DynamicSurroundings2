@@ -86,8 +86,8 @@ public class EventSelectorAcoustic implements IAcoustic {
     }
 
     @Override
-    public IAcousticFactory getFactory() {
-        return resolve(AcousticEvent.NONE).map(IAcoustic::getFactory).orElse(null);
+    public IAcousticFactory getFactory(@Nonnull final AcousticEvent event) {
+        return resolve(event).map(IAcoustic::getFactory).orElse(null);
     }
 
     @Nonnull

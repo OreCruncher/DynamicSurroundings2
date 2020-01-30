@@ -77,7 +77,7 @@ public final class NullAcoustic implements IAcoustic {
     }
 
     @Override
-    public IAcousticFactory getFactory() {
+    public IAcousticFactory getFactory(@Nonnull final AcousticEvent event) {
         return null;
     }
 

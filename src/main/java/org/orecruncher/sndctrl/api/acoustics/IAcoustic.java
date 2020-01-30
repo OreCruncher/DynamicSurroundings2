@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.audio.acoustic.AcousticException;
 
 import javax.annotation.Nonnull;
 
@@ -85,5 +86,9 @@ public interface IAcoustic {
     /**
      * Obtains the underlying factory for creating sounds.
      */
-    IAcousticFactory getFactory();
+    default IAcousticFactory getFactory() {
+        return getFactory(AcousticEvent.NONE);
+    }
+
+    IAcousticFactory getFactory(@Nonnull final AcousticEvent event);
 }

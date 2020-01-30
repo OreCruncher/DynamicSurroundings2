@@ -90,7 +90,7 @@ public class SimpleAcoustic implements IAcoustic {
     }
 
     @Override
-    public IAcousticFactory getFactory() {
+    public IAcousticFactory getFactory(@Nonnull final AcousticEvent event) {
         return this.factory;
     }
 

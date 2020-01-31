@@ -19,7 +19,6 @@
 package org.orecruncher.lib.particles;
 
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

@@ -18,11 +18,9 @@
 
 package org.orecruncher.lib.particles;
 
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -61,12 +59,4 @@ public abstract class BaseParticle extends Particle {
         return Particle.interpPosZ;
     }
 
-    protected void bindTexture(@Nonnull final ResourceLocation resource) {
-        GameUtils.getMC().getTextureManager().bindTexture(resource);
-    }
-
-    protected boolean isThirdPersonView() {
-        final GameSettings settings = GameUtils.getGameSettings();
-        return settings.thirdPersonView == 2;
-    }
 }

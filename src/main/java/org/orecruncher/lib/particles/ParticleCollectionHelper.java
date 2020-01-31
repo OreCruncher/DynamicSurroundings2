@@ -19,6 +19,7 @@
 package org.orecruncher.lib.particles;
 
 import net.minecraft.client.particle.IParticleRenderType;
+import net.minecraft.client.particle.Particle;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -27,6 +28,7 @@ import org.orecruncher.lib.math.TimerEMA;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 final class ParticleCollectionHelper implements IParticleCollection {
@@ -57,40 +59,48 @@ final class ParticleCollectionHelper implements IParticleCollection {
     }
 
     @Nonnull
-    private ParticleCollection get() {
+    private Optional<ParticleCollection> get() {
         ParticleCollection pc = this.collection != null ? this.collection.get() : null;
-        if (pc == null || !pc.isAlive() || pc.shouldDie()) {
+        if (pc == null || !pc.isAlive()) {
             pc = this.factory.create(this.name, GameUtils.getWorld(), this.renderType);
             this.collection = new WeakReference<>(pc);
             GameUtils.getMC().particles.addEffect(pc);
         }
-        return pc;
+        return Optional.of(pc);
     }
 
     @Override
     public void add(@Nonnull final IParticleMote mote) {
-        final ParticleCollection pc = get();
-        if (pc.canFit())
-            pc.addParticle(mote);
+        get().ifPresent(pc -> {
+            if (pc.canFit())
+                pc.addParticle(mote);
+        });
     }
 
     @Override
     public boolean canFit() {
-        return get().canFit();
+        final Optional<ParticleCollection> pc = get();
+        return pc.isPresent() && pc.get().canFit();
     }
 
     void clear() {
-        final ParticleCollection pc = this.collection != null ? this.collection.get() : null;
-        if (pc != null) {
-            pc.setExpired();
-            this.collection = null;
-        }
+        resolve().ifPresent(Particle::setExpired);
+        this.collection = null;
     }
 
-    @Nullable
-    TimerEMA getRenderTimer() {
-        final ParticleCollection pc = this.collection != null ? this.collection.get() : null;
-        return pc != null ? pc.getRenderTimer() : null;
+    @Nonnull
+    Optional<TimerEMA> getRenderTimer() {
+        return resolve().map(ParticleCollection::getRenderTimer);
+    }
+
+    @Nonnull
+    Optional<TimerEMA> getTickTimer() {
+        return resolve().map(ParticleCollection::getTickTimer);
+    }
+
+    @Nonnull
+    private Optional<ParticleCollection> resolve() {
+        return Optional.ofNullable(this.collection != null ? this.collection.get() : null);
     }
 
     @Override

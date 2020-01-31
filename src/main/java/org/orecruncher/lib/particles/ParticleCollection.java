@@ -46,6 +46,7 @@ final class ParticleCollection extends BaseParticle {
     private static final Predicate<IParticleMote> UPDATE_REMOVE = mote -> !mote.tick();
 
     protected final LoggingTimerEMA render;
+    protected final LoggingTimerEMA tick;
     protected final ObjectArray<IParticleMote> myParticles = new ObjectArray<>(ALLOCATION_SIZE);
     protected final IParticleRenderType renderType;
     protected long lastTickUpdate;
@@ -55,7 +56,8 @@ final class ParticleCollection extends BaseParticle {
 
         this.canCollide = false;
         this.renderType = renderType;
-        this.render = new LoggingTimerEMA("Particles " + name);
+        this.render = new LoggingTimerEMA("Render " + name);
+        this.tick = new LoggingTimerEMA("Tick " + name);
         this.lastTickUpdate = TickCounter.getTickCount();
     }
 
@@ -73,8 +75,14 @@ final class ParticleCollection extends BaseParticle {
         return this.myParticles.size();
     }
 
+    @Nonnull
     public TimerEMA getRenderTimer() {
         return this.render;
+    }
+
+    @Nonnull
+    public TimerEMA getTickTimer() {
+        return this.tick;
     }
 
     public boolean shouldDie() {
@@ -84,17 +92,15 @@ final class ParticleCollection extends BaseParticle {
 
     @Override
     public void tick() {
-        if (!isAlive())
-            return;
-
-        this.lastTickUpdate = TickCounter.getTickCount();
-
-        // Update state and remove the dead ones
-        this.myParticles.removeIf(UPDATE_REMOVE);
-
-        if (shouldDie()) {
-            setExpired();
+        this.tick.begin();
+        if (isAlive()) {
+            this.lastTickUpdate = TickCounter.getTickCount();
+            this.myParticles.removeIf(UPDATE_REMOVE);
+            if (shouldDie()) {
+                setExpired();
+            }
         }
+        this.tick.end();
     }
 
     @Override

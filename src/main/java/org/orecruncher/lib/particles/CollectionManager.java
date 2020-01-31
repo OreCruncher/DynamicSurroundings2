@@ -27,7 +27,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.events.DiagnosticEvent;
-import org.orecruncher.lib.math.TimerEMA;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
@@ -60,9 +59,8 @@ public final class CollectionManager {
     public static void diagnostics(@Nonnull final DiagnosticEvent event) {
         helpers.forEach(h -> {
             event.getLeft().add(TextFormatting.AQUA + h.toString());
-            final TimerEMA render = h.getRenderTimer();
-            if (render != null)
-                event.addRenderTimer(render);
+            h.getRenderTimer().ifPresent(event::addRenderTimer);
+            h.getTickTimer().ifPresent(event::addRenderTimer);
         });
     }
 

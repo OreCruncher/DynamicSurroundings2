@@ -21,6 +21,7 @@ package org.orecruncher.sndctrl.audio;
 import com.google.common.base.MoreObjects;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.LocatableSound;
+import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -28,10 +29,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundInstance extends LocatableSound implements ISoundInstance {
@@ -61,6 +64,18 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
 
         this.playDelay = 0;
         this.sound = SoundHandler.MISSING_SOUND;
+
+        // Force creation of the sound instance now.  Need the info in the OGG definition for attenuation
+        // distance prior to submission.
+        this.createAccessor(GameUtils.getSoundHander());
+    }
+
+    @Override
+    @Nullable
+    public SoundEventAccessor createAccessor(@Nonnull final SoundHandler handler) {
+        if (this.sound == SoundHandler.MISSING_SOUND)
+            return super.createAccessor(handler);
+        return this.soundEvent;
     }
 
     @Override

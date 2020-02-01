@@ -1,3 +1,15 @@
+### SoundControl-1.14.4-0.0.5.0
+**Requirements**
+* Forge 1.14.4-28.1.96+
+* 100% client side; no server side deployment needed
+
+**Fixes**
+* OpenAL crash when attempting to mute sound when Minecraft's sound engine is not initialized
+
+**Changes**
+* Library work to support Mob Effects and Environs
+* Config option to replace **client side** randomizers with a faster algorithm
+
 ### SoundControl-1.14.4-0.0.4.0
 **Requirements**
 * Forge 1.14.4-28.1.96+

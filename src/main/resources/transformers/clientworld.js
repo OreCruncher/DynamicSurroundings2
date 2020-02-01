@@ -23,7 +23,7 @@ function initializeCoreMod()
             "transformer": function(classNode) {
 
                 var callback = ASM.buildMethodCall(
-                    "org/orecruncher/lib/ClientBlockUpdateHandler",
+                    "org/orecruncher/lib/world/ClientBlockUpdateHandler",
                     "blockUpdateCallback",
                     "(Lnet/minecraft/client/world/ClientWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V",
                     ASM.MethodType.STATIC

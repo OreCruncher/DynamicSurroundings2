@@ -27,10 +27,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.effects.EntityEffectHandler;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
+import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.IMC;
 import org.orecruncher.sndctrl.audio.AudioEngine;
 import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
@@ -80,6 +82,10 @@ public final class SoundControl {
     }
 
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
+        if (Config.CLIENT.effects.get_fixupRandoms()) {
+            GameUtils.getMC().gameRenderer.random = new XorShiftRandom();
+        }
+
         AudioEngine.initialize();
         SoundLibrary.initialize();
         EntityEffectLibrary.initialize();

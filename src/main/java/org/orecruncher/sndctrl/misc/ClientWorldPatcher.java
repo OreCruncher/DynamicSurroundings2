@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib.world;
+package org.orecruncher.sndctrl.misc;
 
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -26,6 +26,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.lib.random.XorShiftRandom;
+import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
@@ -37,10 +38,12 @@ public final class ClientWorldPatcher {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onWorldLoad(@Nonnull final WorldEvent.Load event) {
-        final IWorld world = event.getWorld();
-        if (world.isRemote() && world instanceof World) {
-            final World w = (World) world;
-            w.rand = new XorShiftRandom();
+        if (Config.CLIENT.effects.get_fixupRandoms()) {
+            final IWorld world = event.getWorld();
+            if (world.isRemote() && world instanceof World) {
+                final World w = (World) world;
+                w.rand = new XorShiftRandom();
+            }
         }
     }
 }

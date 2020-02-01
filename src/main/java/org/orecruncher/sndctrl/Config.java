@@ -233,13 +233,21 @@ public final class Config {
 
         public static class Effects {
 
+            private final BooleanValue fixupRandoms;
             private final IntValue effectRange;
 
+            private boolean _fixupRandoms;
             private int _effectRange;
 
             Effects(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines parameters for special effects")
                         .push("Effect Options");
+
+                this.fixupRandoms = builder
+                        .worldRestart()
+                        .comment("Replace client side Randomizers with faster versions")
+                        .translation("sndctrl.cfg.effects.Randoms")
+                        .define("Replace Randoms", true);
 
                 this.effectRange = builder
                         .worldRestart()
@@ -251,7 +259,12 @@ public final class Config {
             }
 
             void update() {
+                this._fixupRandoms = this.fixupRandoms.get();
                 this._effectRange = this.effectRange.get();
+            }
+
+            public boolean get_fixupRandoms() {
+                return this._fixupRandoms;
             }
 
             public int get_effectRange() {

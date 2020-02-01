@@ -18,7 +18,6 @@
 
 package org.orecruncher.lib.shaders;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +30,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.ResourceUtils;
 import org.orecruncher.lib.gui.Color;
 

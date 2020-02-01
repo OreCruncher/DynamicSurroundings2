@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib;
+package org.orecruncher.lib.world;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.BlockState;
@@ -83,14 +83,18 @@ public final class ClientBlockUpdateHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onWorldLoad(@Nonnull final WorldEvent.Load event) {
-        updates.clear();
-        interval = 0;
+        if (event.getWorld().isRemote()) {
+            updates.clear();
+            interval = 0;
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onWorldUnload(@Nonnull final WorldEvent.Unload event) {
-        updates.clear();
-        interval = 0;
+        if (event.getWorld().isRemote()) {
+            updates.clear();
+            interval = 0;
+        }
     }
 
     @SubscribeEvent

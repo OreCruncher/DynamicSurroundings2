@@ -46,4 +46,8 @@ public final class LibraryFunctions {
                 return true;
         return false;
     }
+
+    public boolean isBetween(final double value, final double min, final double max) {
+        return value >= min && value <= max;
+    }
 }

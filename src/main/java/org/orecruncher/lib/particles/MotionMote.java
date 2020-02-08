@@ -28,7 +28,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -49,7 +49,7 @@ public abstract class MotionMote extends AgeableMote {
 	protected double prevY;
 	protected double prevZ;
 
-	protected MotionMote(@Nonnull final IWorldReader world, final double x, final double y, final double z,
+	protected MotionMote(@Nonnull final IBlockReader world, final double x, final double y, final double z,
 						 final double dX, final double dY, final double dZ) {
 		super(world, x, y, z);
 		this.prevX = this.posX;

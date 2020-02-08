@@ -24,10 +24,13 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import org.orecruncher.lib.EnvironmentBlockReader;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
@@ -53,7 +56,12 @@ public final class WorldContext {
      * Reference to the player's world
      */
     @Nullable
-    public final World world;
+    public final IWorldReader worldReader;
+    /**
+     * Reference to the player's world that does caching
+     */
+    @Nullable
+    public final IEnviromentBlockReader world;
     /**
      * Position of the player.
      */
@@ -89,9 +97,11 @@ public final class WorldContext {
 
     public WorldContext() {
         if (GameUtils.isInGame()) {
+            final World world = GameUtils.getWorld();
             this.player = GameUtils.getPlayer();
-            this.world = GameUtils.getWorld();
-            this.isPrecipitating = this.world.isRaining();
+            this.worldReader = world;
+            this.world = new EnvironmentBlockReader(world);
+            this.isPrecipitating = world.isRaining();
             this.playerPosition = this.player.getPositionVec();
             this.playerEyePosition = this.player.getEyePosition(1F);
             this.playerPos = new BlockPos(this.playerPosition);
@@ -105,11 +115,12 @@ public final class WorldContext {
                 this.auralDampening = 0;
 
             // Get our current rain strength.
-            this.precipitationStrength = WorldUtils.getRainStrength(this.world, 1F);
+            this.precipitationStrength = WorldUtils.getRainStrength(world, 1F);
             this.mc = Minecraft.getInstance();
         } else {
             this.mc = null;
             this.player = null;
+            this.worldReader = null;
             this.world = null;
             this.isPrecipitating = false;
             this.playerPosition = Vec3d.ZERO;

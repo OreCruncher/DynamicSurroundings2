@@ -22,7 +22,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -32,13 +32,13 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public final class ParticleCollisionResult {
 
-    public final IWorldReader world;
+    public final IBlockReader world;
     public final Vec3d position;
     public final BlockState state;
     public final IFluidState fluidState;
     public final boolean onGround;
 
-    public ParticleCollisionResult(@Nonnull final IWorldReader world, @Nonnull final Vec3d pos, @Nonnull final BlockState state, final boolean onGround, @Nullable final IFluidState fluid) {
+    public ParticleCollisionResult(@Nonnull final IBlockReader world, @Nonnull final Vec3d pos, @Nonnull final BlockState state, final boolean onGround, @Nullable final IFluidState fluid) {
         this.world = world;
         this.position = pos;
         this.state = state;

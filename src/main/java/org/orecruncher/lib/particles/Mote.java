@@ -22,16 +22,17 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.GameUtils;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class Mote implements IParticleMote {
 
-    protected final IWorldReader world;
+    protected final IBlockReader world;
 
     protected boolean isAlive = true;
     protected double posX;
@@ -47,7 +48,7 @@ public abstract class Mote implements IParticleMote {
     protected float blue;
     protected float alpha;
 
-    public Mote(@Nonnull final IWorldReader world, final double x, final double y, final double z) {
+    public Mote(@Nonnull final IBlockReader world, final double x, final double y, final double z) {
         this.world = world;
         setPosition(x, y, z);
         configureColor();
@@ -138,7 +139,7 @@ public abstract class Mote implements IParticleMote {
                                 float rotZ, float rotYZ, float rotXY, float rotXZ);
 
     public int getBrightnessForRender(final float partialTicks) {
-        return this.world.getCombinedLight(this.position, 0);
+        return GameUtils.getWorld().getCombinedLight(this.position, 0);
     }
 
 }

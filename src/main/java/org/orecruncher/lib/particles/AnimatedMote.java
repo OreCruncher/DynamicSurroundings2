@@ -25,7 +25,7 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.gui.Color;
@@ -74,7 +74,7 @@ public abstract class AnimatedMote extends MotionMote {
 
 	protected final IAnimatedSprite sprites;
 
-	protected AnimatedMote(final @Nonnull IAnimatedSprite sprites, @Nonnull final IWorldReader world, double x, double y,
+	protected AnimatedMote(final @Nonnull IAnimatedSprite sprites, @Nonnull final IBlockReader world, double x, double y,
 						   double z, double dX, double dY, double dZ) {
 		super(world, x, y, z, dX, dY, dZ);
 

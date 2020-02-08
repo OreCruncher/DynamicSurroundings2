@@ -32,6 +32,7 @@ package org.orecruncher.sndctrl.audio.handlers;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
@@ -359,9 +360,9 @@ public final class SoundFXUtils {
         final BlockPos high = new BlockPos(pt2);
 
         // Determine the precipitation type at each point
-        final Biome.RainType rt1 = WorldUtils.getCurrentPrecipitationAt(ctx.world, low);
-        final Biome.RainType rt2 = WorldUtils.getCurrentPrecipitationAt(ctx.world, mid);
-        final Biome.RainType rt3 = WorldUtils.getCurrentPrecipitationAt(ctx.world, high);
+        final Biome.RainType rt1 = WorldUtils.getCurrentPrecipitationAt(ctx.worldReader, low);
+        final Biome.RainType rt2 = WorldUtils.getCurrentPrecipitationAt(ctx.worldReader, mid);
+        final Biome.RainType rt3 = WorldUtils.getCurrentPrecipitationAt(ctx.worldReader, high);
 
         // Calculate the impact of weather on dampening
         float factor = calcFactor(rt1, 0.25F);
@@ -377,8 +378,8 @@ public final class SoundFXUtils {
         return SURFACE_DIRECTION_NORMALS[d.ordinal()];
     }
 
-    private static Vec3d offsetPositionIfSolid(@Nonnull final World world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
-        if (!world.isAirBlock(new BlockPos(origin))) {
+    private static Vec3d offsetPositionIfSolid(@Nonnull final IEnviromentBlockReader world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
+        if (WorldUtils.isAirBlock(world, new BlockPos(origin))) {
             return MathStuff.addScaled(origin, MathStuff.normalize(origin, target), 0.876F);
         }
         return origin;

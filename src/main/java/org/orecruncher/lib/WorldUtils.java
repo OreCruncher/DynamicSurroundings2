@@ -20,9 +20,11 @@ package org.orecruncher.lib;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
@@ -118,7 +120,7 @@ public final class WorldUtils {
     /**
      * Determines if the side of the block at the specified position is considered solid.
      */
-    public static boolean isSolid(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos, @Nonnull final Direction dir) {
+    public static boolean isSolid(@Nonnull final IBlockReader world, @Nonnull final BlockPos pos, @Nonnull final Direction dir) {
         final BlockState state = world.getBlockState(pos);
         return Block.doesSideFillSquare(state.getCollisionShape(world, pos, ISelectionContext.dummy()),dir);
     }
@@ -126,16 +128,30 @@ public final class WorldUtils {
     /**
      * Determines if the top side of the block at the specified position is considered solid.
      */
-    public static boolean isTopSolid(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
+    public static boolean isTopSolid(@Nonnull final IBlockReader world, @Nonnull final BlockPos pos) {
         return isSolid(world, pos, Direction.UP);
     }
 
     /**
      * Determines if the block at the specified location is solid.
      */
-    public static boolean isBlockSolid(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
+    public static boolean isBlockSolid(@Nonnull final IBlockReader world, @Nonnull final BlockPos pos) {
         final BlockState state = world.getBlockState(pos);
         return state.isSolid();
+    }
+
+    /**
+     * Determines if the block at the specified location is an air block.
+     */
+    public static boolean isAirBlock(@Nonnull final IBlockReader world, @Nonnull final BlockPos pos) {
+        return isAirBlock(world.getBlockState(pos));
+    }
+
+    /**
+     * Determines if the BlockState reference is an air block.
+     */
+    public static boolean isAirBlock(@Nonnull final BlockState state) {
+        return state.getMaterial() == Material.AIR;
     }
 
     /**

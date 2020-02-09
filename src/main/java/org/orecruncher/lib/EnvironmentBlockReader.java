@@ -23,14 +23,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.LightType;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.lighting.IWorldLightListener;
+import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -46,14 +46,24 @@ public class EnvironmentBlockReader implements IEnviromentBlockReader {
 
     private static final BlockState AIR = Blocks.AIR.getDefaultState();
 
-    protected final IWorldReader reader;
+    protected final IWorld reader;
+    protected final WorldLightManager lightManager;
+    protected final IWorldLightListener sky;
+    protected final IWorldLightListener block;
 
     protected int lastChunkX = Integer.MAX_VALUE;
     protected int lastChunkZ = Integer.MAX_VALUE;
     protected IChunk lastChunk;
 
-    public EnvironmentBlockReader(@Nonnull final IWorldReader reader) {
+    public EnvironmentBlockReader(@Nonnull final IWorld reader) {
         this.reader = reader;
+        this.lightManager = reader.getChunkProvider().func_212863_j_();
+        this.sky = this.lightManager.getLightEngine(LightType.SKY);
+        this.block = this.lightManager.getLightEngine(LightType.BLOCK);
+    }
+
+    public boolean needsUpdate(@Nonnull final IWorld world) {
+        return this.reader != world;
     }
 
     @Nonnull
@@ -65,7 +75,18 @@ public class EnvironmentBlockReader implements IEnviromentBlockReader {
 
     @Override
     public int getLightFor(@Nonnull final LightType type, @Nonnull final BlockPos pos) {
-        return this.reader.getLightFor(type, pos);
+        final IWorldLightListener wll = type == LightType.SKY ? this.sky : this.block;
+        return wll.getLightFor(pos);
+    }
+
+    @Override
+    public int getCombinedLight(@Nonnull final BlockPos pos, final int minLight) {
+        int i = this.sky.getLightFor(pos);
+        int j = this.block.getLightFor(pos);
+        if (j < minLight) {
+            j = minLight;
+        }
+        return i << 20 | j << 4;
     }
 
     @Nullable
@@ -105,7 +126,7 @@ public class EnvironmentBlockReader implements IEnviromentBlockReader {
 
     @Nullable
     protected IChunk resolveChunk(@Nonnull final BlockPos pos) {
-        if (pos.getY() < 0 || pos.getY() > this.reader.getHeight())
+        if (!World.isValid(pos))
             return null;
 
         final int chunkX = pos.getX() >> 4;

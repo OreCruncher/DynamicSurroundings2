@@ -35,6 +35,7 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
 import org.orecruncher.sndctrl.audio.*;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
@@ -75,20 +76,25 @@ public final class SoundEventHandling {
                 res = possibles.get(XorShiftRandom.current().nextInt(possibles.size()));
             }
 
-            // Create as a background sound so that it gets centered in the headphones
-            // correctly.
-            final IAcoustic sound = AcousticLibrary.resolve(new ResourceLocation(res));
-            final IFadableSoundInstance instance = sound.getFactory().createBackgroundSound();
-            instance.noFade();
+            final ResourceLocation rl = new ResourceLocation(res);
+            final IAcoustic sound = AcousticLibrary.resolve(rl);
+            final IAcousticFactory factory = sound.getFactory();
 
-            // Queue it up on the main client thread.
-            GameUtils.getMC().enqueue(() -> {
-                try {
-                    AudioEngine.play(instance);
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Error executing startup sound '%s'", sound.toString());
-                }
-            });
+            if (factory != null) {
+                final IFadableSoundInstance instance = factory.createBackgroundSound();
+                instance.noFade();
+
+                // Queue it up on the main client thread.
+                GameUtils.getMC().enqueue(() -> {
+                    try {
+                        AudioEngine.play(instance);
+                    } catch (@Nonnull final Throwable t) {
+                        LOGGER.error(t, "Error executing startup sound '%s'", rl.toString());
+                    }
+                });
+            } else {
+                LOGGER.warn("No factory for sound %s", rl.toString());
+            }
         }
     }
 

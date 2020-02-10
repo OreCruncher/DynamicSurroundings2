@@ -160,8 +160,9 @@ public final class SoundUtils {
                 .add("x", sound.getX())
                 .add("y", sound.getY())
                 .add("z", sound.getZ())
-                .add("d", sound.getSound().getAttenuationDistance())
-                .add("s", sound.getSound().isStreaming())
+                .add("distance", sound.getSound().getAttenuationDistance())
+                .add("streaming", sound.getSound().isStreaming())
+                .add("global", sound.isGlobal())
                 .toString();
         //@formatter:on
     }

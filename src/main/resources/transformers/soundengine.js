@@ -23,7 +23,7 @@ function log(message)
 function initializeCoreMod()
 {
     return {
-        "sndctrl_soundsystem_transformer": {
+        "sndctrl_soundengine_transformer": {
             "target": {
                 "type": "CLASS",
                 "names": function(listofclasses) { return ["net.minecraft.client.audio.SoundEngine"]; }

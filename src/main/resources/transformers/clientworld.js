@@ -7,10 +7,7 @@ var VarInsnNode = Java.type('org.objectweb.asm.tree.VarInsnNode');
 var INVALIDATE_AND_SET_BLOCK = ASM.mapMethod("func_195597_b");
 var SET_BLOCKSTATE = ASM.mapMethod("func_180501_a");
 
-function log(message)
-{
-    print("[SoundControl Transformer - ClientWorld]: " + message);
-}
+var FORMAT = "[clientworld.js] {}";
 
 function initializeCoreMod()
 {
@@ -36,8 +33,12 @@ function initializeCoreMod()
                 newInstructions.add(callback);
 
                 var targetMethod = findMethod(classNode, INVALIDATE_AND_SET_BLOCK);
-                targetMethod.instructions.insert(newInstructions);
-                log("Hooked ClientWorld.invalidateRegionAndSetBlock()");
+                if (targetMethod !== null) {
+                    targetMethod.instructions.insert(newInstructions);
+                    ASM.log("INFO", FORMAT, ["Hooked ClientWorld.invalidateRegionAndSetBlock()"]);
+                } else {
+                    ASM.log("WARN", FORMAT, ["Client side block update notifications will not be processed!"]);
+                }
 
                 return classNode;
             }
@@ -52,6 +53,6 @@ function findMethod(classNode, methodName)
         if (method.name == methodName)
             return method;
     }
-    log("Method not found: " + methodName);
+    ASM.log("WARN", "Method not found: {}", [methodName]);
     return null;
 }

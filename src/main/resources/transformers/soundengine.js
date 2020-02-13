@@ -15,10 +15,7 @@ var GET_CLAMPED_VOLUME = ASM.mapMethod("func_188770_e");
 var PLAY_SOUND = ASM.mapMethod("func_148611_c");
 var RUN_SOUND_EXECUTOR = ASM.mapMethod("func_217888_a");
 
-function log(message)
-{
-    print("[SoundControl Transformer - SoundEngine]: " + message);
-}
+var FORMAT = "[soundengine.js] {}";
 
 function initializeCoreMod()
 {
@@ -43,8 +40,12 @@ function initializeCoreMod()
                 newInstructions.add(initCall);
 
                 var targetMethod = findMethod(classNode, SOUND_ENGINE_LOAD);
-                ASM.insertInsnList(targetMethod, ASM.MethodType.VIRTUAL, "net/minecraft/client/audio/SoundSystem", SOUND_SYSTEM_INITIALIZE, "()V", newInstructions, ASM.InsertMode.INSERT_AFTER);
-                log("Hooked SoundEngine.load()");
+                if (targetMethod !== null) {
+                    ASM.insertInsnList(targetMethod, ASM.MethodType.VIRTUAL, "net/minecraft/client/audio/SoundSystem", SOUND_SYSTEM_INITIALIZE, "()V", newInstructions, ASM.InsertMode.INSERT_AFTER);
+                    ASM.log("INFO", FORMAT, ["Hooked SoundEngine.load()"]);
+                } else {
+                    ASM.log("WARN", FORMAT, ["Sound system will not initialize properly and features will be missing"]);
+                }
 
                 var deinitCall = ASM.buildMethodCall(
                     "org/orecruncher/sndctrl/audio/SoundUtils",
@@ -59,8 +60,12 @@ function initializeCoreMod()
                 newInstructions.add(deinitCall);
 
                 targetMethod = findMethod(classNode, SOUND_ENGINE_UNLOAD);
-                ASM.insertInsnList(targetMethod, ASM.MethodType.VIRTUAL, "net/minecraft/client/audio/SoundSystem", SOUND_SYSTEM_DEINITIALIZE, "()V", newInstructions, ASM.InsertMode.INSERT_BEFORE);
-                log("Hooked SoundEngine.unload()");
+                if (targetMethod !== null) {
+                    ASM.insertInsnList(targetMethod, ASM.MethodType.VIRTUAL, "net/minecraft/client/audio/SoundSystem", SOUND_SYSTEM_DEINITIALIZE, "()V", newInstructions, ASM.InsertMode.INSERT_BEFORE);
+                    ASM.log("INFO", FORMAT, ["Hooked SoundEngine.unload()"]);
+                } else {
+                    ASM.log("WARN", FORMAT, ["Sound system will not deinitialize properly; resource reload will cause issues"]);
+                }
 
                 var clamped = ASM.buildMethodCall(
                     "org/orecruncher/sndctrl/audio/handlers/SoundVolumeEvaluator",
@@ -75,8 +80,12 @@ function initializeCoreMod()
                 newInstructions.add(new InsnNode(Opcodes.FRETURN));
 
                 var targetMethod = findMethod(classNode, GET_CLAMPED_VOLUME);
-                targetMethod.instructions.insert(newInstructions);
-                log("Hooked SoundEngine.getClampedVolume()");
+                if (targetMethod !== null) {
+                    targetMethod.instructions.insert(newInstructions);
+                    ASM.log("INFO", FORMAT, ["Hooked SoundEngine.getClampedVolume()"]);
+                } else {
+                    ASM.log("WARN", FORMAT, ["Sounds will not dynamically scale sound volume"]);
+                }
 
                 var playSound = ASM.buildMethodCall(
                     "org/orecruncher/sndctrl/audio/handlers/SoundFXProcessor",
@@ -91,8 +100,12 @@ function initializeCoreMod()
                 newInstructions.add(playSound);
 
                 var targetMethod = findMethod(classNode, PLAY_SOUND);
-                ASM.insertInsnList(targetMethod, ASM.MethodType.VIRTUAL, "net/minecraft/client/audio/ChannelManager$Entry", RUN_SOUND_EXECUTOR, "(Ljava/util/function/Consumer;)V", newInstructions, ASM.InsertMode.INSERT_AFTER);
-                log("Hooked SoundEngine.play()");
+                if (targetMethod !== null) {
+                    ASM.insertInsnList(targetMethod, ASM.MethodType.VIRTUAL, "net/minecraft/client/audio/ChannelManager$Entry", RUN_SOUND_EXECUTOR, "(Ljava/util/function/Consumer;)V", newInstructions, ASM.InsertMode.INSERT_AFTER);
+                    ASM.log("INFO", FORMAT, ["Hooked SoundEngine.play()"]);
+                } else {
+                    ASM.log("WARN", FORMAT, ["Special effects (reverb, filtering) will not be associated with sound execution"]);
+                }
 
                 return classNode;
             }
@@ -107,6 +120,6 @@ function findMethod(classNode, methodName)
         if (method.name == methodName)
             return method;
     }
-    log("Method not found: " + methodName);
+    ASM.log("WARN", "Method not found: {}", [methodName]);
     return null;
 }

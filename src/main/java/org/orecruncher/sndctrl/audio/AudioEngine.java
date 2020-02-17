@@ -221,7 +221,7 @@ public final class AudioEngine {
         processTerminalSounds();
 
         // Generate diagnostics if needed.
-        if (Minecraft.getInstance().gameSettings.showDebugInfo) {
+        if (processDiagnostics() && Minecraft.getInstance().gameSettings.showDebugInfo) {
             diagnostics = new ArrayList<>(16);
             diagnostics.add(String.format(FMT_DBG_SOUND_SYSTEM, SoundUtils.getTotalPlaying(), SoundUtils.getMaxSounds()));
             diagnostics.add(String.format(FMT_DBG_TRACKED, playingSounds.size()));
@@ -244,9 +244,13 @@ public final class AudioEngine {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onGatherText(@Nonnull final DiagnosticEvent event) {
-        if (!diagnostics.isEmpty()) {
+        if (processDiagnostics() && !diagnostics.isEmpty()) {
             event.getLeft().addAll(diagnostics);
         }
+    }
+
+    private static boolean processDiagnostics() {
+        return Config.CLIENT.logging.get_enableLogging();
     }
 
     public static void initialize() {

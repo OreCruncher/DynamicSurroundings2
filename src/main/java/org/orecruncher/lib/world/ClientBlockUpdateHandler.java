@@ -33,6 +33,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.events.BlockUpdateEvent;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.math.LoggingTimerEMA;
+import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
@@ -99,6 +100,7 @@ public final class ClientBlockUpdateHandler {
 
     @SubscribeEvent
     public static void onDiagnostics(@Nonnull final DiagnosticEvent event) {
-        event.addRenderTimer(timer);
+        if (Config.CLIENT.logging.get_enableLogging())
+            event.addRenderTimer(timer);
     }
 }

@@ -133,7 +133,8 @@ public final class EntityEffectHandler {
 
     @SubscribeEvent
     public static void onDiagnostics(@Nonnull final DiagnosticEvent event) {
-        event.getRenderTimers().add(timer);
+        if (Config.CLIENT.logging.get_enableLogging())
+            event.getRenderTimers().add(timer);
     }
 
 }

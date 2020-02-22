@@ -1,4 +1,4 @@
-### SoundControl-1.14.4-4.0.0.0
+### SoundControl-1.14.4-0.1.0.0
 **Requirements**
 * Forge 1.14.4-28.1.96+
 * 100% client side; no server side deployment needed

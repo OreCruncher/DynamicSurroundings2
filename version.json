@@ -1,10 +1,10 @@
 {
 	"homepage": "https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol",
 	"1.14.4": {
-		"0.0.5.0": "See https://github.com/OreCruncher/SoundControl/blob/master/CHANGELOG.md"
+		"0.1.0.0": "See https://github.com/OreCruncher/SoundControl/blob/master/CHANGELOG.md"
 	},
 	"promos": {
-		"1.14.4-latest": "0.0.5.0",
-		"1.14.4-recommended": "0.0.5.0"
+		"1.14.4-latest": "0.1.0.0",
+		"1.14.4-recommended": "0.1.0.0"
 	}
 }

@@ -7,7 +7,7 @@ logoFile="logo.png"
 [[mods]]
 	modId="sndctrl"
 	version="${version}"
-	displayName="§3Dynamic Surroundings\n§eSound Control"
+	displayName="§3Dynamic Surroundings: §eSound Control"
 	updateJSONURL="https://raw.githubusercontent.com/OreCruncher/SoundControl/master/version.json"
 	credits="\n\n§6All the Players§r that installed and enjoyed §2Dynamic Surroundings§r\n§6SonicEther§r for making §2SoundPhysics§r GPL3\n"
 	authors="§6OreCruncher§r\n"

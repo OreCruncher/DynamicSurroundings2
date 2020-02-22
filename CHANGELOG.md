@@ -1,3 +1,20 @@
+### SoundControl-1.14.4-4.0.0.0
+**Requirements**
+* Forge 1.14.4-28.1.96+
+* 100% client side; no server side deployment needed
+
+**What's New**
+* Spanish translation (thanks ruchom4u!)
+
+**Fixes**
+* NPE playing startup sound when acoustic factory cannot be aquired
+* Allow OGG file to be reselected if the same sound instance is replayed (Environs support)
+
+**Changes**
+* Additional function in JavaScript library
+* ASM to increase streaming sound source count to 10
+* F3 diagnostics will display detailed debug info only when mod debug tracing is enabled
+
 ### SoundControl-1.14.4-0.0.5.0
 **Requirements**
 * Forge 1.14.4-28.1.96+

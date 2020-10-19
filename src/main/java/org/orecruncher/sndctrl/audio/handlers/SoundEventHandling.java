@@ -18,16 +18,11 @@
 
 package org.orecruncher.sndctrl.audio.handlers;
 
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.audio.Listener;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.lib.GameUtils;
@@ -48,7 +43,6 @@ import java.util.stream.Collectors;
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoundEventHandling {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundEventHandling.class);
-    private static final float MUTE_VOLUME = 0.00001F;
     private static boolean hasPlayed = false;
 
     private SoundEventHandling() {
@@ -95,42 +89,6 @@ public final class SoundEventHandling {
             } else {
                 LOGGER.warn("No factory for sound %s", rl.toString());
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void clientTick(@Nonnull final TickEvent.ClientTickEvent event) {
-        if (event.side != LogicalSide.CLIENT || event.phase == TickEvent.Phase.END)
-            return;
-
-        if (handleMute()) {
-            final boolean active = GameUtils.getMC().isGameFocused();
-            final boolean muted = isMuted();
-            if (active && muted) {
-                setMuted(false);
-                LOGGER.debug("Unmuting sounds");
-            } else if (!active && !muted) {
-                setMuted(true);
-                LOGGER.debug("Muting sounds");
-            }
-        }
-    }
-
-    private static boolean handleMute() {
-        return Config.CLIENT.sound.get_muteInBackground() && GameUtils.getSoundHander().sndManager.loaded;
-    }
-
-    private static boolean isMuted() {
-        return SoundUtils.getMasterGain() == MUTE_VOLUME;
-    }
-
-    private static void setMuted(final boolean flag) {
-        final Listener listener = SoundUtils.getListener();
-        if (flag) {
-            listener.setGain(MUTE_VOLUME);
-        } else {
-            final GameSettings options = GameUtils.getGameSettings();
-            listener.setGain(options.getSoundLevel(SoundCategory.MASTER));
         }
     }
 }

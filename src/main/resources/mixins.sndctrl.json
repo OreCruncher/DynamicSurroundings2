@@ -1,0 +1,16 @@
+{
+  "package": "org.orecruncher.sndctrl.mixins",
+  "refmap": "mixins.sndctrl.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "MixinBlockState",
+    "MixinClientWorld",
+    "MixinSoundEngine",
+    "MixinSoundSource",
+    "MixinSoundSystem"
+  ]
+}

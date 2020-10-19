@@ -177,7 +177,7 @@ public final class SoundUtils {
 
         try {
 
-            final long device = soundSystem.field_216411_b;
+            final long device = soundSystem.device;
 
             boolean hasFX = false;
             if (Config.CLIENT.sound.get_enableEnhancedSounds()) {

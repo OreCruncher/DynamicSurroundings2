@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.particles;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -48,15 +49,15 @@ public abstract class BaseParticle extends Particle {
     }
 
     protected double interpX() {
-        return Particle.interpPosX;
+        return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView().x;
     }
 
     protected double interpY() {
-        return Particle.interpPosY;
+        return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView().y;
     }
 
     protected double interpZ() {
-        return Particle.interpPosZ;
+        return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView().z;
     }
 
 }

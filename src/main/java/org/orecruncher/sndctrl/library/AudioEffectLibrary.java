@@ -33,9 +33,9 @@ import org.orecruncher.lib.JsonUtils;
 import org.orecruncher.lib.MaterialUtils;
 import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
+import org.orecruncher.lib.IDataAccessor;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
-import org.orecruncher.lib.reflection.ObjectField;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
@@ -43,13 +43,6 @@ import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public final class AudioEffectLibrary {
-
-    private static final ObjectField<BlockState, EffectData> sndctrl_effectData =
-            new ObjectField<>(
-                    BlockState.class,
-                    () -> new EffectData(1F, 0.5F),
-                    "sndctrl_effectData"
-            );
 
     private static final String MATERIAL_PREFIX = "+";
     private static final String TAG_PREFIX = "#";
@@ -124,12 +117,13 @@ public final class AudioEffectLibrary {
     }
 
     private static EffectData resolve(@Nonnull final BlockState state) {
-        EffectData data = sndctrl_effectData.get(state);
+        IDataAccessor<EffectData> accessor = (IDataAccessor<EffectData>)state;
+        EffectData data = accessor.getData();
         if (data == null) {
             final float o = resolveOcclusion(state);
             final float r = resolveReflectivity(state);
             data = new EffectData(o, r);
-            sndctrl_effectData.set(state, data);
+            accessor.setData(data);
         }
         return data;
     }

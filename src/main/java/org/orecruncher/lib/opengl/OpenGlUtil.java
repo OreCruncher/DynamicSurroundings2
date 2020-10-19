@@ -31,12 +31,12 @@ public final class OpenGlUtil {
 
     public static void setStandardBlend() {
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
     }
 
     public static void setAuroraBlend() {
         GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.SRC_ALPHA,
-                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.SRC_ALPHA.param,
+                GlStateManager.SourceFactor.ONE.param, GlStateManager.DestFactor.ZERO.param);
     }
 }

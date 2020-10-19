@@ -1,6 +1,6 @@
 /*
  * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
 
 package org.orecruncher.lib.particles;
 
-import net.minecraft.client.particle.Particle;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -34,16 +34,15 @@ import javax.annotation.Nonnull;
 public abstract class Mote implements IParticleMote {
 
     protected final IBlockReader world;
-    protected final IEnviromentBlockReader lighting;
+    protected final IWorldReader lighting;
 
     protected boolean isAlive = true;
     protected double posX;
     protected double posY;
     protected double posZ;
-    protected final BlockPos.MutableBlockPos position = new BlockPos.MutableBlockPos();
+    protected final BlockPos.Mutable position = new BlockPos.Mutable();
 
-    protected int slX16;
-    protected int blX16;
+    protected int packedLighting;
 
     protected float red;
     protected float green;
@@ -52,7 +51,7 @@ public abstract class Mote implements IParticleMote {
 
     public Mote(@Nonnull final IBlockReader world, final double x, final double y, final double z) {
         this.world = world;
-        this.lighting = world instanceof IEnviromentBlockReader ? (IEnviromentBlockReader) world : GameUtils.getWorld();
+        this.lighting = world instanceof IWorldReader ? (IWorldReader) world : GameUtils.getWorld();
         setPosition(x, y, z);
         configureColor();
     }
@@ -98,51 +97,42 @@ public abstract class Mote implements IParticleMote {
     }
 
     public void updateBrightness() {
-        final int combinedLight = getBrightnessForRender(0);
-        this.slX16 = combinedLight >> 16 & 65535;
-        this.blX16 = combinedLight & 65535;
+        this.packedLighting = WorldRenderer.getCombinedLight(this.lighting, this.position);
     }
 
-    protected final double interpX() {
-        return Particle.interpPosX;
+    protected final double interpX(ActiveRenderInfo info) {
+        return info.getProjectedView().x;
     }
 
-    protected final double interpY() {
-        return Particle.interpPosY;
+    protected final double interpY(ActiveRenderInfo info) {
+        return info.getProjectedView().y;
     }
 
-    protected final double interpZ() {
-        return Particle.interpPosZ;
+    protected final double interpZ(ActiveRenderInfo info) {
+        return info.getProjectedView().z;
     }
 
-    protected float renderX(final float partialTicks) {
-        return (float) (this.posX - interpX());
+    protected float renderX(ActiveRenderInfo info, final float partialTicks) {
+        return (float) (this.posX - interpX(info));
     }
 
-    protected float renderY(final float partialTicks) {
-        return (float) (this.posY - interpY());
+    protected float renderY(ActiveRenderInfo info, final float partialTicks) {
+        return (float) (this.posY - interpY(info));
     }
 
-    protected float renderZ(final float partialTicks) {
-        return (float) (this.posZ - interpZ());
+    protected float renderZ(ActiveRenderInfo info, final float partialTicks) {
+        return (float) (this.posZ - interpZ(info));
     }
 
-    protected void drawVertex(final BufferBuilder buffer, final double x, final double y, final double z,
-                              final double u, final double v) {
+    protected void drawVertex(final IVertexBuilder buffer, final double x, final double y, final double z,
+                              final float u, final float v) {
         buffer
                 .pos(x, y, z)
                 .tex(u, v)
                 .color(this.red, this.green, this.blue, this.alpha)
-                .lightmap(this.slX16, this.blX16)
+                .lightmap(this.packedLighting)
                 .endVertex();
     }
 
-    @Override
-    public abstract void render(final BufferBuilder buffer, final ActiveRenderInfo info, float partialTicks, float rotX,
-                                float rotZ, float rotYZ, float rotXY, float rotXZ);
-
-    public int getBrightnessForRender(final float partialTicks) {
-        return this.lighting.getCombinedLight(this.position, 0);
-    }
-
+    public abstract void renderParticle(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks);
 }

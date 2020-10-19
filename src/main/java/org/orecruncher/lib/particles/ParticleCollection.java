@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.particles;
 
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -104,11 +105,11 @@ final class ParticleCollection extends BaseParticle {
     }
 
     @Override
-    public void renderParticle(@Nonnull final BufferBuilder buffer, @Nonnull final ActiveRenderInfo info, final float partialTicks,
-                               final float rotX, final float rotZ, final float rotYZ, final float rotXY, final float rotXZ) {
+    public void renderParticle(@Nonnull IVertexBuilder buffer, @Nonnull ActiveRenderInfo renderInfo, float partialTicks)
+    {
         this.render.begin();
         for (final IParticleMote mote : this.myParticles)
-            mote.render(buffer, info, partialTicks, rotX, rotZ, rotYZ, rotXY, rotXZ);
+            mote.render(buffer, renderInfo, partialTicks);
         this.render.end();
     }
 

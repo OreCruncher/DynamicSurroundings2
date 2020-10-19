@@ -32,8 +32,7 @@ package org.orecruncher.sndctrl.audio.handlers;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
-import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -123,7 +122,6 @@ public final class SoundFXUtils {
 
     public static void calculate(@Nonnull final WorldContext ctx, @Nonnull final SourceContext source) {
 
-        assert ctx.world != null;
         assert ctx.player != null;
 
         if (ctx.isNotValid()
@@ -245,7 +243,6 @@ public final class SoundFXUtils {
         final float sharedAirspaceWeight0 = MathStuff.clamp1(sharedAirspace / 20.0F);
         final float sharedAirspaceWeight1 = MathStuff.clamp1(sharedAirspace / 15.0F);
         final float sharedAirspaceWeight2 = MathStuff.clamp1(sharedAirspace / 10.0F);
-        final float sharedAirspaceWeight3 = sharedAirspaceWeight2; //MathStuff.clamp1(sharedAirspace / 10.0F);
 
         final float sendCoeff = -occlusionAccumulation * absorptionCoeff;
         final float exp1 = (float) MathStuff.exp(sendCoeff * 1.0F);
@@ -256,7 +253,7 @@ public final class SoundFXUtils {
         sendCutoff3 = sendCutoff2; //exp2 * (1.0F - sharedAirspaceWeight3) + sharedAirspaceWeight3;
 
         final float averageSharedAirspace = (sharedAirspaceWeight0 + sharedAirspaceWeight1 + sharedAirspaceWeight2
-                + sharedAirspaceWeight3) * 0.25F;
+                + sharedAirspaceWeight2) * 0.25F;
         directCutoff = Math.max((float) Math.sqrt(averageSharedAirspace) * 0.2F, directCutoff);
 
         float directGain = (float) MathStuff.pow(directCutoff, 0.1);
@@ -360,9 +357,9 @@ public final class SoundFXUtils {
         final BlockPos high = new BlockPos(pt2);
 
         // Determine the precipitation type at each point
-        final Biome.RainType rt1 = WorldUtils.getCurrentPrecipitationAt(ctx.worldReader, low);
-        final Biome.RainType rt2 = WorldUtils.getCurrentPrecipitationAt(ctx.worldReader, mid);
-        final Biome.RainType rt3 = WorldUtils.getCurrentPrecipitationAt(ctx.worldReader, high);
+        final Biome.RainType rt1 = WorldUtils.getCurrentPrecipitationAt(ctx.world, low);
+        final Biome.RainType rt2 = WorldUtils.getCurrentPrecipitationAt(ctx.world, mid);
+        final Biome.RainType rt3 = WorldUtils.getCurrentPrecipitationAt(ctx.world, high);
 
         // Calculate the impact of weather on dampening
         float factor = calcFactor(rt1, 0.25F);
@@ -378,7 +375,7 @@ public final class SoundFXUtils {
         return SURFACE_DIRECTION_NORMALS[d.ordinal()];
     }
 
-    private static Vec3d offsetPositionIfSolid(@Nonnull final IEnviromentBlockReader world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
+    private static Vec3d offsetPositionIfSolid(@Nonnull final IWorldReader world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
         if (WorldUtils.isAirBlock(world, new BlockPos(origin))) {
             return MathStuff.addScaled(origin, MathStuff.normalize(origin, target), 0.876F);
         }

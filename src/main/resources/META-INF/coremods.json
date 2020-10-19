@@ -1,7 +1,0 @@
-{
-  "blockstate": "transformers/blockstate.js",
-  "soundsource": "transformers/soundsource.js",
-  "soundengine": "transformers/soundengine.js",
-  "clientworld": "transformers/clientworld.js",
-  "soundsystem": "transformers/soundsystem.js"
-}

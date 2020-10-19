@@ -67,7 +67,7 @@ public final class SoundProcessor {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onConfigChange(@Nonnull final ModConfig.ConfigReloading configEvent) {
+    public static void onConfigChange(@Nonnull final ModConfig.Reloading configEvent) {
         applyConfig();
     }
 

@@ -21,11 +21,11 @@ package org.orecruncher.lib;
 import net.minecraft.world.IWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public enum DayCycle {
 
     NO_SKY(false, "NoSky"),
@@ -62,7 +62,8 @@ public enum DayCycle {
         if (world.getDimension().isNether() || !world.getDimension().hasSkyLight())
             return DayCycle.NO_SKY;
 
-        final float brFactor = world.getDimension().getSunBrightness(1.0F);
+        // TODO: Need to validate this is the right routine for this
+        final float brFactor = world.getDimension().getLightBrightness(15);
         if (brFactor > 0.68F)   // 0.6F on 0-1 scale
             return DayCycle.DAYTIME;
         if (brFactor < 0.3F)    // 0 on 0-1 scale

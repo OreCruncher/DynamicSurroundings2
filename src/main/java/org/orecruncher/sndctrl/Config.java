@@ -65,7 +65,7 @@ public final class Config {
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
+    public static void onFileChange(final ModConfig.Reloading configEvent) {
         SoundControl.LOGGER.debug("Config file changed %s", configEvent.getConfig().getFileName());
         applyConfig();
     }

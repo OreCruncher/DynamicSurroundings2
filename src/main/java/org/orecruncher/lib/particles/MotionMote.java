@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -62,18 +63,18 @@ public abstract class MotionMote extends AgeableMote {
 	}
 
 	@Override
-	protected float renderX(final float partialTicks) {
-		return (float) (MathHelper.lerp(partialTicks, this.prevX, this.posX) - interpX());
+	protected float renderX(ActiveRenderInfo info, final float partialTicks) {
+		return (float) (MathHelper.lerp(partialTicks, this.prevX, this.posX) - interpX(info));
 	}
 
 	@Override
-	protected float renderY(final float partialTicks) {
-		return (float) (MathHelper.lerp(partialTicks, this.prevY, this.posY) - interpY());
+	protected float renderY(ActiveRenderInfo info, final float partialTicks) {
+		return (float) (MathHelper.lerp(partialTicks, this.prevY, this.posY) - interpY(info));
 	}
 
 	@Override
-	protected float renderZ(final float partialTicks) {
-		return (float) (MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - interpZ());
+	protected float renderZ(ActiveRenderInfo info, final float partialTicks) {
+		return (float) (MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - interpZ(info));
 	}
 
 	/**

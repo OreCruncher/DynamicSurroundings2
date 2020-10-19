@@ -20,6 +20,7 @@ package org.orecruncher.lib.particles;
 
 import javax.annotation.Nonnull;
 
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -153,17 +154,25 @@ public abstract class AnimatedMote extends MotionMote {
 	}
 
 	@Override
-	public int getBrightnessForRender(final float partialTick) {
-		return 15728880;
+	public void updateBrightness()
+	{
+		this.packedLighting = 15728880;
 	}
 
 	@Override
-	public void render(final BufferBuilder buffer, final ActiveRenderInfo info, float partialTicks, float rotX,
-					   float rotZ, float rotYZ, float rotXY, float rotXZ) {
+	public void render(@Nonnull final IVertexBuilder buffer, @Nonnull final ActiveRenderInfo info, float partialTicks)
+	{
+		final double x = renderX(info, partialTicks);
+		final double y = renderY(info, partialTicks);
+		final double z = renderZ(info, partialTicks);
 
-		final double x = renderX(partialTicks);
-		final double y = renderY(partialTicks);
-		final double z = renderZ(partialTicks);
+		final float rotX = info.getRotation().getX();
+		final float rotY = info.getRotation().getY();
+		final float rotZ = info.getRotation().getZ();
+
+		final float rotYZ = 0f;
+		final float rotXY = 0f;
+		final float rotXZ = 0f;
 
 		drawVertex(buffer, x + (-rotX * this.particleScale - rotXY * this.particleScale),
 				y + (-rotZ * this.particleScale),

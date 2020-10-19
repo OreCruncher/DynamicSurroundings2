@@ -35,10 +35,10 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.lwjgl.openal.AL10;
+import org.orecruncher.lib.IDataAccessor;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
-import org.orecruncher.lib.reflection.ObjectField;
 import org.orecruncher.lib.threading.Worker;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
@@ -55,13 +55,6 @@ import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoundFXProcessor {
-
-    private static final ObjectField<SoundSource, SourceContext> sndctrl_context =
-            new ObjectField<>(
-                    SoundSource.class,
-                    SourceContext::new,
-                    "sndctrl_context"
-            );
 
     /**
      * Sound categories that are ignored when determing special effects.  Things like MASTER, RECORDS, and MUSIC.
@@ -169,21 +162,24 @@ public final class SoundFXProcessor {
      * @param sound The sound that is going to play
      * @param entry The ChannelManager.Entry instance for the sound play
      */
-    public static void onSoundPlay(@Nonnull final ISound sound, @Nonnull final ChannelManager.Entry entry) {
+    public static void onSoundPlay(@Nonnull final ISound sound, @Nonnull SoundCategory category, @Nonnull final ChannelManager.Entry entry) {
 
         if (!isAvailable())
+            return;
+
+        if (isCategoryIgnored(category))
             return;
 
         // Double suplex!  Queue the operation on the sound executor to do the config work.  This should queue in
         // behind any attempt at getting a sound source.
         entry.runOnSoundExecutor(source -> {
-            if (!isCategoryIgnored(sound.getCategory()) && source.field_216441_b > 0) {
+            if (source.id > 0) {
                 final SourceContext ctx = new SourceContext();
                 ctx.attachSound(sound);
                 ctx.enable();
                 ctx.exec();
-                sndctrl_context.set(source, ctx);
-                sources[source.field_216441_b - 1] = ctx;
+                ((IDataAccessor<SourceContext>) source).setData(ctx);
+                sources[source.id - 1] = ctx;
             }
         });
     }
@@ -195,9 +191,9 @@ public final class SoundFXProcessor {
      * @param source SoundSource being ticked
      */
     public static void tick(@Nonnull final SoundSource source) {
-        final SourceContext ctx = sndctrl_context.get(source);
+        final SourceContext ctx = ((IDataAccessor<SourceContext>)source).getData();
         if (ctx != null)
-            ctx.tick(source.field_216441_b);
+            ctx.tick(source.id);
     }
 
     /**
@@ -206,9 +202,9 @@ public final class SoundFXProcessor {
      * @param source The sound source that is stopping
      */
     public static void stopSoundPlay(@Nonnull final SoundSource source) {
-        final SourceContext ctx = sndctrl_context.get(source);
+        final SourceContext ctx = ((IDataAccessor<SourceContext>)source).getData();
         if (ctx != null)
-            sources[source.field_216441_b - 1] = null;
+            sources[source.id - 1] = null;
     }
 
     /**
@@ -218,7 +214,7 @@ public final class SoundFXProcessor {
      * @return true if the sound is considered playing; false otherwise
      */
     public static boolean isPlaying(@Nonnull final SoundSource source) {
-        final int state = source.func_216428_j();
+        final int state = source.getState();
         return /*state == AL10.AL_INITIAL ||*/ state == AL10.AL_PLAYING;
     }
 
@@ -232,7 +228,7 @@ public final class SoundFXProcessor {
     @Nonnull
     public static AudioStreamBuffer playBuffer(@Nonnull final SoundSource source, @Nonnull final AudioStreamBuffer buffer) {
         if (isAvailable()) {
-            final SourceContext ctx = sndctrl_context.get(source);
+            final SourceContext ctx = ((IDataAccessor<SourceContext>)source).getData();
             if (ctx != null && ctx.getSound() != null) {
                 if (ctx.getSound().getAttenuationType() != ISound.AttenuationType.NONE)
                     return Conversion.convert(buffer);

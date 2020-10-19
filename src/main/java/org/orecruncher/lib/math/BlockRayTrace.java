@@ -86,7 +86,7 @@ public class BlockRayTrace {
             // Do a quick check on the first block.  If there is a hit return
             // that result.  Else, traverse the line segment between start and end
             // points until a hit.
-            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(posX, posY, posZ);
+            BlockPos.Mutable mutablePos = new BlockPos.Mutable(posX, posY, posZ);
             BlockRayTraceResult traceResult = hitCheck(mutablePos);
             if (traceResult == null) {
                 // No hit.  Do the calcs to traverse the line

@@ -18,10 +18,12 @@
 
 package org.orecruncher.lib.particles;
 
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public interface IParticleMote {
@@ -48,7 +50,6 @@ public interface IParticleMote {
     /**
      * Causes the mote to render itself.
      */
-    void render(final BufferBuilder buffer, final ActiveRenderInfo info, final float partialTicks, final float rotX,
-                final float rotZ, final float rotYZ, final float rotXY, final float rotXZ);
+    void render(@Nonnull IVertexBuilder buffer, @Nonnull ActiveRenderInfo renderInfo, float partialTicks);
 
 }

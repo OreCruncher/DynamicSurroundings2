@@ -103,9 +103,9 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
             this.maxHealth = player.getMaxHealth();
             this.foodLevel = player.getFoodStats().getFoodLevel();
             this.foodSaturationLevel = player.getFoodStats().getSaturationLevel();
-            this.x = player.posX;
-            this.y = player.posY;
-            this.z = player.posZ;
+            this.x = player.getPosX();
+            this.y = player.getPosY();
+            this.z = player.getPosZ();
 
         } else {
 

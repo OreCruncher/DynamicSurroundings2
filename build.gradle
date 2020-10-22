@@ -2,17 +2,20 @@ buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url = 'https://plugins.gradle.org/m2/' }
+        maven { url = 'http://repo.spongepowered.org/maven' }
         jcenter()
         mavenCentral()
     }
     dependencies {
 		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
 		classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.1.0'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
 
@@ -50,6 +53,7 @@ repositories {
 }
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 minecraft {
     mappings channel: 'snapshot', version: project.ext.snapshot
@@ -68,7 +72,9 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-            
+
+            args '--mixin', 'mixins.sndctrl.json'
+
 			if (project.ext.has('secrets')) {
 				if (secrets.uuid != null)
 					args '--uuid', secrets.uuid
@@ -126,6 +132,10 @@ configurations {
     implementation.extendsFrom(embed)
 }
 
+mixin {
+    add sourceSets.main, "mixins.sndctrl.refmap.json"
+}
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
@@ -150,12 +160,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    compile fg.deobf("com.github.glitchfiend.biomesoplenty:BiomesOPlenty:${mcVersion}-${project.bopVersion}:universal")
+    //compile fg.deobf("com.github.glitchfiend.biomesoplenty:BiomesOPlenty:${mcVersion}-${project.bopVersion}:universal")
     compile fg.deobf("com.github.glitchfiend.biomesoplenty:SereneSeasons:${mcVersion}-${project.ssVersion}:universal")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mcVersion}:${project.jeiVersion}")
-
-    //compile("org.spongepowered:mixin:0.8-SNAPSHOT")
 }
 
 processResources {
@@ -178,6 +186,7 @@ jar {
     
     manifest {
         attributes([
+            "MixinConfigs": "mixins.sndctrl.json",
             "Specification-Title": "${project.ext.modId}",
             "Specification-Vendor": "OreCruncher",
             "Specification-Version": "1", // We are version 1 of ourselves

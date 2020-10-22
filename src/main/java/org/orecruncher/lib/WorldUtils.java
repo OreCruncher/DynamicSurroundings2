@@ -1,6 +1,6 @@
 /*
  * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import org.orecruncher.sndctrl.misc.ModEnvironment;
-//import sereneseasons.season.SeasonHooks;
+import sereneseasons.season.SeasonHooks;
 
 import javax.annotation.Nonnull;
 
@@ -76,9 +76,9 @@ public final class WorldUtils {
     private static final IWeatherAspect THUNDER_OCCURING;
 
     static {
-//        if (ModEnvironment.SereneSeasons.isLoaded())
-//            TEMP = (world, pos) -> SeasonHooks.getBiomeTemperature(world, world.getBiome(pos), pos);
-//        else
+        if (ModEnvironment.SereneSeasons.isLoaded())
+            TEMP = (world, pos) -> SeasonHooks.getBiomeTemperature(world, world.getBiome(pos), pos);
+        else
             TEMP = (world, pos) -> world.getBiome(pos).getTemperature(pos);
 
         // Place holder for future
@@ -160,7 +160,7 @@ public final class WorldUtils {
      * like.
      */
     public static Biome.RainType getCurrentPrecipitationAt(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
-        if (!isRaining((World) world)) {
+        if (!(world instanceof World) || !isRaining((World) world)) {
             // Not currently raining
             return Biome.RainType.NONE;
         }

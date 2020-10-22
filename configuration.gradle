@@ -1,19 +1,19 @@
 //  Basics defined up here to make life easier
 //  Tweak the defs, not the others!
-def mcVersion    	= '1.14.4'
-def modVersion   	= '0.1.0.0'
+def mcVersion    	= '1.15.2'
+def modVersion   	= '1.0.0.0'
 def modDesignator	= ''
-def forgeVersion 	= '28.1.117'
-def snapshot     	= '20200119-1.14.4'
+def forgeVersion 	= '31.2.45'
+def snapshot     	= '20201018-1.15.1'
 
 // General Mod version stuff
 project.group           	= 'org.orecruncher'
 project.archivesBaseName	= 'SoundControl'
 project.version         	= "${mcVersion}-${modVersion}${modDesignator}"
 
-project.ext.ssVersion     	= "2.0.0.40"
-project.ext.bopVersion      = "9.0.0.262"
-project.ext.jeiVersion    	= "6.0.0.26"
+project.ext.ssVersion     	= "3.0.0.74"
+project.ext.bopVersion      = "10.0.0.366"
+project.ext.jeiVersion    	= "6.0.3.15"
 
 project.ext.modId        	= 'sndctrl'
 project.ext.mcVersion    	= mcVersion

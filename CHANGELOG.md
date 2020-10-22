@@ -1,3 +1,19 @@
+### SoundControl-1.15.2-1.0.0.0
+**Requirements**
+* Forge 1.15.2-31.2.44+
+* 100% client side; no server side deployment needed
+
+**Changes**
+* Disable block occlusion by default.  To enable change "Enable Sound Occlusion Calculations" to true.
+
+### SoundControl-1.14.4-0.1.1.0
+**Requirements**
+* Forge 1.14.4-28.1.96+
+* 100% client side; no server side deployment needed
+
+**Fixes**
+* Server side crash when mod present on dedicated server
+
 ### SoundControl-1.14.4-0.1.0.0
 **Requirements**
 * Forge 1.14.4-28.1.96+

@@ -150,7 +150,7 @@ public final class Config {
                 this.enableOcclusionCalcs = builder
                         .comment("Enable sound occlusion calculations (sound muffling when positioned behind blocks)")
                         .translation("sndctrl.cfg.sound.Occlusion")
-                        .define("Enable Sound Occlusion Calculations", true);
+                        .define("Enable Sound Occlusion Calculations", false);
 
                 this.enhancedWeather = builder
                         .worldRestart()

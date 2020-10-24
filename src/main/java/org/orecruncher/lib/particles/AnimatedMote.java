@@ -160,7 +160,7 @@ public abstract class AnimatedMote extends MotionMote {
 	}
 
 	@Override
-	public void render(@Nonnull final IVertexBuilder buffer, @Nonnull final ActiveRenderInfo info, float partialTicks)
+	public void renderParticle(@Nonnull final IVertexBuilder buffer, @Nonnull final ActiveRenderInfo info, float partialTicks)
 	{
 		final double x = renderX(info, partialTicks);
 		final double y = renderY(info, partialTicks);

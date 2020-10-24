@@ -50,6 +50,6 @@ public interface IParticleMote {
     /**
      * Causes the mote to render itself.
      */
-    void render(@Nonnull IVertexBuilder buffer, @Nonnull ActiveRenderInfo renderInfo, float partialTicks);
+    void renderParticle(@Nonnull IVertexBuilder buffer, @Nonnull ActiveRenderInfo renderInfo, float partialTicks);
 
 }

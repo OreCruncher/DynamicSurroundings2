@@ -134,5 +134,5 @@ public abstract class Mote implements IParticleMote {
                 .endVertex();
     }
 
-    public abstract void renderParticle(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks);
+    public abstract void renderParticle(@Nonnull IVertexBuilder buffer, @Nonnull ActiveRenderInfo renderInfo, float partialTicks);
 }

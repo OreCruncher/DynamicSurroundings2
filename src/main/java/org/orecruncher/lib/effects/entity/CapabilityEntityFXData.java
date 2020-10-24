@@ -36,6 +36,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.lib.capability.NullStorage;
 import org.orecruncher.lib.capability.SerializableProvider;
+import org.orecruncher.lib.capability.SimpleProvider;
 import org.orecruncher.sndctrl.SoundControl;
 
 @OnlyIn(Dist.CLIENT)
@@ -55,7 +56,7 @@ public class CapabilityEntityFXData {
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
 	public static ICapabilityProvider createProvider(final IEntityFX data) {
-		return new SerializableProvider<>(FX_INFO, null, data);
+		return new SimpleProvider<>(FX_INFO, null, data);
 	}
 
 	@Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)

@@ -62,16 +62,17 @@ public enum DayCycle {
         if (world.getDimension().isNether() || !world.getDimension().hasSkyLight())
             return DayCycle.NO_SKY;
 
-        // TODO: Need to validate this is the right routine for this
-        final float brFactor = world.getDimension().getLightBrightness(15);
-        if (brFactor > 0.68F)   // 0.6F on 0-1 scale
-            return DayCycle.DAYTIME;
-        if (brFactor < 0.3F)    // 0 on 0-1 scale
-            return DayCycle.NIGHTTIME;
         final float angle = world.getCelestialAngle(0F);
-        if (angle < 0.744F)
+
+        if (angle > 0.82F)
+            return DayCycle.DAYTIME;
+        if (angle > (0.82F - 0.06F))
+            return DayCycle.SUNRISE;
+        if (angle > 0.26F)
+            return DayCycle.NIGHTTIME;
+        if (angle > (0.26F - 0.06F))
             return DayCycle.SUNSET;
-        return DayCycle.SUNRISE;
+        return DayCycle.DAYTIME;
     }
 
     public static float getMoonPhaseFactor(@Nonnull final IWorld world) {

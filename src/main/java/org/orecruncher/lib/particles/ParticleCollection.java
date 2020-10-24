@@ -109,7 +109,7 @@ final class ParticleCollection extends BaseParticle {
     {
         this.render.begin();
         for (final IParticleMote mote : this.myParticles)
-            mote.render(buffer, renderInfo, partialTicks);
+            mote.renderParticle(buffer, renderInfo, partialTicks);
         this.render.end();
     }
 

@@ -28,7 +28,9 @@ import org.orecruncher.sndctrl.audio.handlers.SourceContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
@@ -91,7 +93,7 @@ public class MixinSoundSource implements IDataAccessor<SourceContext> {
      * @param p_216433_1_ Ignored
      * @param ci Ignored
      */
-    @Inject(method = "func_216433_a(Lnet/minecraft/client/audio/IAudioStream;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/SoundSource;func_216417_a(Ljavax/sound/sampled/AudioFormat;I)I", shift = At.Shift.AFTER))
+    @Inject(method = "func_216433_a(Lnet/minecraft/client/audio/IAudioStream;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/SoundSource;func_216421_a(I)V", shift = At.Shift.BEFORE))
     public void adjustBufferSize(IAudioStream p_216433_1_, CallbackInfo ci)
     {
         this.field_216443_d *= 16;

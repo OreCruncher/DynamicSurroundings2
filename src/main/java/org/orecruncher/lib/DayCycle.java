@@ -66,11 +66,11 @@ public enum DayCycle {
 
         if (angle > 0.82F)
             return DayCycle.DAYTIME;
-        if (angle > (0.82F - 0.06F))
+        if (angle > (0.82F - 0.04F))
             return DayCycle.SUNRISE;
         if (angle > 0.26F)
             return DayCycle.NIGHTTIME;
-        if (angle > (0.26F - 0.06F))
+        if (angle > (0.26F - 0.04F))
             return DayCycle.SUNSET;
         return DayCycle.DAYTIME;
     }

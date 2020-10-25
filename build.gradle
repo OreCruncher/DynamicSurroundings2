@@ -164,6 +164,7 @@ dependencies {
     compile fg.deobf("com.github.glitchfiend.biomesoplenty:SereneSeasons:${mcVersion}-${project.ssVersion}:universal")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mcVersion}:${project.jeiVersion}")
+    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.15:1.15-2.0.6-6")
 }
 
 processResources {

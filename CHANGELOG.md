@@ -1,3 +1,13 @@
+### SoundControl-1.15.2-1.0.0.1
+**Requirements**
+* Forge 1.15.2-31.2.44+
+* 100% client side; no server side deployment needed
+
+**Fixes**
+* Client side entity capability is not serializable
+* Circadian calculations in DayCycle are now based on celestial angle
+* Misc changes in support of Environs and MobEffects
+
 ### SoundControl-1.15.2-1.0.0.0
 **Requirements**
 * Forge 1.15.2-31.2.44+

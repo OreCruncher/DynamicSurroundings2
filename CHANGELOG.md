@@ -1,3 +1,11 @@
+### SoundControl-1.15.2-1.0.0.2
+**Requirements**
+* Forge 1.15.2-31.2.44+
+* 100% client side; no server side deployment needed
+
+**Fixes**
+* Crash due to capability when rendering EnderStorage blocks/items
+
 ### SoundControl-1.15.2-1.0.0.1
 **Requirements**
 * Forge 1.15.2-31.2.44+

@@ -20,11 +20,11 @@ package org.orecruncher.lib.effects.entity;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -35,7 +35,6 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.lib.capability.NullStorage;
-import org.orecruncher.lib.capability.SerializableProvider;
 import org.orecruncher.lib.capability.SimpleProvider;
 import org.orecruncher.sndctrl.SoundControl;
 
@@ -64,7 +63,8 @@ public class CapabilityEntityFXData {
 		@SubscribeEvent
 		public static void attachCapabilities(@Nonnull final AttachCapabilitiesEvent<Entity> event) {
 			final World world = event.getObject().getEntityWorld();
-			if (world.isRemote && event.getObject() instanceof LivingEntity) {
+			// Check for null - some mods do no honor the contract
+			if (world != null && world.isRemote && event.getObject() instanceof LivingEntity) {
 				final EntityFXData info = new EntityFXData();
 				event.addCapability(CAPABILITY_ID, createProvider(info));
 			}

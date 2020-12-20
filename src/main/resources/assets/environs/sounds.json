@@ -1,0 +1,863 @@
+{
+	"ice": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/ice/crack1",
+				"volume": 0.5
+			},
+			{
+				"name": "environs:ambient/ice/crack2",
+				"volume": 0.5
+			},
+			{
+				"name": "environs:ambient/ice/crack3",
+				"volume": 0.5
+			}
+		]
+	},
+	"frog": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/frog/croak1",
+				"volume": 0.4
+			},
+			{
+				"name": "environs:ambient/frog/croak2",
+				"volume": 0.4
+			},
+			{
+				"name": "environs:ambient/frog/croak3",
+				"volume": 0.4
+			}
+		]
+	},
+	"bullfrog": {
+		"category": "spot",
+		"credits": [
+			"§aNight Crickets & Bullfrogs.wav",
+			"sunsinger",
+			"Creative Commons Attributions 3.0 Unported"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/frog/bullfrog1"
+			},
+			{
+				"name": "environs:ambient/frog/bullfrog2"
+			},
+			{
+				"name": "environs:ambient/frog/bullfrog3"
+			},
+			{
+				"name": "environs:ambient/frog/bullfrog4"
+			}
+		]
+	},
+	"wind": {
+		"category": "biomes",
+		"credits": [
+			"§aWind blowing into some cactus spine, on the top of the mountain, in the desert of Atacama (Chile).",
+			"felix.blume",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/wind",
+				"stream": true
+			}
+		]
+	},
+	"desert.wind": {
+		"category": "biomes",
+		"credits": [
+			"§adesertwind1FINAL.wav",
+			"nageor",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/desert_wind"
+			}
+		]
+	},
+	"arctic.wind": {
+		"category": "biomes",
+		"credits": [
+			"§aHowling Wind Ambience",
+			"DBlover",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/arctic_wind"
+			}
+		]
+	},
+	"savanna.day": {
+		"category": "biomes",
+		"credits": [
+			"§aMerlothPark_morning_ambiance.wav",
+			"reinsamba",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/savanna_day",
+				"stream": true
+			}
+		]
+	},
+	"savanna.night": {
+		"category": "biomes",
+		"credits": [
+			"§aMerlothPark_crickets2.WAV",
+			"reinsamba",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/savanna_night",
+				"stream": true
+			}
+		]
+	},
+	"crickets": {
+		"category": "biomes",
+		"credits": [
+			"§aSoft, Chilled Crickets Field Recording",
+			"rayjensen",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/crickets",
+				"stream": true
+			}
+		]
+	},
+	"deep_crickets": {
+		"category": "biomes",
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/deep_crickets",
+				"stream": true
+			}
+		]
+	},
+	"plains": {
+		"category": "biomes",
+		"credits": [
+			"§aCalm Morning Outdoor Ambiance",
+			"blouhond",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/plains",
+				"stream": true
+			}
+		]
+	},
+	"forest": {
+		"category": "biomes",
+		"credits": [
+			"§a001_forrest.wav",
+			"joepsporck",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/forest",
+				"stream": true
+			}
+		]
+	},
+	"deep_forest": {
+		"category": "biomes",
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/deep_forest",
+				"stream": true
+			}
+		]
+	},
+	"beach": {
+		"category": "biomes",
+		"credits": [
+			"§aFiji Beach (Stereo)128kbps.mp3",
+			"c97059890",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/beach",
+				"stream": true
+			}
+		]
+	},
+	"ocean": {
+		"category": "biomes",
+		"credits": [
+			"§aocean waves surround me.wav",
+			"bohitomi",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/ocean",
+				"volume": 0.4,
+				"stream": true
+			}
+		]
+	},
+	"river": {
+		"category": "biomes",
+		"credits": [
+			"§aunderwater ambience.wav",
+			"AlienXXX",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/river",
+				"stream": true
+			}
+		]
+	},
+	"bog": {
+		"category": "biomes",
+		"credits": [
+			"§arbh Mpls Bog birds.wav",
+			"RHumphries",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/bog",
+				"stream": true
+			}
+		]
+	},
+	"jungle": {
+		"category": "biomes",
+		"sounds": [
+			{
+				"name": "environs:ambient/outside/jungle",
+				"volume": 0.2,
+				"pitch": 0.8,
+				"stream": true
+			}
+		]
+	},
+	"soulsand": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/soulsand/soulsand1",
+				"volume": 0.2
+			},
+			{
+				"name": "environs:ambient/soulsand/soulsand2",
+				"volume": 0.2
+			},
+			{
+				"name": "environs:ambient/soulsand/soulsand3",
+				"volume": 0.2
+			}
+		]
+	},
+	"theend": {
+		"category": "biomes",
+		"sounds": [
+			{
+				"name": "environs:ambient/end/end",
+				"volume": 0.2,
+				"stream": true
+			}
+		]
+	},
+	"bird": {
+		"category": "spot",
+		"sounds": [
+			"environs:ambient/birds/bird1",
+			"environs:ambient/birds/bird2",
+			"environs:ambient/birds/bird3",
+			"environs:ambient/birds/bird4",
+			"environs:ambient/birds/bird5",
+			"environs:ambient/birds/bird6",
+			"environs:ambient/birds/bird7",
+			"environs:ambient/birds/bird8",
+			"environs:ambient/birds/bird9",
+			"environs:ambient/birds/bird10"
+		]
+	},
+	"woodpecker": {
+		"category": "spot",
+		"sounds": [
+			"environs:ambient/birds/woodpecker1",
+			"environs:ambient/birds/woodpecker2",
+			"environs:ambient/birds/woodpecker3",
+			"environs:ambient/birds/woodpecker4",
+			"environs:ambient/birds/woodpecker5"
+		]
+	},
+	"raptor": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/birds/bald_eagle_chirp",
+				"weight": 2
+			},
+			{
+				"name": "environs:ambient/birds/red_tailed_hawk",
+				"weight": 1
+			},
+			{
+				"name": "environs:ambient/birds/red_shouldered_hawk",
+				"weight": 2
+			}
+		]
+	},
+	"crow": {
+		"category": "spot",
+		"credits": [
+			"§aANML_M_Ext_Crow_Calls_Single1.wav",
+			"conleec",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			"environs:ambient/birds/crow1",
+			"environs:ambient/birds/crow2",
+			"environs:ambient/birds/crow3",
+			"environs:ambient/birds/crow4",
+			"environs:ambient/birds/crow5",
+			"environs:ambient/birds/crow6",
+			"environs:ambient/birds/crow7",
+			"environs:ambient/birds/crow8",
+			"environs:ambient/birds/crow9",
+			"environs:ambient/birds/crow10"
+		]
+	},
+	"owl": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/owl/owl1",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/owl/owl2",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/owl/owl3",
+				"volume": 0.3
+			}
+		]
+	},
+	"loon": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/birds/loon1"
+			},
+			{
+				"name": "environs:ambient/birds/loon2"
+			}
+		]
+	},
+	"nightingale": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/birds/nightingale1"
+			},
+			{
+				"name": "environs:ambient/birds/nightingale2"
+			},
+			{
+				"name": "environs:ambient/birds/nightingale3"
+			},
+			{
+				"name": "environs:ambient/birds/nightingale4"
+			}
+		]
+	},
+	"underground": {
+		"category": "biomes",
+		"sounds": [
+			{
+				"name": "environs:ambient/underground/ambient",
+				"volume": 0.3,
+				"stream": true
+			}
+		]
+	},
+	"rockfall": {
+		"category": "spot",
+		"credits": [
+			"§aRocks falling over rocks, over a steep hill, like a cliff.flac",
+			"gfrog",
+			"Creative Commons 0",
+			"",
+			"§aRocks.wav",
+			"adamgryu",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			"environs:ambient/underground/smallslide1",
+			"environs:ambient/underground/smallslide2",
+			"environs:ambient/underground/smallslide3"
+		]
+	},
+	"bigrockfall": {
+		"category": "spot",
+		"credits": [
+			"§aRockfall in mine.wav",
+			"Benboncan",
+			"Attribution",
+			"",
+			"§aRocks.wav",
+			"adamgryu",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/underground/bigslide1",
+				"volume": 0.4
+			},
+			{
+				"name": "environs:ambient/underground/bigslide2",
+				"volume": 0.4
+			}
+		]
+	},
+	"monstergrowl": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/underground/monster_growl1",
+				"volume": 0.3
+			}
+		]
+	},
+	"waterdrops": {
+		"category": "spot",
+		"sounds": [
+			"environs:ambient/droplets/water1",
+			"environs:ambient/droplets/water2",
+			"environs:ambient/droplets/water3"
+		]
+	},
+	"waterdrips": {
+		"category": "spot",
+		"credits": [
+			"§aDripping, Very Fast, A.wav",
+			"InspectorJ",
+			"Attribution"
+		],
+		"sounds": [
+			"environs:ambient/droplets/drop1",
+			"environs:ambient/droplets/drop2",
+			"environs:ambient/droplets/drop3",
+			"environs:ambient/droplets/drop3"
+		]
+	},
+	"seagulls": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/seagulls/seagulls1",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/seagulls/seagulls2",
+				"volume": 0.3
+			}
+		]
+	},
+	"coyote": {
+		"category": "spot",
+		"credits": [
+			"§acoyote barks and howls",
+			"dkaufman",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			"environs:ambient/coyote/coyote1",
+			"environs:ambient/coyote/coyote2",
+			"environs:ambient/coyote/coyote3",
+			"environs:ambient/coyote/coyote4",
+			"environs:ambient/coyote/coyote5",
+			"environs:ambient/coyote/coyote6"
+		]
+	},
+	"wolf": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/wolf/wolf1",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/wolf/wolf2",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/wolf/wolf3",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/wolf/wolf4",
+				"volume": 0.3
+			}
+		]
+	},
+	"underdeepocean": {
+		"category": "biomes",
+		"credits": [
+			"§aunderwater ambience.wav",
+			"AlienXXX",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/underwater/deepocean",
+				"stream": true
+			}
+		]
+	},
+	"underocean": {
+		"category": "biomes",
+		"credits": [
+			"§aunderwater ambience.wav",
+			"AlienXXX",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/underwater/ocean",
+				"stream": true
+			}
+		]
+	},
+	"underriver": {
+		"category": "biomes",
+		"sounds": [
+			{
+				"name": "environs:ambient/underwater/river",
+				"stream": true
+			}
+		]
+	},
+	"underwater": {
+		"category": "biomes",
+		"credits": [
+			"§aUnderwaterDrowning01.wav",
+			"Abolla",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/underwater/water",
+				"stream": true
+			}
+		]
+	},
+	"whale": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/whale/whale1",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/whale/whale2",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/whale/whale3",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/whale/whale4",
+				"volume": 0.3
+			},
+			{
+				"name": "environs:ambient/whale/whale5",
+				"volume": 0.3
+			}
+		]
+	},
+	"heartbeat": {
+		"category": "player",
+		"sounds": [
+			"environs:ambient/steve/heartbeat"
+		]
+	},
+	"tummy": {
+		"category": "player",
+		"sounds": [
+			"environs:ambient/steve/tummy1",
+			"environs:ambient/steve/tummy2",
+			"environs:ambient/steve/tummy3"
+		]
+	},
+	"breathing": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/miscblocks/breathing1",
+				"volume": 0.5
+			},
+			{
+				"name": "environs:ambient/miscblocks/breathing2",
+				"volume": 0.5
+			}
+		]
+	},
+	"jump": {
+		"category": "player",
+		"sounds": [
+			{
+				"name": "environs:ambient/steve/jump",
+				"volume": 0.8
+			}
+		]
+	},
+	"bees": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/insects/bee1",
+				"volume": 0.05
+			}
+		]
+	},
+	"insectcrawl": {
+		"category": "spot",
+		"sounds": [
+			"environs:ambient/insects/crawl1",
+			"environs:ambient/insects/crawl2",
+			"environs:ambient/insects/crawl3"
+		]
+	},
+	"newsprint": {
+		"category": "spot",
+		"sounds": [
+			"environs:ambient/book/newsprint1",
+			"environs:ambient/book/newsprint2"
+		]
+	},
+	"pageflip": {
+		"category": "spot",
+		"sounds": [
+			"environs:ambient/book/pageflip1",
+			"environs:ambient/book/pageflip2",
+			"environs:ambient/book/pageflip3"
+		]
+	},
+	"pageflipheavy": {
+		"category": "spot",
+		"sounds": [
+			"environs:ambient/book/pageflipheavy1",
+			"environs:ambient/book/pageflipheavy2",
+			"environs:ambient/book/pageflipheavy3"
+		]
+	},
+	"bookshelf": {
+		"category": "spot",
+		"sounds": [
+			{
+				"name": "environs:ambient/book/newsprint1",
+				"volume": 0.175
+			},
+			{
+				"name": "environs:ambient/book/newsprint2",
+				"volume": 0.175
+			},
+			{
+				"name": "environs:ambient/book/pageflip1",
+				"volume": 0.175
+			},
+			{
+				"name": "environs:ambient/book/pageflip2",
+				"volume": 0.175
+			},
+			{
+				"name": "environs:ambient/book/pageflip3",
+				"volume": 0.175
+			},
+			{
+				"name": "environs:ambient/book/pageflipheavy1",
+				"volume": 0.175
+			},
+			{
+				"name": "environs:ambient/book/pageflipheavy2",
+				"volume": 0.175
+			},
+			{
+				"name": "environs:ambient/book/pageflipheavy3",
+				"volume": 0.175
+			}
+		]
+	},
+	"waterfall.0": {
+		"category": "biomes",
+		"credits": [
+			"§aWaterfall Winspit Dorset.wav",
+			"genghis attenborough",
+			"Attribution Noncommercial"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/stream/waterfall0",
+				"attenuation_distance": 12,
+				"preload": true
+			}
+		]
+	},
+	"waterfall.1": {
+		"category": "biomes",
+		"credits": [
+			"§aRunning-water-mountain-stream.mp3",
+			"Alexander",
+			"Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/stream/waterfall1",
+				"attenuation_distance": 16,
+				"preload": true
+			}
+		]
+	},
+	"waterfall.2": {
+		"category": "biomes",
+		"credits": [
+			"§aWaterfall",
+			"Orpheuz",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/stream/waterfall2",
+				"attenuation_distance": 18,
+				"preload": true
+			}
+		]
+	},
+	"waterfall.3": {
+		"category": "biomes",
+		"credits": [
+			"§aSmall Waterfall at the Mill",
+			"willstepp",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/stream/waterfall3",
+				"attenuation_distance": 20,
+				"preload": true
+			}
+		]
+	},
+	"waterfall.4": {
+		"category": "biomes",
+		"credits": [
+			"§a Waterfall, Large, A.wav",
+			"InspectorJ",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/stream/waterfall4",
+				"attenuation_distance": 22,
+				"preload": true
+			}
+		]
+	},
+	"waterfall.5": {
+		"category": "biomes",
+		"credits": [
+			"§aWaterfall, Small, B.wav",
+			"InspectorJ",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/stream/waterfall5",
+				"attenuation_distance": 24,
+				"preload": true
+			}
+		]
+	},
+	"village.rooster": {
+		"category": "biomes",
+		"credits": [
+			"§aVillage ambience rooster and light birds with wind .wav",
+			"Ramston",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			"environs:ambient/village/rooster1",
+			"environs:ambient/village/rooster2",
+			"environs:ambient/village/rooster3"
+		]
+	},
+	"village.anvil": {
+		"category": "biomes",
+		"credits": [
+			"§aAnvil",
+			"MrAuralization",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/village/anvil1"
+			},
+			{
+				"name": "environs:ambient/village/anvil2"
+			}
+		]
+	},
+	"village.dogbark": {
+		"category": "biomes",
+		"credits": [
+			"§aDogs Barking",
+			"darranambler",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			"environs:ambient/village/dogbark1",
+			"environs:ambient/village/dogbark2",
+			"environs:ambient/village/dogbark3",
+			"environs:ambient/village/dogbark4",
+			"environs:ambient/village/dogbark5",
+			"environs:ambient/village/dogbark6"
+		]
+	},
+	"dimension.nether": {
+		"category": "biomes",
+		"credits": [
+			"§aCreepy Dungeon Ambiance",
+			"DrMinky",
+			"Attribution"
+		],
+		"sounds": [
+			{
+				"name": "environs:ambient/dimension/nether",
+				"volume": 0.3,
+				"stream": true
+			}
+		]
+	},
+	"silence": {
+		"category": "ambient",
+		"sounds": [
+			"environs:ambient/silence"
+		]
+	}
+}

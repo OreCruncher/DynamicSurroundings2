@@ -1,0 +1,43 @@
+{
+  "default": {
+    "volume_scale": 0.4
+  },
+  "player": {
+    "playJump": true
+  },
+  "player_slow": {
+    "playJump": true,
+    "speedToRun": 0.022,
+    "stride": 0.95,
+    "stride_stair": 0.6175
+  },
+  "quadruped": {
+    "playJump": true,
+    "quadruped": true,
+    "speedToRun": 0.022,
+    "stride": 0.95,
+    "stride_stair": 0.6175,
+    "quadrupedMultiplier": 0.925,
+    "footprintScale": 0.75
+  },
+  "quadruped_slow": {
+    "playJump": true,
+    "quadruped": true,
+    "speedToRun": 0.022,
+    "stride": 0.95,
+    "stride_stair": 0.6175,
+    "quadrupedMultiplier": 0.925,
+    "footprintScale": 0.75
+  },
+  "child": {
+    "stride": 0.375,
+    "strideStair": 0.24375,
+    "distanceToCenter": 0.1,
+    "footprintScale": 0.5,
+    "volumeScale": 0.3
+  },
+  "minecraft:skeleton": {
+    "footprintScale": 0.5,
+    "volumeScale": 0.3
+  }
+}

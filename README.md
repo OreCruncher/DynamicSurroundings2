@@ -1,4 +1,4 @@
-### Sound Control
+### Dynamic Surroundings 2
 Forge mod that gives the player control over the sounds that play.
 
 <a href="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol"><img src="http://cf.way2muchnoise.eu/versions/dynamic-surroundings-soundcontrol.svg" alt="CurseForge Project"/></a>
@@ -7,9 +7,9 @@ Forge mod that gives the player control over the sounds that play.
 </br></br>
 
 ### License
- Dynamic Surroundings: Sound Control
+ Dynamic Surroundings2
  
- Copyright (C) 2019  OreCruncher
+ Copyright (C) 2020  OreCruncher
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

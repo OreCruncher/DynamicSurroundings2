@@ -31,7 +31,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import org.orecruncher.sndctrl.misc.ModEnvironment;
-import sereneseasons.season.SeasonHooks;
+//import sereneseasons.season.SeasonHooks;
 
 import javax.annotation.Nonnull;
 
@@ -76,9 +76,12 @@ public final class WorldUtils {
     private static final IWeatherAspect THUNDER_OCCURING;
 
     static {
+        /*
         if (ModEnvironment.SereneSeasons.isLoaded())
             TEMP = (world, pos) -> SeasonHooks.getBiomeTemperature(world, world.getBiome(pos), pos);
         else
+
+         */
             TEMP = (world, pos) -> world.getBiome(pos).getTemperature(pos);
 
         // Place holder for future

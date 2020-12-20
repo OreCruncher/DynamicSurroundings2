@@ -1,0 +1,201 @@
+{
+  "biome/wind": {
+    "name": "environs:wind",
+    "repeatable": true
+  },
+  "biome/wind/hills": {
+    "name": "environs:wind",
+    "repeatable": true,
+    "volume": 20,
+    "pitch": 150
+  },
+  "biome/wind/mountains": {
+    "name": "environs:wind",
+    "repeatable": true
+  },
+  "biome/wind/desert": {
+    "name": "environs:desert.wind",
+    "repeatable": true,
+    "volume": 15
+  },
+  "biome/wind/arctic": {
+    "name": "environs:arctic.wind",
+    "repeatable": true,
+    "volume": 30
+  },
+  "biome/ocean": {
+    "name": "environs:ocean",
+    "repeatable": true
+  },
+  "biome/ocean/deep": {
+    "name": "environs:ocean",
+    "repeatable": true,
+    "pitch": 70
+  },
+  "biome/jungle": {
+    "name": "environs:jungle",
+    "repeatable": true
+  },
+  "biome/savanna/day": {
+    "name": "environs:savanna.day",
+    "repeatable": true
+  },
+  "biome/savanna/night": {
+    "name": "environs:savanna.night",
+    "repeatable": true
+  },
+  "biome/plains": {
+    "name": "environs:plains",
+    "repeatable": true
+  },
+  "biome/crickets": {
+    "name": "environs:crickets",
+    "repeatable": true
+  },
+  "biome/forest": {
+    "name": "environs:forest",
+    "repeatable": true
+  },
+  "biome/forest/deep": {
+    "name": "environs:deep_forest",
+    "repeatable": true
+  },
+  "biome/crickets/deep": {
+    "name": "environs:deep_crickets",
+    "repeatable": true
+  },
+  "biome/beach": {
+    "name": "environs:beach",
+    "repeatable": true
+  },
+  "biome/river": {
+    "name": "environs:river",
+    "repeatable": true
+  },
+  "biome/bog": {
+    "name": "environs:bog",
+    "repeatable": true
+  },
+  "biome/underground": {
+    "name": "environs:underground",
+    "repeatable": true
+  },
+  "biome/ocean/under": {
+    "name": "environs:underocean",
+    "repeatable": true
+  },
+  "biome/ocean/deep/under": {
+    "name": "environs:underdeepocean",
+    "repeatable": true
+  },
+  "biome/river/under": {
+    "name": "environs:underriver",
+    "repeatable": true
+  },
+  "biome/water/under": {
+    "name": "environs:underwater",
+    "repeatable": true
+  },
+
+  "village/rooster": {
+    "name": "environs:village.rooster",
+    "category": "biomes",
+    "repeatable": true,
+    "repeat_delay_min": 100,
+    "repeat_delay_max": 200
+  },
+  "village/anvil": {
+    "name": "environs:village.anvil",
+    "category": "biomes",
+    "repeatable": true,
+    "repeat_delay_min": 1200,
+    "repeat_delay_max": 2400
+  },
+  "village/dogbark": {
+    "name": "environs:village.dogbark",
+    "category": "biomes",
+    "repeatable": true,
+    "repeat_delay_min": 200,
+    "repeat_delay_max": 300
+  },
+
+  "dimension/theend": {
+    "name": "environs:theend",
+    "category": "biomes",
+    "repeatable": true
+  },
+  "dimension/nether": {
+    "name": "environs:dimension.nether",
+    "category": "biomes",
+    "repeatable": true
+  },
+
+  "waterlily/frog": {
+    "type": "probability",
+    "array": [
+      "30", {
+        "name": "environs:frog",
+        "pitch_min": 80,
+        "pitch_max": 120,
+        "vol_min": 60,
+        "vol_max": 100
+      },
+      "10", {
+        "name": "environs:bullfrog"
+      }
+    ]
+  },
+  "netherbrick/breathing": {
+    "name": "environs:breathing",
+    "pitch_min": 80,
+    "pitch_max": 120
+  },
+  "soulsand/laughter": {
+    "name": "environs:soulsand",
+    "pitch_min": 60,
+    "pitch_max": 120
+  },
+  "steam.hiss": {
+    "name": "minecraft:block.fire.extinguish",
+    "category": "ambient",
+    "vol_min": 8,
+    "vol_max": 12
+  },
+
+  "waterfall/0": {
+    "name": "environs:waterfall.0",
+    "repeatable": true,
+    "pitch_min": 80,
+    "pitch_max": 120
+  },
+  "waterfall/1": {
+    "name": "environs:waterfall.1",
+    "repeatable": true,
+    "pitch_min": 80,
+    "pitch_max": 120
+  },
+  "waterfall/2": {
+    "name": "environs:waterfall.2",
+    "repeatable": true,
+    "pitch_min": 80,
+    "pitch_max": 120
+  },
+  "waterfall/3": {
+    "name": "environs:waterfall.3",
+    "repeatable": true,
+    "pitch_min": 80,
+    "pitch_max": 120
+  },
+  "waterfall/4": {
+    "name": "environs:waterfall.4",
+    "repeatable": true,
+    "pitch_min": 80,
+    "pitch_max": 120
+  },
+  "waterfall/5": {
+    "name": "environs:waterfall.5",
+    "repeatable": true,
+    "pitch_min": 80,
+    "pitch_max": 120
+  }
+}

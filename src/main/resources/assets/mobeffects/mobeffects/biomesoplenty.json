@@ -1,0 +1,12 @@
+{
+  "footsteps": {
+    "biomesoplenty:goldenrod": "#tallplant",
+    "biomesoplenty:blue_hydrangea": "#tallplant",
+    "biomesoplenty:barley": "#bush",
+    "biomesoplenty:willow_vine": "#vine",
+    "biomesoplenty:mud": "mud",
+    "biomesoplenty:cattail": "#plant",
+    "biomesoplenty:tall_cattail": "#reed",
+    "biomesoplenty:mangrove_root": "#reed"
+  }
+}

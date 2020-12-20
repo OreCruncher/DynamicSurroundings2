@@ -1,0 +1,21 @@
+{
+  "footprints": [
+    "quark:thatch",
+    "quark:thatch_slab",
+    "quark:thatch_stairs",
+    "quark:thatch_vertical_slab"
+  ],
+  "footsteps": {
+    "quark:root": "#vine",
+    "quark:thatch": "leaves",
+    "quark:thatch_slab": "leaves",
+    "quark:thatch_stairs": "leaves",
+    "quark:thatch_vertical_slab": "leaves",
+
+    "quark:orange_blossom_leaves": "leaves",
+    "quark:lavender_blossom_leaves": "leaves",
+    "quark:blue_blossom_leaves": "leaves",
+    "quark:yellow_blossom_leaves": "leaves",
+    "quark:pink_blossom_leaves": "leaves"
+  }
+}

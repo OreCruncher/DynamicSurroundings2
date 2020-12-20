@@ -1,0 +1,93 @@
+{
+  "minecraft:wither_skeleton": {
+    "effects": "bow,swing,footprint",
+    "variator": "minecraft:skeleton",
+    "blockedSounds": [
+      "entity.wither_skeleton.step"
+    ]
+  },
+  "minecraft:villager": {
+    "effects": "bow,swing,footprint,breath,chat",
+    "blockedSounds": [
+      "entity.villager.step"
+    ]
+  },
+  "minecraft:wandering_trader": {
+    "effects": "bow,swing,footprint,breath,chat",
+    "blockedSounds": [
+      "entity.villager.step"
+    ]
+  },
+  "minecraft:pillager": {
+    "effects": "bow,swing,footprint,breath",
+    "blockedSounds": [
+      "entity.villager.step"
+    ]
+  },
+  "minecraft:husk": {
+    "effects": "bow,swing,footprint",
+    "blockedSounds": [
+      "entity.husk.step"
+    ]
+  },
+  "minecraft:drowned": {
+    "effects": "bow,swing,footprint",
+    "blockedSounds": [
+      "entity.drowned.step"
+    ]
+  },
+  "minecraft:zombie_villager": {
+    "effects": "bow,swing,footprint",
+    "blockedSounds": [
+      "entity.zombie_villager.step"
+    ]
+  },
+  "minecraft:evoker": {
+    "effects": "bow,swing,footprint,breath"
+  },
+  "minecraft:vindicator": {
+    "effects": "bow,swing,footprint,breath"
+  },
+  "minecraft:illusioner": {
+    "effects": "bow,swing,footprint,breath"
+  },
+  "minecraft:skeleton": {
+    "effects": "bow,swing,footprint,chat",
+    "variator": "minecraft:skeleton",
+    "blockedSounds": [
+      "entity.skeleton.step"
+    ]
+  },
+  "minecraft:stray": {
+    "effects": "bow,swing,footprint",
+    "variator": "minecraft:skeleton",
+    "blockedSounds": [
+      "entity.stray.step"
+    ]
+  },
+  "minecraft:zombie": {
+    "effects": "bow,swing,footprint,chat",
+    "blockedSounds": [
+      "entity.zombie.step"
+    ]
+  },
+  "minecraft:zombie_pigman": {
+    "effects": "bow,swing,footprint",
+    "blockedSounds": [
+      "entity.zombie_pigman.step"
+    ]
+  },
+  "minecraft:witch": {
+    "effects": "footprint,breath,chat",
+    "blockedSounds": [
+      "entity.witch.step"
+    ]
+  },
+  "minecraft:squid": {
+    "effects": "chat"
+  },
+  "minecraft:player": {
+    "effects": "bow,swing,footprint,breath,toolbar",
+    "variator": "player"
+  }
+}

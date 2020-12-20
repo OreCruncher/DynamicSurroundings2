@@ -1,0 +1,32 @@
+{
+  "biomes": [
+    {
+      "conditions": "biome.id == 'biomesoplenty:cold_desert'",
+      "_comment": "BoP Cold Desert fog explicit set",
+      "fog": true,
+      "fogColor": "220,219,223",
+      "fogDensity": 0.4
+    },
+    {
+      "conditions": "biome.id == 'biomesoplenty:ghost_forest'",
+      "_comment": "BoP Ghost Forest fog explicit set",
+      "fog": true,
+      "fogColor": "220,219,223",
+      "fogDensity": 0.4
+    },
+    {
+      "conditions": "lib.oneof(biome.id, 'biomesoplenty:marsh', 'biomesoplenty:mangrove')",
+      "_comment": "BoP Marsh/Mangrove specific set",
+      "acoustics": [
+        {
+          "acoustic": "biome/bog",
+          "conditions": "weather.isNotRaining() && !weather.canWaterFreeze() && diurnal.isDay()"
+        },
+        {
+          "acoustic": "biome/crickets",
+          "conditions": "!weather.canWaterFreeze() && diurnal.isNight()"
+        }
+      ]
+    }
+  ]
+}

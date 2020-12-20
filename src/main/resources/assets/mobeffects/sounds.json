@@ -1,0 +1,983 @@
+{
+	"armor.light_walk": {
+		"category": "footsteps",
+		"credits": [
+			"§aFoley",
+			"Samulis"
+		],
+		"sounds": [
+			"mobeffects:footsteps/armor/light_1",
+			"mobeffects:footsteps/armor/light_2",
+			"mobeffects:footsteps/armor/light_3"
+		]
+	},
+	"armor.light_run": {
+		"category": "footsteps",
+		"credits": [
+			"§aFoley",
+			"Samulis"
+		],
+		"sounds": [
+			"mobeffects:footsteps/armor/light_1",
+			"mobeffects:footsteps/armor/light_2",
+			"mobeffects:footsteps/armor/light_3"
+		]
+	},
+	"armor.medium_walk": {
+		"category": "footsteps",
+		"credits": [
+			"§aFoley",
+			"Samulis",
+			"",
+			"§achain drop",
+			"satanicupsman",
+			"Creative Commons 0"
+		],
+		"sounds": [
+			"mobeffects:footsteps/armor/medium_walk1",
+			"mobeffects:footsteps/armor/medium_walk2",
+			"mobeffects:footsteps/armor/medium_walk3"
+		]
+	},
+	"armor.medium_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/armor/medium_walk1",
+			"mobeffects:footsteps/armor/medium_walk2",
+			"mobeffects:footsteps/armor/medium_walk3"
+		]
+	},
+	"armor.medium_foot": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/armor/medium_walk1",
+			"mobeffects:footsteps/armor/medium_walk2",
+			"mobeffects:footsteps/armor/medium_walk3"
+		]
+	},
+	"armor.crystal_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/armor/crystal_walk1",
+			"mobeffects:footsteps/armor/crystal_walk2",
+			"mobeffects:footsteps/armor/crystal_walk3",
+			"mobeffects:footsteps/armor/crystal_walk4",
+			"mobeffects:footsteps/armor/crystal_walk5",
+			"mobeffects:footsteps/armor/crystal_walk6"
+		]
+	},
+	"armor.crystal_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/armor/crystal_run1",
+			"mobeffects:footsteps/armor/crystal_run2",
+			"mobeffects:footsteps/armor/crystal_run3",
+			"mobeffects:footsteps/armor/crystal_run4",
+			"mobeffects:footsteps/armor/crystal_run5",
+			"mobeffects:footsteps/armor/crystal_run6"
+		]
+	},
+	"armor.crystal_foot": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/armor/crystal_foot1",
+			"mobeffects:footsteps/armor/crystal_foot2",
+			"mobeffects:footsteps/armor/crystal_foot3",
+			"mobeffects:footsteps/armor/crystal_foot4"
+		]
+	},
+	"armor.heavy_walk": {
+		"category": "footsteps",
+		"credits": [
+			"§aClanking Armor",
+			"LordSane",
+			"Attribution"
+		],
+		"sounds": [
+			"mobeffects:footsteps/armor/heavy_walk1",
+			"mobeffects:footsteps/armor/heavy_walk2",
+			"mobeffects:footsteps/armor/heavy_walk3",
+			"mobeffects:footsteps/armor/heavy_walk4",
+			"mobeffects:footsteps/armor/heavy_walk5",
+			"mobeffects:footsteps/armor/heavy_walk6"
+		]
+	},
+	"armor.heavy_run": {
+		"category": "footsteps",
+		"credits": [
+			"§aClanking Armor",
+			"LordSane",
+			"Attribution"
+		],
+		"sounds": [
+			"mobeffects:footsteps/armor/heavy_run1",
+			"mobeffects:footsteps/armor/heavy_run2",
+			"mobeffects:footsteps/armor/heavy_run3",
+			"mobeffects:footsteps/armor/heavy_run4",
+			"mobeffects:footsteps/armor/heavy_run5",
+			"mobeffects:footsteps/armor/heavy_run6",
+			"mobeffects:footsteps/armor/heavy_run7",
+			"mobeffects:footsteps/armor/heavy_run8",
+			"mobeffects:footsteps/armor/heavy_run9"
+		]
+	},
+	"armor.heavy_foot": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/armor/heavy_foot1",
+			"mobeffects:footsteps/armor/heavy_foot2",
+			"mobeffects:footsteps/armor/heavy_foot3"
+		]
+	},
+	"armor.slimey_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/armor/slime_walk1",
+			"mobeffects:footsteps/armor/slime_walk2",
+			"mobeffects:footsteps/armor/slime_walk3",
+			"mobeffects:footsteps/armor/slime_walk4",
+			"mobeffects:footsteps/armor/slime_walk5",
+			"mobeffects:footsteps/armor/slime_walk6"
+		]
+	},
+	"armor.slimey_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/armor/slime_run1",
+			"mobeffects:footsteps/armor/slime_run2",
+			"mobeffects:footsteps/armor/slime_run3",
+			"mobeffects:footsteps/armor/slime_run4",
+			"mobeffects:footsteps/armor/slime_run5",
+			"mobeffects:footsteps/armor/slime_run6"
+		]
+	},
+	"bluntwood.bluntwood_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/bluntwood/bluntwood_walk1",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk10",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk11",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk2",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk3",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk4",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk5",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk6",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk7",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk8",
+			"mobeffects:footsteps/bluntwood/bluntwood_walk9"
+		]
+	},
+	"bluntwood.bluntwood_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/bluntwood/bluntwood_wander1",
+			"mobeffects:footsteps/bluntwood/bluntwood_wander2",
+			"mobeffects:footsteps/bluntwood/bluntwood_wander3",
+			"mobeffects:footsteps/bluntwood/bluntwood_wander4",
+			"mobeffects:footsteps/bluntwood/bluntwood_wander5"
+		]
+	},
+	"brush.brush_through": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/brush/brush_through1",
+			"mobeffects:footsteps/brush/brush_through10",
+			"mobeffects:footsteps/brush/brush_through11",
+			"mobeffects:footsteps/brush/brush_through2",
+			"mobeffects:footsteps/brush/brush_through3",
+			"mobeffects:footsteps/brush/brush_through4",
+			"mobeffects:footsteps/brush/brush_through5",
+			"mobeffects:footsteps/brush/brush_through6",
+			"mobeffects:footsteps/brush/brush_through7",
+			"mobeffects:footsteps/brush/brush_through8",
+			"mobeffects:footsteps/brush/brush_through9"
+		]
+	},
+	"concrete.concrete_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/concrete/concrete_run1",
+			"mobeffects:footsteps/concrete/concrete_run10",
+			"mobeffects:footsteps/concrete/concrete_run11",
+			"mobeffects:footsteps/concrete/concrete_run2",
+			"mobeffects:footsteps/concrete/concrete_run3",
+			"mobeffects:footsteps/concrete/concrete_run4",
+			"mobeffects:footsteps/concrete/concrete_run5",
+			"mobeffects:footsteps/concrete/concrete_run6",
+			"mobeffects:footsteps/concrete/concrete_run7",
+			"mobeffects:footsteps/concrete/concrete_run8",
+			"mobeffects:footsteps/concrete/concrete_run9"
+		]
+	},
+	"concrete.concrete_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/concrete/concrete_walk1",
+			"mobeffects:footsteps/concrete/concrete_walk10",
+			"mobeffects:footsteps/concrete/concrete_walk11",
+			"mobeffects:footsteps/concrete/concrete_walk2",
+			"mobeffects:footsteps/concrete/concrete_walk3",
+			"mobeffects:footsteps/concrete/concrete_walk4",
+			"mobeffects:footsteps/concrete/concrete_walk5",
+			"mobeffects:footsteps/concrete/concrete_walk6",
+			"mobeffects:footsteps/concrete/concrete_walk7",
+			"mobeffects:footsteps/concrete/concrete_walk8",
+			"mobeffects:footsteps/concrete/concrete_walk9"
+		]
+	},
+	"concrete.concrete_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/concrete/concrete_wander1",
+			"mobeffects:footsteps/concrete/concrete_wander2",
+			"mobeffects:footsteps/concrete/concrete_wander3",
+			"mobeffects:footsteps/concrete/concrete_wander4",
+			"mobeffects:footsteps/concrete/concrete_wander5"
+		]
+	},
+	"deckwood.deckwood_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/deckwood/deckwood_run1",
+			"mobeffects:footsteps/deckwood/deckwood_run10",
+			"mobeffects:footsteps/deckwood/deckwood_run11",
+			"mobeffects:footsteps/deckwood/deckwood_run2",
+			"mobeffects:footsteps/deckwood/deckwood_run3",
+			"mobeffects:footsteps/deckwood/deckwood_run4",
+			"mobeffects:footsteps/deckwood/deckwood_run5",
+			"mobeffects:footsteps/deckwood/deckwood_run6",
+			"mobeffects:footsteps/deckwood/deckwood_run7",
+			"mobeffects:footsteps/deckwood/deckwood_run8",
+			"mobeffects:footsteps/deckwood/deckwood_run9"
+		]
+	},
+	"dirt.dirt_land": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/dirt/dirt_land1",
+			"mobeffects:footsteps/dirt/dirt_land2",
+			"mobeffects:footsteps/dirt/dirt_land3",
+			"mobeffects:footsteps/dirt/dirt_land4"
+		]
+	},
+	"dirt.dirt_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/dirt/dirt_run1",
+			"mobeffects:footsteps/dirt/dirt_run10",
+			"mobeffects:footsteps/dirt/dirt_run11",
+			"mobeffects:footsteps/dirt/dirt_run2",
+			"mobeffects:footsteps/dirt/dirt_run3",
+			"mobeffects:footsteps/dirt/dirt_run4",
+			"mobeffects:footsteps/dirt/dirt_run5",
+			"mobeffects:footsteps/dirt/dirt_run6",
+			"mobeffects:footsteps/dirt/dirt_run7",
+			"mobeffects:footsteps/dirt/dirt_run8",
+			"mobeffects:footsteps/dirt/dirt_run9"
+		]
+	},
+	"dirt.dirt_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/dirt/dirt_walk1",
+			"mobeffects:footsteps/dirt/dirt_walk10",
+			"mobeffects:footsteps/dirt/dirt_walk11",
+			"mobeffects:footsteps/dirt/dirt_walk2",
+			"mobeffects:footsteps/dirt/dirt_walk3",
+			"mobeffects:footsteps/dirt/dirt_walk4",
+			"mobeffects:footsteps/dirt/dirt_walk5",
+			"mobeffects:footsteps/dirt/dirt_walk6",
+			"mobeffects:footsteps/dirt/dirt_walk7",
+			"mobeffects:footsteps/dirt/dirt_walk8",
+			"mobeffects:footsteps/dirt/dirt_walk9"
+		]
+	},
+	"dirt.dirt_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/dirt/dirt_wander1",
+			"mobeffects:footsteps/dirt/dirt_wander2",
+			"mobeffects:footsteps/dirt/dirt_wander3",
+			"mobeffects:footsteps/dirt/dirt_wander4",
+			"mobeffects:footsteps/dirt/dirt_wander5"
+		]
+	},
+	"glass.glass_hard": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/glass/glass_hard1"
+		]
+	},
+	"glass.glass_hit": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/glass/glass_hit1",
+			"mobeffects:footsteps/glass/glass_hit2"
+		]
+	},
+	"grass.grass_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/grass/grass_run1",
+			"mobeffects:footsteps/grass/grass_run2",
+			"mobeffects:footsteps/grass/grass_run3",
+			"mobeffects:footsteps/grass/grass_run4"
+		]
+	},
+	"grass.grass_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/grass/grass_walk1",
+			"mobeffects:footsteps/grass/grass_walk10",
+			"mobeffects:footsteps/grass/grass_walk2",
+			"mobeffects:footsteps/grass/grass_walk3",
+			"mobeffects:footsteps/grass/grass_walk4",
+			"mobeffects:footsteps/grass/grass_walk5",
+			"mobeffects:footsteps/grass/grass_walk6",
+			"mobeffects:footsteps/grass/grass_walk7",
+			"mobeffects:footsteps/grass/grass_walk8",
+			"mobeffects:footsteps/grass/grass_walk9"
+		]
+	},
+	"grass.grass_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/grass/grass_wander1",
+			"mobeffects:footsteps/grass/grass_wander2",
+			"mobeffects:footsteps/grass/grass_wander3",
+			"mobeffects:footsteps/grass/grass_wander4",
+			"mobeffects:footsteps/grass/grass_wander5",
+			"mobeffects:footsteps/grass/grass_wander6"
+		]
+	},
+	"gravel.gravel_land": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/gravel/gravel_land1",
+			"mobeffects:footsteps/gravel/gravel_land2"
+		]
+	},
+	"gravel.gravel_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/gravel/gravel_run1",
+			"mobeffects:footsteps/gravel/gravel_run10",
+			"mobeffects:footsteps/gravel/gravel_run11",
+			"mobeffects:footsteps/gravel/gravel_run2",
+			"mobeffects:footsteps/gravel/gravel_run3",
+			"mobeffects:footsteps/gravel/gravel_run4",
+			"mobeffects:footsteps/gravel/gravel_run5",
+			"mobeffects:footsteps/gravel/gravel_run6",
+			"mobeffects:footsteps/gravel/gravel_run7",
+			"mobeffects:footsteps/gravel/gravel_run8",
+			"mobeffects:footsteps/gravel/gravel_run9"
+		]
+	},
+	"gravel.gravel_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/gravel/gravel_walk1",
+			"mobeffects:footsteps/gravel/gravel_walk10",
+			"mobeffects:footsteps/gravel/gravel_walk11",
+			"mobeffects:footsteps/gravel/gravel_walk2",
+			"mobeffects:footsteps/gravel/gravel_walk3",
+			"mobeffects:footsteps/gravel/gravel_walk4",
+			"mobeffects:footsteps/gravel/gravel_walk5",
+			"mobeffects:footsteps/gravel/gravel_walk6",
+			"mobeffects:footsteps/gravel/gravel_walk7",
+			"mobeffects:footsteps/gravel/gravel_walk8",
+			"mobeffects:footsteps/gravel/gravel_walk9"
+		]
+	},
+	"gravel.gravel_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/gravel/gravel_wander1",
+			"mobeffects:footsteps/gravel/gravel_wander2",
+			"mobeffects:footsteps/gravel/gravel_wander3"
+		]
+	},
+	"leaves.leaves_through": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/leaves/leaves_through1",
+			"mobeffects:footsteps/leaves/leaves_through2",
+			"mobeffects:footsteps/leaves/leaves_through3",
+			"mobeffects:footsteps/leaves/leaves_through4",
+			"mobeffects:footsteps/leaves/leaves_through5",
+			"mobeffects:footsteps/leaves/leaves_through6",
+			"mobeffects:footsteps/leaves/leaves_through7"
+		]
+	},
+	"lino.lino_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/lino/lino_run1",
+			"mobeffects:footsteps/lino/lino_run2",
+			"mobeffects:footsteps/lino/lino_run3",
+			"mobeffects:footsteps/lino/lino_run4",
+			"mobeffects:footsteps/lino/lino_run5",
+			"mobeffects:footsteps/lino/lino_run6"
+		]
+	},
+	"lino.lino_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/lino/lino_walk1",
+			"mobeffects:footsteps/lino/lino_walk2",
+			"mobeffects:footsteps/lino/lino_walk3",
+			"mobeffects:footsteps/lino/lino_walk4",
+			"mobeffects:footsteps/lino/lino_walk5",
+			"mobeffects:footsteps/lino/lino_walk6",
+			"mobeffects:footsteps/lino/lino_walk7",
+			"mobeffects:footsteps/lino/lino_walk8"
+		]
+	},
+	"marble.marble_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/marble/marble_run1",
+			"mobeffects:footsteps/marble/marble_run10",
+			"mobeffects:footsteps/marble/marble_run11",
+			"mobeffects:footsteps/marble/marble_run2",
+			"mobeffects:footsteps/marble/marble_run3",
+			"mobeffects:footsteps/marble/marble_run4",
+			"mobeffects:footsteps/marble/marble_run5",
+			"mobeffects:footsteps/marble/marble_run6",
+			"mobeffects:footsteps/marble/marble_run7",
+			"mobeffects:footsteps/marble/marble_run8",
+			"mobeffects:footsteps/marble/marble_run9"
+		]
+	},
+	"marble.marble_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/marble/marble_walk1",
+			"mobeffects:footsteps/marble/marble_walk10",
+			"mobeffects:footsteps/marble/marble_walk11",
+			"mobeffects:footsteps/marble/marble_walk2",
+			"mobeffects:footsteps/marble/marble_walk3",
+			"mobeffects:footsteps/marble/marble_walk4",
+			"mobeffects:footsteps/marble/marble_walk5",
+			"mobeffects:footsteps/marble/marble_walk6",
+			"mobeffects:footsteps/marble/marble_walk7",
+			"mobeffects:footsteps/marble/marble_walk8",
+			"mobeffects:footsteps/marble/marble_walk9"
+		]
+	},
+	"marble.marble_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/marble/marble_wander1",
+			"mobeffects:footsteps/marble/marble_wander2",
+			"mobeffects:footsteps/marble/marble_wander3",
+			"mobeffects:footsteps/marble/marble_wander4",
+			"mobeffects:footsteps/marble/marble_wander5",
+			"mobeffects:footsteps/marble/marble_wander6",
+			"mobeffects:footsteps/marble/marble_wander7"
+		]
+	},
+	"metalbar.metalbar_land": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/metalbar/metalbar_land1"
+		]
+	},
+	"metalbar.metalbar_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/metalbar/metalbar_run1",
+			"mobeffects:footsteps/metalbar/metalbar_run10",
+			"mobeffects:footsteps/metalbar/metalbar_run11",
+			"mobeffects:footsteps/metalbar/metalbar_run2",
+			"mobeffects:footsteps/metalbar/metalbar_run3",
+			"mobeffects:footsteps/metalbar/metalbar_run4",
+			"mobeffects:footsteps/metalbar/metalbar_run5",
+			"mobeffects:footsteps/metalbar/metalbar_run6",
+			"mobeffects:footsteps/metalbar/metalbar_run7",
+			"mobeffects:footsteps/metalbar/metalbar_run8",
+			"mobeffects:footsteps/metalbar/metalbar_run9"
+		]
+	},
+	"metalbar.metalbar_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/metalbar/metalbar_walk1",
+			"mobeffects:footsteps/metalbar/metalbar_walk10",
+			"mobeffects:footsteps/metalbar/metalbar_walk11",
+			"mobeffects:footsteps/metalbar/metalbar_walk2",
+			"mobeffects:footsteps/metalbar/metalbar_walk3",
+			"mobeffects:footsteps/metalbar/metalbar_walk4",
+			"mobeffects:footsteps/metalbar/metalbar_walk5",
+			"mobeffects:footsteps/metalbar/metalbar_walk6",
+			"mobeffects:footsteps/metalbar/metalbar_walk7",
+			"mobeffects:footsteps/metalbar/metalbar_walk8",
+			"mobeffects:footsteps/metalbar/metalbar_walk9"
+		]
+	},
+	"metalbar.metalbar_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/metalbar/metalbar_wander1",
+			"mobeffects:footsteps/metalbar/metalbar_wander2",
+			"mobeffects:footsteps/metalbar/metalbar_wander3",
+			"mobeffects:footsteps/metalbar/metalbar_wander4",
+			"mobeffects:footsteps/metalbar/metalbar_wander5",
+			"mobeffects:footsteps/metalbar/metalbar_wander6"
+		]
+	},
+	"metalbox.metalbox_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/metalbox/metalbox_run1",
+			"mobeffects:footsteps/metalbox/metalbox_run10",
+			"mobeffects:footsteps/metalbox/metalbox_run2",
+			"mobeffects:footsteps/metalbox/metalbox_run3",
+			"mobeffects:footsteps/metalbox/metalbox_run4",
+			"mobeffects:footsteps/metalbox/metalbox_run5",
+			"mobeffects:footsteps/metalbox/metalbox_run6",
+			"mobeffects:footsteps/metalbox/metalbox_run7",
+			"mobeffects:footsteps/metalbox/metalbox_run8",
+			"mobeffects:footsteps/metalbox/metalbox_run9"
+		]
+	},
+	"metalbox.metalbox_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/metalbox/metalbox_walk1",
+			"mobeffects:footsteps/metalbox/metalbox_walk2",
+			"mobeffects:footsteps/metalbox/metalbox_walk3",
+			"mobeffects:footsteps/metalbox/metalbox_walk4",
+			"mobeffects:footsteps/metalbox/metalbox_walk5",
+			"mobeffects:footsteps/metalbox/metalbox_walk6",
+			"mobeffects:footsteps/metalbox/metalbox_walk7",
+			"mobeffects:footsteps/metalbox/metalbox_walk8",
+			"mobeffects:footsteps/metalbox/metalbox_walk9"
+		]
+	},
+	"metalbox.metalbox_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/metalbox/metalbox_wander1",
+			"mobeffects:footsteps/metalbox/metalbox_wander2",
+			"mobeffects:footsteps/metalbox/metalbox_wander3",
+			"mobeffects:footsteps/metalbox/metalbox_wander4"
+		]
+	},
+	"mud.mud_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/mud/mud_walk1",
+			"mobeffects:footsteps/mud/mud_walk2",
+			"mobeffects:footsteps/mud/mud_walk3",
+			"mobeffects:footsteps/mud/mud_walk4",
+			"mobeffects:footsteps/mud/mud_walk5",
+			"mobeffects:footsteps/mud/mud_walk6"
+		]
+	},
+	"mud.mud_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/mud/mud_wander1",
+			"mobeffects:footsteps/mud/mud_wander2",
+			"mobeffects:footsteps/mud/mud_wander3",
+			"mobeffects:footsteps/mud/mud_wander4"
+		]
+	},
+	"muffledice.muffledice_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/muffledice/muffledice_walk1",
+			"mobeffects:footsteps/muffledice/muffledice_walk10",
+			"mobeffects:footsteps/muffledice/muffledice_walk2",
+			"mobeffects:footsteps/muffledice/muffledice_walk3",
+			"mobeffects:footsteps/muffledice/muffledice_walk4",
+			"mobeffects:footsteps/muffledice/muffledice_walk5",
+			"mobeffects:footsteps/muffledice/muffledice_walk6",
+			"mobeffects:footsteps/muffledice/muffledice_walk7",
+			"mobeffects:footsteps/muffledice/muffledice_walk8",
+			"mobeffects:footsteps/muffledice/muffledice_walk9"
+		]
+	},
+	"quicksand.quicksand_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/quicksand/quicksand_walk1",
+			"mobeffects:footsteps/quicksand/quicksand_walk10",
+			"mobeffects:footsteps/quicksand/quicksand_walk11",
+			"mobeffects:footsteps/quicksand/quicksand_walk2",
+			"mobeffects:footsteps/quicksand/quicksand_walk3",
+			"mobeffects:footsteps/quicksand/quicksand_walk4",
+			"mobeffects:footsteps/quicksand/quicksand_walk5",
+			"mobeffects:footsteps/quicksand/quicksand_walk6",
+			"mobeffects:footsteps/quicksand/quicksand_walk7",
+			"mobeffects:footsteps/quicksand/quicksand_walk8",
+			"mobeffects:footsteps/quicksand/quicksand_walk9"
+		]
+	},
+	"rug.rug_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/rug/rug_walk1",
+			"mobeffects:footsteps/rug/rug_walk10",
+			"mobeffects:footsteps/rug/rug_walk11",
+			"mobeffects:footsteps/rug/rug_walk2",
+			"mobeffects:footsteps/rug/rug_walk3",
+			"mobeffects:footsteps/rug/rug_walk4",
+			"mobeffects:footsteps/rug/rug_walk5",
+			"mobeffects:footsteps/rug/rug_walk6",
+			"mobeffects:footsteps/rug/rug_walk7",
+			"mobeffects:footsteps/rug/rug_walk8",
+			"mobeffects:footsteps/rug/rug_walk9"
+		]
+	},
+	"sand.sand_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/sand/sand_run1",
+			"mobeffects:footsteps/sand/sand_run10",
+			"mobeffects:footsteps/sand/sand_run11",
+			"mobeffects:footsteps/sand/sand_run2",
+			"mobeffects:footsteps/sand/sand_run3",
+			"mobeffects:footsteps/sand/sand_run4",
+			"mobeffects:footsteps/sand/sand_run5",
+			"mobeffects:footsteps/sand/sand_run6",
+			"mobeffects:footsteps/sand/sand_run7",
+			"mobeffects:footsteps/sand/sand_run8",
+			"mobeffects:footsteps/sand/sand_run9"
+		]
+	},
+	"sand.sand_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/sand/sand_walk1",
+			"mobeffects:footsteps/sand/sand_walk10",
+			"mobeffects:footsteps/sand/sand_walk11",
+			"mobeffects:footsteps/sand/sand_walk2",
+			"mobeffects:footsteps/sand/sand_walk3",
+			"mobeffects:footsteps/sand/sand_walk4",
+			"mobeffects:footsteps/sand/sand_walk5",
+			"mobeffects:footsteps/sand/sand_walk6",
+			"mobeffects:footsteps/sand/sand_walk7",
+			"mobeffects:footsteps/sand/sand_walk8",
+			"mobeffects:footsteps/sand/sand_walk9"
+		]
+	},
+	"snow.snow_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/snow/snow_run1",
+			"mobeffects:footsteps/snow/snow_run10",
+			"mobeffects:footsteps/snow/snow_run11",
+			"mobeffects:footsteps/snow/snow_run2",
+			"mobeffects:footsteps/snow/snow_run3",
+			"mobeffects:footsteps/snow/snow_run4",
+			"mobeffects:footsteps/snow/snow_run5",
+			"mobeffects:footsteps/snow/snow_run6",
+			"mobeffects:footsteps/snow/snow_run7",
+			"mobeffects:footsteps/snow/snow_run8",
+			"mobeffects:footsteps/snow/snow_run9"
+		]
+	},
+	"snow.snow_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/snow/snow_walk1",
+			"mobeffects:footsteps/snow/snow_walk10",
+			"mobeffects:footsteps/snow/snow_walk11",
+			"mobeffects:footsteps/snow/snow_walk2",
+			"mobeffects:footsteps/snow/snow_walk3",
+			"mobeffects:footsteps/snow/snow_walk4",
+			"mobeffects:footsteps/snow/snow_walk5",
+			"mobeffects:footsteps/snow/snow_walk6",
+			"mobeffects:footsteps/snow/snow_walk7",
+			"mobeffects:footsteps/snow/snow_walk8",
+			"mobeffects:footsteps/snow/snow_walk9"
+		]
+	},
+	"snow.snow_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/snow/snow_wander1",
+			"mobeffects:footsteps/snow/snow_wander2",
+			"mobeffects:footsteps/snow/snow_wander3",
+			"mobeffects:footsteps/snow/snow_wander4",
+			"mobeffects:footsteps/snow/snow_wander5"
+		]
+	},
+	"squeakywood.squeakywood_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/squeakywood/squeakywood_walk1",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk10",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk11",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk2",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk3",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk4",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk5",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk6",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk7",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk8",
+			"mobeffects:footsteps/squeakywood/squeakywood_walk9"
+		]
+	},
+	"squeakywood.squeakywood_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/squeakywood/squeakywood_wander1",
+			"mobeffects:footsteps/squeakywood/squeakywood_wander2",
+			"mobeffects:footsteps/squeakywood/squeakywood_wander3",
+			"mobeffects:footsteps/squeakywood/squeakywood_wander4",
+			"mobeffects:footsteps/squeakywood/squeakywood_wander5",
+			"mobeffects:footsteps/squeakywood/squeakywood_wander6",
+			"mobeffects:footsteps/squeakywood/squeakywood_wander7"
+		]
+	},
+	"stone.stone_run": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/stone/stone_run1",
+			"mobeffects:footsteps/stone/stone_run10",
+			"mobeffects:footsteps/stone/stone_run11",
+			"mobeffects:footsteps/stone/stone_run2",
+			"mobeffects:footsteps/stone/stone_run3",
+			"mobeffects:footsteps/stone/stone_run4",
+			"mobeffects:footsteps/stone/stone_run5",
+			"mobeffects:footsteps/stone/stone_run6",
+			"mobeffects:footsteps/stone/stone_run7",
+			"mobeffects:footsteps/stone/stone_run8",
+			"mobeffects:footsteps/stone/stone_run9"
+		]
+	},
+	"stone.stone_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/stone/stone_walk1",
+			"mobeffects:footsteps/stone/stone_walk10",
+			"mobeffects:footsteps/stone/stone_walk11",
+			"mobeffects:footsteps/stone/stone_walk2",
+			"mobeffects:footsteps/stone/stone_walk3",
+			"mobeffects:footsteps/stone/stone_walk4",
+			"mobeffects:footsteps/stone/stone_walk5",
+			"mobeffects:footsteps/stone/stone_walk6",
+			"mobeffects:footsteps/stone/stone_walk7",
+			"mobeffects:footsteps/stone/stone_walk8",
+			"mobeffects:footsteps/stone/stone_walk9"
+		]
+	},
+	"stone.stone_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/stone/stone_wander1",
+			"mobeffects:footsteps/stone/stone_wander2",
+			"mobeffects:footsteps/stone/stone_wander3",
+			"mobeffects:footsteps/stone/stone_wander4",
+			"mobeffects:footsteps/stone/stone_wander5"
+		]
+	},
+	"water.water_through": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/water/water_through1",
+			"mobeffects:footsteps/water/water_through10",
+			"mobeffects:footsteps/water/water_through11",
+			"mobeffects:footsteps/water/water_through2",
+			"mobeffects:footsteps/water/water_through3",
+			"mobeffects:footsteps/water/water_through4",
+			"mobeffects:footsteps/water/water_through5",
+			"mobeffects:footsteps/water/water_through6",
+			"mobeffects:footsteps/water/water_through7",
+			"mobeffects:footsteps/water/water_through8",
+			"mobeffects:footsteps/water/water_through9"
+		]
+	},
+	"water.water_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/water/water_wander1",
+			"mobeffects:footsteps/water/water_wander2",
+			"mobeffects:footsteps/water/water_wander3",
+			"mobeffects:footsteps/water/water_wander4",
+			"mobeffects:footsteps/water/water_wander5"
+		]
+	},
+	"water_stereofix.water_through": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/water_stereofix/water_through1",
+			"mobeffects:footsteps/water_stereofix/water_through10",
+			"mobeffects:footsteps/water_stereofix/water_through11",
+			"mobeffects:footsteps/water_stereofix/water_through2",
+			"mobeffects:footsteps/water_stereofix/water_through3",
+			"mobeffects:footsteps/water_stereofix/water_through4",
+			"mobeffects:footsteps/water_stereofix/water_through5",
+			"mobeffects:footsteps/water_stereofix/water_through6",
+			"mobeffects:footsteps/water_stereofix/water_through7",
+			"mobeffects:footsteps/water_stereofix/water_through8",
+			"mobeffects:footsteps/water_stereofix/water_through9"
+		]
+	},
+	"water_stereofix.water_wander": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/water_stereofix/water_wander1",
+			"mobeffects:footsteps/water_stereofix/water_wander2",
+			"mobeffects:footsteps/water_stereofix/water_wander3",
+			"mobeffects:footsteps/water_stereofix/water_wander4",
+			"mobeffects:footsteps/water_stereofix/water_wander5"
+		]
+	},
+	"weakice.weakice_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/weakice/weakice_walk1",
+			"mobeffects:footsteps/weakice/weakice_walk10",
+			"mobeffects:footsteps/weakice/weakice_walk2",
+			"mobeffects:footsteps/weakice/weakice_walk3",
+			"mobeffects:footsteps/weakice/weakice_walk4",
+			"mobeffects:footsteps/weakice/weakice_walk5",
+			"mobeffects:footsteps/weakice/weakice_walk6",
+			"mobeffects:footsteps/weakice/weakice_walk7",
+			"mobeffects:footsteps/weakice/weakice_walk8",
+			"mobeffects:footsteps/weakice/weakice_walk9"
+		]
+	},
+	"wood.wood_walk": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/wood/wood_walk1",
+			"mobeffects:footsteps/wood/wood_walk10",
+			"mobeffects:footsteps/wood/wood_walk11",
+			"mobeffects:footsteps/wood/wood_walk2",
+			"mobeffects:footsteps/wood/wood_walk3",
+			"mobeffects:footsteps/wood/wood_walk4",
+			"mobeffects:footsteps/wood/wood_walk5",
+			"mobeffects:footsteps/wood/wood_walk6",
+			"mobeffects:footsteps/wood/wood_walk7",
+			"mobeffects:footsteps/wood/wood_walk8",
+			"mobeffects:footsteps/wood/wood_walk9"
+		]
+	},
+	"floorsqueak": {
+		"category": "footsteps",
+		"sounds": [
+			"mobeffects:footsteps/wood/floorsqueak1",
+			"mobeffects:footsteps/wood/floorsqueak2",
+			"mobeffects:footsteps/wood/floorsqueak3"
+		]
+	},
+	"pageflip": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/pageflip1",
+			"mobeffects:items/pageflip2",
+			"mobeffects:items/pageflip3"
+		]
+	},
+	"blunt.equip": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/blunt_draw"
+		]
+	},
+	"blunt.swing": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/blunt_swing1",
+			"mobeffects:items/blunt_swing2",
+			"mobeffects:items/blunt_swing3",
+			"mobeffects:items/blunt_swing4",
+			"mobeffects:items/blunt_swing5"
+		]
+	},
+	"bow.equip": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/bow_draw"
+		]
+	},
+	"bow.pull": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/bow_pull1",
+			"mobeffects:items/bow_pull2",
+			"mobeffects:items/bow_pull3",
+			"mobeffects:items/bow_pull4",
+			"mobeffects:items/bow_pull5"
+		]
+	},
+	"bow.loose": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/bow_loose1",
+			"mobeffects:items/bow_loose2",
+			"mobeffects:items/bow_loose3",
+			"mobeffects:items/bow_loose4"
+		]
+	},
+	"sword.equip": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/sword_draw"
+		]
+	},
+	"sword.swing": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/sword_swing1",
+			"mobeffects:items/sword_swing2",
+			"mobeffects:items/sword_swing3",
+			"mobeffects:items/sword_swing4",
+			"mobeffects:items/sword_swing5",
+			"mobeffects:items/sword_swing6",
+			"mobeffects:items/sword_swing7",
+			"mobeffects:items/sword_swing8",
+			"mobeffects:items/sword_swing9"
+		]
+	},
+	"tool.equip": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/tool_draw"
+		]
+	},
+	"tool.swing": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/swoosh1",
+			"mobeffects:items/swoosh2",
+			"mobeffects:items/swoosh3",
+			"mobeffects:items/swoosh4",
+			"mobeffects:items/swoosh5",
+			"mobeffects:items/swoosh6",
+			"mobeffects:items/swoosh7"
+		]
+	},
+	"utility.equip": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/utility_draw"
+		]
+	},
+	"shield.equip": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/tool_draw"
+		]
+	},
+	"shield.use": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/tool_draw"
+		]
+	},
+	"potion.equip": {
+		"category": "player",
+		"sounds": [
+			"mobeffects:items/potion_slosh1",
+			"mobeffects:items/potion_slosh2",
+			"mobeffects:items/potion_slosh3",
+			"mobeffects:items/potion_slosh4"
+		]
+	}
+}

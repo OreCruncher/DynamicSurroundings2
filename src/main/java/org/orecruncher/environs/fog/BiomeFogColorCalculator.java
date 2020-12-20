@@ -19,6 +19,7 @@
 package org.orecruncher.environs.fog;
 
 import net.minecraft.client.GameSettings;
+import net.minecraft.client.settings.GraphicsFanciness;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -68,7 +69,8 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
 
         final GameSettings settings = GameUtils.getGameSettings();
         int distance = 6;
-        if (settings.fancyGraphics) {
+        // TODO: What is fabulous vs. previous fancy?
+        if (settings.graphicFanciness == GraphicsFanciness.FABULOUS) {
             distance = BLEND_RANGES[MathStuff.clamp(settings.renderDistanceChunks, 0, BLEND_RANGES.length - 1)];
         }
 
@@ -131,7 +133,8 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
         // WorldProvider.getFogColor() - need to calculate the scale based
         // on sunlight and stuff.
         final float partialTicks = (float) event.getRenderPartialTicks();
-        final float celestialAngle = world.getCelestialAngle(partialTicks);
+        // TODO: Change in celestial angle name to include radians - did the calc change?
+        final float celestialAngle = world.getCelestialAngleRadians(partialTicks);
         final float baseScale = MathStuff.clamp1(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F);
 
         double rScale = baseScale * 0.94F + 0.06F;
@@ -179,7 +182,7 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
     protected Color applyPlayerEffects(@Nonnull final World world, @Nonnull final PlayerEntity player,
                                        @Nonnull final Color fogColor, final float renderPartialTicks) {
         float darkScale = (float) ((player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * renderPartialTicks)
-                * world.getDimension().getVoidFogYFactor());
+                * world.getDimensionType().getVoidFogYFactor());
 
         // EntityRenderer.updateFogColor() - If the player is blind need to
         // darken it further

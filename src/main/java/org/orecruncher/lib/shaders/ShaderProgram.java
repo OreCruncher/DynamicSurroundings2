@@ -27,9 +27,9 @@ import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 import org.orecruncher.lib.ResourceUtils;
 import org.orecruncher.lib.gui.Color;
 
@@ -162,15 +162,15 @@ public class ShaderProgram {
 		this.set(name, color.red(), color.green(), color.blue(), alpha);
 	}
 
-	public void set(final String name, final Vec3d vector) throws ShaderException {
+	public void set(final String name, final Vector3d vector) throws ShaderException {
 		this.set(name, (float) vector.x, (float) vector.y, (float) vector.z);
 	}
 
-	public void set(final String name, final Vec3i vector) throws ShaderException {
+	public void set(final String name, final Vector3i vector) throws ShaderException {
 		this.set(name, vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public void set(final String name, final Vec2f vector) throws ShaderException {
+	public void set(final String name, final Vector2f vector) throws ShaderException {
 		this.set(name, vector.x, vector.y);
 	}
 

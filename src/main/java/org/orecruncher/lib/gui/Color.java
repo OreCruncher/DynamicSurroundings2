@@ -19,7 +19,7 @@
 package org.orecruncher.lib.gui;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -77,7 +77,7 @@ public class Color {
         this(red / 255F, green / 255F, blue / 255F, alpha / 255F);
     }
 
-    public Color(@Nonnull final Vec3d vec) {
+    public Color(@Nonnull final Vector3d vec) {
         this((float) vec.x, (float) vec.y, (float) vec.z);
     }
 
@@ -117,8 +117,8 @@ public class Color {
     }
 
     @Nonnull
-    public Vec3d toVec3d() {
-        return new Vec3d(this.red, this.green, this.blue);
+    public Vector3d toVec3d() {
+        return new Vector3d(this.red, this.green, this.blue);
     }
 
     /*
@@ -126,11 +126,11 @@ public class Color {
      * color after the specified number of iterations.
      */
     @Nonnull
-    public Vec3d transitionTo(@Nonnull final Color target, final int iterations) {
+    public Vector3d transitionTo(@Nonnull final Color target, final int iterations) {
         final double deltaRed = (target.red - this.red) / iterations;
         final double deltaGreen = (target.green - this.green) / iterations;
         final double deltaBlue = (target.blue - this.blue) / iterations;
-        return new Vec3d(deltaRed, deltaGreen, deltaBlue);
+        return new Vector3d(deltaRed, deltaGreen, deltaBlue);
     }
 
     @Nonnull
@@ -269,7 +269,7 @@ public class Color {
         }
 
         @Nonnull
-        public Color adjust(@Nonnull final Vec3d adjust, @Nonnull final Color target) {
+        public Color adjust(@Nonnull final Vector3d adjust, @Nonnull final Color target) {
             this.red += adjust.x;
             if ((adjust.x < 0.0F && this.red < target.red) || (adjust.x > 0.0F && this.red > target.red)) {
                 this.red = target.red;

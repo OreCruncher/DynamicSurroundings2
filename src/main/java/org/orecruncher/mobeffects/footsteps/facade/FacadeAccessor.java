@@ -26,13 +26,13 @@ import javax.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import org.orecruncher.mobeffects.MobEffects;
 
 @OnlyIn(Dist.CLIENT)
@@ -73,7 +73,7 @@ class FacadeAccessor implements IFacadeAccessor {
 	@Override
 	@Nullable
 	public BlockState getBlockState(@Nonnull final LivingEntity entity, @Nonnull final BlockState state,
-									@Nonnull final IWorldReader world, @Nonnull final Vec3d pos, @Nullable final Direction side) {
+									@Nonnull final IWorldReader world, @Nonnull final Vector3d pos, @Nullable final Direction side) {
 		if (isValid())
 			try {
 				if (instanceOf(state.getBlock()))

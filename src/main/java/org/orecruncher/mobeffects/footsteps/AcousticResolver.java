@@ -25,13 +25,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import org.orecruncher.mobeffects.footsteps.facade.FacadeHelper;
 import org.orecruncher.mobeffects.library.Constants;
 import org.orecruncher.mobeffects.library.FootstepLibrary;
@@ -52,11 +52,11 @@ public class AcousticResolver {
 		this.distanceToCenter = distanceToCenter;
 	}
 
-	protected BlockState getBlockStateFacade(@Nonnull final Vec3d pos) {
+	protected BlockState getBlockStateFacade(@Nonnull final Vector3d pos) {
 		return FacadeHelper.resolveState(this.loc.getEntity(), getBlockState(pos), this.world, pos, Direction.UP);
 	}
 
-	protected BlockState getBlockState(@Nonnull final Vec3d pos) {
+	protected BlockState getBlockState(@Nonnull final Vector3d pos) {
 		return this.world.getBlockState(new BlockPos(pos));
 	}
 
@@ -73,7 +73,7 @@ public class AcousticResolver {
 	@Nullable
 	public Association findAssociationForEvent() {
 
-		final Vec3d pos = this.loc.getStrikePosition();
+		final Vector3d pos = this.loc.getStrikePosition();
 
 		Association worked = resolve(pos);
 
@@ -138,11 +138,11 @@ public class AcousticResolver {
 	}
 
 	@Nullable
-	protected Association resolve(@Nonnull Vec3d vec) {
+	protected Association resolve(@Nonnull Vector3d vec) {
 		BlockState in;
 		IAcoustic acoustics = Constants.EMPTY;
 
-		Vec3d tPos = vec.add(0, 1, 0);
+		Vector3d tPos = vec.add(0, 1, 0);
 		final BlockState above = getBlockState(tPos);
 
 		if (above.getMaterial() != Material.AIR)

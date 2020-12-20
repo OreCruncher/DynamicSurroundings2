@@ -115,7 +115,7 @@ public final class Environs {
 
     @SubscribeEvent
     public void onPlayerLogin(@Nonnull final PlayerLoggedInEvent event) {
-        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName().getFormattedText());
+        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName());
         if (Config.CLIENT.logging.get_onlineVersionCheck())
             UpdateChecker.doCheck(event, MOD_ID);
     }

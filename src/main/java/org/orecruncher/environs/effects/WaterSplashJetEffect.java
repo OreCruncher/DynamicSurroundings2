@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -34,16 +34,16 @@ import org.orecruncher.lib.WorldUtils;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 
 @OnlyIn(Dist.CLIENT)
 public class WaterSplashJetEffect extends JetEffect {
 
-	private final static Vec3i[] cardinal_offsets = {
-		new Vec3i(-1, 0, 0),
-		new Vec3i(1, 0, 0),
-		new Vec3i(0, 0, -1),
-		new Vec3i(0, 0, 1)
+	private final static Vector3i[] cardinal_offsets = {
+		new Vector3i(-1, 0, 0),
+		new Vector3i(1, 0, 0),
+		new Vector3i(0, 0, -1),
+		new Vector3i(0, 0, 1)
 	};
 
 	public WaterSplashJetEffect(final int chance) {
@@ -57,12 +57,12 @@ public class WaterSplashJetEffect extends JetEffect {
 	}
 
 	private static boolean isUnboundedLiquid(final IBlockReader provider, final BlockPos pos) {
-		for (final Vec3i cardinal_offset : cardinal_offsets) {
+		for (final Vector3i cardinal_offset : cardinal_offsets) {
 			final BlockPos tp = pos.add(cardinal_offset);
 			final BlockState state = provider.getBlockState(tp);
 			if (state.getMaterial() == Material.AIR)
 				return true;
-			final IFluidState fluidState = state.getFluidState();
+			final FluidState fluidState = state.getFluidState();
 			final int height = fluidState.getLevel();
 			if (height > 0 && height < 8)
 				return true;
@@ -75,12 +75,12 @@ public class WaterSplashJetEffect extends JetEffect {
 	 * Similar to isUnboundedLiquid() but geared towards determine that the liquid is bound on all sides.
 	 */
 	private static boolean isBoundedLiquid(final IBlockReader provider, final BlockPos pos) {
-		for (final Vec3i cardinal_offset : cardinal_offsets) {
+		for (final Vector3i cardinal_offset : cardinal_offsets) {
 			final BlockPos tp = pos.add(cardinal_offset);
 			final BlockState state = provider.getBlockState(tp);
 			if (state.getMaterial() == Material.AIR)
 				return false;
-			final IFluidState fluidState = state.getFluidState();
+			final FluidState fluidState = state.getFluidState();
 			if (fluidState.isEmpty()) {
 				continue;
 			}

@@ -21,10 +21,9 @@ package org.orecruncher.sndctrl.api.acoustics;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.sndctrl.audio.acoustic.AcousticException;
 
 import javax.annotation.Nonnull;
 
@@ -59,11 +58,11 @@ public interface IAcoustic {
     /**
      * Play the acoustic at the specified block position
      */
-    default void playAt(@Nonnull final Vec3d pos) {
+    default void playAt(@Nonnull final Vector3d pos) {
         playAt(pos, AcousticEvent.NONE);
     }
 
-    void playAt(@Nonnull final Vec3d pos, @Nonnull final AcousticEvent event);
+    void playAt(@Nonnull final Vector3d pos, @Nonnull final AcousticEvent event);
 
     /**
      * Play the acoustic near the entity

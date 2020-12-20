@@ -19,10 +19,10 @@
 package org.orecruncher.lib.fml;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.resources.ClientResourcePackInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -36,7 +36,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Lib;
-import org.orecruncher.lib.world.FakeWorld;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -91,7 +90,7 @@ public final class ForgeUtils {
 
     @OnlyIn(Dist.CLIENT)
     @Nonnull
-    public static Collection<ClientResourcePackInfo> getEnabledResourcePacks() {
+    public static Collection<ResourcePackInfo> getEnabledResourcePacks() {
         return GameUtils.getMC().getResourcePackList().getEnabledPacks();
     }
 

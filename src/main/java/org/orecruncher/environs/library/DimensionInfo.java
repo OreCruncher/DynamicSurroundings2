@@ -19,8 +19,8 @@
 package org.orecruncher.environs.library;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Config;
@@ -38,7 +38,6 @@ public class DimensionInfo {
     public static final  DimensionInfo NONE = new DimensionInfo();
 
     // Attributes about the dimension. This is information is loaded from local configs.
-    protected int dimensionId;
     protected ResourceLocation name;
     protected int seaLevel;
     protected int skyHeight;
@@ -51,33 +50,28 @@ public class DimensionInfo {
     protected boolean playBiomeSounds = true;
 
     DimensionInfo() {
-        this.dimensionId = Integer.MIN_VALUE;
         this.name = new ResourceLocation(Environs.MOD_ID, "no_dimension");
     }
 
     public DimensionInfo(@Nonnull final World world, @Nullable final DimensionConfig dimConfig) {
         // Attributes that come from the world object itself. Set now because the config may override.
-        this.dimensionId = world.getDimension().getType().getId();
-        this.name = world.getDimension().getType().getRegistryName();
+        DimensionType dt = world.getDimensionType();
+        this.name = world.getDimensionKey().getRegistryName();
         this.seaLevel = world.getSeaLevel();
-        this.skyHeight = world.getActualHeight();
+        this.skyHeight = world.getHeight();
         this.cloudHeight = this.skyHeight;
         this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
 
-        if (world.getDimension().isSurfaceWorld() && world.getDimension().hasSkyLight()) {
+        if (dt.isNatural() && dt.hasSkyLight()) {
             this.hasAuroras = true;
             this.hasFog = true;
         }
 
         // Force sea level based on known world types that give heartburn
-        final WorldType wt = world.getWorldType();
-
-        if (wt == WorldType.FLAT)
-            this.seaLevel = 0;
-        else if (this.dimensionId == 0 && Config.CLIENT.biome.get_worldSealevelOverride() > 0)
+        if (dt.isNatural() && Config.CLIENT.biome.get_worldSealevelOverride() > 0)
             this.seaLevel = Config.CLIENT.biome.get_worldSealevelOverride();
 
-        if (Config.CLIENT.biome.get_biomeSoundBlacklist().contains(this.dimensionId))
+        if (Config.CLIENT.biome.get_biomeSoundBlacklist().contains(this.name))
             this.playBiomeSounds = false;
 
         // Override based on player config settings
@@ -101,10 +95,6 @@ public class DimensionInfo {
 
             this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
         }
-    }
-
-    public int getId() {
-        return this.dimensionId;
     }
 
     @Nonnull

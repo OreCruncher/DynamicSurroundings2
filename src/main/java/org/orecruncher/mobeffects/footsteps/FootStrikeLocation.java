@@ -30,7 +30,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.orecruncher.mobeffects.footsteps.facade.FacadeHelper;
 import org.orecruncher.mobeffects.library.FootstepLibrary;
@@ -39,20 +39,20 @@ import org.orecruncher.mobeffects.library.FootstepLibrary;
 public final class FootStrikeLocation {
 
 	private final LivingEntity entity;
-	private final Vec3d strike;
+	private final Vector3d strike;
 	private final BlockPos stepPos;
 
 	public FootStrikeLocation(@Nonnull final LivingEntity entity, final double x, final double y, final double z) {
-		this(entity, new Vec3d(x, y, z));
+		this(entity, new Vector3d(x, y, z));
 	}
 
-	public FootStrikeLocation(@Nonnull final LivingEntity entity, @Nonnull final Vec3d loc) {
+	public FootStrikeLocation(@Nonnull final LivingEntity entity, @Nonnull final Vector3d loc) {
 		this.entity = entity;
 		this.strike = loc;
 		this.stepPos = new BlockPos(loc);
 	}
 
-	protected FootStrikeLocation(@Nonnull final LivingEntity entity, @Nonnull final Vec3d loc,
+	protected FootStrikeLocation(@Nonnull final LivingEntity entity, @Nonnull final Vector3d loc,
 			@Nonnull final BlockPos pos) {
 		this.entity = entity;
 		this.strike = loc;
@@ -77,31 +77,31 @@ public final class FootStrikeLocation {
 	}
 
 	@Nonnull
-	public Vec3d getStrikePosition() {
+	public Vector3d getStrikePosition() {
 		return this.strike;
 	}
 
-	public Vec3d north() {
+	public Vector3d north() {
 		return offset(Direction.NORTH, 1);
 	}
 
-	public Vec3d south() {
+	public Vector3d south() {
 		return offset(Direction.SOUTH, 1);
 	}
 
-	public Vec3d east() {
+	public Vector3d east() {
 		return offset(Direction.EAST, 1);
 	}
 
-	public Vec3d west() {
+	public Vector3d west() {
 		return offset(Direction.WEST, 1);
 	}
 
-	public Vec3d up() {
+	public Vector3d up() {
 		return offset(Direction.UP, 1);
 	}
 
-	public Vec3d down() {
+	public Vector3d down() {
 		return offset(Direction.DOWN, 1);
 	}
 
@@ -109,9 +109,9 @@ public final class FootStrikeLocation {
 	 * Offsets this strike position n blocks in the given direction
 	 */
 	@Nonnull
-	public Vec3d offset(@Nonnull final Direction facing, final float n) {
+	public Vector3d offset(@Nonnull final Direction facing, final float n) {
 		return n == 0 ? this.strike
-				: new Vec3d(this.strike.x + facing.getXOffset() * n, this.strike.y + facing.getYOffset() * n,
+				: new Vector3d(this.strike.x + facing.getXOffset() * n, this.strike.y + facing.getYOffset() * n,
 						this.strike.z + facing.getZOffset() * n);
 	}
 
@@ -124,13 +124,13 @@ public final class FootStrikeLocation {
 	 *         be generated
 	 */
 	@Nullable
-	protected Vec3d footprintPosition() {
+	protected Vector3d footprintPosition() {
 		final World world = this.entity.getEntityWorld();
 		final BlockState state = world.getBlockState(this.stepPos);
 		if (hasFootstepImprint(world, state, this.strike)) {
 			final double entityY = this.entity.getBoundingBox().minY;
 			final double blockY = getBoundingBoxY(entityY, world, state, this.stepPos);
-			return new Vec3d(this.strike.x, Math.max(entityY, blockY), this.strike.z);
+			return new Vector3d(this.strike.x, Math.max(entityY, blockY), this.strike.z);
 		}
 		return null;
 	}
@@ -146,7 +146,7 @@ public final class FootStrikeLocation {
 	}
 
 	protected boolean hasFootstepImprint(@Nonnull final World world, @Nonnull final BlockState state,
-			@Nonnull final Vec3d pos) {
+			@Nonnull final Vector3d pos) {
 		final BlockState footstepState = FacadeHelper.resolveState(this.entity, state, world, pos, Direction.UP);
 		return FootstepLibrary.hasFootprint(footstepState);
 	}

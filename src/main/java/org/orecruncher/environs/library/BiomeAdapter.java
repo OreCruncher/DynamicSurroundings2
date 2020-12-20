@@ -28,7 +28,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
 @OnlyIn(Dist.CLIENT)
@@ -54,7 +53,7 @@ public class BiomeAdapter implements IBiome {
 
 	@Override
 	public String getName() {
-		return this.biome.getDisplayName().getFormattedText();
+		return this.biome.getRegistryName().toString();
 	}
 
 	@Override
@@ -74,12 +73,7 @@ public class BiomeAdapter implements IBiome {
 
 	@Override
 	public float getTemperature() {
-		return this.biome.getDefaultTemperature();
-	}
-
-	@Override
-	public TempCategory getTempCategory() {
-		return this.biome.getTempCategory();
+		return this.biome.getTemperature();
 	}
 
 	@Override

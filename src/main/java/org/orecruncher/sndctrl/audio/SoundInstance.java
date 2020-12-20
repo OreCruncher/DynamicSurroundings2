@@ -24,8 +24,8 @@ import net.minecraft.client.audio.LocatableSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -95,11 +95,11 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.z = z;
     }
 
-    public void setPosition(@Nonnull final Vec3i pos) {
+    public void setPosition(@Nonnull final Vector3i pos) {
         this.setPosition(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
     }
 
-    public void setPosition(@Nonnull final Vec3d pos) {
+    public void setPosition(@Nonnull final Vector3d pos) {
         this.setPosition((float) pos.x, (float) pos.y, (float) pos.z);
     }
 

@@ -21,11 +21,12 @@ package org.orecruncher.mobeffects.effects.particles;
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.particle.SpriteTexturedParticle;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -35,14 +36,14 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class BubbleBreathParticle  extends SpriteTexturedParticle {
     public BubbleBreathParticle(@Nonnull final LivingEntity entity, final boolean isDrowning) {
-        super(entity.getEntityWorld(), 0, 0, 0);
+        super((ClientWorld) entity.getEntityWorld(), 0, 0, 0);
 
         // Reuse the bubble sheet
         final IAnimatedSprite spriteSet = GameUtils.getMC().particles.sprites.get(ParticleTypes.BUBBLE.getRegistryName());
         this.selectSpriteRandomly(spriteSet);
 
-        final Vec3d origin = ParticleUtils.getBreathOrigin(entity);
-        final Vec3d trajectory = ParticleUtils.getLookTrajectory(entity);
+        final Vector3d origin = ParticleUtils.getBreathOrigin(entity);
+        final Vector3d trajectory = ParticleUtils.getLookTrajectory(entity);
         final double factor = isDrowning ? 0.02D : 0.005D;
 
         this.setPosition(origin.x, origin.y, origin.z);

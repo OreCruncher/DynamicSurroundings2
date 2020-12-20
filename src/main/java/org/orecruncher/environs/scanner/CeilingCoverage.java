@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.handlers.CommonState;
@@ -37,7 +38,7 @@ import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.math.MathStuff;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 
 /**
@@ -59,7 +60,7 @@ public final class CeilingCoverage {
 		// Build our cell map
 		for (int x = -INSIDE_SURVEY_RANGE; x <= INSIDE_SURVEY_RANGE; x++)
 			for (int z = -INSIDE_SURVEY_RANGE; z <= INSIDE_SURVEY_RANGE; z++)
-				cellList.add(new Cell(new Vec3i(x, 0, z), INSIDE_SURVEY_RANGE));
+				cellList.add(new Cell(new Vector3i(x, 0, z), INSIDE_SURVEY_RANGE));
 
 		// Sort so the highest score cells are first
 		Collections.sort(cellList);
@@ -76,7 +77,8 @@ public final class CeilingCoverage {
 	public void tick() {
 		if (TickCounter.getTickCount() % SURVEY_INTERVAL == 0) {
 			final DimensionInfo dimInfo = DimensionLibrary.getData(GameUtils.getWorld());
-			if (dimInfo.getId() == -1 || dimInfo.alwaysOutside()) {
+			// TODO: Figure out whether to do scan to save time based on dimension id.
+			if (/*dimInfo.getId() == -1 ||*/ dimInfo.alwaysOutside()) {
 				this.reallyInside = false;
 			} else {
 				final BlockPos pos = CommonState.getPlayerPosition();
@@ -94,11 +96,11 @@ public final class CeilingCoverage {
 
 	private static final class Cell implements Comparable<Cell> {
 
-		private final Vec3i offset;
+		private final Vector3i offset;
 		private final float points;
 		private final BlockPos.Mutable working;
 
-		public Cell(@Nonnull final Vec3i offset, final int range) {
+		public Cell(@Nonnull final Vector3i offset, final int range) {
 			this.offset = offset;
 			final float xV = range - MathStuff.abs(offset.getX()) + 1;
 			final float zV = range - MathStuff.abs(offset.getZ()) + 1;

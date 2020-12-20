@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
@@ -148,7 +149,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 	@Override
 	public boolean isFirstPersonView() {
 		final GameSettings settings = GameUtils.getGameSettings();
-		return settings.thirdPersonView == 0;
+		return settings.getPointOfView() == PointOfView.FIRST_PERSON;
 	}
 
 	/**

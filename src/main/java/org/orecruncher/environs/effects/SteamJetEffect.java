@@ -19,7 +19,7 @@
 package org.orecruncher.environs.effects;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -61,7 +61,7 @@ public class SteamJetEffect extends JetEffect {
                          @Nonnull final BlockPos pos, @Nonnull final Random random) {
         final int strength = countCubeBlocks(provider, pos, HOTBLOCK_PREDICATE, false);
         if (strength > 0) {
-            final IFluidState fluidState = state.getFluidState();
+            final FluidState fluidState = state.getFluidState();
             final float spawnHeight;
             if (fluidState.isEmpty()) {
                 spawnHeight = pos.getY() + 0.9F;

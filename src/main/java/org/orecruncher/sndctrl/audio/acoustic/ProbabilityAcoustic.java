@@ -22,7 +22,7 @@ import com.google.common.base.MoreObjects;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WeightTable;
@@ -78,7 +78,7 @@ public class ProbabilityAcoustic implements IAcoustic {
     }
 
     @Override
-    public void playAt(@Nonnull Vec3d pos, @Nonnull final AcousticEvent event) {
+    public void playAt(@Nonnull Vector3d pos, @Nonnull final AcousticEvent event) {
         select().ifPresent(a -> a.playAt(pos, event));
     }
 

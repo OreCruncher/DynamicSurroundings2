@@ -20,7 +20,7 @@ package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
@@ -52,17 +52,17 @@ public class EntitySoundInstance extends WrappedSoundInstance {
     }
 
     @Override
-    public float getX() {
+    public double getX() {
         return this.x;
     }
 
     @Override
-    public float getY() {
+    public double getY() {
         return this.y;
     }
 
     @Override
-    public float getZ() {
+    public double getZ() {
         return this.z;
     }
 
@@ -82,7 +82,7 @@ public class EntitySoundInstance extends WrappedSoundInstance {
     }
 
     private void updatePosition() {
-        final Vec3d box = this.entity.getBoundingBox().getCenter();
+        final Vector3d box = this.entity.getBoundingBox().getCenter();
         this.x = (float) box.x;
         this.y = (float) box.y;
         this.z = (float) box.z;

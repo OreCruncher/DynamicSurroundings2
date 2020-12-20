@@ -19,9 +19,10 @@
 package org.orecruncher.mobeffects.effects.particles;
 
 import net.minecraft.client.particle.*;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -36,15 +37,15 @@ public class FrostBreathParticle extends SpriteTexturedParticle {
     private final IAnimatedSprite field_217583_C;
 
     public FrostBreathParticle(@Nonnull final LivingEntity entity) {
-        super(entity.getEntityWorld(), 0, 0, 0, 0.0D, 0.0D, 0.0D);
+        super((ClientWorld) entity.getEntityWorld(), 0, 0, 0, 0.0D, 0.0D, 0.0D);
 
         final Random rand = XorShiftRandom.current();
 
         // Reuse the cloud sheet
         this.field_217583_C = GameUtils.getMC().particles.sprites.get(ParticleTypes.CLOUD.getRegistryName());
 
-        final Vec3d origin = ParticleUtils.getBreathOrigin(entity);
-        final Vec3d trajectory = ParticleUtils.getLookTrajectory(entity);
+        final Vector3d origin = ParticleUtils.getBreathOrigin(entity);
+        final Vector3d trajectory = ParticleUtils.getLookTrajectory(entity);
 
         this.setPosition(origin.x, origin.y, origin.z);
         this.prevPosX = origin.x;

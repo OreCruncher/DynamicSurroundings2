@@ -36,7 +36,6 @@ import org.orecruncher.lib.WeightTable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.gui.Color;
@@ -187,10 +186,6 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 
 	public float getTemperature() {
 		return this.biome.getTemperature();
-	}
-
-	public TempCategory getTempCategory() {
-		return this.biome.getTempCategory();
 	}
 
 	public boolean isHighHumidity() {

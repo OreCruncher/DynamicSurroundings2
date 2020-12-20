@@ -24,7 +24,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,10 +46,10 @@ public class FootprintMote extends AgeableMote {
     // Basic layout of the footprint
     private static final float WIDTH = 0.125F;
     private static final float LENGTH = WIDTH * 2.0F;
-    private static final Vec2f FIRST_POINT = new Vec2f(-WIDTH, LENGTH);
-    private static final Vec2f SECOND_POINT = new Vec2f(WIDTH, LENGTH);
-    private static final Vec2f THIRD_POINT = new Vec2f(WIDTH, -LENGTH);
-    private static final Vec2f FOURTH_POINT = new Vec2f(-WIDTH, -LENGTH);
+    private static final Vector2f FIRST_POINT = new Vector2f(-WIDTH, LENGTH);
+    private static final Vector2f SECOND_POINT = new Vector2f(WIDTH, LENGTH);
+    private static final Vector2f THIRD_POINT = new Vector2f(WIDTH, -LENGTH);
+    private static final Vector2f FOURTH_POINT = new Vector2f(-WIDTH, -LENGTH);
 
     // Micro Y adjuster to avoid z-fighting when rendering
     // multiple overlapping prints.
@@ -62,10 +62,10 @@ public class FootprintMote extends AgeableMote {
     protected final float texV1, texV2;
     protected final float scale;
 
-    protected final Vec2f firstPoint;
-    protected final Vec2f secondPoint;
-    protected final Vec2f thirdPoint;
-    protected final Vec2f fourthPoint;
+    protected final Vector2f firstPoint;
+    protected final Vector2f secondPoint;
+    protected final Vector2f thirdPoint;
+    protected final Vector2f fourthPoint;
 
     public FootprintMote(@Nonnull final FootprintStyle style, @Nonnull final IBlockReader world, final double x,
                          final double y, final double z, final float rotation, final float scale, final boolean isRight) {

@@ -21,7 +21,7 @@ package org.orecruncher.lib;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nonnull;
 
@@ -44,7 +44,7 @@ public final class BlockPosUtil {
     }
 
     public static BlockPos.Mutable setPos(@Nonnull final BlockPos.Mutable pos,
-                                                  @Nonnull final Vec3d vec) {
+                                                  @Nonnull final Vector3d vec) {
         return pos.setPos(vec.x, vec.y, vec.z);
     }
 

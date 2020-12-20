@@ -32,6 +32,8 @@ package org.orecruncher.sndctrl.audio.handlers;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
@@ -87,21 +89,23 @@ public final class SoundFXUtils {
     /**
      * Normals for the direction of each of the rays to be cast.
      */
-    private static final Vec3d[] REVERB_RAY_NORMALS = new Vec3d[REVERB_RAYS];
+    private static final Vector3d[] REVERB_RAY_NORMALS = new Vector3d[REVERB_RAYS];
     /**
      * Precalculated vectors to determine end targets relative to an origin.
      */
-    private static final Vec3d[] REVERB_RAY_PROJECTED = new Vec3d[REVERB_RAYS];
+    private static final Vector3d[] REVERB_RAY_PROJECTED = new Vector3d[REVERB_RAYS];
     /**
      * Precaluclated direction surface normals as Vec3d instead of Vec3i
      */
-    private static final Vec3d[] SURFACE_DIRECTION_NORMALS = new Vec3d[Direction.values().length];
+    private static final Vector3d[] SURFACE_DIRECTION_NORMALS = new Vector3d[Direction.values().length];
 
     static {
 
         // Would have been cool to have a direction vec as a 3d as well as 3i.
-        for (final Direction d : Direction.values())
-            SURFACE_DIRECTION_NORMALS[d.ordinal()] = new Vec3d(d.getDirectionVec());
+        for (final Direction d : Direction.values()) {
+            Vector3i v = d.getDirectionVec();
+            SURFACE_DIRECTION_NORMALS[d.ordinal()] = new Vector3d(v.getX(), v.getY(), v.getZ());
+        }
 
         // Pre-calculate the known vectors that will be projected off a sound source when casting about to establish
         // reverb effects.
@@ -109,7 +113,7 @@ public final class SoundFXUtils {
             final double longitude = MathStuff.ANGLE * i;
             final double latitude = Math.asin(((double) i / REVERB_RAYS) * 2.0D - 1.0D);
 
-            REVERB_RAY_NORMALS[i] = new Vec3d(
+            REVERB_RAY_NORMALS[i] = new Vector3d(
                     Math.cos(latitude) * Math.cos(longitude),
                     Math.cos(latitude) * Math.sin(longitude),
                     Math.sin(latitude)
@@ -127,13 +131,13 @@ public final class SoundFXUtils {
         if (ctx.isNotValid()
                 || !source.isEnabled()
                 || !inRange(source.getPosition(), ctx.playerEyePosition, source.getAttenuationDistance())
-                || source.getPosition().equals(Vec3d.ZERO)) {
+                || source.getPosition().equals(Vector3d.ZERO)) {
             clearSettings(source);
             return;
         }
 
         // Need to offset sound toward player if it is in a solid block
-        final Vec3d soundPos = offsetPositionIfSolid(ctx.world, source.getPosition(), ctx.playerEyePosition);
+        final Vector3d soundPos = offsetPositionIfSolid(ctx.world, source.getPosition(), ctx.playerEyePosition);
 
         final float absorptionCoeff = Effects.GLOBAL_BLOCK_ABSORPTION * 3.0F;
         final float airAbsorptionFactor = calculateWeatherAbsorption(ctx, soundPos, ctx.playerEyePosition);
@@ -164,8 +168,8 @@ public final class SoundFXUtils {
 
         for (int i = 0; i < REVERB_RAYS; i++) {
 
-            Vec3d origin = soundPos;
-            Vec3d target = origin.add(REVERB_RAY_PROJECTED[i]);
+            Vector3d origin = soundPos;
+            Vector3d target = origin.add(REVERB_RAY_PROJECTED[i]);
 
             BlockRayTraceResult rayHit = traceContext.trace(origin, target);
 
@@ -174,9 +178,9 @@ public final class SoundFXUtils {
 
             // Additional bounces
             BlockPos lastHitBlock = rayHit.getPos();
-            Vec3d lastHitPos = rayHit.getHitVec();
-            Vec3d lastHitNormal = surfaceNormal(rayHit.getFace());
-            Vec3d lastRayDir = REVERB_RAY_NORMALS[i];
+            Vector3d lastHitPos = rayHit.getHitVec();
+            Vector3d lastHitNormal = surfaceNormal(rayHit.getFace());
+            Vector3d lastRayDir = REVERB_RAY_NORMALS[i];
 
             double totalRayDistance = origin.distanceTo(rayHit.getHitVec());
 
@@ -186,7 +190,7 @@ public final class SoundFXUtils {
                 final float blockReflectivity = AudioEffectLibrary.getReflectivity(ctx.world.getBlockState(lastHitBlock));
                 final float energyTowardsPlayer = blockReflectivity * ENERGY_COEFF + ENERGY_CONST;
 
-                final Vec3d newRayDir = MathStuff.reflection(lastRayDir, lastHitNormal);
+                final Vector3d newRayDir = MathStuff.reflection(lastRayDir, lastHitNormal);
                 origin = MathStuff.addScaled(lastHitPos, newRayDir, 0.01F);
                 target = MathStuff.addScaled(origin, newRayDir, MAX_REVERB_DISTANCE);
 
@@ -206,7 +210,7 @@ public final class SoundFXUtils {
 
                     // Cast a ray back at the player.  If it is a miss there is a path back from the reflection
                     // point to the player meaning they share the same airspace.
-                    final Vec3d finalRayStart = MathStuff.addScaled(lastHitPos, lastHitNormal, 0.01F);
+                    final Vector3d finalRayStart = MathStuff.addScaled(lastHitPos, lastHitNormal, 0.01F);
                     final BlockRayTraceResult finalRayHit = traceContext.trace(finalRayStart, ctx.playerEyePosition);
                     if (isMiss(finalRayHit)) {
                         sharedAirspace += 1.0F;
@@ -323,7 +327,7 @@ public final class SoundFXUtils {
         }
     }
 
-    private static float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
+    private static float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
 
         assert ctx.world != null;
         assert ctx.player != null;
@@ -346,7 +350,7 @@ public final class SoundFXUtils {
         return accum;
     }
 
-    private static float calculateWeatherAbsorption(@Nonnull final WorldContext ctx, @Nonnull final Vec3d pt1, @Nonnull final Vec3d pt2) {
+    private static float calculateWeatherAbsorption(@Nonnull final WorldContext ctx, @Nonnull final Vector3d pt1, @Nonnull final Vector3d pt2) {
         assert ctx.world != null;
 
         if (!ctx.isPrecipitating)
@@ -371,11 +375,11 @@ public final class SoundFXUtils {
     }
 
     @Nonnull
-    private static Vec3d surfaceNormal(@Nonnull final Direction d) {
+    private static Vector3d surfaceNormal(@Nonnull final Direction d) {
         return SURFACE_DIRECTION_NORMALS[d.ordinal()];
     }
 
-    private static Vec3d offsetPositionIfSolid(@Nonnull final IWorldReader world, @Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
+    private static Vector3d offsetPositionIfSolid(@Nonnull final IWorldReader world, @Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
         if (WorldUtils.isAirBlock(world, new BlockPos(origin))) {
             return MathStuff.addScaled(origin, MathStuff.normalize(origin, target), 0.876F);
         }
@@ -390,7 +394,7 @@ public final class SoundFXUtils {
         return result == null || result.getType() == RayTraceResult.Type.MISS;
     }
 
-    private static boolean inRange(@Nonnull final Vec3d origin, @Nonnull final Vec3d target, final double distance) {
+    private static boolean inRange(@Nonnull final Vector3d origin, @Nonnull final Vector3d target, final double distance) {
         return distance > 0 && origin.squareDistanceTo(target) <= (distance * distance);
     }
 }

@@ -21,7 +21,7 @@ package org.orecruncher.lib.blockstate;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.BlockState;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.lib.Lib;
 
@@ -37,7 +37,7 @@ public class BlockStateProperties {
 
     public static final BlockStateProperties NONE = new BlockStateProperties();
 
-    private final Map<IProperty<?>, Comparable<?>> props;
+    private final Map<Property<?>, Comparable<?>> props;
 
     private BlockStateProperties() {
         this.props = ImmutableMap.of();
@@ -47,7 +47,7 @@ public class BlockStateProperties {
         this(state.getValues());
     }
 
-    public BlockStateProperties(@Nonnull final Map<IProperty<?>, Comparable<?>> props) {
+    public BlockStateProperties(@Nonnull final Map<Property<?>, Comparable<?>> props) {
         this.props = props;
     }
 
@@ -60,7 +60,7 @@ public class BlockStateProperties {
      */
     public boolean matches(@Nonnull final BlockState state) {
         try {
-            for (final Map.Entry<IProperty<?>, Comparable<?>> kvp : this.props.entrySet()) {
+            for (final Map.Entry<Property<?>, Comparable<?>> kvp : this.props.entrySet()) {
                 final Comparable<?> comp = state.get(kvp.getKey());
                 if (!comp.equals(kvp.getValue()))
                     return false;
@@ -91,13 +91,13 @@ public class BlockStateProperties {
      * @param m Property map to evaluate
      * @return true if all the property values in the collection are present in the map; false otherwise
      */
-    public boolean matches(@Nonnull final Map<IProperty<?>, Comparable<?>> m) {
+    public boolean matches(@Nonnull final Map<Property<?>, Comparable<?>> m) {
         try {
             if (this.props == m)
                 return true;
             if (this.props.size() > m.size())
                 return false;
-            for (final Map.Entry<IProperty<?>, Comparable<?>> kvp : this.props.entrySet()) {
+            for (final Map.Entry<Property<?>, Comparable<?>> kvp : this.props.entrySet()) {
                 final Comparable<?> comp = m.get(kvp.getKey());
                 if (!comp.equals(kvp.getValue()))
                     return false;
@@ -113,7 +113,7 @@ public class BlockStateProperties {
     @Override
     public int hashCode() {
         int code = 0;
-        for (final Map.Entry<IProperty<?>, Comparable<?>> kvp : this.props.entrySet()) {
+        for (final Map.Entry<Property<?>, Comparable<?>> kvp : this.props.entrySet()) {
             code = code * 31 + kvp.getKey().hashCode();
             code = code * 31 + kvp.getValue().hashCode();
         }

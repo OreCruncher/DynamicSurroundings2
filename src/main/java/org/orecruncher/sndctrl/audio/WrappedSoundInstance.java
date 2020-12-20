@@ -142,17 +142,17 @@ public class WrappedSoundInstance implements ISoundInstance, ITickableSound {
     }
 
     @Override
-    public float getX() {
+    public double getX() {
         return this.sound.getX();
     }
 
     @Override
-    public float getY() {
+    public double getY() {
         return this.sound.getY();
     }
 
     @Override
-    public float getZ() {
+    public double getZ() {
         return this.sound.getZ();
     }
 

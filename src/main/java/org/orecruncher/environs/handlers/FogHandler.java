@@ -20,7 +20,7 @@ package org.orecruncher.environs.handlers;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -65,7 +65,7 @@ public class FogHandler extends HandlerBase {
     public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
         if (doFog()) {
             this.renderColor.begin();
-            final IFluidState fluidState = event.getInfo().getFluidState();
+            final FluidState fluidState = event.getInfo().getFluidState();
             if (fluidState.isEmpty()) {
                 final Color color = this.fogColor.calculate(event);
                 event.setRed(color.red());
@@ -80,7 +80,7 @@ public class FogHandler extends HandlerBase {
     public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
         if (doFog()) {
             this.render.begin();
-            final IFluidState fluidState = event.getInfo().getFluidState();
+            final FluidState fluidState = event.getInfo().getFluidState();
             if (fluidState.isEmpty()) {
                 final FogResult result = this.fogRange.calculate(event);
                 GlStateManager.fogStart(result.getStart());

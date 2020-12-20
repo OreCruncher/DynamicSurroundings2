@@ -24,7 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -92,7 +92,7 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
                     biome = BiomeUtil.getBiomeData(b);
                 } else {
                     ctx.doScan = true;
-                    biome = BiomeUtil.getBiomeData(Biomes.PLAINS);
+                    biome = BiomeUtil.getBiomeData(BiomeRegistry.PLAINS);
                 }
 
                 float distancePart = 1F;

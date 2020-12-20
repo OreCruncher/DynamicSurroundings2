@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -40,12 +41,12 @@ public abstract class BaseParticle extends Particle {
 
     protected BaseParticle(@Nonnull final World worldIn, final double posXIn, final double posYIn,
                            final double posZIn) {
-        super(worldIn, posXIn, posYIn, posZIn);
+        super((ClientWorld) worldIn, posXIn, posYIn, posZIn);
     }
 
     public BaseParticle(@Nonnull final World worldIn, final double xCoordIn, final double yCoordIn,
                         final double zCoordIn, final double xSpeedIn, final double ySpeedIn, final double zSpeedIn) {
-        super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+        super((ClientWorld) worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
     }
 
     protected double interpX() {

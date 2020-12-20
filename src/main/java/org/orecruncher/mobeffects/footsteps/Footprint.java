@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -31,13 +31,13 @@ public class Footprint {
 
 	private FootprintStyle style;
 	private LivingEntity entity;
-	private Vec3d stepLoc;
+	private Vector3d stepLoc;
 	private boolean isRightFoot;
 	private float rotation;
 	private float scale;
 
 	public static Footprint produce(@Nonnull final FootprintStyle style, @Nonnull final LivingEntity entity,
-			@Nonnull final Vec3d stepLoc, final float rotation, final float scale, final boolean rightFoot) {
+			@Nonnull final Vector3d stepLoc, final float rotation, final float scale, final boolean rightFoot) {
 		final Footprint print = new Footprint();
 		print.style = style;
 		print.entity = entity;
@@ -57,7 +57,7 @@ public class Footprint {
 	}
 
 	@Nullable
-	public Vec3d getStepLocation() {
+	public Vector3d getStepLocation() {
 		return this.stepLoc;
 	}
 

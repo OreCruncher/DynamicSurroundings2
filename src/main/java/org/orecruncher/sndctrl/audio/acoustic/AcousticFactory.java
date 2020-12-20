@@ -21,7 +21,7 @@ package org.orecruncher.sndctrl.audio.acoustic;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.LCGRandom;
@@ -83,7 +83,7 @@ public class AcousticFactory extends SoundBuilder implements IAcousticFactory {
      */
     @Override
     @Nonnull
-    public ISoundInstance createSoundAt(@Nonnull final Vec3d pos) {
+    public ISoundInstance createSoundAt(@Nonnull final Vector3d pos) {
         final SoundInstance sound = makeSound();
         sound.setPosition(pos);
         return sound;

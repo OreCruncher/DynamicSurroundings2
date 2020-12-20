@@ -20,7 +20,7 @@ package org.orecruncher.mobeffects.effects.particles;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.XorShiftRandom;
@@ -37,14 +37,14 @@ public final class ParticleUtils {
     }
 
     @Nonnull
-    public static Vec3d getBreathOrigin(@Nonnull final LivingEntity entity) {
-        final Vec3d eyePosition = eyePosition(entity).subtract(0D, entity.isChild() ? 0.1D : 0.2D, 0D);
-        final Vec3d look = entity.getLook(1F); // Don't use the other look vector method!
+    public static Vector3d getBreathOrigin(@Nonnull final LivingEntity entity) {
+        final Vector3d eyePosition = eyePosition(entity).subtract(0D, entity.isChild() ? 0.1D : 0.2D, 0D);
+        final Vector3d look = entity.getLook(1F); // Don't use the other look vector method!
         return eyePosition.add(look.scale(entity.isChild() ? 0.25D : 0.5D));
     }
 
     @Nonnull
-    public static Vec3d getLookTrajectory(@Nonnull final LivingEntity entity) {
+    public static Vector3d getLookTrajectory(@Nonnull final LivingEntity entity) {
         return entity.getLook(1F).rotateYaw(RANDOM.nextFloat() * 2F).rotatePitch(RANDOM.nextFloat() * 2F)
                 .normalize();
     }
@@ -53,8 +53,8 @@ public final class ParticleUtils {
      * Use some corrective lenses because the MC routine just doesn't lower the
      * height enough for our rendering purpose.
      */
-    private static Vec3d eyePosition(final Entity e) {
-        Vec3d t = e.getEyePosition(1F);
+    private static Vector3d eyePosition(final Entity e) {
+        Vector3d t = e.getEyePosition(1F);
         if (e.isSneaking())
             t = t.subtract(0D, 0.25D, 0D);
         return t;

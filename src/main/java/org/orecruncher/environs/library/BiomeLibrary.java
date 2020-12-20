@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -120,7 +121,7 @@ public final class BiomeLibrary {
 			final ResourceLocation plainsLoc = new ResourceLocation("plains");
 			final Biome plains = ForgeRegistries.BIOMES.getValue(plainsLoc);
 			final BiomeInfo info = BiomeUtil.getBiomeData(plains);
-			BiomeUtil.setBiomeData(Biomes.PLAINS, info);
+			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, info);
 		}
 	}
 

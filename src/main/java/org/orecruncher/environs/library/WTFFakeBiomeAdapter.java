@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -46,11 +45,6 @@ public class WTFFakeBiomeAdapter extends FakeBiomeAdapter {
 	@Override
 	public float getTemperature() {
 		return 0F;
-	}
-
-	@Override
-	public TempCategory getTempCategory() {
-		return TempCategory.COLD;
 	}
 
 	@Override

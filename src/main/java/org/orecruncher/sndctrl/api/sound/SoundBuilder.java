@@ -23,7 +23,7 @@ import net.minecraft.client.audio.LocatableSound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
@@ -51,7 +51,7 @@ public class SoundBuilder {
     @Nonnull
     private ISoundCategory soundCategory;
     @Nonnull
-    private Vec3d position = Vec3d.ZERO;
+    private Vector3d position = Vector3d.ZERO;
     @Nonnull
     private AttenuationType attenuation = AttenuationType.LINEAR;
 
@@ -140,7 +140,7 @@ public class SoundBuilder {
         Objects.requireNonNull(ps);
 
         this.soundCategory = Category.getCategory(ps.getCategory()).orElse(Category.MASTER);
-        this.position = new Vec3d(ps.getX(), ps.getY(), ps.getZ());
+        this.position = new Vector3d(ps.getX(), ps.getY(), ps.getZ());
         this.attenuation = ps.getAttenuationType();
         this.global = ps.isGlobal();
         this.repeatable = ps.canRepeat();
@@ -164,7 +164,7 @@ public class SoundBuilder {
 
     @Nonnull
     public SoundBuilder setPosition(final float x, final float y, final float z) {
-        this.position = new Vec3d(x, y, z);
+        this.position = new Vector3d(x, y, z);
         return this;
     }
 
@@ -176,7 +176,7 @@ public class SoundBuilder {
     }
 
     @Nonnull
-    public SoundBuilder setPosition(@Nonnull final Vec3d pos) {
+    public SoundBuilder setPosition(@Nonnull final Vector3d pos) {
         Objects.requireNonNull(pos);
 
         this.position = pos;

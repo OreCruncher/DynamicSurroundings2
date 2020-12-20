@@ -21,7 +21,7 @@ package org.orecruncher.lib.blockstate;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.Lib;
@@ -56,7 +56,7 @@ public final class BlockStateMatcher {
     }
 
     BlockStateMatcher(@Nonnull final Block block,
-                              @Nonnull final Map<IProperty<?>, Comparable<?>> props) {
+                              @Nonnull final Map<Property<?>, Comparable<?>> props) {
         this.block = block;
         this.props = props.size() > 0 ? new BlockStateProperties(props) : BlockStateProperties.NONE;
     }
@@ -97,12 +97,12 @@ public final class BlockStateMatcher {
         }
 
         final Map<String, String> properties = result.getProperties();
-        final Map<IProperty<?>, Comparable<?>> props = new IdentityHashMap<>(properties.size());
+        final Map<Property<?>, Comparable<?>> props = new IdentityHashMap<>(properties.size());
 
         // Blow out the property list
         for (final Map.Entry<String, String> entry : properties.entrySet()) {
             final String s = entry.getKey();
-            final IProperty<?> prop = container.getProperty(s);
+            final Property<?> prop = container.getProperty(s);
             if (prop != null) {
                 final Optional<?> optional = prop.parseValue(entry.getValue());
                 if (optional.isPresent()) {
@@ -124,7 +124,7 @@ public final class BlockStateMatcher {
     @Nonnull
     private static <T extends Comparable<T>> String getAllowedValues(@Nonnull final Block block, @Nonnull final String propName) {
         @SuppressWarnings("unchecked")
-        final IProperty<T> prop = (IProperty<T>) block.getStateContainer().getProperty(propName);
+        final Property<T> prop = (Property<T>) block.getStateContainer().getProperty(propName);
         if (prop != null) {
             return prop.getAllowedValues().stream().map(prop::getName).collect(Collectors.joining(","));
         }

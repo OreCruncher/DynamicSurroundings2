@@ -22,7 +22,7 @@ import com.google.common.base.MoreObjects;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.audio.*;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.*;
@@ -125,13 +125,13 @@ public final class SoundUtils {
      * @param pad Additional distance to add when evaluating
      * @return true if the sound is within the attenuation distance; false otherwise
      */
-    public static boolean inRange(@Nonnull final Vec3d listener, @Nonnull final ISound sound, final int pad) {
+    public static boolean inRange(@Nonnull final Vector3d listener, @Nonnull final ISound sound, final int pad) {
         int distSq = sound.getSound().getAttenuationDistance() + pad;
         distSq *= distSq;
         return listener.squareDistanceTo(sound.getX(), sound.getY(), sound.getZ()) <= distSq;
     }
 
-    public static boolean inRange(@Nonnull final Vec3d listener, @Nonnull final ISound sound) {
+    public static boolean inRange(@Nonnull final Vector3d listener, @Nonnull final ISound sound) {
         return inRange(listener, sound, 0);
     }
 

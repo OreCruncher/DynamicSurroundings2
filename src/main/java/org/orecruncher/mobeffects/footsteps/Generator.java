@@ -27,7 +27,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -37,7 +37,7 @@ import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.orecruncher.mobeffects.Config;
 import org.orecruncher.mobeffects.effects.particles.Collections;
@@ -203,7 +203,7 @@ public class Generator {
 		this.xMovec = movX;
 		this.zMovec = movZ;
 
-		if (entity.onGround || this.isInWater || this.isOnLadder) {
+		if (entity.isOnGround() || this.isInWater || this.isOnLadder) {
 			AcousticEvent event = null;
 
 			float dwm = distanceReference - this.dmwBase;
@@ -215,7 +215,7 @@ public class Generator {
 
 			float distance = 0f;
 
-			if (entity.isOnLadder() && !entity.onGround) {
+			if (entity.isOnLadder() && !entity.isOnGround()) {
 				distance = this.VAR.STRIDE_LADDER;
 			} else if (!this.isInWater && MathStuff.abs(this.yPosition - entity.getPosY()) > 0.4d) {
 				// This ensures this does not get recorded as landing, but as a
@@ -250,7 +250,7 @@ public class Generator {
 		// This fixes an issue where the value is evaluated
 		// while the player is between two steps in the air
 		// while descending stairs
-		if (entity.onGround) {
+		if (entity.isOnGround()) {
 			this.yPosition = entity.getPosY();
 		}
 	}
@@ -279,7 +279,7 @@ public class Generator {
 	}
 
 	protected void simulateAirborne(@Nonnull final LivingEntity entity) {
-		if ((entity.onGround || this.isOnLadder) == this.isFlying) {
+		if ((entity.isOnGround() || this.isOnLadder) == this.isFlying) {
 			this.isFlying = !this.isFlying;
 			simulateJumpingLanding(entity);
 		}
@@ -331,7 +331,7 @@ public class Generator {
 			this.brushesTime = current + BRUSH_INTERVAL;
 			if (proceedWithStep(entity) && (entity.getMotion().x != 0d || entity.getMotion().z != 0d)) {
 				final int yy = MathStuff
-						.floor(entity.getPosY() - PROBE_DEPTH - entity.getYOffset() - (entity.onGround ? 0d : 0.25d));
+						.floor(entity.getPosY() - PROBE_DEPTH - entity.getYOffset() - (entity.isOnGround() ? 0d : 0.25d));
 				final BlockPos pos = new BlockPos(entity.getPosX(), yy, entity.getPosZ());
 				if (!this.messyPos.equals(pos)) {
 					this.messyPos = pos;
@@ -379,7 +379,7 @@ public class Generator {
 	protected boolean shouldProducePrint(@Nonnull final LivingEntity entity) {
 		return this.VAR.HAS_FOOTPRINT
 				&& Config.CLIENT.footsteps.get_enableFootprintParticles()
-				&& (entity.onGround || !(this.isJumping || entity.isAirBorne))
+				&& (entity.isOnGround() || !(this.isJumping || entity.isAirBorne))
 				&& !entity.isInvisibleToPlayer(GameUtils.getPlayer());
 	}
 
@@ -411,7 +411,7 @@ public class Generator {
 		// It is possible that the association has no position, so it
 		// needs to be checked.
 		if (result != null && shouldProducePrint(entity)) {
-			final Vec3d printPos = result.getStrikeLocation().footprintPosition();
+			final Vector3d printPos = result.getStrikeLocation().footprintPosition();
 			if (printPos != null) {
 				FootprintStyle style = this.VAR.FOOTPRINT_STYLE;
 
@@ -424,7 +424,7 @@ public class Generator {
 						this.VAR.FOOTPRINT_SCALE,
 						isRightFoot);
 
-				final Vec3d stepLocation = print.getStepLocation();
+				final Vector3d stepLocation = print.getStepLocation();
 				final World world = print.getEntity().getEntityWorld();
 				Collections.addFootprint(print.getStyle(), world, stepLocation, print.getRotation(), print.getScale(),
 						print.isRightFoot());
@@ -440,7 +440,7 @@ public class Generator {
 	protected boolean playSpecialStoppingConditions(@Nonnull final LivingEntity entity) {
 		if (entity.isInWater()) {
 			if (proceedWithStep(entity)) {
-				final IFluidState fs = entity.getEntityWorld().getFluidState(new BlockPos(entity.getEyePosition(1F)));
+				final FluidState fs = entity.getEntityWorld().getFluidState(new BlockPos(entity.getEyePosition(1F)));
 				final AcousticEvent evt = fs.isEmpty() ? Constants.WALK : Constants.SWIM;
 				FootstepLibrary.getSwimAcoustic().playAt(entity.getPositionVec(), evt);
 			}
@@ -482,9 +482,9 @@ public class Generator {
 	@Nullable
 	protected Association addFootstepAccent(@Nonnull final LivingEntity entity, @Nullable Association assoc) {
 		// Don't apply overlays if the entity is not on the ground
-		if (Config.CLIENT.footsteps.get_enableFootstepAccents() && entity.onGround) {
+		if (Config.CLIENT.footsteps.get_enableFootstepAccents() && entity.isOnGround()) {
 			accents.clear();
-			final BlockPos pos = assoc != null ? assoc.getStepPos() : new BlockPos(entity);
+			final BlockPos pos = assoc != null ? assoc.getStepPos() : entity.getPosition();
 			FootstepAccents.provide(entity, pos, accents);
 			if (accents.size() > 0) {
 				if (assoc == null) {

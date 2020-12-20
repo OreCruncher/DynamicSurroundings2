@@ -23,7 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -57,12 +57,12 @@ public final class WorldContext {
      * Position of the player.
      */
     @Nonnull
-    public final Vec3d playerPosition;
+    public final Vector3d playerPosition;
     /**
      * Position of the player's eyes.
      */
     @Nonnull
-    public final Vec3d playerEyePosition;
+    public final Vector3d playerEyePosition;
     /**
      * Block position of the player.
      */
@@ -116,8 +116,8 @@ public final class WorldContext {
             this.player = null;
             this.world = null;
             this.isPrecipitating = false;
-            this.playerPosition = Vec3d.ZERO;
-            this.playerEyePosition = Vec3d.ZERO;
+            this.playerPosition = Vector3d.ZERO;
+            this.playerEyePosition = Vector3d.ZERO;
             this.playerPos = BlockPos.ZERO;
             this.playerEyePos = BlockPos.ZERO;
             this.auralDampening = 0;

@@ -23,11 +23,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.DripParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -71,7 +71,7 @@ public final class ParticleHooks {
 
         // If the particle is hitting solid ground we need to play a splat
         if (particle.onGround) {
-            final Vec3d vecPos = new Vec3d(particle.posX, particle.posY, particle.posZ);
+            final Vector3d vecPos = new Vector3d(particle.posX, particle.posY, particle.posZ);
             final ResourceLocation acoustic;
             if (doSteamHiss(particle.fluid, state)) {
                 createSteamCloud(world, vecPos);
@@ -88,14 +88,14 @@ public final class ParticleHooks {
         }
 
         // Could be falling into a fluid
-        final IFluidState fluidState = world.getFluidState(pos);
+        final FluidState fluidState = world.getFluidState(pos);
         if (!fluidState.isEmpty()) {
             final float actualHeight = fluidState.getActualHeight(world, pos) + pos.getY();
             if (particle.posY <= actualHeight) {
                 // The position of the particle intersected with the fluid surface thus a hit.  The effect of a drop
                 // hitting lava is different than water.
                 boolean isDripLava = particle.fluid.isIn(FluidTags.LAVA);
-                final Vec3d vecPos = new Vec3d(particle.posX, particle.posY, particle.posZ);
+                final Vector3d vecPos = new Vector3d(particle.posX, particle.posY, particle.posZ);
                 final ResourceLocation acoustic;
 
                 if (fluidState.isTagged(FluidTags.LAVA)) {
@@ -130,7 +130,7 @@ public final class ParticleHooks {
 
         final IBlockReader world = collision.world;
         // Move down slightly on the Y.  Reason is that the particle may literally just above the block
-        final Vec3d particlePos = collision.position;
+        final Vector3d particlePos = collision.position;
         final BlockPos pos = new BlockPos(particlePos.x, particlePos.y - 0.01D, particlePos.z);
         final BlockState state = collision.state;
 
@@ -150,7 +150,7 @@ public final class ParticleHooks {
         }
 
         // Could be falling into a fluid
-        final IFluidState fluidState = collision.fluidState;
+        final FluidState fluidState = collision.fluidState;
         if (!fluidState.isEmpty() && fluidState.isSource() && world.getBlockState(pos.up()).getMaterial() == Material.AIR) {
             final float actualHeight = fluidState.getActualHeight(world, pos) + pos.getY();
             if (particlePos.y <= actualHeight) {
@@ -183,7 +183,7 @@ public final class ParticleHooks {
         }
     }
 
-    private static void createSteamCloud(@Nonnull final IBlockReader world, @Nonnull final Vec3d pos) {
+    private static void createSteamCloud(@Nonnull final IBlockReader world, @Nonnull final Vector3d pos) {
         final Particle steamCloud = new SteamCloudParticle(GameUtils.getWorld(), pos.x, pos.y + 0.01D, pos.z, 0.01D);
         GameUtils.getMC().particles.addEffect(steamCloud);
     }

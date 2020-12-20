@@ -62,7 +62,7 @@ public abstract class JetEffect extends BlockEffect {
     public static int countVerticalBlocks(@Nonnull final IBlockReader provider, @Nonnull final BlockPos pos,
                                           @Nonnull final Predicate<BlockState> predicate, final int step) {
         int count = 0;
-        final BlockPos.Mutable mutable = new BlockPos.Mutable(pos);
+        final BlockPos.Mutable mutable = pos.toMutable();
         for (; count < MAX_STRENGTH && predicate.test(provider.getBlockState(mutable)); count++)
             mutable.setY(mutable.getY() + step);
         return MathStuff.clamp(count, 0, MAX_STRENGTH);

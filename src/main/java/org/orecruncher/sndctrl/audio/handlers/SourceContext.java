@@ -20,7 +20,7 @@ package org.orecruncher.sndctrl.audio.handlers;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.EXTEfx;
@@ -66,7 +66,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
     @Nullable
     private ISound sound;
     @Nonnull
-    private Vec3d pos;
+    private Vector3d pos;
 
     private boolean isEnabled;
     private int updateCount;
@@ -78,7 +78,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
         this.lowPass3 = new LowPassData();
         this.direct = new LowPassData();
         this.airAbsorb = new SourcePropertyFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, EXTEfx.AL_DEFAULT_AIR_ABSORPTION_FACTOR, EXTEfx.AL_MIN_AIR_ABSORPTION_FACTOR, EXTEfx.AL_MAX_AIR_ABSORPTION_FACTOR);
-        this.pos = Vec3d.ZERO;
+        this.pos = Vector3d.ZERO;
     }
 
     public Object sync() {
@@ -124,7 +124,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
     }
 
     @Nonnull
-    public Vec3d getPosition() {
+    public Vector3d getPosition() {
         return this.pos;
     }
 
@@ -204,7 +204,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
 
     private void captureState() {
         if (this.sound != null) {
-            this.pos = new Vec3d(this.sound.getX(), this.sound.getY(), this.sound.getZ());
+            this.pos = new Vector3d(this.sound.getX(), this.sound.getY(), this.sound.getZ());
         }
     }
 

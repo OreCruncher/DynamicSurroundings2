@@ -23,10 +23,10 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
@@ -99,7 +99,7 @@ public abstract class MotionMote extends AgeableMote {
 					// Have a collision
 					return Optional.of(new ParticleCollisionResult(
 							this.world,
-							new Vec3d(this.posX, height, this.posZ),
+							new Vector3d(this.posX, height, this.posZ),
 							state,
 							true,
 							null
@@ -111,7 +111,7 @@ public abstract class MotionMote extends AgeableMote {
 		}
 
 		// Check fluid state because the particle could have landed in fluid
-		final IFluidState fluid = state.getFluidState();
+		final FluidState fluid = state.getFluidState();
 		if (!fluid.isEmpty()) {
 			// Potential of collision with a liquid
 			final double height = fluid.getHeight() + this.position.getY();
@@ -119,7 +119,7 @@ public abstract class MotionMote extends AgeableMote {
 				// Hit the surface of liquid
 				return Optional.of(new ParticleCollisionResult(
 						this.world,
-						new Vec3d(this.posX, height, this.posZ),
+						new Vector3d(this.posX, height, this.posZ),
 						state,
 						false,
 						fluid

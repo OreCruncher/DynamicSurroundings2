@@ -21,9 +21,9 @@ package org.orecruncher.lib;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -78,11 +78,11 @@ public final class GameUtils {
 
     @OnlyIn(Dist.CLIENT)
     public static boolean isThirdPersonView() {
-        return getGameSettings().thirdPersonView == 2;
+        return getGameSettings().getPointOfView() != PointOfView.FIRST_PERSON;
     }
 
     @OnlyIn(Dist.CLIENT)
     public static boolean isFirstPersonView() {
-        return getGameSettings().thirdPersonView == 0;
+        return getGameSettings().getPointOfView() == PointOfView.FIRST_PERSON;
     }
 }

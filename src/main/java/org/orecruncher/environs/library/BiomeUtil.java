@@ -20,8 +20,10 @@ package org.orecruncher.environs.library;
 
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
@@ -74,7 +76,7 @@ public final class BiomeUtil {
 
     @Nonnull
     public static Color getColorForLiquid(@Nonnull final IBlockReader world, @Nonnull final BlockPos pos) {
-        final IFluidState fluidState = world.getFluidState(pos);
+        final FluidState fluidState = world.getFluidState(pos);
 
         if (fluidState.isEmpty())
             return NO_COLOR;
@@ -89,9 +91,10 @@ public final class BiomeUtil {
         // There is an internal check that will throw an exception if that is the
         // case. Seen this with OTG installed.
         try {
-            return BiomeDictionary.getTypes(biome);
+            RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, biome.getRegistryName());
+            return BiomeDictionary.getTypes(key);
         } catch (@Nonnull final Throwable t) {
-            final String name = biome.getDisplayName().getFormattedText();
+            final String name = biome.toString(); //biome.getDisplayName().getFormattedText();
             Environs.LOGGER.warn("Unable to get biome type data for biome '%s'", name);
         }
         return ImmutableSet.of();

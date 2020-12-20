@@ -38,8 +38,6 @@ public interface IBiomeVariables {
 
     String getCategory();
 
-    String getTemperatureCategory();
-
     String getRainType();
 
     String getTraits();

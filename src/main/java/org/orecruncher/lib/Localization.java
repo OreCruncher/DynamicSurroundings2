@@ -19,8 +19,7 @@
 package org.orecruncher.lib;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.LanguageManager;
-import net.minecraft.client.resources.Locale;
+import net.minecraft.util.text.LanguageMap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -29,8 +28,6 @@ import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public final class Localization {
-
-    private static final Locale locale = LanguageManager.CURRENT_LOCALE;
 
     private Localization() {
     }
@@ -42,6 +39,6 @@ public final class Localization {
 
     @Nonnull
     public static String load(@Nonnull final String fmt) {
-        return locale.translateKeyPrivate(fmt);
+        return LanguageMap.getInstance().func_230503_a_(fmt);
     }
 }

@@ -69,7 +69,6 @@ class CommonStateHandler extends HandlerBase {
         data.playerBiome = BiomeLibrary.getPlayerBiome(player, false);
         data.truePlayerBiome = BiomeLibrary.getPlayerBiome(player, true);
         data.dimInfo = DimensionLibrary.getData(world);
-        data.dimensionId = data.dimInfo.getId();
         data.dimensionName = data.dimInfo.getName().toString();
         data.playerPosition = player.getPosition();
         data.playerEyePosition = player.getEyePosition(1F);
@@ -88,11 +87,11 @@ class CommonStateHandler extends HandlerBase {
         // Only check once a second
         if (currentTick % 20 == 0) {
             // Only for surface worlds.  Other types of worlds are interpreted as not having villages.
-            if (world.getDimension().isSurfaceWorld()) {
+            if (world.getDimensionType().isNatural()) {
                 // Look for a bell within range of the player
                 final Optional<TileEntity> bell = world.loadedTileEntityList.stream()
                         .filter(te -> te instanceof BellTileEntity)
-                        .filter(te -> te.getDistanceSq(data.playerEyePosition.x, data.playerEyePosition.y, data.playerEyePosition.z) <= VILLAGE_RANGE)
+                        .filter(te -> te.getPos().distanceSq(data.playerEyePosition.x, data.playerEyePosition.y, data.playerEyePosition.z, true) <= VILLAGE_RANGE)
                         .findAny();
 
                 // If a bell is found, look for a villager within range
@@ -120,7 +119,7 @@ class CommonStateHandler extends HandlerBase {
 
     private final static String[] scripts = {
             "'Dim: ' + dim.getId() + '/' + dim.getDimName()",
-            "'Biome: ' + biome.getName() + ' (' + biome.getId() + '); Temp ' + biome.getTemperature() + '/' + state.getCurrentTemperature() + ' rainfall: ' + biome.getRainfall() + ' traits: ' + biome.getTraits()",
+            "'Biome: ' + biome.getName() + '; Temp ' + biome.getTemperature() + '/' + state.getCurrentTemperature() + ' rainfall: ' + biome.getRainfall() + ' traits: ' + biome.getTraits()",
             "'Weather: ' + lib.iif(weather.isRaining(),'rain: ' + weather.getRainIntensity(),'not raining') + lib.iif(weather.isThundering(),' thundering','') + ' Temp: ' + weather.getTemperature() + ' ice: ' + lib.iif(weather.getTemperature() < 0.15, 'true', 'false') + ' ' + lib.iif(weather.getTemperature() < 0.2, '(breath)', '')",
             "'Diurnal: ' + lib.iif(diurnal.isNight(),' night,',' day,') + lib.iif(state.isInside(),' inside,',' outside,') + ' celestial angle: ' + diurnal.getCelestialAngle()",
             "'Season: ' + season.getSeason()",

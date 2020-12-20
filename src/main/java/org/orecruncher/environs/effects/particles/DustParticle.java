@@ -20,6 +20,7 @@ package org.orecruncher.environs.effects.particles;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.DiggingParticle;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WorldUtils;
@@ -37,7 +38,7 @@ public class DustParticle extends DiggingParticle {
 	}
 
 	public DustParticle(final World world, final double x, final double y, final double z, final double dX, final double dY, final double dZ, final BlockState state) {
-		super(world, x, y, z, 0, 0, 0, state);
+		super((ClientWorld) world, x, y, z, 0, 0, 0, state);
 
 		this.canCollide = false;
 		this.motionX = dX;

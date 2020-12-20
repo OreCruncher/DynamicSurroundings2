@@ -18,11 +18,12 @@
 
 package org.orecruncher.environs.library;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -43,7 +44,8 @@ public final class DimensionLibrary {
 	}
 
 	private static final ObjectArray<DimensionConfig> cache = new ObjectArray<>();
-	private static final Int2ObjectOpenHashMap<DimensionInfo> configs = new Int2ObjectOpenHashMap<>();
+	// TODO:  What type of hash map?
+	private static final HashMap<RegistryKey<World>, DimensionInfo> configs = new HashMap<>();
 
 	static void initialize() {
 
@@ -95,17 +97,18 @@ public final class DimensionLibrary {
 
 	@Nonnull
 	public static DimensionInfo getData(@Nonnull final World world) {
-		DimensionInfo dimInfo = configs.get(world.getDimension().getType().getId());
+		RegistryKey<World> key = world.getDimensionKey();
+		DimensionInfo dimInfo = configs.get(key);
 		if (dimInfo == null) {
 			DimensionConfig config = null;
 			for (final DimensionConfig e : cache)
-				if ((e.dimensionId != null && e.dimensionId == world.getDimension().getType().getId())
-						|| (e.name != null && e.name.equals(world.getDimension().getType().getRegistryName().toString()))) {
+				// TODO:  What format should the dimension key be?
+				if ((e.name != null && e.name.equals(world.getDimensionKey().toString()))) {
 					config = e;
 					break;
 				}
 
-			configs.put(world.getDimension().getType().getId(), dimInfo = new DimensionInfo(world, config));
+			configs.put(key, dimInfo = new DimensionInfo(world, config));
 		}
 		return dimInfo;
 	}

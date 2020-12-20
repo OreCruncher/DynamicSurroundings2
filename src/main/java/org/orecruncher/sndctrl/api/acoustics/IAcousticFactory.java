@@ -20,7 +20,7 @@ package org.orecruncher.sndctrl.api.acoustics;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
@@ -46,7 +46,7 @@ public interface IAcousticFactory {
      * Creates a sound instance centered at the specified location.
      */
     @Nonnull
-    ISoundInstance createSoundAt(@Nonnull final Vec3d pos);
+    ISoundInstance createSoundAt(@Nonnull final Vector3d pos);
 
     /**
      * Creates a sound instance within a random range centered on the specified entity.

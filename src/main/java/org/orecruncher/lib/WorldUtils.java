@@ -27,10 +27,9 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
-import org.orecruncher.sndctrl.misc.ModEnvironment;
+//import org.orecruncher.sndctrl.misc.ModEnvironment;
 //import sereneseasons.season.SeasonHooks;
 
 import javax.annotation.Nonnull;
@@ -207,7 +206,7 @@ public final class WorldUtils {
     }
 
     public static boolean hasVoidPartiles(@Nonnull final World world) {
-        return world.getWorldType() != WorldType.FLAT && world.getDimension().hasSkyLight();
+        return world.getDimensionType().hasSkyLight();
     }
 
 }

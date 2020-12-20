@@ -90,8 +90,12 @@ public final class UpdateChecker {
             final String updateMessage = getUpdateMessage(this.modId);
             if (updateMessage != null) {
                 try {
+                    // TODO:  Sort out formatting/sending message
+                    /*
                     final ITextComponent component = ITextComponent.Serializer.fromJson(updateMessage);
                     event.getPlayer().sendMessage(component);
+
+                     */
                 } catch (@Nonnull final Throwable t) {
                     t.printStackTrace();
                 }

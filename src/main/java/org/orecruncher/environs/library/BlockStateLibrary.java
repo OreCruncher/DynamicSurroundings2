@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -143,7 +143,7 @@ public final class BlockStateLibrary {
     private static Collection<BlockStateMatcher> expand(@Nonnull final String blockName) {
         if (blockName.startsWith(TAG_SPECIFIER)) {
             final String tagName = blockName.substring(1);
-            final Tag<Block> tag = TagUtils.getBlockTag(tagName);
+            final ITag<Block> tag = TagUtils.getBlockTag(tagName);
             if (tag != null) {
                 return tag.getAllElements().stream().map(BlockStateMatcher::create).filter(m -> !m.isEmpty()).collect(Collectors.toList());
             }

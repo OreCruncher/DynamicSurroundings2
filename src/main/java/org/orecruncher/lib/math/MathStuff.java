@@ -19,8 +19,8 @@
 package org.orecruncher.lib.math;
 
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nonnull;
 
@@ -274,26 +274,26 @@ public final class MathStuff {
 
     // Assumes center at origin.
     @Nonnull
-    public static Vec2f rotateScale(@Nonnull final Vec2f coord, final float radians, final float scale) {
+    public static Vector2f rotateScale(@Nonnull final Vector2f coord, final float radians, final float scale) {
         final float f = cos(radians);
         final float f1 = sin(radians);
         final float d0 = coord.x * f + coord.y * f1;
         final float d1 = coord.y * f - coord.x * f1;
-        return new Vec2f(d0 * scale, d1 * scale);
+        return new Vector2f(d0 * scale, d1 * scale);
     }
 
     @Nonnull
-    public static Vec2f rotate(@Nonnull final Vec2f coord, final float radians) {
+    public static Vector2f rotate(@Nonnull final Vector2f coord, final float radians) {
         return rotateScale(coord, radians, 1F);
     }
 
     @Nonnull
-    public static Vec3d getVectorForRotation(final float pitch, final float yaw) {
+    public static Vector3d getVectorForRotation(final float pitch, final float yaw) {
         final float f = cos(-yaw * 0.017453292F - PI_F);
         final float f1 = sin(-yaw * 0.017453292F - PI_F);
         final float f2 = -cos(-pitch * 0.017453292F);
         final float f3 = sin(-pitch * 0.017453292F);
-        return new Vec3d(f1 * f2, f3, f * f2);
+        return new Vector3d(f1 * f2, f3, f * f2);
     }
 
     /**
@@ -304,15 +304,15 @@ public final class MathStuff {
      * @return The reflected vector
      */
     @Nonnull
-    public static Vec3d reflection(@Nonnull final Vec3d vector, @Nonnull final Vec3d surfaceNormal) {
+    public static Vector3d reflection(@Nonnull final Vector3d vector, @Nonnull final Vector3d surfaceNormal) {
         final double dot2 = vector.dotProduct(surfaceNormal) * 2;
         final double x = vector.x - dot2 * surfaceNormal.x;
         final double y = vector.y - dot2 * surfaceNormal.y;
         final double z = vector.z - dot2 * surfaceNormal.z;
-        return new Vec3d(x, y, z);
+        return new Vector3d(x, y, z);
     }
 
-    public static boolean isValid(@Nonnull final Vec3d vec) {
+    public static boolean isValid(@Nonnull final Vector3d vec) {
         return !(Double.isNaN(vec.x) || Double.isNaN(vec.y) || Double.isNaN(vec.z));
     }
 
@@ -324,8 +324,8 @@ public final class MathStuff {
      * @return Vector that is a sum of the base and the addened that has been scaled
      */
     @Nonnull
-    public static Vec3d addScaled(@Nonnull final Vec3d base, @Nonnull final Vec3d addened, final double scale) {
-        return new Vec3d(base.x + addened.x * scale, base.y + addened.y * scale, base.z + addened.z * scale);
+    public static Vector3d addScaled(@Nonnull final Vector3d base, @Nonnull final Vector3d addened, final double scale) {
+        return new Vector3d(base.x + addened.x * scale, base.y + addened.y * scale, base.z + addened.z * scale);
     }
 
     /**
@@ -335,11 +335,11 @@ public final class MathStuff {
      * @return Normal vector between the two points
      */
     @Nonnull
-    public static Vec3d normalize(@Nonnull final Vec3d origin, @Nonnull final Vec3d target) {
+    public static Vector3d normalize(@Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
         final double x = target.x - origin.x;
         final double y = target.y - origin.y;
         final double z = target.z - origin.z;
         final double d0 = Math.sqrt(x * x + y * y + z * z);
-        return d0 < 1.0E-4D ? Vec3d.ZERO : new Vec3d(x / d0, y / d0, z / d0);
+        return d0 < 1.0E-4D ? Vector3d.ZERO : new Vector3d(x / d0, y / d0, z / d0);
     }
 }

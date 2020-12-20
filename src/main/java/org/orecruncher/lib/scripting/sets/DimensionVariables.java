@@ -18,10 +18,9 @@
 
 package org.orecruncher.lib.scripting.sets;
 
-import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
@@ -47,10 +46,10 @@ public class DimensionVariables extends VariableSet<IDimensionVariables> impleme
     @Override
     public void update() {
         if (GameUtils.isInGame()) {
-            final Dimension dim = GameUtils.getWorld().getDimension();
-            this.id = dim.getType().getId();
+            final DimensionType dim = GameUtils.getWorld().getDimensionType();
             this.hasSky = dim.hasSkyLight();
-            this.name = dim.getType().getRegistryName().toString();
+            // TODO: What is the right way to get the dimension resource location?
+            this.name = GameUtils.getWorld().getProviderName();
         } else {
             this.id = 0;
             this.hasSky = false;

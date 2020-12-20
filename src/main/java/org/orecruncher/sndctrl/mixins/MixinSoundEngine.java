@@ -21,7 +21,7 @@ package org.orecruncher.sndctrl.mixins;
 import net.minecraft.client.audio.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 import org.orecruncher.sndctrl.audio.handlers.SoundVolumeEvaluator;
@@ -96,7 +96,7 @@ public class MixinSoundEngine {
      * @param entry The ChannelManager entry that is being queued to the SoundEngine for off thread processing.
      */
     @Inject(method = "play(Lnet/minecraft/client/audio/ISound;)V", at = @At(value = "INVOKE", target ="Lnet/minecraft/client/audio/ChannelManager$Entry;runOnSoundExecutor(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-    public void onSoundPlay(ISound p_sound, CallbackInfo ci, SoundEventAccessor soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f3, float f, SoundCategory soundcategory, float f1, float f2, ISound.AttenuationType attenuationtype, boolean flag, boolean flag1, Vec3d vec3d, ChannelManager.Entry entry)
+    public void onSoundPlay(ISound p_sound, CallbackInfo ci, SoundEventAccessor soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f3, float f, SoundCategory soundcategory, float f1, float f2, ISound.AttenuationType attenuationtype, boolean flag, boolean flag1, Vector3d vec3d, ChannelManager.Entry entry)
     {
         SoundFXProcessor.onSoundPlay(p_sound, soundcategory, entry);
     }

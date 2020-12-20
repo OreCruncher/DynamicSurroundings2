@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -46,8 +45,6 @@ public interface IBiome {
 	float getFloatTemperature(@Nonnull final BlockPos pos);
 
 	float getTemperature();
-
-	TempCategory getTempCategory();
 
 	boolean isHighHumidity();
 

@@ -18,11 +18,15 @@
 
 package org.orecruncher.lib.scripting.sets;
 
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
@@ -34,19 +38,18 @@ import java.util.stream.Collectors;
 public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBiomeVariables {
 
     private Biome biome;
-    private final LazyVariable<Set<BiomeDictionary.Type>> biomeTraits = new LazyVariable<>(() -> BiomeDictionary.getTypes(this.biome));
+    private final LazyVariable<Set<BiomeDictionary.Type>> biomeTraits = new LazyVariable<>(() -> BiomeDictionary.getTypes(RegistryKey.getOrCreateKey(Registry.BIOME_KEY, this.biome.getRegistryName())));
     private final LazyVariable<Set<String>> biomeTraitNames = new LazyVariable<>(() -> this.biomeTraits.get().stream().map(BiomeDictionary.Type::getName).collect(Collectors.toSet()));
     private final LazyVariable<String> traits = new LazyVariable<>(() -> String.join(" ", this.biomeTraitNames.get()));
-    private final LazyVariable<String> name = new LazyVariable<>(() -> this.biome.getDisplayName().getFormattedText());
+    private final LazyVariable<String> name = new LazyVariable<>(() -> this.biome.getRegistryName().toString());
     private final LazyVariable<String> modid = new LazyVariable<>(() -> this.biome.getRegistryName().getNamespace());
     private final LazyVariable<String> id = new LazyVariable<>(() -> this.biome.getRegistryName().toString());
     private final LazyVariable<String> category = new LazyVariable<>(() -> this.biome.getCategory().getName());
     private final LazyVariable<String> rainType = new LazyVariable<>(() -> this.biome.getPrecipitation().getName());
-    private final LazyVariable<String> temp = new LazyVariable<>(() -> this.biome.getTempCategory().getName());
 
     public BiomeVariables() {
         super("biome");
-        setBiome(Biomes.PLAINS);
+        setBiome(BiomeRegistry.PLAINS);
     }
 
     public void setBiome(@Nonnull final Biome biome) {
@@ -68,7 +71,7 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
         if (GameUtils.isInGame()) {
             newBiome = GameUtils.getWorld().getBiome(GameUtils.getPlayer().getPosition());
         } else {
-            newBiome = Biomes.PLAINS;
+            newBiome = BiomeRegistry.PLAINS;
         }
 
         if (newBiome != this.biome) {
@@ -78,7 +81,6 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
             this.id.reset();
             this.category.reset();
             this.rainType.reset();
-            this.temp.reset();
             this.traits.reset();
             this.biomeTraits.reset();
             this.biomeTraitNames.reset();
@@ -108,17 +110,12 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
 
     @Override
     public float getTemperature() {
-        return this.biome.getDefaultTemperature();
+        return this.biome.getTemperature();
     }
 
     @Override
     public String getCategory() {
         return this.category.get();
-    }
-
-    @Override
-    public String getTemperatureCategory() {
-        return this.temp.get();
     }
 
     @Override

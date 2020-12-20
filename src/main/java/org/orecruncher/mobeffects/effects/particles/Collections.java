@@ -22,7 +22,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -56,7 +56,7 @@ public final class Collections {
     }
 
     public static void addFootprint(@Nonnull final FootprintStyle style, @Nonnull final World world,
-                                    final Vec3d loc, final float rot, final float scale, final boolean isRight) {
+                                    final Vector3d loc, final float rot, final float scale, final boolean isRight) {
         if (thePrints.canFit()) {
             final IParticleMote mote = new FootprintMote(style, world, loc.x, loc.y, loc.z, rot, scale, isRight);
             thePrints.add(mote);

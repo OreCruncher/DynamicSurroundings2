@@ -18,7 +18,7 @@
 
 package org.orecruncher.environs;
 
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -33,6 +33,8 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = Environs.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
@@ -155,10 +157,10 @@ public final class Config {
         public static class Biome {
 
             private final IntValue worldSealevelOverride;
-            private final ForgeConfigSpec.ConfigValue<List<? extends Integer>> biomeSoundBlacklist;
+            private final ForgeConfigSpec.ConfigValue<List<? extends String>> biomeSoundBlacklist;
 
             private int _worldSealevelOverride;
-            private IntOpenHashSet _biomeSoundBlacklist = new IntOpenHashSet();
+            private Set<ResourceLocation> _biomeSoundBlacklist;
 
             Biome(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options for controlling biome sound/effects")
@@ -179,14 +181,14 @@ public final class Config {
 
             public void update() {
                 this._worldSealevelOverride = this.worldSealevelOverride.get();
-                this._biomeSoundBlacklist = new IntOpenHashSet(this.biomeSoundBlacklist.get());
+                this._biomeSoundBlacklist = this.biomeSoundBlacklist.get().stream().map(ResourceLocation::new).collect(Collectors.toSet());
             }
 
             public int get_worldSealevelOverride() {
                 return this._worldSealevelOverride;
             }
 
-            public IntOpenHashSet get_biomeSoundBlacklist() {
+            public Set<ResourceLocation> get_biomeSoundBlacklist() {
                 return this._biomeSoundBlacklist;
             }
         }

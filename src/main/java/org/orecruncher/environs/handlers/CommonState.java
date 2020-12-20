@@ -19,7 +19,7 @@
 package org.orecruncher.environs.handlers;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -52,7 +52,7 @@ public final class CommonState {
     String dimensionName = StringUtils.EMPTY;
     DimensionInfo dimInfo = DimensionInfo.NONE;
     BlockPos playerPosition = BlockPos.ZERO;
-    Vec3d playerEyePosition = Vec3d.ZERO;
+    Vector3d playerEyePosition = Vector3d.ZERO;
     float biomeTemperature = 0F;
 
     boolean inside;
@@ -97,7 +97,7 @@ public final class CommonState {
         return instance.playerPosition;
     }
 
-    public static Vec3d getPlayerEyePosition() { return instance.playerEyePosition; }
+    public static Vector3d getPlayerEyePosition() { return instance.playerEyePosition; }
 
     public static float getCurrentTemperature() {
         return instance.biomeTemperature;

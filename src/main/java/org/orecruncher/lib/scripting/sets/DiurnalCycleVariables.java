@@ -30,7 +30,8 @@ import javax.annotation.Nonnull;
 public class DiurnalCycleVariables extends VariableSet<IDiurnalCycle> implements IDiurnalCycle {
 
     private final LazyVariable<Float> moonPhaseFactor = new LazyVariable<>(() -> GameUtils.isInGame() ? DayCycle.getMoonPhaseFactor(GameUtils.getWorld()) : 0F);
-    private final LazyVariable<Float> celestialAngle = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getWorld().getCelestialAngle(0F) : 0F);
+    // TODO: Is it the right units?
+    private final LazyVariable<Float> celestialAngle = new LazyVariable<>(() -> GameUtils.isInGame() ? GameUtils.getWorld().getCelestialAngleRadians(0F) : 0F);
     private boolean isAuroraVisible;
     private boolean isDay;
     private boolean isNight;

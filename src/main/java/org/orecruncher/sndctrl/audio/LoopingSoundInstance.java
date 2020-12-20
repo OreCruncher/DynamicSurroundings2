@@ -19,7 +19,7 @@
 package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
@@ -29,14 +29,14 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class LoopingSoundInstance extends WrappedSoundInstance {
 
-    private final Vec3d position;
+    private final Vector3d position;
 
     public LoopingSoundInstance(@Nonnull final ISoundInstance sound) {
         super(sound);
         this.position = null;
     }
 
-    public LoopingSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final Vec3d position) {
+    public LoopingSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final Vector3d position) {
         super(sound);
         this.position = position;
     }
@@ -65,17 +65,17 @@ public class LoopingSoundInstance extends WrappedSoundInstance {
     }
 
     @Override
-    public float getX() {
+    public double getX() {
         return this.position != null ? (float) this.position.x : super.getX();
     }
 
     @Override
-    public float getY() {
+    public double getY() {
         return this.position != null ? (float) this.position.y : super.getY();
     }
 
     @Override
-    public float getZ() {
+    public double getZ() {
         return this.position != null ? (float) this.position.z : super.getZ();
     }
 

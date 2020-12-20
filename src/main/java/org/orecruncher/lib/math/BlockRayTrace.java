@@ -19,11 +19,12 @@
 package org.orecruncher.lib.math;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nonnull;
@@ -43,14 +44,14 @@ public class BlockRayTrace {
     final ISelectionContext selectionCtx;
 
     // Can be changed dynamically to avoid recreating contexts
-    Vec3d start;
-    Vec3d end;
+    Vector3d start;
+    Vector3d end;
 
     public BlockRayTrace(@Nonnull final IBlockReader world, @Nonnull final RayTraceContext.BlockMode bm, @Nonnull final RayTraceContext.FluidMode fm) {
-        this(world, Vec3d.ZERO, Vec3d.ZERO, bm, fm);
+        this(world, Vector3d.ZERO, Vector3d.ZERO, bm, fm);
     }
 
-    public BlockRayTrace(@Nonnull final IBlockReader world, @Nonnull final Vec3d start, @Nonnull final Vec3d end, @Nonnull final RayTraceContext.BlockMode bm, @Nonnull final RayTraceContext.FluidMode fm) {
+    public BlockRayTrace(@Nonnull final IBlockReader world, @Nonnull final Vector3d start, @Nonnull final Vector3d end, @Nonnull final RayTraceContext.BlockMode bm, @Nonnull final RayTraceContext.FluidMode fm) {
         this.world = world;
         this.start = start;
         this.end = end;
@@ -65,7 +66,7 @@ public class BlockRayTrace {
     }
 
     @Nonnull
-    public BlockRayTraceResult trace(@Nonnull final Vec3d start, @Nonnull final Vec3d end) {
+    public BlockRayTraceResult trace(@Nonnull final Vector3d start, @Nonnull final Vector3d end) {
         this.start = start;
         this.end = end;
         return traceLoop();
@@ -143,7 +144,7 @@ public class BlockRayTrace {
 
     @Nonnull
     private BlockRayTraceResult miss() {
-        final Vec3d directionVec = this.start.subtract(this.end);
+        final Vector3d directionVec = this.start.subtract(this.end);
         return BlockRayTraceResult.createMiss(this.end, Direction.getFacingFromVector(directionVec.x, directionVec.y, directionVec.z), new BlockPos(this.end));
     }
 
@@ -163,7 +164,7 @@ public class BlockRayTrace {
 
         // Handle it's fluid state
         BlockRayTraceResult fluidTraceResult = null;
-        final IFluidState fluidState = state.getFluidState();
+        final FluidState fluidState = state.getFluidState();
         if (!fluidState.isEmpty() && this.fluidMode.test(fluidState)) {
             final VoxelShape voxelFluidShape = state.getShape(this.world, pos);
             if (!voxelFluidShape.isEmpty())

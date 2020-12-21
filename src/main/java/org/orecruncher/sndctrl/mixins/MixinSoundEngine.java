@@ -34,6 +34,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.concurrent.CompletableFuture;
+
 @Mixin(SoundEngine.class)
 public class MixinSoundEngine {
 
@@ -84,20 +86,21 @@ public class MixinSoundEngine {
      * @param soundeventaccessor Ignored
      * @param resourcelocation Ignored
      * @param sound Ignored
-     * @param f3 Ignored
      * @param f Ignored
-     * @param soundcategory Category of the sound that is being played
      * @param f1 Ignored
+     * @param soundcategory Category of the sound that is being played
      * @param f2 Ignored
+     * @param f3 Ignored
      * @param attenuationtype Ignored
      * @param flag Ignored
-     * @param flag1 Ignored
-     * @param vec3d Ignored
+     * @param vector3d Ignored
+     * @param flag2 Ignored
+     * @param flag3 Ignored
+     * @param completablefuture Ignored
      * @param entry The ChannelManager entry that is being queued to the SoundEngine for off thread processing.
      */
     @Inject(method = "play(Lnet/minecraft/client/audio/ISound;)V", at = @At(value = "INVOKE", target ="Lnet/minecraft/client/audio/ChannelManager$Entry;runOnSoundExecutor(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-    public void onSoundPlay(ISound p_sound, CallbackInfo ci, SoundEventAccessor soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f3, float f, SoundCategory soundcategory, float f1, float f2, ISound.AttenuationType attenuationtype, boolean flag, boolean flag1, Vector3d vec3d, ChannelManager.Entry entry)
-    {
+    public void onSoundPlay(ISound p_sound, CallbackInfo ci, SoundEventAccessor soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f, float f1, SoundCategory soundcategory, float f2, float f3, ISound.AttenuationType attenuationtype, boolean flag, Vector3d vector3d, boolean flag2, boolean flag3, CompletableFuture completablefuture, ChannelManager.Entry entry)    {
         SoundFXProcessor.onSoundPlay(p_sound, soundcategory, entry);
     }
 }

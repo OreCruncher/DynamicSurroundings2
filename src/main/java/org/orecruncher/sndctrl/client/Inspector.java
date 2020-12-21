@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -70,16 +71,17 @@ public class Inspector {
     }
 
     private static List<String> getTags(@Nonnull final BlockState state) {
-        final Collection<Tag<Block>> tags = TagUtils.getBlockStateTags(state);
-        return tags.stream().map(t -> "#" + t.getId().toString()).collect(Collectors.toList());
+        final Collection<ITag<Block>> tags = TagUtils.getBlockStateTags(state);
+        return tags.stream().map(t -> "#" + t.toString()).collect(Collectors.toList());
     }
 
     private static List<String> gatherBlockText(final ItemStack stack, final List<String> text, final BlockState state,
                                                 final BlockPos pos) {
 
         if (!stack.isEmpty()) {
-            text.add(TextFormatting.RED + stack.getDisplayName().getFormattedText());
-            final String itemName = stack.getItem().getName().getFormattedText();
+            // TODO: Is getString() correct?
+            text.add(TextFormatting.RED + stack.getDisplayName().getString());
+            final String itemName = stack.getItem().getName().getString();
             if (!StringUtils.isEmpty(itemName)) {
                 text.add("ITEM: " + itemName);
                 text.add(TextFormatting.DARK_AQUA + stack.getItem().getClass().getName());

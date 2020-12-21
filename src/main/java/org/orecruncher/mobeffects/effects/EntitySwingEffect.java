@@ -24,7 +24,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -97,7 +99,7 @@ public class EntitySwingEffect extends AbstractEntityEffect {
 
     protected static double getReach(@Nonnull final LivingEntity entity) {
         if (entity instanceof PlayerEntity)
-            return entity.getAttribute(PlayerEntity.REACH_DISTANCE).getValue();
+            return entity.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue();
 
         // From EntityAIAttackMelee::getAttackReachSqr - approximate
         return entity.getWidth() * 2F + 0.6F; // 0.6 == default entity width
@@ -105,9 +107,9 @@ public class EntitySwingEffect extends AbstractEntityEffect {
 
     protected static BlockRayTraceResult rayTraceBlock(@Nonnull final LivingEntity entity) {
         double range = getReach(entity);
-        final Vec3d eyes = entity.getEyePosition(1F);
-        final Vec3d look = entity.getLook(1F);
-        final Vec3d rangedLook = eyes.add(look.x * range, look.y * range, look.z * range);
+        final Vector3d eyes = entity.getEyePosition(1F);
+        final Vector3d look = entity.getLook(1F);
+        final Vector3d rangedLook = eyes.add(look.x * range, look.y * range, look.z * range);
         return entity.getEntityWorld().rayTraceBlocks(new RayTraceContext(eyes, rangedLook, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY, entity));
     }
 

@@ -20,6 +20,7 @@ package org.orecruncher.environs.fog;
 
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.settings.GraphicsFanciness;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -181,8 +182,10 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
 
     protected Color applyPlayerEffects(@Nonnull final World world, @Nonnull final PlayerEntity player,
                                        @Nonnull final Color fogColor, final float renderPartialTicks) {
+
+        // TODO: Check!
         float darkScale = (float) ((player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * renderPartialTicks)
-                * world.getDimensionType().getVoidFogYFactor());
+                * ((ClientWorld)world).getWorldInfo().getFogDistance());
 
         // EntityRenderer.updateFogColor() - If the player is blind need to
         // darken it further

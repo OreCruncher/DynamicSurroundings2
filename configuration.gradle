@@ -1,19 +1,19 @@
 //  Basics defined up here to make life easier
 //  Tweak the defs, not the others!
-def mcVersion    	= '1.15.2'
-def modVersion   	= '1.0.0.2'
+def mcVersion    	= '1.16.4'
+def modVersion   	= '4.0.0.0'
 def modDesignator	= ''
-def forgeVersion 	= '31.2.45'
-def snapshot     	= '20201018-1.15.1'
+def forgeVersion 	= '35.1.10'
+def snapshot     	= '20201028-1.16.3'
 
 // General Mod version stuff
 project.group           	= 'org.orecruncher'
 project.archivesBaseName	= 'DynamicSurroundings2'
 project.version         	= "${mcVersion}-${modVersion}${modDesignator}"
 
-project.ext.ssVersion     	= "3.0.0.74"
-project.ext.bopVersion      = "10.0.0.366"
-project.ext.jeiVersion    	= "6.0.3.15"
+//project.ext.ssVersion     	= "3.0.0.74"
+project.ext.bopVersion      = "13.0.0.425"
+project.ext.jeiVersion    	= "7.6.0.62"
 
 project.ext.modId        	= 'dsurround2'
 project.ext.mcVersion    	= mcVersion
@@ -21,7 +21,7 @@ project.ext.modVersion   	= modVersion
 project.ext.forgeVersion	= forgeVersion
 project.ext.modDesignator	= modDesignator
 project.ext.fingerprint  	= '7a2128d395ad96ceb9d9030fbd41d035b435753a'
-project.ext.updateurl    	= 'https://raw.githubusercontent.com/OreCruncher/SoundControl/master/version.json'
+project.ext.updateurl    	= 'https://raw.githubusercontent.com/OreCruncher/DynamicSurroundings2/master/version.json'
 
 // Build Stuff
 project.ext.snapshot = snapshot

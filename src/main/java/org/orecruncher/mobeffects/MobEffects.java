@@ -131,7 +131,8 @@ public final class MobEffects {
 
     @SubscribeEvent
     public void onPlayerLogin(@Nonnull final PlayerLoggedInEvent event) {
-        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName().getFormattedText());
+        // TODO: getString()?
+        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName().getString());
         if (Config.CLIENT.logging.get_onlineVersionCheck())
             UpdateChecker.doCheck(event, MOD_ID);
     }

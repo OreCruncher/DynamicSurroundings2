@@ -26,6 +26,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -356,7 +357,7 @@ public final class FootstepLibrary {
             tagName = tagName.substring(0, idx);
         }
 
-        final Tag<Block> blockTag = TagUtils.getBlockTag(tagName);
+        final ITag<Block> blockTag = TagUtils.getBlockTag(tagName);
         if (blockTag != null) {
             for (final Block b : blockTag.getAllElements()) {
                 String blockName = Objects.requireNonNull(b.getRegistryName()).toString();

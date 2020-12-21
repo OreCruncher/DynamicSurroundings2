@@ -129,6 +129,8 @@ public final class ForgeUtils {
     public static Map<ResourceLocation, Class<? extends Entity>> getRegisteredEntities() {
         final Map<ResourceLocation, Class<? extends Entity>> results = new HashMap<>();
 
+        // TODO: Sort this out - dynamically handle at runtime?
+        /*
         final World fake = FakeWorld.create("Fake");
         final Collection<EntityType<?>> f = ForgeRegistries.ENTITIES.getValues();
         for (final EntityType<?> et : f) {
@@ -143,7 +145,7 @@ public final class ForgeUtils {
                 Lib.LOGGER.warn("Unable to instantiate '%s'", et.getRegistryName().toString());
             }
         }
-
+*/
         return results;
     }
 

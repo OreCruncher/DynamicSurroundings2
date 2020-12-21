@@ -25,7 +25,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -173,7 +173,7 @@ public final class AudioEffectLibrary {
                 }
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
-                final Tag<Block> tag = TagUtils.getBlockTag(name.substring(1));
+                final ITag<Block> tag = TagUtils.getBlockTag(name.substring(1));
                 if (tag != null) {
                     for (final Block block : tag.getAllElements()) {
                         for (final BlockState state : block.getStateContainer().getValidStates())
@@ -212,7 +212,7 @@ public final class AudioEffectLibrary {
                 }
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
-                final Tag<Block> tag = TagUtils.getBlockTag(name.substring(1));
+                final ITag<Block> tag = TagUtils.getBlockTag(name.substring(1));
                 if (tag != null) {
                     for (final Block block : tag.getAllElements()) {
                         for (final BlockState state : block.getStateContainer().getValidStates())

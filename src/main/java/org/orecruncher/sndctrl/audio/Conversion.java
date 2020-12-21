@@ -118,14 +118,8 @@ public final class Conversion {
         }
 
         @Override
-        public ByteBuffer func_216453_b() throws IOException {
-            return this.source.func_216453_b();
-        }
-
-        @Nullable
-        @Override
-        public ByteBuffer func_216455_a(int p_216455_1_) throws IOException {
-            return this.source.func_216455_a(p_216455_1_);
+        public ByteBuffer readOggSoundWithCapacity(int size) throws IOException {
+            return this.source.readOggSoundWithCapacity(size);
         }
 
         @Override

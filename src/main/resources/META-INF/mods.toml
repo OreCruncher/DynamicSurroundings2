@@ -3,6 +3,7 @@ loaderVersion="[31,)"
 issueTrackerURL="https://github.com/OreCruncher/DynamicSurroundings2/issues"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol"
 logoFile="logo.png"
+license = "GPL-3.0"
 
 [[mods]]
 	modId="sndctrl"
@@ -16,7 +17,7 @@ logoFile="logo.png"
 	[[dependencies.sndctrl]]
 		modId="forge"
 		mandatory=true
-		versionRange="[31.2.44,)"
+		versionRange="[35.1.10,)"
 		ordering="NONE"
 		side="CLIENT"
 
@@ -32,14 +33,14 @@ logoFile="logo.png"
 	[[dependencies.environs]]
 		modId="forge"
 		mandatory=true
-		versionRange="[31.2.4,)"
+		versionRange="[35.1.10,)"
 		ordering="NONE"
 		side="CLIENT"
 
 	[[dependencies.environs]]
 		modId="sndctrl"
 		mandatory=true
-		versionRange="[1.15.2-1.0.0.1,)"
+		versionRange="[1.16.4-4.0.0.0,)"
 		ordering="AFTER"
 		side="CLIENT"
 
@@ -55,13 +56,13 @@ logoFile="logo.png"
 	[[dependencies.mobeffects]]
 		modId="forge"
 		mandatory=true
-		versionRange="[31.2.44,)"
+		versionRange="[35.1.10,)"
 		ordering="NONE"
 		side="CLIENT"
 
 	[[dependencies.mobeffects]]
 		modId="sndctrl"
 		mandatory=true
-		versionRange="[1.15.2-1.0.0.1,)"
+		versionRange="[1.16.4-4.0.0.0,)"
 		ordering="AFTER"
 		side="CLIENT"

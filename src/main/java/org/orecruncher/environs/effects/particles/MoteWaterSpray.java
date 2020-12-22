@@ -26,7 +26,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.client.renderer.BufferBuilder;
-import org.orecruncher.environs.library.BiomeUtil;
+import org.orecruncher.lib.biomes.BiomeUtilities;
 import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.particles.MotionMote;
 import org.orecruncher.lib.particles.ParticleCollisionResult;
@@ -69,7 +69,7 @@ public class MoteWaterSpray extends MotionMote {
 
 	@Override
 	public void configureColor() {
-		final Color waterColor = BiomeUtil.getColorForLiquid(this.world, this.position);
+		final Color waterColor = BiomeUtilities.getColorForLiquid(this.world, this.position);
 		this.red = waterColor.red();
 		this.green = waterColor.green();
 		this.blue = waterColor.blue();

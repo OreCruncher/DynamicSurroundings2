@@ -18,33 +18,17 @@
 
 package org.orecruncher.environs.library;
 
-import com.google.common.collect.ImmutableSet;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.lwjgl.system.CallbackI;
-import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.misc.IMixinBiomeData;
-import org.orecruncher.lib.gui.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public final class BiomeUtil {
-
-    private static final Color NO_COLOR = new Color(1F, 1F, 1F);
 
     @Nonnull
     public static BiomeInfo getBiomeData(@Nonnull final Biome biome) {
@@ -69,41 +53,4 @@ public final class BiomeUtil {
     public static void setBiomeData(@Nonnull final Biome biome, @Nullable final BiomeInfo data) {
         ((IMixinBiomeData) (Object) biome).setInfo(data);
     }
-
-    // ===================================
-    //
-    // Miscellaneous Support Functions
-    //
-    // ===================================
-    @Nonnull
-    public static Collection<Type> getBiomeTypes() {
-        return BiomeDictionary.Type.getAll();
-    }
-
-    @Nonnull
-    public static Color getColorForLiquid(@Nonnull final IBlockReader world, @Nonnull final BlockPos pos) {
-        final FluidState fluidState = world.getFluidState(pos);
-
-        if (fluidState.isEmpty())
-            return NO_COLOR;
-
-        final Fluid fluid = fluidState.getFluid();
-        return new Color(fluid.getAttributes().getColor());
-    }
-
-    @Nonnull
-    public static Set<Type> getBiomeTypes(@Nonnull final Biome biome) {
-        // It's possible to have a biome that is not registered come through here
-        // There is an internal check that will throw an exception if that is the
-        // case. Seen this with OTG installed.
-        try {
-            RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, biome.getRegistryName());
-            return BiomeDictionary.getTypes(key);
-        } catch (@Nonnull final Throwable t) {
-            final String name = biome.toString(); //biome.getDisplayName().getFormattedText();
-            Environs.LOGGER.warn("Unable to get biome type data for biome '%s'", name);
-        }
-        return ImmutableSet.of();
-    }
-
 }

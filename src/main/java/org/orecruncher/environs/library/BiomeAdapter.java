@@ -29,6 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import org.orecruncher.lib.biomes.BiomeUtilities;
 
 @OnlyIn(Dist.CLIENT)
 public class BiomeAdapter implements IBiome {
@@ -38,7 +39,7 @@ public class BiomeAdapter implements IBiome {
 
 	public BiomeAdapter(@Nonnull final Biome biome) {
 		this.biome = biome;
-		this.types = BiomeUtil.getBiomeTypes(this.biome);
+		this.types = BiomeUtilities.getBiomeTypes(this.biome);
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class BiomeAdapter implements IBiome {
 
 	@Override
 	public String getName() {
-		return this.biome.getRegistryName().toString();
+		return BiomeUtilities.getBiomeName(biome);
 	}
 
 	@Override

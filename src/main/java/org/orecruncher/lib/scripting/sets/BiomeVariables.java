@@ -26,6 +26,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.biomes.BiomeUtilities;
 import org.orecruncher.lib.scripting.VariableSet;
 
 import javax.annotation.Nonnull;
@@ -39,7 +40,7 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
     private final LazyVariable<Set<BiomeDictionary.Type>> biomeTraits = new LazyVariable<>(() -> BiomeDictionary.getTypes(RegistryKey.getOrCreateKey(Registry.BIOME_KEY, this.biome.getRegistryName())));
     private final LazyVariable<Set<String>> biomeTraitNames = new LazyVariable<>(() -> this.biomeTraits.get().stream().map(BiomeDictionary.Type::getName).collect(Collectors.toSet()));
     private final LazyVariable<String> traits = new LazyVariable<>(() -> String.join(" ", this.biomeTraitNames.get()));
-    private final LazyVariable<String> name = new LazyVariable<>(() -> this.biome.getRegistryName().toString());
+    private final LazyVariable<String> name = new LazyVariable<>(() -> BiomeUtilities.getBiomeName(this.biome));
     private final LazyVariable<String> modid = new LazyVariable<>(() -> this.biome.getRegistryName().getNamespace());
     private final LazyVariable<String> id = new LazyVariable<>(() -> this.biome.getRegistryName().toString());
     private final LazyVariable<String> category = new LazyVariable<>(() -> this.biome.getCategory().getName());

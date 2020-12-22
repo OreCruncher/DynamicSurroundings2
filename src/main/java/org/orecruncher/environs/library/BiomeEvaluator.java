@@ -21,6 +21,7 @@ package org.orecruncher.environs.library;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
+import org.orecruncher.lib.biomes.BiomeUtilities;
 import org.orecruncher.lib.scripting.ExecutionContext;
 
 import javax.annotation.Nonnull;
@@ -50,7 +51,7 @@ public class BiomeEvaluator {
             props.put("rainfall", biome.getRainfall());
         }
 
-        final Collection<BiomeDictionary.Type> types = BiomeUtil.getBiomeTypes();
+        final Collection<BiomeDictionary.Type> types = BiomeUtilities.getBiomeTypes();
         final Set<BiomeDictionary.Type> biomeTypes = biome.getBiomeTypes();
 
         for (final BiomeDictionary.Type t : types) {

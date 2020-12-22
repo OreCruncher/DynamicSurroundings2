@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2020 OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,32 +15,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
+package org.orecruncher.environs.mixins;
 
-package org.orecruncher.sndctrl.mixins;
-
-import net.minecraft.block.BlockState;
-import org.orecruncher.sndctrl.library.AudioEffectLibrary;
-import org.orecruncher.sndctrl.misc.IMixinAudioEffectData;
+import net.minecraft.world.biome.Biome;
+import org.orecruncher.environs.library.BiomeInfo;
+import org.orecruncher.environs.misc.IMixinBiomeData;
 import org.spongepowered.asm.mixin.Mixin;
 
 import javax.annotation.Nullable;
 
-/**
- * Simple mixin that adds a context field to BlockState where effect information for the block can be stored.
- */
-@Mixin(BlockState.class)
-public class MixinBlockState implements IMixinAudioEffectData {
+@Mixin(Biome.class)
+public class MixinBiome implements IMixinBiomeData {
 
-    private AudioEffectLibrary.EffectData sndctrl_data = null;
+    private BiomeInfo environs_biomeInfo;
 
-    @Override
     @Nullable
-    public AudioEffectLibrary.EffectData getData() {
-        return this.sndctrl_data;
+    @Override
+    public BiomeInfo getInfo() {
+        return this.environs_biomeInfo;
     }
 
     @Override
-    public void setData(@Nullable AudioEffectLibrary.EffectData data) {
-        this.sndctrl_data = data;
+    public void setInfo(@Nullable BiomeInfo info) {
+        this.environs_biomeInfo = info;
     }
 }

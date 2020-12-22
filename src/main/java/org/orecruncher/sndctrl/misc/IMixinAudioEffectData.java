@@ -1,5 +1,5 @@
 /*
- * Dynamic Surroundings: Sound Control
+ * Dynamic Surroundings
  * Copyright (C) 2020 OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,32 +15,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
+package org.orecruncher.sndctrl.misc;
 
-package org.orecruncher.sndctrl.mixins;
-
-import net.minecraft.block.BlockState;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
-import org.orecruncher.sndctrl.misc.IMixinAudioEffectData;
-import org.spongepowered.asm.mixin.Mixin;
 
 import javax.annotation.Nullable;
 
-/**
- * Simple mixin that adds a context field to BlockState where effect information for the block can be stored.
- */
-@Mixin(BlockState.class)
-public class MixinBlockState implements IMixinAudioEffectData {
-
-    private AudioEffectLibrary.EffectData sndctrl_data = null;
-
-    @Override
+public interface IMixinAudioEffectData {
     @Nullable
-    public AudioEffectLibrary.EffectData getData() {
-        return this.sndctrl_data;
-    }
+    AudioEffectLibrary.EffectData getData();
 
-    @Override
-    public void setData(@Nullable AudioEffectLibrary.EffectData data) {
-        this.sndctrl_data = data;
-    }
+    void setData(@Nullable AudioEffectLibrary.EffectData data);
 }

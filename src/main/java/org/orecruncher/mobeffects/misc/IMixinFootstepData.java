@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2020 OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,18 +12,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib;
+package org.orecruncher.mobeffects.misc;
+
+import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 
 import javax.annotation.Nullable;
 
-public interface IDataAccessor<T> {
+public interface IMixinFootstepData {
+
+    Boolean hasFootprint();
+
+    void setHasFootprint(final boolean flag);
 
     @Nullable
-    T getData();
+    IAcoustic[] getAcoustics();
 
-    void setData(@Nullable T data);
+    void setAcoustics(@Nullable final IAcoustic[] obj);
 }

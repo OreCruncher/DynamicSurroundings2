@@ -35,7 +35,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.lwjgl.openal.AL10;
-import org.orecruncher.lib.IDataAccessor;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
@@ -44,6 +43,7 @@ import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.Conversion;
 import org.orecruncher.sndctrl.audio.SoundUtils;
+import org.orecruncher.sndctrl.misc.IMixinSoundContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -178,7 +178,7 @@ public final class SoundFXProcessor {
                 ctx.attachSound(sound);
                 ctx.enable();
                 ctx.exec();
-                ((IDataAccessor<SourceContext>) source).setData(ctx);
+                ((IMixinSoundContext) source).setData(ctx);
                 sources[source.id - 1] = ctx;
             }
         });
@@ -191,7 +191,7 @@ public final class SoundFXProcessor {
      * @param source SoundSource being ticked
      */
     public static void tick(@Nonnull final SoundSource source) {
-        final SourceContext ctx = ((IDataAccessor<SourceContext>)source).getData();
+        final SourceContext ctx = ((IMixinSoundContext)source).getData();
         if (ctx != null)
             ctx.tick(source.id);
     }
@@ -202,7 +202,7 @@ public final class SoundFXProcessor {
      * @param source The sound source that is stopping
      */
     public static void stopSoundPlay(@Nonnull final SoundSource source) {
-        final SourceContext ctx = ((IDataAccessor<SourceContext>)source).getData();
+        final SourceContext ctx = ((IMixinSoundContext)source).getData();
         if (ctx != null)
             sources[source.id - 1] = null;
     }
@@ -228,7 +228,7 @@ public final class SoundFXProcessor {
     @Nonnull
     public static AudioStreamBuffer playBuffer(@Nonnull final SoundSource source, @Nonnull final AudioStreamBuffer buffer) {
         if (isAvailable()) {
-            final SourceContext ctx = ((IDataAccessor<SourceContext>)source).getData();
+            final SourceContext ctx = ((IMixinSoundContext)source).getData();
             if (ctx != null && ctx.getSound() != null) {
                 if (ctx.getSound().getAttenuationType() != ISound.AttenuationType.NONE)
                     return Conversion.convert(buffer);

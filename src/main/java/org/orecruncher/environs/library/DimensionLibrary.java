@@ -61,9 +61,6 @@ public final class DimensionLibrary {
 		cfg.dimensions.forEach(DimensionLibrary::register);
 	}
 
-	static void complete() {
-	}
-
 	@Nonnull
 	private static DimensionConfig getData(@Nonnull final DimensionConfig entry) {
 		final Optional<DimensionConfig> result = cache.stream().filter(e -> e.equals(entry)).findFirst();

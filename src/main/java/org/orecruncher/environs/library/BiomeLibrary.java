@@ -121,10 +121,6 @@ public final class BiomeLibrary {
 		}
 	}
 
-	static void complete() {
-		// Do nada
-	}
-
 	@Nonnull
 	public static BiomeInfo getPlayerBiome(@Nonnull final PlayerEntity player, final boolean getTrue) {
 		final Biome biome = player.getEntityWorld().getBiome(new BlockPos(player.getPosX(), 0, player.getPosZ()));
@@ -166,18 +162,17 @@ public final class BiomeLibrary {
 	{
 		@Override
 		public void start() {
-			ForgeUtils.getBiomes().forEach(BiomeUtil::getBiomeData);
+
+			ForgeUtils.getBiomes().forEach(b -> {
+				final BiomeAdapter handler = new BiomeAdapter(b);
+				BiomeUtil.setBiomeData(b, new BiomeInfo(handler));
+			});
 
 			// Make sure the default PLAINS biome is set.
 			final ResourceLocation plainsLoc = new ResourceLocation("plains");
 			final Biome plains = ForgeRegistries.BIOMES.getValue(plainsLoc);
 			final BiomeInfo info = BiomeUtil.getBiomeData(plains);
 			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, info);
-
-			if (Config.CLIENT.logging.get_enableLogging()) {
-				LOGGER.info("*** BIOME REGISTRY ***");
-				getCombinedStream().stream().sorted().map(Object::toString).forEach(LOGGER::info);
-			}
 
 			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "biomes.json");
 			for (IResourceAccessor accessor : configs) {
@@ -187,6 +182,11 @@ public final class BiomeLibrary {
 				} catch (@Nonnull final Throwable t) {
 					LOGGER.error(t, "Unable to load %s", accessor.location());
 				}
+			}
+
+			if (Config.CLIENT.logging.get_enableLogging()) {
+				LOGGER.info("*** BIOME REGISTRY ***");
+				getCombinedStream().stream().sorted().map(Object::toString).forEach(LOGGER::info);
 			}
 
 			getCombinedStream().forEach(BiomeInfo::trim);

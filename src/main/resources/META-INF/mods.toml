@@ -4,6 +4,7 @@ issueTrackerURL="https://github.com/OreCruncher/DynamicSurroundings2/issues"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol"
 logoFile="logo.png"
 license = "GPL-3.0"
+showAsResourcePack=false
 
 [[mods]]
 	modId="dsurround"

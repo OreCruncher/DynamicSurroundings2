@@ -31,8 +31,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.misc.IMixinBiomeData;
 import org.orecruncher.lib.gui.Color;
-import org.orecruncher.lib.reflection.ObjectField;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,25 +44,18 @@ public final class BiomeUtil {
 
     private static final Color NO_COLOR = new Color(1F, 1F, 1F);
 
-    private static final ObjectField<Biome, BiomeInfo> environs_biomeData =
-            new ObjectField<>(
-                    Biome.class,
-                    () -> BiomeLibrary.WTF_INFO,
-                    "environs_biomeData"
-            );
-
     @Nonnull
     public static BiomeInfo getBiomeData(@Nonnull final Biome biome) {
-        BiomeInfo result = environs_biomeData.get(biome);
+        BiomeInfo result = ((IMixinBiomeData) (Object) biome).getInfo();
         if (result == null) {
             final BiomeAdapter handler = new BiomeAdapter(biome);
-            environs_biomeData.set(biome, result = new BiomeInfo(handler));
+            ((IMixinBiomeData) (Object) biome).setInfo(result = new BiomeInfo(handler));
         }
         return result;
     }
 
     public static void setBiomeData(@Nonnull final Biome biome, @Nullable final BiomeInfo data) {
-        environs_biomeData.set(biome, data);
+        ((IMixinBiomeData) (Object) biome).setInfo(data);
     }
 
     // ===================================

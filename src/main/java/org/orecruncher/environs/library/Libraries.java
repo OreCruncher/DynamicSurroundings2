@@ -116,10 +116,6 @@ public final class Libraries {
                     }
                 }
             }
-
-            DimensionLibrary.complete();
-            BiomeLibrary.complete();
-            BlockStateLibrary.complete();
         }
 
         @Override

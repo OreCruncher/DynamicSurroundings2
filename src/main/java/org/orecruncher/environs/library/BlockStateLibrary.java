@@ -71,10 +71,6 @@ public final class BlockStateLibrary {
         config.blocks.forEach(BlockStateLibrary::register);
     }
 
-    static void complete() {
-        // Do nada
-    }
-
     @Nonnull
     static BlockStateData get(@Nonnull final BlockState state) {
         BlockStateData profile = registry.get(state);

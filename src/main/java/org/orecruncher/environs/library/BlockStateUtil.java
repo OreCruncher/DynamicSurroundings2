@@ -21,7 +21,7 @@ package org.orecruncher.environs.library;
 import net.minecraft.block.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.reflection.ObjectField;
+import org.orecruncher.environs.misc.IMixinBlockData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,29 +29,20 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public final class BlockStateUtil {
     private BlockStateUtil() {
-
     }
-
-    private static final ObjectField<BlockState, BlockStateData> environs_blockData =
-            new ObjectField<>(
-                    BlockState.class,
-                    () -> BlockStateData.DEFAULT,
-                    "environs_blockData"
-            );
 
     @Nonnull
     public static BlockStateData getData(@Nonnull final BlockState state) {
-        BlockStateData profile = environs_blockData.get(state);
+        BlockStateData profile = ((IMixinBlockData) state).getBlockData();
         if (profile == null) {
             profile = BlockStateLibrary.get(state);
-            environs_blockData.set(state, profile);
+            ((IMixinBlockData) state).setBlockData(profile);
         }
         return profile;
     }
 
     public static void setData(@Nonnull final BlockState state, @Nullable final BlockStateData data) {
-        //noinspection ConstantConditions
-        environs_blockData.set(state, data);
+        ((IMixinBlockData) state).setBlockData(data);
     }
 
 }

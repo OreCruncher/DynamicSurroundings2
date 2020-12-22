@@ -33,7 +33,6 @@ import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.MaterialUtils;
 import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
-import org.orecruncher.lib.IDataAccessor;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
@@ -42,6 +41,7 @@ import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ClientServiceManager;
 import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.misc.IMixinAudioEffectData;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -94,7 +94,7 @@ public final class AudioEffectLibrary {
     }
 
     private static EffectData resolve(@Nonnull final BlockState state) {
-        IDataAccessor<EffectData> accessor = (IDataAccessor<EffectData>)state;
+        IMixinAudioEffectData accessor = (IMixinAudioEffectData)state;
         EffectData data = accessor.getData();
         if (data == null) {
             final float o = resolveOcclusion(state);
@@ -286,7 +286,7 @@ public final class AudioEffectLibrary {
 
             // Clear out cached data
             ForgeUtils.getBlockStates().forEach(state -> {
-                IDataAccessor<EffectData> accessor = (IDataAccessor<EffectData>) state;
+                IMixinAudioEffectData accessor = (IMixinAudioEffectData) state;
                 accessor.setData(null);
             });
         }

@@ -19,25 +19,22 @@
 package org.orecruncher.sndctrl.mixins;
 
 import net.minecraft.client.audio.AudioStreamBuffer;
-import net.minecraft.client.audio.IAudioStream;
 import net.minecraft.client.audio.SoundSource;
 import org.lwjgl.openal.AL10;
-import org.orecruncher.lib.IDataAccessor;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 import org.orecruncher.sndctrl.audio.handlers.SourceContext;
+import org.orecruncher.sndctrl.misc.IMixinSoundContext;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
 
 @Mixin(SoundSource.class)
-public class MixinSoundSource implements IDataAccessor<SourceContext> {
+public class MixinSoundSource implements IMixinSoundContext {
 
     private SourceContext sndctrl_data = null;
 

@@ -39,7 +39,6 @@ import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
 import org.orecruncher.lib.blockstate.BlockStateParser;
 import org.orecruncher.lib.logging.IModLog;
-import org.orecruncher.lib.reflection.ObjectField;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ClientServiceManager;
@@ -52,6 +51,7 @@ import org.orecruncher.mobeffects.footsteps.Substrate;
 import org.orecruncher.mobeffects.footsteps.Variator;
 import org.orecruncher.mobeffects.library.config.ModConfig;
 import org.orecruncher.mobeffects.library.config.VariatorConfig;
+import org.orecruncher.mobeffects.misc.IMixinFootstepData;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 import org.orecruncher.sndctrl.events.BlockInspectionEvent;
@@ -65,18 +65,6 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FootstepLibrary {
 
-    private static final ObjectField<BlockState, Boolean> mobeffects_hasfootprint =
-            new ObjectField<>(
-                    BlockState.class,
-                    () -> null,
-                    "mobeffects_hasfootprint"
-            );
-    private static final ObjectField<BlockState, IAcoustic[]> mobeffects_acoustic =
-            new ObjectField<>(
-                    BlockState.class,
-                    () -> null,
-                    "mobeffects_acoustic"
-            );
     private static final String TEXT_FOOTSTEPS = TextFormatting.DARK_PURPLE + "<Footsteps>";
     private static final Map<Substrate, BlockAcousticMap> substrateMap = new EnumMap<>(Substrate.class);
     private static final List<SoundType> FOOTPRINT_SOUND_PROFILE =
@@ -90,7 +78,7 @@ public final class FootstepLibrary {
     private static final BlockStateMatcherMap<Boolean> FOOTPRINT_STATES = new BlockStateMatcherMap<>();
     private static final Map<String, List<MacroEntry>> macros = new Object2ObjectOpenHashMap<>();
     private static final Map<String, Variator> variators = new Object2ObjectOpenHashMap<>();
-    private static IModLog LOGGER = MobEffects.LOGGER.createChild(FootstepLibrary.class);
+    private static final IModLog LOGGER = MobEffects.LOGGER.createChild(FootstepLibrary.class);
     private static Variator defaultVariator;
     private static Variator childVariator;
     private static Variator playerVariator;
@@ -283,9 +271,9 @@ public final class FootstepLibrary {
         if (state.getMaterial() == Material.AIR)
             return Constants.NOT_EMITTER;
         // Get our cached entries
-        IAcoustic[] cached = mobeffects_acoustic.get(state);
+        IAcoustic[] cached = ((IMixinFootstepData)state).getAcoustics();
         if (cached == null) {
-            mobeffects_acoustic.set(state, cached = new IAcoustic[Substrate.values().length]);
+            ((IMixinFootstepData) state).setAcoustics(cached = new IAcoustic[Substrate.values().length]);
         }
         IAcoustic result = cached[substrate.ordinal()];
         if (result == null) {
@@ -409,7 +397,7 @@ public final class FootstepLibrary {
     }
 
     public static boolean hasFootprint(@Nonnull final BlockState state) {
-        Boolean result = mobeffects_hasfootprint.get(state);
+        Boolean result = ((IMixinFootstepData) state).hasFootprint();
         if (result != null)
             return result;
 
@@ -417,7 +405,7 @@ public final class FootstepLibrary {
         if (result == null) {
             result = FOOTPRINT_MATERIAL.contains(state.getMaterial()) || FOOTPRINT_SOUND_PROFILE.contains(state.getSoundType());
         }
-        mobeffects_hasfootprint.set(state, result);
+        ((IMixinFootstepData) state).setHasFootprint(result);
         return result;
     }
 

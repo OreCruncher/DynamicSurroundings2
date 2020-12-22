@@ -1,7 +1,5 @@
 {
   "biome": "transformers/biome.js",
-  "environs_blockstate": "transformers/environs_blockstate.js",
   "dripparticle": "transformers/dripparticle.js",
-  "abstractarrowentity": "transformers/arrow.js",
-  "mobeffects_blockstate": "transformers/mobeffects_blockstate.js"
+  "abstractarrowentity": "transformers/arrow.js"
 }

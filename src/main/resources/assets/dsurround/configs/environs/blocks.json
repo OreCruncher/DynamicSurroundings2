@@ -94,7 +94,7 @@
     "acoustics": [
       {
         "acoustic": "soulsand/laughter",
-        "conditions": "dim.getId() == -1"
+        "conditions": "dim.getId() == 'minecraft:the_nether'"
       }
     ]
   },
@@ -108,7 +108,7 @@
     "acoustics": [
       {
         "acoustic": "netherbrick/breathing",
-        "conditions": "dim.getId() == -1"
+        "conditions": "dim.getId() == 'minecraft:the_nether'"
       }
     ]
   },

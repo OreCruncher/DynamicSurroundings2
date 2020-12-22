@@ -159,14 +159,6 @@ public final class BlockStateLibrary {
     {
         @Override
         public void start() {
-            final int blockStates = (int) ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).count();
-            LOGGER.info("%d block states processed, %d registry entries", blockStates, registry.size());
-            ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).forEach(BlockStateData::trim);
-
-            BlockStateUtil.setData(Blocks.AIR.getDefaultState(), BlockStateData.DEFAULT);
-            BlockStateUtil.setData(Blocks.CAVE_AIR.getDefaultState(), BlockStateData.DEFAULT);
-            BlockStateUtil.setData(Blocks.VOID_AIR.getDefaultState(), BlockStateData.DEFAULT);
-
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "blocks.json");
 
             for (final IResourceAccessor accessor : configs) {
@@ -177,6 +169,14 @@ public final class BlockStateLibrary {
                     LOGGER.error(t, "Unable to load %s", accessor.location());
                 }
             }
+
+            final int blockStates = (int) ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).count();
+            LOGGER.info("%d block states processed, %d registry entries", blockStates, registry.size());
+            ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).forEach(BlockStateData::trim);
+
+            BlockStateUtil.setData(Blocks.AIR.getDefaultState(), BlockStateData.DEFAULT);
+            BlockStateUtil.setData(Blocks.CAVE_AIR.getDefaultState(), BlockStateData.DEFAULT);
+            BlockStateUtil.setData(Blocks.VOID_AIR.getDefaultState(), BlockStateData.DEFAULT);
         }
 
         @Override

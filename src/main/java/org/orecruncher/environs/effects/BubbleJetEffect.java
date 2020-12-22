@@ -19,6 +19,7 @@
 package org.orecruncher.environs.effects;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
@@ -47,7 +48,12 @@ public class BubbleJetEffect extends JetEffect {
     public boolean canTrigger(@Nonnull final IBlockReader provider, @Nonnull final BlockState state,
                               @Nonnull final BlockPos pos, @Nonnull final Random random) {
         if (WATER_PREDICATE.test(state)) {
-            final boolean isSolidBlock = provider.getBlockState(pos.down()).getMaterial().isSolid();
+            final BlockState belowBlock = provider.getBlockState(pos.down());
+            final Material material = belowBlock.getMaterial();
+            final boolean isSolidBlock = material.isSolid();
+            if (isSolidBlock) {
+                int x = 0;
+            }
             return isSolidBlock && super.canTrigger(provider, state, pos, random);
         }
         return false;

@@ -71,11 +71,13 @@ public final class SoundLibrary {
         // Gather up resource pack sound files and process them to ensure meta data is collected
         // and we become aware of configured sounds.  Resource pack sounds generally replace existing
         // registration, but this allows for new sounds to be added client side.
-        final List<ResourceLocation> packs = ForgeUtils.getResourcePackIdList().stream().map(p -> new ResourceLocation(p, "sounds.json")).collect(Collectors.toList());;
+        final List<ResourceLocation> packs = ForgeUtils.getResourcePackIdList().stream().map(p -> new ResourceLocation(p, "sounds.json")).collect(Collectors.toList());
 
         for (final ResourceLocation packId : packs) {
             registerSoundFile(packId);
         }
+
+        LOGGER.info("Number of SoundEvents cached: %d", myRegistry.size());
     }
 
     // Package internal!

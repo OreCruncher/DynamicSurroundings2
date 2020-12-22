@@ -27,20 +27,23 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.tuple.Pair;
-import org.orecruncher.lib.JsonUtils;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
 import org.orecruncher.lib.blockstate.BlockStateParser;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.reflection.ObjectField;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.service.ClientServiceManager;
+import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.mobeffects.Config;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.footsteps.Generator;
@@ -55,6 +58,8 @@ import org.orecruncher.sndctrl.events.BlockInspectionEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -204,32 +209,7 @@ public final class FootstepLibrary {
     }
 
     static void initialize() {
-
-        variators.clear();
-        FOOTPRINT_STATES.clear();
-
-        for (final BlockAcousticMap m : substrateMap.values())
-            m.clear();
-
-        // Load up the variators
-        final Map<String, VariatorConfig> variatorMap = JsonUtils.loadConfig(new ResourceLocation(MobEffects.MOD_ID, "variators.json"), VariatorConfig.class);
-        for (final Map.Entry<String, VariatorConfig> kvp : variatorMap.entrySet()) {
-            variators.put(kvp.getKey(), new Variator(kvp.getValue()));
-        }
-
-        defaultVariator = getVariator("default");
-        childVariator = getVariator("child");
-        playerVariator = getVariator(Config.CLIENT.footsteps.get_firstPersonFootstepCadence() ? "player_slow" : "player");
-        playerQuadrupedVariator = getVariator(Config.CLIENT.footsteps.get_firstPersonFootstepCadence() ? "quadruped_slow" : "quadruped");
-
-        if (Config.CLIENT.logging.get_enableLogging()) {
-            LOGGER.info("Registered Variators");
-            LOGGER.info("====================");
-
-            for (final String v : variators.keySet()) {
-                LOGGER.info(v);
-            }
-        }
+        ClientServiceManager.instance().add(new FootstepLibraryService());
     }
 
     static void initFromConfig(@Nonnull final ModConfig mod) {
@@ -477,4 +457,77 @@ public final class FootstepLibrary {
         }
     }
 
+    private static class FootstepLibraryService implements IClientService {
+
+        @Override
+        public void start() {
+
+            // Load up the variators
+            Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "variators.json");
+
+            for (final IResourceAccessor accessor : configs) {
+                LOGGER.debug("Loading configuration %s", accessor.location());
+                try {
+                    final Map<String, VariatorConfig> cfg = accessor.as(FootstepLibrary.variatorType);
+                    for (final Map.Entry<String, VariatorConfig> kvp : cfg.entrySet()) {
+                        variators.put(kvp.getKey(), new Variator(kvp.getValue()));
+                    }
+                } catch (@Nonnull final Throwable t) {
+                    LOGGER.error(t, "Unable to load %s", accessor.location());
+                }
+            }
+
+            defaultVariator = getVariator("default");
+            childVariator = getVariator("child");
+            playerVariator = getVariator(Config.CLIENT.footsteps.get_firstPersonFootstepCadence() ? "player_slow" : "player");
+            playerQuadrupedVariator = getVariator(Config.CLIENT.footsteps.get_firstPersonFootstepCadence() ? "quadruped_slow" : "quadruped");
+
+            if (Config.CLIENT.logging.get_enableLogging()) {
+                LOGGER.info("Registered Variators");
+                LOGGER.info("====================");
+
+                for (final String v : variators.keySet()) {
+                    LOGGER.info(v);
+                }
+            }
+
+            configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "footsteps.json");
+
+            for (final IResourceAccessor accessor : configs) {
+                LOGGER.debug("Loading configuration %s", accessor.location());
+                try {
+                    initFromConfig(accessor.as(ModConfig.class));
+                } catch (@Nonnull final Throwable t) {
+                    LOGGER.error(t, "Unable to load %s", accessor.location());
+                }
+            }
+        }
+
+        @Override
+        public void stop() {
+            variators.clear();
+            FOOTPRINT_STATES.clear();
+
+            for (final BlockAcousticMap m : substrateMap.values())
+                m.clear();
+        }
+    }
+
+    private static final ParameterizedType variatorType = new ParameterizedType() {
+        @Override
+        public Type[] getActualTypeArguments() {
+            return new Type[]{String.class, VariatorConfig.class};
+        }
+
+        @Override
+        public Type getRawType() {
+            return Map.class;
+        }
+
+        @Override
+        @Nullable
+        public Type getOwnerType() {
+            return null;
+        }
+    };
 }

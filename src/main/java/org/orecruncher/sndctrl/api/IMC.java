@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
 import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.audio.handlers.SoundVolumeEvaluator;
-import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
@@ -75,10 +74,6 @@ public final class IMC {
 
     private static void registerSoundFileHandler(@Nonnull final InterModComms.IMCMessage msg) {
         handle(msg, ResourceLocation.class, SoundLibrary::registerSoundFile);
-    }
-
-    private static void registerAcousticFileHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        handle(msg, ResourceLocation.class, AcousticLibrary::processFile);
     }
 
     private static void registerEffectFactoryHandlerHandler(@Nonnull final InterModComms.IMCMessage msg) {
@@ -126,16 +121,6 @@ public final class IMC {
     public static void registerSoundFile(@Nonnull final ResourceLocation... soundFile) {
         for (final ResourceLocation r : soundFile)
             Methods.REGISTER_SOUND_FILE.send(() -> r);
-    }
-
-    /**
-     * Have Sound Control scan the specified Json file to configure acoustics for the acoustic library.
-     *
-     * @param acousticFile Acoustic file to process
-     */
-    public static void registerAcousticFile(@Nonnull final ResourceLocation... acousticFile) {
-        for (final ResourceLocation r : acousticFile)
-            Methods.REGISTER_ACOUSTIC_FILE.send(() -> r);
     }
 
     /**
@@ -191,7 +176,6 @@ public final class IMC {
     private enum Methods {
         REGISTER_ACOUSTIC_EVENT(IMC::registerAcousticEventHandler),
         REGISTER_SOUND_CATEGORY(IMC::registerSoundCategoryHandler),
-        REGISTER_ACOUSTIC_FILE(IMC::registerAcousticFileHandler),
         REGISTER_SOUND_FILE(IMC::registerSoundFileHandler),
         REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler),
         REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler),

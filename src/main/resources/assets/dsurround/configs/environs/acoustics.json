@@ -96,7 +96,6 @@
     "name": "environs:underwater",
     "repeatable": true
   },
-
   "village/rooster": {
     "name": "environs:village.rooster",
     "category": "biomes",
@@ -118,7 +117,6 @@
     "repeat_delay_min": 200,
     "repeat_delay_max": 300
   },
-
   "dimension/theend": {
     "name": "environs:theend",
     "category": "biomes",
@@ -129,18 +127,19 @@
     "category": "biomes",
     "repeatable": true
   },
-
   "waterlily/frog": {
     "type": "probability",
     "array": [
-      "30", {
+      "30",
+      {
         "name": "environs:frog",
         "pitch_min": 80,
         "pitch_max": 120,
         "vol_min": 60,
         "vol_max": 100
       },
-      "10", {
+      "10",
+      {
         "name": "environs:bullfrog"
       }
     ]
@@ -161,7 +160,6 @@
     "vol_min": 8,
     "vol_max": 12
   },
-
   "waterfall/0": {
     "name": "environs:waterfall.0",
     "repeatable": true,
@@ -197,5 +195,14 @@
     "repeatable": true,
     "pitch_min": 80,
     "pitch_max": 120
+  },
+  "none": "",
+  "_jump": {
+    "type": "event",
+    "jump": {
+      "name": "mobeffects:jump",
+      "pitch_min": 80,
+      "pitch_max": 120
+    }
   }
 }

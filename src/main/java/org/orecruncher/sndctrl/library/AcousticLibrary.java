@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,10 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.dsurround.DynamicSurroundings;
+import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.audio.acoustic.*;
@@ -36,6 +40,8 @@ import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public final class AcousticLibrary {
+
+    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(AudioEffectLibrary.class);
 
     private static final ResourceLocation ADHOC = new ResourceLocation(SoundControl.MOD_ID, "ad_hoc");
     private static final Map<String, IAcoustic> compiled = new Object2ObjectAVLTreeMap<>();
@@ -64,13 +70,20 @@ public final class AcousticLibrary {
                 evt.ifPresent(e -> addAcoustic(e.getName(), new SimpleAcoustic(e)));
             }
         }
-    }
 
-    public static void processFile(@Nonnull final ResourceLocation acousticFile) {
-        final AcousticCompiler compiler = new AcousticCompiler(acousticFile.getNamespace());
-        final List<IAcoustic> acoustics = compiler.compile(acousticFile);
-        for (final IAcoustic a : acoustics) {
-            addAcoustic(a.getName(), a);
+        final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "acoustics.json");
+
+        for (final IResourceAccessor accessor : configs) {
+            LOGGER.debug("Loading configuration %s", accessor.location());
+            try {
+                final AcousticCompiler compiler = new AcousticCompiler(accessor.location().getNamespace());
+                final List<IAcoustic> acoustics = compiler.compile(accessor.asString());
+                for (final IAcoustic a : acoustics) {
+                    addAcoustic(a.getName(), a);
+                }
+            } catch (@Nonnull final Throwable t) {
+                LOGGER.error(t, "Unable to load %s", accessor.location());
+            }
         }
     }
 
@@ -79,9 +92,9 @@ public final class AcousticLibrary {
 
         // Reformat the definition to ensure proper sequencing, etc.
         definition = Arrays.stream(definition.toLowerCase().split(","))
-                        .map(frag -> AcousticLibrary.resolveResource(namespace, frag).toString())
-                        .sorted()
-                        .collect(Collectors.joining(","));
+                .map(frag -> AcousticLibrary.resolveResource(namespace, frag).toString())
+                .sorted()
+                .collect(Collectors.joining(","));
 
         IAcoustic result = compiled.get(definition);
         if (result == null) {
@@ -191,5 +204,4 @@ public final class AcousticLibrary {
         }
         return result;
     }
-
 }

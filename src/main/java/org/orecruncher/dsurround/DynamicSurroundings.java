@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Environs
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.environs;
+package org.orecruncher.dsurround;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -35,27 +29,39 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import org.orecruncher.environs.handlers.Manager;
-import org.orecruncher.environs.library.Constants;
-import org.orecruncher.environs.library.Libraries;
+import org.orecruncher.lib.fml.ConfigUtils;
+import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
-import org.orecruncher.sndctrl.api.IMC;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-@Mod(Environs.MOD_ID)
-public final class Environs {
+@Mod(DynamicSurroundings.MOD_ID)
+public final class DynamicSurroundings {
 
     /**
      * ID of the mod
      */
-    public static final String MOD_ID = "environs";
+    public static final String MOD_ID = "dsurround";
+
     /**
      * Logging instance for trace
      */
-    public static final ModLog LOGGER = new ModLog(Environs.class);
+    public static final ModLog LOGGER = new ModLog(DynamicSurroundings.class);
 
-    public Environs() {
+    /**
+     * Path to the mod's configuration directory
+     */
+    public static final Path CONFIG_PATH = ConfigUtils.getConfigPath(MOD_ID);
+
+    /**
+     * Path to the external config data cache for user customization
+     */
+    public static final File DATA_PATH = Paths.get(CONFIG_PATH.toString(), "configs").toFile();
+
+    public DynamicSurroundings() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             // Various event bus registrations
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
@@ -66,41 +72,34 @@ public final class Environs {
 
             // Initialize our configuration
             Config.setup();
+
+            if (!DATA_PATH.exists()) {
+                try {
+                    DATA_PATH.mkdirs();
+                } catch (@Nonnull final Throwable t) {
+                    LOGGER.error(t, "Unable to create configuration data path");
+                }
+            }
         }
     }
 
     private void commonSetup(@Nonnull final FMLCommonSetupEvent event) {
-
     }
 
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
-        // Disable Particles if configured to do so
-        if (Config.CLIENT.effects.get_disableUnderwaterParticles())
-            Minecraft.getInstance().particles.registerFactory(ParticleTypes.UNDERWATER, (IParticleFactory<BasicParticleType>) null);
-    }
-
-    private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
-
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-        IMC.registerSoundCategory(Constants.BIOMES);
-        IMC.registerSoundCategory(Constants.SPOT_SOUNDS);
-
-        IMC.registerSoundFile(new ResourceLocation(MOD_ID, "sounds.json"));
-
-        IMC.registerCompletionCallback(Libraries::initialize);
-        IMC.registerCompletionCallback(Libraries::complete);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void clientConnect(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
-        Manager.connect();
+    private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void clientDisconnect(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
-        Manager.disconnect();
+    @SubscribeEvent
+    public void onPlayerLogin(@Nonnull final PlayerLoggedInEvent event) {
+        // TODO:  getString()?
+        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName().getString());
+        if (Config.CLIENT.logging.get_onlineVersionCheck())
+            UpdateChecker.doCheck(event, MOD_ID);
     }
-
 }

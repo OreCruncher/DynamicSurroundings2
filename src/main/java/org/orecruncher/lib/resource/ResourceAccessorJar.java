@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,27 +16,30 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib;
+package org.orecruncher.lib.resource;
 
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 
-public final class ResourceUtils {
-    private ResourceUtils() {
+final class ResourceAccessorJar extends ResourceAccessorBase {
 
+    // Used to find assets within the current jar
+    final String asset;
+
+    public ResourceAccessorJar(@Nonnull final String rootContainer, @Nonnull ResourceLocation location) {
+        super(location);
+        this.asset = String.format("/assets/%s/%s/%s", rootContainer, location.getNamespace(), location.getPath());
     }
 
-    public static String readResource(@Nonnull final ResourceLocation location) {
-        final String asset = String.format("/assets/%s/%s", location.getNamespace(), location.getPath());
-        try(InputStream stream = ResourceUtils.class.getResourceAsStream(asset)) {
-            return IOUtils.toString(stream, Charset.defaultCharset());
-        } catch(@Nonnull final Throwable ignore) {
+    @Override
+    protected byte[] getAsset() {
+        try (InputStream stream = ResourceAccessorJar.class.getResourceAsStream(this.asset)) {
+            return IOUtils.toByteArray(stream);
+        } catch (@Nonnull Throwable ignore) {
         }
-
         return null;
     }
 }

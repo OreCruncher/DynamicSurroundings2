@@ -27,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.effects.BlockEffectType;
 import org.orecruncher.environs.library.config.AcousticConfig;
@@ -38,6 +39,10 @@ import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.service.ClientServiceManager;
+import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 
@@ -58,10 +63,8 @@ public final class BlockStateLibrary {
     }
 
     static void initialize() {
-        ForgeUtils.getBlockStates().forEach(state -> BlockStateUtil.setData(state, null));
-        BlockStateUtil.setData(Blocks.AIR.getDefaultState(), BlockStateData.DEFAULT);
-        BlockStateUtil.setData(Blocks.CAVE_AIR.getDefaultState(), BlockStateData.DEFAULT);
-        BlockStateUtil.setData(Blocks.VOID_AIR.getDefaultState(), BlockStateData.DEFAULT);
+        ClientServiceManager.instance().add(new BlockStateLibraryService());
+
     }
 
     static void initFromConfig(@Nonnull final ModConfig config) {
@@ -69,9 +72,7 @@ public final class BlockStateLibrary {
     }
 
     static void complete() {
-        final int blockStates = (int) ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).count();
-        LOGGER.info("%d block states processed, %d registry entries", blockStates, registry.size());
-        ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).forEach(BlockStateData::trim);
+        // Do nada
     }
 
     @Nonnull
@@ -156,6 +157,36 @@ public final class BlockStateLibrary {
             LOGGER.warn("Unknown block name '%s' in Block Specification", blockName);
         }
         return ImmutableList.of();
+    }
+
+    private static class BlockStateLibraryService implements IClientService
+    {
+        @Override
+        public void start() {
+            final int blockStates = (int) ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).count();
+            LOGGER.info("%d block states processed, %d registry entries", blockStates, registry.size());
+            ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).forEach(BlockStateData::trim);
+
+            BlockStateUtil.setData(Blocks.AIR.getDefaultState(), BlockStateData.DEFAULT);
+            BlockStateUtil.setData(Blocks.CAVE_AIR.getDefaultState(), BlockStateData.DEFAULT);
+            BlockStateUtil.setData(Blocks.VOID_AIR.getDefaultState(), BlockStateData.DEFAULT);
+
+            final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "blocks.json");
+
+            for (final IResourceAccessor accessor : configs) {
+                LOGGER.debug("Loading configuration %s", accessor.location());
+                try {
+                    initFromConfig(accessor.as(ModConfig.class));
+                } catch (@Nonnull final Throwable t) {
+                    LOGGER.error(t, "Unable to load %s", accessor.location());
+                }
+            }
+        }
+
+        @Override
+        public void stop() {
+            ForgeUtils.getBlockStates().forEach(state -> BlockStateUtil.setData(state, null));
+        }
     }
 
 }

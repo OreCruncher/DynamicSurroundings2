@@ -97,11 +97,11 @@ public class ObjectField<T, R> {
         return this.defaultValue.get();
     }
 
-    public void set(@Nonnull T obj, @Nonnull R value) {
+    public void set(@Nonnull T obj, @Nullable R value) {
         this.setter.accept(obj, value);
     }
 
-    private void setImpl(@Nonnull T obj, @Nonnull R value) {
+    private void setImpl(@Nonnull T obj, @Nullable R value) {
         try {
             this.field.set(obj, value);
         } catch (@Nonnull final Throwable ignored) {

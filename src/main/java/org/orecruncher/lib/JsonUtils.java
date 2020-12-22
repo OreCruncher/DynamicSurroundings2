@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,16 @@ package org.orecruncher.lib;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import net.minecraft.util.ResourceLocation;
+import org.orecruncher.lib.resource.ResourceUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -130,6 +133,20 @@ public final class JsonUtils {
         } catch (final Throwable t) {
             Lib.LOGGER.error(t, "Unable to process Json from stream");
         }
+        return null;
+    }
+
+    @Nullable
+    public static <T> T load(@Nonnull final String source, @Nonnull final Type type) {
+        Objects.requireNonNull(source);
+        Objects.requireNonNull(type);
+
+        try {
+            return new Gson().fromJson(source, type);
+        } catch (final Throwable t) {
+            Lib.LOGGER.error(t, "Unable to process Json from string");
+        }
+
         return null;
     }
 }

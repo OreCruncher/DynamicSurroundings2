@@ -29,6 +29,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orecruncher.dsurround.DynamicSurroundings;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 public final class Config {
     @Nonnull
     public static final Client CLIENT;
-    private static final String CLIENT_CONFIG = SoundControl.MOD_ID + File.separator + SoundControl.MOD_ID + "-client.toml";
+    private static final String CLIENT_CONFIG = DynamicSurroundings.MOD_ID + File.separator + SoundControl.MOD_ID + "-client.toml";
     @Nonnull
     private static final ForgeConfigSpec clientSpec;
 

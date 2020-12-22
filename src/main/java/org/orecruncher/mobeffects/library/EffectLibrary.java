@@ -32,14 +32,23 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.orecruncher.lib.JsonUtils;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.fml.ForgeUtils;
+import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.service.ClientServiceManager;
+import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.library.config.EntityConfig;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 import org.orecruncher.sndctrl.api.sound.SoundBuilder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +58,8 @@ import java.util.Set;
         bus = Mod.EventBusSubscriber.Bus.FORGE
 )
 public final class EffectLibrary {
+
+    private static final IModLog LOGGER = MobEffects.LOGGER.createChild(EffectLibrary.class);
 
     private static final ResourceLocation PLAYER = new ResourceLocation("minecraft:player");
     private static final EntityEffectInfo DEFAULT = new EntityEffectInfo();
@@ -63,57 +74,7 @@ public final class EffectLibrary {
     }
 
     static void initialize() {
-
-        effects.clear();
-        blockedSounds.clear();
-
-        final Map<ResourceLocation, Class<? extends Entity>> entities = ForgeUtils.getRegisteredEntities();
-
-        // Load up the effects
-        final Map<String, EntityConfig> configMap = JsonUtils.loadConfig(new ResourceLocation(MobEffects.MOD_ID, "effects.json"), EntityConfig.class);
-        for (final Map.Entry<String, EntityConfig> kvp : configMap.entrySet()) {
-            final EntityEffectInfo eei = new EntityEffectInfo(kvp.getValue());
-            final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
-
-            if (loc.equals(PLAYER)) {
-                playerEffects = eei;
-            } else if (entities.containsKey(loc)) {
-                final Class<? extends Entity> clazz = entities.get(loc);
-                effects.put(clazz, eei);
-                entities.remove(loc);
-            }
-
-            for (final String r : kvp.getValue().blockedSounds) {
-                try {
-                    blockedSounds.add(new ResourceLocation(r));
-                } catch (@Nonnull final Throwable t) {
-                    MobEffects.LOGGER.error(t, "Not a valid sound resource location: %s", r);
-                }
-            }
-        }
-
-        // Process the other entries in the entity list looking for fuzzy matches
-        for(final Map.Entry<ResourceLocation, Class<? extends Entity>> kvp : entities.entrySet()) {
-            if (!effects.containsKey(kvp.getValue())) {
-                // Not found. Scan our list looking for those that can be assigned
-                for (final Map.Entry<Class<? extends Entity>, EntityEffectInfo> e : effects.entrySet()) {
-                    if (e.getKey().isAssignableFrom(kvp.getValue())) {
-                        effects.put(kvp.getValue(), e.getValue());
-                        break;
-                    }
-                }
-            }
-        }
-
-        // The default
-        effects.defaultReturnValue(DEFAULT);
-
-        // Replace our bow loose sounds
-        final ResourceLocation bowLoose = new ResourceLocation(MobEffects.MOD_ID, "bow.loose");
-        Library.getSound(bowLoose).ifPresent(se -> {
-            soundReplace.put(new ResourceLocation("minecraft:entity.arrow.shoot"), se);
-            soundReplace.put(new ResourceLocation("minecraft:entity.skeleton.shoot"), se);
-        });
+        ClientServiceManager.instance().add(new EffectLibraryService());
     }
 
     public static boolean hasEffect(@Nonnull final Entity entity, @Nonnull final ResourceLocation loc) {
@@ -142,4 +103,93 @@ public final class EffectLibrary {
             }
         }
     }
+
+    private static class EffectLibraryService implements IClientService {
+
+        @Override
+        public void start() {
+
+            final Map<ResourceLocation, Class<? extends Entity>> entities = ForgeUtils.getRegisteredEntities();
+
+            final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "mobeffects.json");
+
+            for (final IResourceAccessor accessor : configs) {
+                LOGGER.debug("Loading configuration %s", accessor.location());
+                try {
+                    Map<String, EntityConfig> cfg = accessor.as(EffectLibrary.entityConfigType);
+                    for (final Map.Entry<String, EntityConfig> kvp : cfg.entrySet()) {
+                        final EntityEffectInfo eei = new EntityEffectInfo(kvp.getValue());
+                        final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
+
+                        if (loc.equals(PLAYER)) {
+                            playerEffects = eei;
+                        } else if (entities.containsKey(loc)) {
+                            final Class<? extends Entity> clazz = entities.get(loc);
+                            effects.put(clazz, eei);
+                            entities.remove(loc);
+                        }
+
+                        for (final String r : kvp.getValue().blockedSounds) {
+                            try {
+                                blockedSounds.add(new ResourceLocation(r));
+                            } catch (@Nonnull final Throwable t) {
+                                MobEffects.LOGGER.error(t, "Not a valid sound resource location: %s", r);
+                            }
+                        }
+                    }
+                } catch (@Nonnull final Throwable t) {
+                    LOGGER.error(t, "Unable to load %s", accessor.location());
+                }
+            }
+
+            // Process the other entries in the entity list looking for fuzzy matches
+            for(final Map.Entry<ResourceLocation, Class<? extends Entity>> kvp : entities.entrySet()) {
+                if (!effects.containsKey(kvp.getValue())) {
+                    // Not found. Scan our list looking for those that can be assigned
+                    for (final Map.Entry<Class<? extends Entity>, EntityEffectInfo> e : effects.entrySet()) {
+                        if (e.getKey().isAssignableFrom(kvp.getValue())) {
+                            effects.put(kvp.getValue(), e.getValue());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // The default
+            effects.defaultReturnValue(DEFAULT);
+
+            // Replace our bow loose sounds
+            final ResourceLocation bowLoose = new ResourceLocation(MobEffects.MOD_ID, "bow.loose");
+            Library.getSound(bowLoose).ifPresent(se -> {
+                soundReplace.put(new ResourceLocation("minecraft:entity.arrow.shoot"), se);
+                soundReplace.put(new ResourceLocation("minecraft:entity.skeleton.shoot"), se);
+            });
+        }
+
+        @Override
+        public void stop() {
+            effects.clear();
+            blockedSounds.clear();
+            soundReplace.clear();
+        }
+    }
+
+    private static final ParameterizedType entityConfigType = new ParameterizedType() {
+        @Override
+        public Type[] getActualTypeArguments() {
+            return new Type[]{String.class, EntityConfig.class};
+        }
+
+        @Override
+        public Type getRawType() {
+            return Map.class;
+        }
+
+        @Override
+        @Nullable
+        public Type getOwnerType() {
+            return null;
+        }
+    };
+
 }

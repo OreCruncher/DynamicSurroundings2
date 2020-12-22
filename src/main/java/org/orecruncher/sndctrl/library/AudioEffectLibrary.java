@@ -29,16 +29,22 @@ import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.JsonUtils;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.MaterialUtils;
 import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
 import org.orecruncher.lib.IDataAccessor;
+import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.service.ClientServiceManager;
+import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
@@ -60,38 +66,9 @@ public final class AudioEffectLibrary {
     // Lowpass Data
     private static final Object2FloatOpenHashMap<ResourceLocation> fluidCoefficient = new Object2FloatOpenHashMap<>();
 
-    static {
-
-        // Occlusion setup
-        materialOcclusion.defaultReturnValue(-1F);
-        for (final Material mat : MaterialUtils.getMaterials())
-            materialOcclusion.put(mat, mat.isOpaque() ? 1F : 0.15F);
-        blockStateOcclusionMap.setDefaultValue(() -> -1F);
-
-        // Reflection setup
-        materialReflect.defaultReturnValue(-1F);
-        blockStateReflectMap.setDefaultValue(() -> -1F);
-
-        // Default lowpass state is essentially normal air
-        fluidCoefficient.defaultReturnValue(0);
-        fluidCoefficient.put(new ResourceLocation("sndctrl:default"), 0);
-
-        final ResourceLocation res = new ResourceLocation(SoundControl.MOD_ID, "effects.json");
-        try {
-            final EffectOptions options = JsonUtils.load(res, EffectOptions.class);
-            // Occlusions values determine how effectively a sound gets blocked from the listener
-            processOcclusions(options);
-            // Refelectivity governs how much reverb will be generated when a sound bounces off it's surface
-            processReflectivity(options);
-            // Lowpass filter gets applied when a player head is inside the block - think fluids.
-            processLowpass(options);
-        } catch (@Nonnull final Throwable t) {
-            LOGGER.error(t, "Unable to load %s", res.toString());
-        }
-    }
-
     public static void initialize() {
         // Currently does nothing.  Called during startup which triggers the class init.
+        ClientServiceManager.instance().add(new AudioEffectLibraryService());
     }
 
     /**
@@ -259,6 +236,65 @@ public final class AudioEffectLibrary {
         public EffectData(final float o, final float r) {
             this.occlusion = o;
             this.reflectivity = r;
+        }
+    }
+
+    private static class AudioEffectLibraryService implements IClientService
+    {
+        @Override
+        public void start() {
+            // Occlusion setup
+            materialOcclusion.defaultReturnValue(-1F);
+            for (final Material mat : MaterialUtils.getMaterials())
+                materialOcclusion.put(mat, mat.isOpaque() ? 1F : 0.15F);
+            blockStateOcclusionMap.setDefaultValue(() -> -1F);
+
+            // Reflection setup
+            materialReflect.defaultReturnValue(-1F);
+            blockStateReflectMap.setDefaultValue(() -> -1F);
+
+            // Default lowpass state is essentially normal air
+            fluidCoefficient.defaultReturnValue(0);
+            fluidCoefficient.put(new ResourceLocation("sndctrl:default"), 0);
+
+            final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "effects.json");
+
+            for (final IResourceAccessor accessor : configs) {
+                LOGGER.debug("Loading configuration %s", accessor.location());
+                try {
+                    final EffectOptions cfg = accessor.as(EffectOptions.class);
+                    // Occlusions values determine how effectively a sound gets blocked from the listener
+                    processOcclusions(cfg);
+                    // Refelectivity governs how much reverb will be generated when a sound bounces off it's surface
+                    processReflectivity(cfg);
+                    // Lowpass filter gets applied when a player head is inside the block - think fluids.
+                    processLowpass(cfg);
+
+                } catch (@Nonnull final Throwable t) {
+                    LOGGER.error(t, "Unable to load %s", accessor.location());
+                }
+            }
+        }
+
+        @Override
+        public void stop() {
+            materialOcclusion.clear();
+            materialReflect.clear();
+            blockStateOcclusionMap.clear();
+            blockStateReflectMap.clear();
+            fluidCoefficient.clear();
+
+            // Clear out cached data
+            ForgeUtils.getBlockStates().forEach(state -> {
+                IDataAccessor<EffectData> accessor = (IDataAccessor<EffectData>) state;
+                accessor.setData(null);
+            });
+        }
+
+        @Override
+        public void reload() {
+            stop();
+            start();
         }
     }
 

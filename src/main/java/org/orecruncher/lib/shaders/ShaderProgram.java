@@ -30,7 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
-import org.orecruncher.lib.ResourceUtils;
+import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.gui.Color;
 
 @OnlyIn(Dist.CLIENT)
@@ -190,8 +190,8 @@ public class ShaderProgram {
 
 	protected void initialize(final ResourceLocation vertexResource, final ResourceLocation fragmentResource)
 			throws Exception {
-		final String vertex = ResourceUtils.readResource(vertexResource);
-		final String fragment = ResourceUtils.readResource(fragmentResource);
+		final String vertex = ResourceUtils.readResource("shaders", vertexResource);
+		final String fragment = ResourceUtils.readResource("shaders", fragmentResource);
 		this.initialize(vertex, fragment);
 	}
 

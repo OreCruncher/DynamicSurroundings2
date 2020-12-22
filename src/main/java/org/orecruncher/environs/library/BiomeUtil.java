@@ -35,6 +35,7 @@ import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.reflection.ObjectField;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -60,7 +61,7 @@ public final class BiomeUtil {
         return result;
     }
 
-    public static void setBiomeData(@Nonnull final Biome biome, @Nonnull final BiomeInfo data) {
+    public static void setBiomeData(@Nonnull final Biome biome, @Nullable final BiomeInfo data) {
         environs_biomeData.set(biome, data);
     }
 

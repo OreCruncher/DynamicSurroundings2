@@ -80,12 +80,19 @@ public final class ForgeUtils {
 
     @Nonnull
     public static List<String> getModIdList() {
-        return ModList.get().getModFiles()
+        List<String> result = ModList.get().getModFiles()
                 .stream()
                 .flatMap(e -> e.getMods().stream())
                 .map(IModInfo::getModId)
                 .distinct()
                 .collect(Collectors.toList());
+
+        // Make sure minecraft is the first element.  This is done to ensure that any baseline configs are applied
+        // first so that other configs can properly override.
+        result.remove("minecraft");
+        result.add(0, "minecraft");
+
+        return result;
     }
 
     @OnlyIn(Dist.CLIENT)

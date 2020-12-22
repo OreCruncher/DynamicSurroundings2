@@ -1,0 +1,19 @@
+{
+  "dimensions": [
+    {
+      "dimId": 0,
+      "fog": true,
+      "haze": true,
+      "aurora": true
+    },
+    {
+      "dimId": -1,
+      "seaLevel": 0
+    },
+    {
+      "dimId": 1,
+      "seaLevel": 0,
+      "cloudHeight": 128
+    }
+  ]
+}

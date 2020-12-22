@@ -27,7 +27,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.service.ClientServiceManager;
+import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.library.config.ModConfig;
 
@@ -91,11 +96,7 @@ public final class ItemLibrary {
     }
 
     static void initialize() {
-        classMap.clear();
-        items.clear();
-
-        for (final ItemData ic : CACHE.values())
-            classMap.put(ic, new ReferenceOpenHashSet<>(SET_CAPACITY));
+        ClientServiceManager.instance().add(new ItemLibraryService());
     }
 
     static void initFromConfig(@Nonnull final ModConfig mod) {
@@ -105,14 +106,6 @@ public final class ItemLibrary {
     }
 
     static void complete() {
-        // Iterate through the list of registered Items to see if we know about them, or can infer based on class
-        // matching.
-        for (final Item item : ForgeRegistries.ITEMS) {
-            if (!items.containsKey(item)) {
-                final ItemData ic = resolveClass(item);
-                items.put(item, ic);
-            }
-        }
     }
 
     private static ItemData resolveClass(@Nonnull final Item item) {
@@ -196,5 +189,40 @@ public final class ItemLibrary {
         }
 
         return data;
+    }
+
+    private static class ItemLibraryService implements IClientService {
+
+        @Override
+        public void start() {
+            for (final ItemData ic : CACHE.values())
+                classMap.put(ic, new ReferenceOpenHashSet<>(SET_CAPACITY));
+
+            final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "items.json");
+
+            for (final IResourceAccessor accessor : configs) {
+                LOGGER.debug("Loading configuration %s", accessor.location());
+                try {
+                    initFromConfig(accessor.as(ModConfig.class));
+                } catch (@Nonnull final Throwable t) {
+                    LOGGER.error(t, "Unable to load %s", accessor.location());
+                }
+            }
+
+            // Iterate through the list of registered Items to see if we know about them, or can infer based on class
+            // matching.
+            for (final Item item : ForgeRegistries.ITEMS) {
+                if (!items.containsKey(item)) {
+                    final ItemData ic = resolveClass(item);
+                    items.put(item, ic);
+                }
+            }
+        }
+
+        @Override
+        public void stop() {
+            classMap.clear();
+            items.clear();
+        }
     }
 }

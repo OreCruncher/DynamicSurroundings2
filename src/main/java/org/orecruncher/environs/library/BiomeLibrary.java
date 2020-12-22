@@ -28,10 +28,10 @@ import javax.annotation.Nonnull;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.biome.BiomeRegistry;
-import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.BiomeConfig;
@@ -44,6 +44,9 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.service.IClientService;
 
 @OnlyIn(Dist.CLIENT)
 public final class BiomeLibrary {
@@ -97,7 +100,6 @@ public final class BiomeLibrary {
 	}
 
 	static void initialize() {
-		ForgeUtils.getBiomes().forEach(BiomeUtil::getBiomeData);
 	}
 
 	static void initFromConfig(@Nonnull final ModConfig cfg) {
@@ -116,21 +118,11 @@ public final class BiomeLibrary {
 					}
 				}
 			}
-
-			// Make sure the default PLAINS biome is set. OTG can do some strange things.
-			final ResourceLocation plainsLoc = new ResourceLocation("plains");
-			final Biome plains = ForgeRegistries.BIOMES.getValue(plainsLoc);
-			final BiomeInfo info = BiomeUtil.getBiomeData(plains);
-			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, info);
 		}
 	}
 
 	static void complete() {
-		if (Config.CLIENT.logging.get_enableLogging()) {
-			LOGGER.info("*** BIOME REGISTRY ***");
-			getCombinedStream().stream().sorted().map(Object::toString).forEach(LOGGER::info);
-		}
-		getCombinedStream().forEach(BiomeInfo::trim);
+		// Do nada
 	}
 
 	@Nonnull
@@ -168,5 +160,43 @@ public final class BiomeLibrary {
 				ForgeUtils.getBiomes().stream().map(BiomeUtil::getBiomeData),
 				theFakes.stream().map(FakeBiomeAdapter::getBiomeData)
 		).collect(Collectors.toCollection(ArrayList::new));
+	}
+
+	static class BiomeLibraryService implements IClientService
+	{
+		@Override
+		public void start() {
+			ForgeUtils.getBiomes().forEach(BiomeUtil::getBiomeData);
+
+			// Make sure the default PLAINS biome is set.
+			final ResourceLocation plainsLoc = new ResourceLocation("plains");
+			final Biome plains = ForgeRegistries.BIOMES.getValue(plainsLoc);
+			final BiomeInfo info = BiomeUtil.getBiomeData(plains);
+			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, info);
+
+			if (Config.CLIENT.logging.get_enableLogging()) {
+				LOGGER.info("*** BIOME REGISTRY ***");
+				getCombinedStream().stream().sorted().map(Object::toString).forEach(LOGGER::info);
+			}
+
+			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "biomes.json");
+			for (IResourceAccessor accessor : configs) {
+				LOGGER.debug("Loading configuration %s", accessor.location());
+				try {
+					initFromConfig(accessor.as(ModConfig.class));
+				} catch (@Nonnull final Throwable t) {
+					LOGGER.error(t, "Unable to load %s", accessor.location());
+				}
+			}
+
+			getCombinedStream().forEach(BiomeInfo::trim);
+		}
+
+		@Override
+		public void stop() {
+			ForgeUtils.getBiomes().forEach(b -> BiomeUtil.setBiomeData(b, null));
+			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, null);
+		}
+
 	}
 }

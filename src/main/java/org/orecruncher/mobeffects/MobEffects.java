@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@ package org.orecruncher.mobeffects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -30,8 +28,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import org.orecruncher.lib.fml.ConfigUtils;
-import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
 import org.orecruncher.mobeffects.effects.*;
 import org.orecruncher.mobeffects.library.Constants;
@@ -39,7 +35,6 @@ import org.orecruncher.mobeffects.library.Libraries;
 import org.orecruncher.sndctrl.api.IMC;
 
 import javax.annotation.Nonnull;
-import java.nio.file.Path;
 
 @Mod(MobEffects.MOD_ID)
 public final class MobEffects {
@@ -52,11 +47,6 @@ public final class MobEffects {
      * Logging instance for trace
      */
     public static final ModLog LOGGER = new ModLog(MobEffects.class);
-    /**
-     * Path to the mod's configuration directory
-     */
-    @Nonnull
-    public static final Path CONFIG_PATH = ConfigUtils.getConfigPath(MOD_ID);
 
     public MobEffects() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -110,9 +100,6 @@ public final class MobEffects {
         // Register our sounds through SoundControl because Forge likes stomping client side sounds from the registry
         IMC.registerSoundFile(new ResourceLocation(MOD_ID, "sounds.json"));
 
-        // Register our acoustics.  Do this after the sound file because of dependencies.
-        IMC.registerAcousticFile(new ResourceLocation(MOD_ID, "acoustics.json"));
-
         // Register our effect handlers
         IMC.registerEffectFactoryHandler(EntityFootprintEffect.FACTORY);
         if (Config.CLIENT.effects.get_showBreath())
@@ -127,13 +114,5 @@ public final class MobEffects {
         // Callback for completions
         IMC.registerCompletionCallback(Libraries::initialize);
         IMC.registerCompletionCallback(Libraries::complete);
-    }
-
-    @SubscribeEvent
-    public void onPlayerLogin(@Nonnull final PlayerLoggedInEvent event) {
-        // TODO: getString()?
-        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName().getString());
-        if (Config.CLIENT.logging.get_onlineVersionCheck())
-            UpdateChecker.doCheck(event, MOD_ID);
     }
 }

@@ -34,8 +34,8 @@ public final class Shaders {
 
 		AURORA = register(
 				"Aurora",
-				new ResourceLocation(Environs.MOD_ID, "shaders/aurora.vert"),
-				new ResourceLocation(Environs.MOD_ID, "shaders/aurora.frag"));
+				new ResourceLocation(Environs.MOD_ID, "aurora.vert"),
+				new ResourceLocation(Environs.MOD_ID, "aurora.frag"));
 	}
 
 	public static boolean areShadersSupported() {

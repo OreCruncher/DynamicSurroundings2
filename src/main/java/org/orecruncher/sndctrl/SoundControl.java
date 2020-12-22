@@ -20,8 +20,6 @@ package org.orecruncher.sndctrl;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -31,8 +29,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.effects.EntityEffectHandler;
-import org.orecruncher.lib.fml.ConfigUtils;
-import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.IMC;
@@ -46,7 +42,6 @@ import org.orecruncher.sndctrl.library.SoundLibrary;
 import org.orecruncher.sndctrl.misc.ModEnvironment;
 
 import javax.annotation.Nonnull;
-import java.nio.file.Path;
 
 @Mod(SoundControl.MOD_ID)
 public final class SoundControl {
@@ -59,11 +54,6 @@ public final class SoundControl {
      * Logging instance for trace
      */
     public static final ModLog LOGGER = new ModLog(SoundControl.class);
-    /**
-     * Path to the mod's configuration directory
-     */
-    @Nonnull
-    public static final Path CONFIG_PATH = ConfigUtils.getConfigPath(MOD_ID);
 
     public SoundControl() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -114,11 +104,4 @@ public final class SoundControl {
         AcousticLibrary.initialize();
     }
 
-    @SubscribeEvent
-    public void onPlayerLogin(@Nonnull final PlayerLoggedInEvent event) {
-        // TODO:  getString()?
-        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName().getString());
-        if (Config.CLIENT.logging.get_onlineVersionCheck())
-            UpdateChecker.doCheck(event, MOD_ID);
-    }
 }

@@ -18,6 +18,7 @@
 
 package org.orecruncher.environs.library;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -27,12 +28,17 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.DimensionConfig;
 import org.orecruncher.environs.library.config.ModConfig;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.service.ClientServiceManager;
+import org.orecruncher.lib.service.IClientService;
 
 @OnlyIn(Dist.CLIENT)
 public final class DimensionLibrary {
@@ -48,7 +54,7 @@ public final class DimensionLibrary {
 	private static final HashMap<RegistryKey<World>, DimensionInfo> configs = new HashMap<>();
 
 	static void initialize() {
-
+		ClientServiceManager.instance().add(new DimensionLibraryService());
 	}
 
 	static void initFromConfig(@Nonnull final ModConfig cfg) {
@@ -56,10 +62,6 @@ public final class DimensionLibrary {
 	}
 
 	static void complete() {
-		if (Config.CLIENT.logging.get_enableLogging()) {
-			LOGGER.info("*** DIMENSION REGISTRY (cache) ***");
-			cache.stream().map(Object::toString).forEach(LOGGER::info);
-		}
 	}
 
 	@Nonnull
@@ -111,5 +113,34 @@ public final class DimensionLibrary {
 			configs.put(key, dimInfo = new DimensionInfo(world, config));
 		}
 		return dimInfo;
+	}
+
+	private static class DimensionLibraryService implements IClientService {
+
+		@Override
+		public void start() {
+
+			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "dimensions.json");
+
+			for (final IResourceAccessor accessor : configs) {
+				LOGGER.debug("Loading configuration %s", accessor.location());
+				try {
+					initFromConfig(accessor.as(ModConfig.class));
+				} catch (@Nonnull final Throwable t) {
+					LOGGER.error(t, "Unable to load %s", accessor.location());
+				}
+			}
+
+			if (Config.CLIENT.logging.get_enableLogging()) {
+				LOGGER.info("*** DIMENSION REGISTRY (cache) ***");
+				cache.stream().map(Object::toString).forEach(LOGGER::info);
+			}
+		}
+
+		@Override
+		public void stop() {
+			cache.clear();
+			configs.clear();
+		}
 	}
 }

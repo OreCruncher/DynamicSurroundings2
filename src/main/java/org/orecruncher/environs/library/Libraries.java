@@ -25,6 +25,8 @@ import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.ModConfig;
 import org.orecruncher.lib.JsonUtils;
 import org.orecruncher.lib.fml.ForgeUtils;
+import org.orecruncher.lib.service.ClientServiceManager;
+import org.orecruncher.lib.service.IClientService;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -36,8 +38,9 @@ public final class Libraries {
     }
 
     public static void initialize() {
+
         DimensionLibrary.initialize();
-        BiomeLibrary.initialize();
+        ClientServiceManager.instance().add(new BiomeLibrary.BiomeLibraryService());
         BlockStateLibrary.initialize();
 
         // Config locations are mods plus resource packs that could contain Json files
@@ -73,8 +76,55 @@ public final class Libraries {
     }
 
     public static void complete() {
-        DimensionLibrary.complete();
-        BiomeLibrary.complete();
-        BlockStateLibrary.complete();
+    }
+
+    private static class LibaryClientService implements IClientService
+    {
+        @Override
+        public void start() {
+            DimensionLibrary.initialize();
+            BiomeLibrary.initialize();
+            BlockStateLibrary.initialize();
+
+            // Config locations are mods plus resource packs that could contain Json files
+            final List<String> configLocations = ForgeUtils.getConfigLocations();
+
+            // Since other mods/packs can override our settings we need to process our data first.
+            configLocations.remove(Environs.MOD_ID);
+            configLocations.add(0, Environs.MOD_ID);
+
+            // List of installed mods are the names of configs we will look for
+            final List<String> installed = ForgeUtils.getModIdList();
+
+            // Need to process the minecraft config first since it other configs can override.  Oh, and MobEffects
+            // doesn't have a config since it uses minecraft.json.
+            installed.remove(Environs.MOD_ID);
+            installed.remove("minecraft");
+            installed.add(0, "minecraft");
+
+            for (final String loc : configLocations) {
+                for (final String id : installed) {
+                    try {
+                        final String resource = String.format("%s/%s.json", Environs.MOD_ID, id);
+                        final ResourceLocation res = new ResourceLocation(loc, resource);
+                        final ModConfig mod = JsonUtils.load(res, ModConfig.class);
+                        DimensionLibrary.initFromConfig(mod);
+                        BiomeLibrary.initFromConfig(mod);
+                        BlockStateLibrary.initFromConfig(mod);
+                    } catch (@Nonnull final Throwable t) {
+                        Environs.LOGGER.error(t, "Unable to load '%s.json' config data!", id);
+                    }
+                }
+            }
+
+            DimensionLibrary.complete();
+            BiomeLibrary.complete();
+            BlockStateLibrary.complete();
+        }
+
+        @Override
+        public void stop() {
+
+        }
     }
 }

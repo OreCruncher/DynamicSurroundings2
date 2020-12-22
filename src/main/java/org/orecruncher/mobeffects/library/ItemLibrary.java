@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Mob Effects
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +34,11 @@ import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ClientServiceManager;
 import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.mobeffects.MobEffects;
-import org.orecruncher.mobeffects.library.config.ModConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,8 +100,8 @@ public final class ItemLibrary {
         ClientServiceManager.instance().add(new ItemLibraryService());
     }
 
-    static void initFromConfig(@Nonnull final ModConfig mod) {
-        for (final Map.Entry<String, List<String>> entry : mod.items.entrySet()) {
+    static void initFromConfig(@Nonnull final Map<String, List<String>> cfg) {
+        for (final Map.Entry<String, List<String>> entry : cfg.entrySet()) {
             process(entry.getValue(), entry.getKey());
         }
     }
@@ -183,8 +184,7 @@ public final class ItemLibrary {
         Item item = stack.getItem();
         ItemData data = items.get(item);
 
-        if (data == null)
-        {
+        if (data == null) {
             items.put(item, data = resolveClass(item));
         }
 
@@ -198,12 +198,12 @@ public final class ItemLibrary {
             for (final ItemData ic : CACHE.values())
                 classMap.put(ic, new ReferenceOpenHashSet<>(SET_CAPACITY));
 
-            final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "items.json");
+            final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "armor_accents.json");
 
             for (final IResourceAccessor accessor : configs) {
                 LOGGER.debug("Loading configuration %s", accessor.location());
                 try {
-                    initFromConfig(accessor.as(ModConfig.class));
+                    initFromConfig(accessor.as(ItemLibrary.entityConfigType));
                 } catch (@Nonnull final Throwable t) {
                     LOGGER.error(t, "Unable to load %s", accessor.location());
                 }
@@ -225,4 +225,41 @@ public final class ItemLibrary {
             items.clear();
         }
     }
+
+    private static final ParameterizedType itemConfigType = new ParameterizedType() {
+        @Override
+        public Type[] getActualTypeArguments() {
+            return new Type[]{String.class};
+        }
+
+        @Override
+        public Type getRawType() {
+            return List.class;
+        }
+
+        @Override
+        @Nullable
+        public Type getOwnerType() {
+            return null;
+        }
+    };
+
+    private static final ParameterizedType entityConfigType = new ParameterizedType() {
+        @Override
+        public Type[] getActualTypeArguments() {
+            return new Type[]{String.class, itemConfigType};
+        }
+
+        @Override
+        public Type getRawType() {
+            return Map.class;
+        }
+
+        @Override
+        @Nullable
+        public Type getOwnerType() {
+            return null;
+        }
+    };
+
 }

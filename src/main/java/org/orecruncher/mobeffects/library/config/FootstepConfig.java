@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Mob Effects
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public class ModConfig {
+public class FootstepConfig {
     @SerializedName("primitives")
     public Map<String, String> primitives = ImmutableMap.of();
     @SerializedName("blockTags")
@@ -37,6 +37,4 @@ public class ModConfig {
     public Map<String, String> footsteps = ImmutableMap.of();
     @SerializedName("footprints")
     public List<String> footprints = ImmutableList.of();
-    @SerializedName("items")
-    public Map<String, List<String>> items = ImmutableMap.of();
 }

@@ -49,7 +49,7 @@ import org.orecruncher.mobeffects.footsteps.Generator;
 import org.orecruncher.mobeffects.footsteps.GeneratorQP;
 import org.orecruncher.mobeffects.footsteps.Substrate;
 import org.orecruncher.mobeffects.footsteps.Variator;
-import org.orecruncher.mobeffects.library.config.ModConfig;
+import org.orecruncher.mobeffects.library.config.FootstepConfig;
 import org.orecruncher.mobeffects.library.config.VariatorConfig;
 import org.orecruncher.mobeffects.misc.IMixinFootstepData;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
@@ -200,7 +200,7 @@ public final class FootstepLibrary {
         ClientServiceManager.instance().add(new FootstepLibraryService());
     }
 
-    static void initFromConfig(@Nonnull final ModConfig mod) {
+    static void initFromConfig(@Nonnull final FootstepConfig mod) {
         // Handle our primitives first
         for (final Map.Entry<String, String> kvp : mod.primitives.entrySet()) {
             final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
@@ -484,7 +484,7 @@ public final class FootstepLibrary {
             for (final IResourceAccessor accessor : configs) {
                 LOGGER.debug("Loading configuration %s", accessor.location());
                 try {
-                    initFromConfig(accessor.as(ModConfig.class));
+                    initFromConfig(accessor.as(FootstepConfig.class));
                 } catch (@Nonnull final Throwable t) {
                     LOGGER.error(t, "Unable to load %s", accessor.location());
                 }

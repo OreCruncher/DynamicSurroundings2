@@ -18,16 +18,8 @@
 
 package org.orecruncher.mobeffects.library;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.JsonUtils;
-import org.orecruncher.lib.fml.ForgeUtils;
-import org.orecruncher.mobeffects.MobEffects;
-import org.orecruncher.mobeffects.library.config.ModConfig;
-
-import javax.annotation.Nonnull;
-import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public final class Libraries {
@@ -39,6 +31,7 @@ public final class Libraries {
         ItemLibrary.initialize();
         FootstepLibrary.initialize();
 
+        /*
         // Config locations are mods plus resource packs that could contain Json files
         final List<String> configLocations = ForgeUtils.getConfigLocations();
 
@@ -68,6 +61,8 @@ public final class Libraries {
                 }
             }
         }
+
+         */
     }
 
     public static void complete() {

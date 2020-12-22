@@ -19,7 +19,6 @@
 package org.orecruncher.sndctrl.client;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,8 +26,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -44,17 +41,16 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.MaterialUtils;
-import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.sndctrl.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.events.BlockInspectionEvent;
+import org.orecruncher.sndctrl.events.EntityInspectionEvent;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,12 +67,11 @@ public class Inspector {
     }
 
     private static List<String> getTags(@Nonnull final BlockState state) {
-        final Collection<ITag<Block>> tags = TagUtils.getBlockStateTags(state);
-        return tags.stream().map(t -> "#" + t.toString()).collect(Collectors.toList());
+        return state.getBlock().getTags().stream().map(t -> "#" + t.toString()).collect(Collectors.toList());
     }
 
-    private static List<String> gatherBlockText(final ItemStack stack, final List<String> text, final BlockState state,
-                                                final BlockPos pos) {
+    private static void gatherBlockText(final ItemStack stack, final List<String> text, final BlockState state,
+                                        final BlockPos pos) {
 
         if (!stack.isEmpty()) {
             // TODO: Is getString() correct?
@@ -110,7 +105,6 @@ public class Inspector {
             }
         }
 
-        return text;
     }
 
     private static boolean isHolding() {
@@ -130,17 +124,24 @@ public class Inspector {
 
             if (Config.CLIENT.logging.get_enableLogging() && isHolding()) {
                 final World world = GameUtils.getWorld();
-                final RayTraceResult current = GameUtils.getMC().objectMouseOver;
-                if (current instanceof BlockRayTraceResult) {
-                    final BlockRayTraceResult trace = (BlockRayTraceResult) current;
-                    if (trace.getType() != RayTraceResult.Type.MISS) {
+                if (GameUtils.getMC().pointedEntity != null) {
+                    final EntityInspectionEvent evt = new EntityInspectionEvent(GameUtils.getMC().pointedEntity);
+                    evt.data.add(TextFormatting.RED + "Entity " + evt.entity.toString());
+                    MinecraftForge.EVENT_BUS.post(evt);
+                    diagnostics = evt.data;
+                } else {
+                    final RayTraceResult current = GameUtils.getMC().objectMouseOver;
+                    if (current instanceof BlockRayTraceResult) {
+                        final BlockRayTraceResult trace = (BlockRayTraceResult) current;
+                        if (trace.getType() != RayTraceResult.Type.MISS) {
 
-                        final BlockState state = world.getBlockState(trace.getPos());
+                            final BlockState state = world.getBlockState(trace.getPos());
 
-                        if (!state.isAir(world, trace.getPos())) {
-                            final BlockInspectionEvent evt = new BlockInspectionEvent(trace, world, state, trace.getPos());
-                            MinecraftForge.EVENT_BUS.post(evt);
-                            diagnostics = evt.data;
+                            if (!state.isAir(world, trace.getPos())) {
+                                final BlockInspectionEvent evt = new BlockInspectionEvent(trace, world, state, trace.getPos());
+                                MinecraftForge.EVENT_BUS.post(evt);
+                                diagnostics = evt.data;
+                            }
                         }
                     }
                 }

@@ -71,10 +71,22 @@
       "entity.zombie.step"
     ]
   },
-  "minecraft:zombie_pigman": {
+  "minecraft:zombified_piglin": {
     "effects": "bow,swing,footprint",
     "blockedSounds": [
-      "entity.zombie_pigman.step"
+      "entity.zombie.step"
+    ]
+  },
+  "minecraft:piglin_brute": {
+    "effects": "bow,swing,footprint",
+    "blockedSounds": [
+      "entity.piglin_brute.step"
+    ]
+  },
+  "minecraft:piglin": {
+    "effects": "bow,swing,footprint",
+    "blockedSounds": [
+      "entity.piglin.step"
     ]
   },
   "minecraft:witch": {

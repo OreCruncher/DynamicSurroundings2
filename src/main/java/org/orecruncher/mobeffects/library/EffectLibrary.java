@@ -18,12 +18,14 @@
 
 package org.orecruncher.mobeffects.library;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.LocatableSound;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -32,8 +34,8 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.dsurround.DynamicSurroundings;
-import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
@@ -64,6 +66,8 @@ public final class EffectLibrary {
     private static final ResourceLocation PLAYER = new ResourceLocation("minecraft:player");
     private static final EntityEffectInfo DEFAULT = new EntityEffectInfo();
     private static EntityEffectInfo playerEffects = DEFAULT;
+
+    private static final Object2ObjectOpenHashMap<ResourceLocation, EntityEffectInfo> effectConfiguration = new Object2ObjectOpenHashMap<>();
     private static final Reference2ObjectOpenHashMap<Class<? extends Entity>, EntityEffectInfo> effects = new Reference2ObjectOpenHashMap<>();
     private static final Set<ResourceLocation> blockedSounds = new ObjectOpenHashSet<>();
 
@@ -85,7 +89,15 @@ public final class EffectLibrary {
     private static EntityEffectInfo getEffectInfo(@Nonnull final Entity entity) {
         if (entity instanceof PlayerEntity)
             return playerEffects;
-        return effects.get(entity.getClass());
+        EntityEffectInfo eei = effects.get(entity.getClass());
+        if (eei == null) {
+            // Do we have a config for it?
+            eei = effectConfiguration.get(entity.getType().getRegistryName());
+            if (eei == null)
+                eei = DEFAULT;
+            effects.put(entity.getClass(), eei);
+        }
+        return eei;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -109,8 +121,13 @@ public final class EffectLibrary {
         @Override
         public void start() {
 
-            final Map<ResourceLocation, Class<? extends Entity>> entities = ForgeUtils.getRegisteredEntities();
+            // Seed our configuration with known entities that have defaults
+            ForgeRegistries.ENTITIES.forEach(e -> {
+                if (e.getClassification() != EntityClassification.MISC)
+                    effectConfiguration.put(e.getRegistryName(), DEFAULT);
+            });
 
+            // Apply configuration.  These will replace defaults as needed.
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "mobeffects.json");
 
             for (final IResourceAccessor accessor : configs) {
@@ -120,13 +137,9 @@ public final class EffectLibrary {
                     for (final Map.Entry<String, EntityConfig> kvp : cfg.entrySet()) {
                         final EntityEffectInfo eei = new EntityEffectInfo(kvp.getValue());
                         final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
-
+                        effectConfiguration.put(loc, eei);
                         if (loc.equals(PLAYER)) {
                             playerEffects = eei;
-                        } else if (entities.containsKey(loc)) {
-                            final Class<? extends Entity> clazz = entities.get(loc);
-                            effects.put(clazz, eei);
-                            entities.remove(loc);
                         }
 
                         for (final String r : kvp.getValue().blockedSounds) {
@@ -142,32 +155,26 @@ public final class EffectLibrary {
                 }
             }
 
-            // Process the other entries in the entity list looking for fuzzy matches
-            for(final Map.Entry<ResourceLocation, Class<? extends Entity>> kvp : entities.entrySet()) {
-                if (!effects.containsKey(kvp.getValue())) {
-                    // Not found. Scan our list looking for those that can be assigned
-                    for (final Map.Entry<Class<? extends Entity>, EntityEffectInfo> e : effects.entrySet()) {
-                        if (e.getKey().isAssignableFrom(kvp.getValue())) {
-                            effects.put(kvp.getValue(), e.getValue());
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // The default
-            effects.defaultReturnValue(DEFAULT);
-
             // Replace our bow loose sounds
             final ResourceLocation bowLoose = new ResourceLocation(MobEffects.MOD_ID, "bow.loose");
             Library.getSound(bowLoose).ifPresent(se -> {
                 soundReplace.put(new ResourceLocation("minecraft:entity.arrow.shoot"), se);
                 soundReplace.put(new ResourceLocation("minecraft:entity.skeleton.shoot"), se);
             });
+
+            // Dump out the configuration if running debug
+            if (MobEffects.LOGGER.isDebugging()) {
+                MobEffects.LOGGER.debug("MobEffect Registry");
+                MobEffects.LOGGER.debug("==================");
+                for (final Object2ObjectMap.Entry<ResourceLocation, EntityEffectInfo> kvp : effectConfiguration.object2ObjectEntrySet()) {
+                    MobEffects.LOGGER.debug("%s: %s", kvp.getKey(), kvp.getValue());
+                }
+            }
         }
 
         @Override
         public void stop() {
+            effectConfiguration.clear();
             effects.clear();
             blockedSounds.clear();
             soundReplace.clear();

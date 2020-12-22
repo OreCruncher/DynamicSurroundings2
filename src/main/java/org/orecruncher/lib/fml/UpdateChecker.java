@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.VersionChecker.CheckResult;
 import net.minecraftforge.fml.VersionChecker.Status;
@@ -31,6 +31,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
 public final class UpdateChecker {
@@ -43,7 +44,7 @@ public final class UpdateChecker {
         this.messageId = messageId;
     }
 
-    private static boolean printMessage(@Nonnull final CheckResult result) {
+    private static boolean shouldPrintMessage(@Nonnull final CheckResult result) {
         return result.status == Status.OUTDATED;
     }
 
@@ -54,7 +55,7 @@ public final class UpdateChecker {
      * @param event The PlayerLoggedInEvent
      * @param modId Id of the mod in question
      */
-    public static void doCheck(@Nonnull final PlayerLoggedInEvent event, @Nonnull String modId) {
+    public static void doCheck(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event, @Nonnull String modId) {
         doCheck(event, modId, modId + ".msg.NewVersion");
     }
 
@@ -66,7 +67,7 @@ public final class UpdateChecker {
      * @param modId Id of the mod in question
      * @param msgId Resource string of the update message to display in chat
      */
-    public static void doCheck(@Nonnull final PlayerLoggedInEvent event, @Nonnull String modId, @Nonnull String msgId) {
+    public static void doCheck(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event, @Nonnull String modId, @Nonnull String msgId) {
         if (event.getPlayer() != null) {
             new UpdateChecker(modId, msgId).playerLogin(event);
         }
@@ -78,24 +79,21 @@ public final class UpdateChecker {
         if (!mod.isPresent())
             return null;
         final CheckResult result = VersionChecker.getResult(mod.get());
-        if (!printMessage(result))
+        if (!shouldPrintMessage(result))
             return null;
         final String t = result.target != null ? result.target.toString() : "UNKNOWN";
         final String u = result.url != null ? result.url : "UNKNOWN";
         return I18n.format(this.messageId, mod.get().getDisplayName(), t, u);
     }
 
-    private void playerLogin(@Nonnull final PlayerLoggedInEvent event) {
+    private void playerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
         if (event.getPlayer() != null) {
             final String updateMessage = getUpdateMessage(this.modId);
             if (updateMessage != null) {
                 try {
-                    // TODO:  Sort out formatting/sending message
-                    /*
-                    final ITextComponent component = ITextComponent.Serializer.fromJson(updateMessage);
-                    event.getPlayer().sendMessage(component);
-
-                     */
+                    final ITextComponent component = ITextComponent.Serializer.getComponentFromJson(updateMessage);
+                    if (component != null)
+                        event.getPlayer().sendMessage(component, UUID.randomUUID());
                 } catch (@Nonnull final Throwable t) {
                     t.printStackTrace();
                 }

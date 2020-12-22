@@ -1,12 +1,9 @@
 {
 	"mobeffects.modname": "Dynamic Surroundings: MobEffects",
-	"mobeffects.msg.NewVersion": "[\"§6Update Available: §9[\",{\"text\":\"§2%1$s §ev%2$s§f\",\"color\":\"gold\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"Click for CurseForge Project Page\",\"color\":\"aqua\"}},\"clickEvent\":{\"action\":\"open_url\",\"value\":\"%3$s\"}},\"§9]\"]",
 	"mobeffects.cfg.logging": "Logging Options",
 	"mobeffects.cfg.logging.tooltip": "Defines how logging will behave",
 	"mobeffects.cfg.logging.EnableDebug": "Debug Logging",
 	"mobeffects.cfg.logging.EnableDebug.tooltip": "Enables/disables debug logging of the mod",
-	"mobeffects.cfg.logging.VersionCheck": "Online Version Check Result",
-	"mobeffects.cfg.logging.VersionCheck.tooltip": "Enables/disables display of version check information",
 	"mobeffects.cfg.logging.FlagMask": "Debug Flag Mask",
 	"mobeffects.cfg.logging.FlagMask.tooltip": "Bitmask for toggling various debug traces",
 	"mobeffects.cfg.footsteps": "Footstep Options",

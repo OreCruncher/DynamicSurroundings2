@@ -1,7 +1,7 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[35,)"
 issueTrackerURL="https://github.com/OreCruncher/DynamicSurroundings2/issues"
-displayURL="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings"
 logoFile="logo.png"
 license = "GPL-3.0"
 showAsResourcePack=false
@@ -11,14 +11,21 @@ showAsResourcePack=false
 	version="${version}"
 	displayName="§3Dynamic Surroundings"
 	updateJSONURL="https://raw.githubusercontent.com/OreCruncher/DynamicSurroundings2/master/version.json"
-	credits="\n\n§6All the Players§r that installed and enjoyed §2Dynamic Surroundings§r\n§6SonicEther§r for making §2SoundPhysics§r GPL3\n"
+	credits="\n\n§6Wirsbo§r for §2BetterRain§r\n§6SonicEther§r for §2Sound Physics§r\n§6MrRube§r for §2Aurora Rubealis§r\n§6Hurricaaane§r for §2Presence Footsteps§r and §2MAtmos§r\n§eSound and Texture Attributions§r at https://tinyurl.com/mggnl76\n\n"
 	authors="§6OreCruncher§r\n"
-	description="\nGiving the player §6control§r over their §2Minecraft§r §6sound experience§r."
+	description="\nAdds a variety of §6sound§r and §6visual§r effects to improve your Minecraft experience"
 
 	[[dependencies.dsurround]]
 		modId="forge"
 		mandatory=true
 		versionRange="[35.1.10,)"
+		ordering="NONE"
+		side="CLIENT"
+
+	[[dependencies.dsurround]]
+		modId="minecraft"
+		mandatory=true
+		versionRange="[1.16.4,1.17)"
 		ordering="NONE"
 		side="CLIENT"
 

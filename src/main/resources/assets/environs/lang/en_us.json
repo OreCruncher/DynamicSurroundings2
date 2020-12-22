@@ -1,12 +1,9 @@
 {
 	"environs.modname": "Dynamic Surroundings: Environs",
-	"environs.msg.NewVersion": "[\"§6Update Available: §9[\",{\"text\":\"§2%1$s §ev%2$s§f\",\"color\":\"gold\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"Click for CurseForge Project Page\",\"color\":\"aqua\"}},\"clickEvent\":{\"action\":\"open_url\",\"value\":\"%3$s\"}},\"§9]\"]",
 	"environs.cfg.logging": "Logging Options",
 	"environs.cfg.logging.tooltip": "Defines how logging will behave",
 	"environs.cfg.logging.EnableDebug": "Debug Logging",
 	"environs.cfg.logging.EnableDebug.tooltip": "Enables/disables debug logging of the mod",
-	"environs.cfg.logging.VersionCheck": "Online Version Check Result",
-	"environs.cfg.logging.VersionCheck.tooltip": "Enables/disables display of version check information",
 	"environs.cfg.logging.FlagMask": "Debug Flag Mask",
 	"environs.cfg.logging.FlagMask.tooltip": "Bitmask for toggling various debug traces",
 	"environs.cfg.biomes": "Biome Options",

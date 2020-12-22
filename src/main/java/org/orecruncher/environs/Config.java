@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Environs
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,11 +107,9 @@ public final class Config {
         public static class Logging {
 
             private final BooleanValue enableLogging;
-            private final BooleanValue onlineVersionCheck;
             private final IntValue flagMask;
 
             private boolean _enableLogging;
-            private boolean _onlineVersionCheck;
             private int _flagMask;
 
             Logging(@Nonnull final ForgeConfigSpec.Builder builder) {
@@ -123,11 +121,6 @@ public final class Config {
                         .translation("environs.cfg.logging.EnableDebug")
                         .define("Debug Logging", false);
 
-                this.onlineVersionCheck = builder
-                        .comment("Enables/disables display of version check information")
-                        .translation("environs.cfg.logging.VersionCheck")
-                        .define("Online Version Check Result", true);
-
                 this.flagMask = builder
                         .comment("Bitmask for toggling various debug traces")
                         .translation("environs.cfg.logging.FlagMask")
@@ -138,16 +131,11 @@ public final class Config {
 
             void update() {
                 this._enableLogging = this.enableLogging.get();
-                this._onlineVersionCheck = this.onlineVersionCheck.get();
                 this._flagMask = this.flagMask.get();
             }
 
             public boolean get_enableLogging() {
                 return this._enableLogging;
-            }
-
-            public boolean get_onlineVersionCheck() {
-                return this._onlineVersionCheck;
             }
 
             public int get_flagMask() {

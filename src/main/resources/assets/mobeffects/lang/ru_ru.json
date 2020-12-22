@@ -1,12 +1,9 @@
 {
 	"mobeffects.modname": "Dynamic Surrounding: Mob Effects",
-	"mobeffects.msg.NewVersion": "[\"§6Доступно обновление: §9[\",{\"text\":\"§2%1$s §ev%2$s§f\",\"color\":\"gold\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"Нажмите, чтобы открыть страницу мода на CurseForge\",\"color\":\"aqua\"}},\"clickEvent\":{\"action\":\"open_url\",\"value\":\"%3$s\"}},\"§9]\"]",
 	"mobeffects.cfg.logging": "Настройки логирования",
 	"mobeffects.cfg.logging.tooltip": "Определяет как будет вести лог",
 	"mobeffects.cfg.logging.EnableDebug": "Отладка",
 	"mobeffects.cfg.logging.EnableDebug.tooltip": "Вкл/выкл отладочный лог",
-	"mobeffects.cfg.logging.VersionCheck": "Проверка новых версий",
-	"mobeffects.cfg.logging.VersionCheck.tooltip": "Вкл/выкл информацию о новых версиях мода",
 	"mobeffects.cfg.logging.FlagMask": "Маска отладки",
 	"mobeffects.cfg.logging.FlagMask.tooltip": "Битовая маска для включения различных отладочных трассировок",
 	"mobeffects.cfg.footsteps": "Footstep Options",

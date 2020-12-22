@@ -18,7 +18,9 @@
 
 package org.orecruncher.dsurround;
 
+import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -96,7 +98,7 @@ public final class DynamicSurroundings {
     }
 
     @SubscribeEvent
-    public void onPlayerLogin(@Nonnull final PlayerLoggedInEvent event) {
+    public void onPlayerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
         // TODO:  getString()?
         LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName().getString());
         if (Config.CLIENT.logging.get_onlineVersionCheck())

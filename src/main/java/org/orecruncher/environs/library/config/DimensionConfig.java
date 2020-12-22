@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,9 +27,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class DimensionConfig {
 	@SerializedName("dimId")
-	public Integer dimensionId = null;
-	@SerializedName("name")
-	public String name = null;
+	public String dimensionId = null;
 	@SerializedName("seaLevel")
 	public Integer seaLevel = null;
 	@SerializedName("skyHeight")
@@ -52,9 +50,7 @@ public class DimensionConfig {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		if (this.dimensionId != null)
-			builder.append("dimensionId: ").append(this.dimensionId.intValue()).append(" ");
-		if (this.name != null)
-			builder.append("name: ").append(this.name).append(" ");
+			builder.append("dimensionId: ").append(this.dimensionId).append(" ");
 		if (this.seaLevel != null)
 			builder.append("seaLevel: ").append(this.seaLevel.intValue()).append(" ");
 		if (this.skyHeight != null)
@@ -76,16 +72,14 @@ public class DimensionConfig {
 
 	@Override
 	public int hashCode() {
-		return this.dimensionId != null ? this.dimensionId.hashCode()
-				: this.name != null ? this.name.hashCode() : super.hashCode();
+		return this.dimensionId != null ? this.dimensionId.hashCode() : 0;
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
 		if (obj instanceof DimensionConfig) {
 			final DimensionConfig dc = (DimensionConfig) obj;
-			return (this.dimensionId != null && this.dimensionId.equals(dc.dimensionId))
-					|| (this.name != null && this.name.equals(dc.name));
+			return (this.dimensionId != null && this.dimensionId.equals(dc.dimensionId));
 		}
 		return false;
 	}

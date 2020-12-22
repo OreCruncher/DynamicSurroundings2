@@ -56,7 +56,7 @@ public class DimensionInfo {
     public DimensionInfo(@Nonnull final World world, @Nullable final DimensionConfig dimConfig) {
         // Attributes that come from the world object itself. Set now because the config may override.
         DimensionType dt = world.getDimensionType();
-        this.name = world.getDimensionKey().getRegistryName();
+        this.name = world.getDimensionKey().getLocation();
         this.seaLevel = world.getSeaLevel();
         this.skyHeight = world.getHeight();
         this.cloudHeight = this.skyHeight;

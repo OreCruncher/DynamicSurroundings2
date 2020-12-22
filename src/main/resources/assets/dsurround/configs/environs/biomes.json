@@ -416,11 +416,11 @@
       "acoustics": [
         {
           "acoustic": "dimension/nether",
-          "conditions": "dim.getId() == -1"
+          "conditions": "dim.getId() == 'minecraft:the_nether'"
         },
         {
           "acoustic": "dimension/theend",
-          "conditions": "dim.getId() == 1"
+          "conditions": "dim.getId() == 'minecraft:the_end'"
         }
       ]
     },

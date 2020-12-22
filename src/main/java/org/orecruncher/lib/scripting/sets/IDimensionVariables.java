@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public interface IDimensionVariables {
 
-    int getId();
+    String getId();
 
     String getDimName();
 

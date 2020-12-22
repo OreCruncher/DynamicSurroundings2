@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class DimensionVariables extends VariableSet<IDimensionVariables> implements IDimensionVariables {
 
-    private int id;
+    private String id;
     private String name;
     private boolean hasSky;
 
@@ -47,18 +47,19 @@ public class DimensionVariables extends VariableSet<IDimensionVariables> impleme
     public void update() {
         if (GameUtils.isInGame()) {
             final DimensionType dim = GameUtils.getWorld().getDimensionType();
+            this.id = GameUtils.getWorld().getDimensionKey().getRegistryName().toString();
             this.hasSky = dim.hasSkyLight();
             // TODO: What is the right way to get the dimension resource location?
             this.name = GameUtils.getWorld().getProviderName();
         } else {
-            this.id = 0;
+            this.id = "UNKNOWN";
             this.hasSky = false;
             this.name = "UNKNOWN";
         }
     }
 
     @Override
-    public int getId() {
+    public String getId() {
         return this.id;
     }
 

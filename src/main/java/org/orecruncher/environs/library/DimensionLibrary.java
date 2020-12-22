@@ -25,6 +25,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -71,14 +72,12 @@ public final class DimensionLibrary {
 	}
 
 	private static void register(@Nonnull final DimensionConfig entry) {
-		if (entry.dimensionId != null || entry.name != null) {
+		if (entry.dimensionId != null) {
 			final DimensionConfig data = getData(entry);
 			if (data == entry)
 				return;
 			if (data.dimensionId == null)
 				data.dimensionId = entry.dimensionId;
-			if (data.name == null)
-				data.name = entry.name;
 			if (entry.hasAurora != null)
 				data.hasAurora = entry.hasAurora;
 			if (entry.hasHaze != null)
@@ -98,11 +97,12 @@ public final class DimensionLibrary {
 	public static DimensionInfo getData(@Nonnull final World world) {
 		RegistryKey<World> key = world.getDimensionKey();
 		DimensionInfo dimInfo = configs.get(key);
+
 		if (dimInfo == null) {
 			DimensionConfig config = null;
+			ResourceLocation location = key.getLocation();
 			for (final DimensionConfig e : cache)
-				// TODO:  What format should the dimension key be?
-				if ((e.name != null && e.name.equals(world.getDimensionKey().toString()))) {
+				if (e.dimensionId.equals(location.toString())) {
 					config = e;
 					break;
 				}

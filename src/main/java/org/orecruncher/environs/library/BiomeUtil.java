@@ -30,6 +30,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.lwjgl.system.CallbackI;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.misc.IMixinBiomeData;
 import org.orecruncher.lib.gui.Color;
@@ -48,8 +50,18 @@ public final class BiomeUtil {
     public static BiomeInfo getBiomeData(@Nonnull final Biome biome) {
         BiomeInfo result = ((IMixinBiomeData) (Object) biome).getInfo();
         if (result == null) {
-            final BiomeAdapter handler = new BiomeAdapter(biome);
-            ((IMixinBiomeData) (Object) biome).setInfo(result = new BiomeInfo(handler));
+            // Get the data from the Forge registries
+            final Biome forge = ForgeRegistries.BIOMES.getValue(biome.getRegistryName());
+            if (forge != null) {
+                result = ((IMixinBiomeData) (Object) forge).getInfo();
+            }
+
+            if (result == null) {
+                final BiomeAdapter handler = new BiomeAdapter(biome);
+                result = new BiomeInfo(handler);
+            }
+
+            ((IMixinBiomeData) (Object) biome).setInfo(result);
         }
         return result;
     }

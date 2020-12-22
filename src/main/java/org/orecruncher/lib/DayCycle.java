@@ -62,7 +62,7 @@ public enum DayCycle {
         if (world.getDimensionType().getHasCeiling() || !world.getDimensionType().hasSkyLight())
             return DayCycle.NO_SKY;
 
-        final float angle = world.getDimensionType().getCelestrialAngleByTime(world.func_241851_ab());
+        final float angle = world.func_242415_f(0);
 
         if (angle > 0.82F)
             return DayCycle.DAYTIME;

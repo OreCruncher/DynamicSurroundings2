@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.scripting.sets;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -47,10 +48,10 @@ public class DimensionVariables extends VariableSet<IDimensionVariables> impleme
     public void update() {
         if (GameUtils.isInGame()) {
             final DimensionType dim = GameUtils.getWorld().getDimensionType();
-            this.id = GameUtils.getWorld().getDimensionKey().getRegistryName().toString();
+            final ResourceLocation location = GameUtils.getWorld().getDimensionKey().getLocation();
+            this.id = location.toString();
             this.hasSky = dim.hasSkyLight();
-            // TODO: What is the right way to get the dimension resource location?
-            this.name = GameUtils.getWorld().getProviderName();
+            this.name = location.getPath();
         } else {
             this.id = "UNKNOWN";
             this.hasSky = false;

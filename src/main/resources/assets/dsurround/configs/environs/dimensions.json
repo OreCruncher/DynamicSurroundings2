@@ -1,19 +1,17 @@
-{
-  "dimensions": [
-    {
-      "dimId": "minecraft:overworld",
-      "fog": true,
-      "haze": true,
-      "aurora": true
-    },
-    {
-      "dimId": "minecraft:the_nether",
-      "seaLevel": 0
-    },
-    {
-      "dimId": "minecraft:the_end",
-      "seaLevel": 0,
-      "cloudHeight": 128
-    }
-  ]
-}
+[
+  {
+    "dimId": "minecraft:overworld",
+    "fog": true,
+    "haze": true,
+    "aurora": true
+  },
+  {
+    "dimId": "minecraft:the_nether",
+    "seaLevel": 0
+  },
+  {
+    "dimId": "minecraft:the_end",
+    "seaLevel": 0,
+    "cloudHeight": 128
+  }
+]

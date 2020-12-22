@@ -18,12 +18,16 @@
 
 package org.orecruncher.environs.library;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
@@ -35,7 +39,6 @@ import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.BiomeConfig;
-import org.orecruncher.environs.library.config.ModConfig;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
@@ -46,6 +49,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.service.ClientServiceManager;
 import org.orecruncher.lib.service.IClientService;
 
 @OnlyIn(Dist.CLIENT)
@@ -100,15 +104,16 @@ public final class BiomeLibrary {
 	}
 
 	static void initialize() {
+		ClientServiceManager.instance().add(new BiomeLibraryService());
 	}
 
-	static void initFromConfig(@Nonnull final ModConfig cfg) {
+	static void initFromConfig(@Nonnull final List<BiomeConfig> cfg) {
 
-		if (cfg.biomes.size() > 0) {
+		if (cfg.size() > 0) {
 			final BiomeEvaluator evaluator = new BiomeEvaluator();
 			for (final BiomeInfo bi : getCombinedStream()) {
 				evaluator.update(bi);
-				for (final BiomeConfig c : cfg.biomes) {
+				for (final BiomeConfig c : cfg) {
 					if (evaluator.matches(c.conditions)) {
 						try {
 							bi.update(c);
@@ -178,7 +183,7 @@ public final class BiomeLibrary {
 			for (IResourceAccessor accessor : configs) {
 				LOGGER.debug("Loading configuration %s", accessor.location());
 				try {
-					initFromConfig(accessor.as(ModConfig.class));
+					initFromConfig(accessor.as(BiomeLibrary.biomeType));
 				} catch (@Nonnull final Throwable t) {
 					LOGGER.error(t, "Unable to load %s", accessor.location());
 				}
@@ -197,6 +202,23 @@ public final class BiomeLibrary {
 			ForgeUtils.getBiomes().forEach(b -> BiomeUtil.setBiomeData(b, null));
 			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, null);
 		}
-
 	}
+
+	private static final ParameterizedType biomeType = new ParameterizedType() {
+		@Override
+		public Type[] getActualTypeArguments() {
+			return new Type[]{BiomeConfig.class};
+		}
+
+		@Override
+		public Type getRawType() {
+			return List.class;
+		}
+
+		@Override
+		@Nullable
+		public Type getOwnerType() {
+			return null;
+		}
+	};
 }

@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,10 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.effects.BlockEffectType;
-import org.orecruncher.environs.library.config.AcousticConfig;
-import org.orecruncher.environs.library.config.BlockConfig;
-import org.orecruncher.environs.library.config.EffectConfig;
-import org.orecruncher.environs.library.config.ModConfig;
+import org.orecruncher.environs.library.config.*;
 import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
@@ -47,7 +44,11 @@ import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
@@ -64,11 +65,10 @@ public final class BlockStateLibrary {
 
     static void initialize() {
         ClientServiceManager.instance().add(new BlockStateLibraryService());
-
     }
 
-    static void initFromConfig(@Nonnull final ModConfig config) {
-        config.blocks.forEach(BlockStateLibrary::register);
+    static void initFromConfig(@Nonnull final List<BlockConfig> config) {
+        config.forEach(BlockStateLibrary::register);
     }
 
     @Nonnull
@@ -172,7 +172,7 @@ public final class BlockStateLibrary {
             for (final IResourceAccessor accessor : configs) {
                 LOGGER.debug("Loading configuration %s", accessor.location());
                 try {
-                    initFromConfig(accessor.as(ModConfig.class));
+                    initFromConfig(accessor.as(BlockStateLibrary.blockType));
                 } catch (@Nonnull final Throwable t) {
                     LOGGER.error(t, "Unable to load %s", accessor.location());
                 }
@@ -185,4 +185,21 @@ public final class BlockStateLibrary {
         }
     }
 
+    private static final ParameterizedType blockType = new ParameterizedType() {
+        @Override
+        public Type[] getActualTypeArguments() {
+            return new Type[]{BlockConfig.class};
+        }
+
+        @Override
+        public Type getRawType() {
+            return List.class;
+        }
+
+        @Override
+        @Nullable
+        public Type getOwnerType() {
+            return null;
+        }
+    };
 }

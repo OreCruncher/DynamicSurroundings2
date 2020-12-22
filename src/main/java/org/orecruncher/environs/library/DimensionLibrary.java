@@ -18,11 +18,15 @@
 
 package org.orecruncher.environs.library;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +37,6 @@ import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.DimensionConfig;
-import org.orecruncher.environs.library.config.ModConfig;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
@@ -58,8 +61,8 @@ public final class DimensionLibrary {
 		ClientServiceManager.instance().add(new DimensionLibraryService());
 	}
 
-	static void initFromConfig(@Nonnull final ModConfig cfg) {
-		cfg.dimensions.forEach(DimensionLibrary::register);
+	static void initFromConfig(@Nonnull final List<DimensionConfig> cfg) {
+		cfg.forEach(DimensionLibrary::register);
 	}
 
 	@Nonnull
@@ -122,7 +125,7 @@ public final class DimensionLibrary {
 			for (final IResourceAccessor accessor : configs) {
 				LOGGER.debug("Loading configuration %s", accessor.location());
 				try {
-					initFromConfig(accessor.as(ModConfig.class));
+					initFromConfig(accessor.as(DimensionLibrary.dimensionType));
 				} catch (@Nonnull final Throwable t) {
 					LOGGER.error(t, "Unable to load %s", accessor.location());
 				}
@@ -140,4 +143,22 @@ public final class DimensionLibrary {
 			configs.clear();
 		}
 	}
+
+	private static final ParameterizedType dimensionType = new ParameterizedType() {
+		@Override
+		public Type[] getActualTypeArguments() {
+			return new Type[]{DimensionConfig.class};
+		}
+
+		@Override
+		public Type getRawType() {
+			return List.class;
+		}
+
+		@Override
+		@Nullable
+		public Type getOwnerType() {
+			return null;
+		}
+	};
 }

@@ -18,17 +18,23 @@
 
 package org.orecruncher.environs.scanner;
 
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
+import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.environs.library.BiomeInfo;
 import org.orecruncher.environs.library.BiomeUtil;
 import org.orecruncher.lib.TickCounter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Performs an area scan around the to calculate the relative weights of the
@@ -81,6 +87,17 @@ public final class BiomeScanner {
 					}
 				}
 				this.biomeArea = MAX_BIOME_AREA;
+			}
+
+			// Validate there are no duplicates in the list.
+			final Set<ResourceLocation> seen = new HashSet<>();
+			for (final Reference2IntMap.Entry<BiomeInfo> kvp : this.weights.reference2IntEntrySet()) {
+				final ResourceLocation location = kvp.getKey().getKey();
+				if (seen.contains(location)) {
+					Environs.LOGGER.debug("Duplicate entry detected: %s", location.toString());
+				} else {
+					seen.add(location);
+				}
 			}
 		}
 	}

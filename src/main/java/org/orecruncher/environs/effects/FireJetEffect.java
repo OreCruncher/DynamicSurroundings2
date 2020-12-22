@@ -20,6 +20,7 @@ package org.orecruncher.environs.effects;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -62,7 +63,11 @@ public class FireJetEffect extends JetEffect {
             spawnHeight = pos.getY() + state.getFluidState().getHeight() + 0.1F;
             isSolid = false;
         } else {
-            final double blockHeight = state.getRenderShape(provider, pos).getBoundingBox().maxY;
+            final VoxelShape shape = state.getShape(provider, pos);
+            if (shape.isEmpty()) {
+                return;
+            }
+            final double blockHeight = shape.getBoundingBox().maxY;
             spawnHeight = (float) (pos.getY() + blockHeight);
             isSolid = true;
             if (state.isSolid()) {

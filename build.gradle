@@ -9,9 +9,11 @@ buildscript {
     dependencies {
 		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-		classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.1.0'
+		classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
+
+import net.minecraftforge.gradle.common.task.SignJar
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -229,3 +231,18 @@ publishing {
         }
     }
 }
+
+task signJar(type: SignJar) {
+    onlyIf { // Skip the task if our secret data isn't available
+        project.hasProperty('keyStore')
+    }
+
+    keyStore = project.keyStore // This needs to be a path to the keystore file
+    alias = project.keyStoreAlias
+    storePass = project.keyStorePass
+    keyPass = project.keyStoreKeyPass
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
+}
+
+signJar.dependsOn build

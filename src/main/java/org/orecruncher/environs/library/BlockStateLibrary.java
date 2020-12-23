@@ -166,22 +166,21 @@ public final class BlockStateLibrary {
         public void start() {
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "blocks.json");
 
-            for (final IResourceAccessor accessor : configs) {
-                LOGGER.debug("Loading configuration %s", accessor.location());
-                try {
-                    initFromConfig(accessor.as(BlockStateLibrary.blockType));
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Unable to load %s", accessor.location());
-                }
-            }
+            IResourceAccessor.process(configs, accessor -> {
+                initFromConfig(accessor.as(BlockStateLibrary.blockType));
+            });
 
-            final int blockStates = (int) ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).count();
-            LOGGER.info("%d block states processed, %d registry entries", blockStates, registry.size());
+            ForgeUtils.getBlockStates().forEach(BlockStateUtil::getData);
             ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).forEach(BlockStateData::trim);
 
             BlockStateUtil.setData(Blocks.AIR.getDefaultState(), BlockStateData.DEFAULT);
             BlockStateUtil.setData(Blocks.CAVE_AIR.getDefaultState(), BlockStateData.DEFAULT);
             BlockStateUtil.setData(Blocks.VOID_AIR.getDefaultState(), BlockStateData.DEFAULT);
+        }
+
+        @Override
+        public void log() {
+            LOGGER.info("%d block states processed, %d registry entries", ForgeUtils.getBlockStates().size(), registry.size());
         }
 
         @Override

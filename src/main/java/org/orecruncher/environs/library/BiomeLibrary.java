@@ -185,15 +185,14 @@ public final class BiomeLibrary {
 			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, info);
 
 			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "biomes.json");
-			for (IResourceAccessor accessor : configs) {
-				LOGGER.debug("Loading configuration %s", accessor.location());
-				try {
-					initFromConfig(accessor.as(BiomeLibrary.biomeType));
-				} catch (@Nonnull final Throwable t) {
-					LOGGER.error(t, "Unable to load %s", accessor.location());
-				}
-			}
 
+			IResourceAccessor.process(configs, accessor -> {
+				initFromConfig(accessor.as(BiomeLibrary.biomeType));
+			});
+		}
+
+		@Override
+		public void log() {
 			if (Config.CLIENT.logging.get_enableLogging()) {
 				LOGGER.info("*** BIOME REGISTRY ***");
 				getCombinedStream().stream().sorted().map(Object::toString).forEach(LOGGER::info);

@@ -42,8 +42,13 @@ final class ResourceAccessorJar extends ResourceAccessorBase {
     protected byte[] getAsset() {
         try (InputStream stream = ResourceAccessorJar.class.getResourceAsStream(this.asset)) {
             return IOUtils.toByteArray(stream);
-        } catch (@Nonnull Throwable ignore) {
+        } catch (@Nonnull final Throwable ignore) {
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", super.toString(), this.asset);
     }
 }

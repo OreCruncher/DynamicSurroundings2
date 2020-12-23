@@ -127,15 +127,13 @@ public final class DimensionLibrary {
 
 			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "dimensions.json");
 
-			for (final IResourceAccessor accessor : configs) {
-				LOGGER.debug("Loading configuration %s", accessor.location());
-				try {
-					initFromConfig(accessor.as(DimensionLibrary.dimensionType));
-				} catch (@Nonnull final Throwable t) {
-					LOGGER.error(t, "Unable to load %s", accessor.location());
-				}
-			}
+			IResourceAccessor.process(configs, accessor -> {
+				initFromConfig(accessor.as(DimensionLibrary.dimensionType));
+			});
+		}
 
+		@Override
+		public void log() {
 			if (Config.CLIENT.logging.get_enableLogging()) {
 				LOGGER.info("*** DIMENSION REGISTRY (cache) ***");
 				cache.stream().map(Object::toString).forEach(LOGGER::info);

@@ -20,11 +20,14 @@ package org.orecruncher.lib.resource;
 
 import com.google.gson.Gson;
 import net.minecraft.util.ResourceLocation;
+import org.orecruncher.lib.Lib;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * A resource accessor is used to obtain the content of a resource from within the JAR or from an external disk source.
@@ -122,6 +125,23 @@ public interface IResourceAccessor {
      */
     static IResourceAccessor createExternalResource(@Nonnull File root, @Nonnull ResourceLocation location) {
         return new ResourceAccessorExternal(root, location);
+    }
+
+    /**
+     * Iterates over a collection of accessors invoking an operation.  The operation is logged and encapsulated within
+     * an error handling for logging purposes.  Exceptions will be suppressed.
+     * @param accessors Collection of accessors to invoke
+     * @param consumer The routine to invoke on each accessor.
+     */
+    static void process(Collection<IResourceAccessor> accessors, @Nonnull final Consumer<IResourceAccessor> consumer) {
+        for (final IResourceAccessor accessor : accessors) {
+            Lib.LOGGER.info("Processing %s", accessor);
+            try {
+                consumer.accept(accessor);
+            } catch(@Nonnull final Throwable t) {
+                Lib.LOGGER.error(t, "Unable to complete processing of %s", accessor);
+            }
+        }
     }
 
     @FunctionalInterface

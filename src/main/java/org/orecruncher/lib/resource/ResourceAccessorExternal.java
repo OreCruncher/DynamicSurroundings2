@@ -21,6 +21,7 @@ package org.orecruncher.lib.resource;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,20 +31,28 @@ final class ResourceAccessorExternal extends ResourceAccessorBase {
 
     final Path filePath;
 
-    public ResourceAccessorExternal(@Nonnull final File root, @Nonnull final ResourceLocation location)
-    {
+    public ResourceAccessorExternal(@Nonnull final File root, @Nonnull final ResourceLocation location) {
         super(location);
         this.filePath = Paths.get(root.getPath(), location.getNamespace(), location.getPath());
     }
 
     @Override
+    public boolean exists() {
+        return Files.exists(this.filePath);
+    }
+
+    @Override
+    @Nullable
     protected byte[] getAsset() {
-        byte[] result = null;
         try {
-            if (Files.exists(this.filePath))
-                result = Files.readAllBytes(this.filePath);
-        } catch (@Nonnull Throwable ignore) {
+            return Files.readAllBytes(this.filePath);
+        } catch (@Nonnull final Throwable ignore) {
         }
-        return result;
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", super.toString(), this.filePath);
     }
 }

@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
 
 package org.orecruncher.lib;
 
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.logging.IModLog;
-import org.orecruncher.sndctrl.SoundControl;
 
 public final class Lib {
 
-    public final static IModLog LOGGER = SoundControl.LOGGER.createChild(Lib.class);
+    public final static IModLog LOGGER = DynamicSurroundings.LOGGER.createChild(Lib.class);
 
     private Lib() {
 

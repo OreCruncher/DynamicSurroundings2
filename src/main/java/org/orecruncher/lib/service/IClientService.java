@@ -28,6 +28,10 @@ public interface IClientService {
 
     void start();
 
+    default void log() {
+
+    }
+
     void stop();
 
     default void reload() {

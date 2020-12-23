@@ -29,7 +29,9 @@ import org.orecruncher.lib.Singleton;
 import org.orecruncher.lib.collections.ObjectArray;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientServiceManager {
@@ -68,32 +70,40 @@ public class ClientServiceManager {
      * Causes the service start phase to be invoked when a player logs in
      * @param event Event that is raised
      */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStart(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
         performAction("start", IClientService::start);
+
+        for (@Nonnull final IClientService svc : this.services)
+            svc.log();
     }
 
     /**
      * Causes the service stop phase to be invoked when a player logs out
      * @param event Event that is raised
      */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
         performAction("stop", IClientService::stop);
     }
 
     private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IClientService> action) {
-        long start = System.nanoTime();
-        long duration = 0;
 
-        for (final IClientService svc : services) {
+        Lib.LOGGER.info("Starting parallel action '%s'", actionName);
+
+        long start = System.nanoTime();
+
+        final List<String> results = services.parallelStream().map(svc -> {
             long begin = System.nanoTime();
             action.accept(svc);
-            duration = System.nanoTime() - begin;
-            Lib.LOGGER.info("Action '%s::%s' took %dmsecs", svc.name(), actionName, (long) (duration / 1000000D));
-        }
+            long duration = System.nanoTime() - begin;
+            return String.format("Action '%s::%s' took %dmsecs", svc.name(), actionName, (long) (duration / 1000000D));
+        }).collect(Collectors.toList());
 
-        duration = System.nanoTime() - start;
+        long duration = System.nanoTime() - start;
+        for (final String r : results)
+            Lib.LOGGER.info(r);
+
         Lib.LOGGER.info("Overall Action '%s' took %dmsecs", actionName, (long) (duration / 1000000D));
     }
 }

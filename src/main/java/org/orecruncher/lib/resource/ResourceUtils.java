@@ -54,22 +54,21 @@ public final class ResourceUtils {
                 locations.put(location, accessor);
         }
 
-        // Scan JARs looking for additional configs.  Do not include the parent - it goes last
+        // Scan JARs looking for additional configs.  Do not include the parent - it goes last.  These JARs will
+        // only contain configs that apply to themselves.
         for (final String mod : modList) {
             if (mod.equals(modId))
                 continue;
             final String container = String.format("%s/configs", mod);
-            for (final String mod1 : modList) {
-                final ResourceLocation location = new ResourceLocation(mod1, config);
-                if (!locations.containsKey(location)) {
-                    final IResourceAccessor accessor = IResourceAccessor.createJarResource(container, location);
-                    if (accessor.exists())
-                        locations.put(location, accessor);
-                }
+            final ResourceLocation location = new ResourceLocation(mod, config);
+            if (!locations.containsKey(location)) {
+                final IResourceAccessor accessor = IResourceAccessor.createJarResource(container, location);
+                if (accessor.exists())
+                    locations.put(location, accessor);
             }
         }
 
-        // Lastly scan the parent
+        // Lastly scan the parent.  The parent can contain references to multiple mods (dsurround)
         final String container = String.format("%s/configs", modId);
         for (final String mod1 : modList) {
             final ResourceLocation location = new ResourceLocation(mod1, config);

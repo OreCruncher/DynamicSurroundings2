@@ -73,18 +73,13 @@ public final class AcousticLibrary {
 
         final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "acoustics.json");
 
-        for (final IResourceAccessor accessor : configs) {
-            LOGGER.debug("Loading configuration %s", accessor.location());
-            try {
-                final AcousticCompiler compiler = new AcousticCompiler(accessor.location().getNamespace());
-                final List<IAcoustic> acoustics = compiler.compile(accessor.asString());
-                for (final IAcoustic a : acoustics) {
-                    addAcoustic(a.getName(), a);
-                }
-            } catch (@Nonnull final Throwable t) {
-                LOGGER.error(t, "Unable to load %s", accessor.location());
+        IResourceAccessor.process(configs, accessor -> {
+            final AcousticCompiler compiler = new AcousticCompiler(accessor.location().getNamespace());
+            final List<IAcoustic> acoustics = compiler.compile(accessor.asString());
+            for (final IAcoustic a : acoustics) {
+                addAcoustic(a.getName(), a);
             }
-        }
+        });
     }
 
     @Nonnull

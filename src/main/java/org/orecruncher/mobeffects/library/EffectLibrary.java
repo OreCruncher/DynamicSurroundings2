@@ -41,6 +41,7 @@ import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ClientServiceManager;
 import org.orecruncher.lib.service.IClientService;
+import org.orecruncher.mobeffects.Config;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.library.config.EntityConfig;
 import org.orecruncher.sndctrl.api.acoustics.Library;
@@ -135,30 +136,25 @@ public final class EffectLibrary {
             // Apply configuration.  These will replace defaults as needed.
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "mobeffects.json");
 
-            for (final IResourceAccessor accessor : configs) {
-                LOGGER.debug("Loading configuration %s", accessor.location());
-                try {
-                    Map<String, EntityConfig> cfg = accessor.as(EffectLibrary.entityConfigType);
-                    for (final Map.Entry<String, EntityConfig> kvp : cfg.entrySet()) {
-                        final EntityEffectInfo eei = new EntityEffectInfo(kvp.getValue());
-                        final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
-                        effectConfiguration.put(loc, eei);
-                        if (loc.equals(PLAYER)) {
-                            playerEffects = eei;
-                        }
+            IResourceAccessor.process(configs, accessor -> {
+                Map<String, EntityConfig> cfg = accessor.as(EffectLibrary.entityConfigType);
+                for (final Map.Entry<String, EntityConfig> kvp : cfg.entrySet()) {
+                    final EntityEffectInfo eei = new EntityEffectInfo(kvp.getValue());
+                    final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
+                    effectConfiguration.put(loc, eei);
+                    if (loc.equals(PLAYER)) {
+                        playerEffects = eei;
+                    }
 
-                        for (final String r : kvp.getValue().blockedSounds) {
-                            try {
-                                blockedSounds.add(new ResourceLocation(r));
-                            } catch (@Nonnull final Throwable t) {
-                                MobEffects.LOGGER.error(t, "Not a valid sound resource location: %s", r);
-                            }
+                    for (final String r : kvp.getValue().blockedSounds) {
+                        try {
+                            blockedSounds.add(new ResourceLocation(r));
+                        } catch (@Nonnull final Throwable t) {
+                            MobEffects.LOGGER.error(t, "Not a valid sound resource location: %s", r);
                         }
                     }
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Unable to load %s", accessor.location());
                 }
-            }
+            });
 
             // Replace our bow loose sounds
             final ResourceLocation bowLoose = new ResourceLocation(MobEffects.MOD_ID, "bow.loose");
@@ -166,9 +162,11 @@ public final class EffectLibrary {
                 soundReplace.put(new ResourceLocation("minecraft:entity.arrow.shoot"), se);
                 soundReplace.put(new ResourceLocation("minecraft:entity.skeleton.shoot"), se);
             });
+        }
 
-            // Dump out the configuration if running debug
-            if (MobEffects.LOGGER.isDebugging()) {
+        @Override
+        public void log() {
+            if (Config.CLIENT.logging.get_enableLogging()) {
                 MobEffects.LOGGER.debug("MobEffect Registry");
                 MobEffects.LOGGER.debug("==================");
                 for (final Object2ObjectMap.Entry<ResourceLocation, EntityEffectInfo> kvp : effectConfiguration.object2ObjectEntrySet()) {

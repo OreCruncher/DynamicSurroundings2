@@ -99,8 +99,6 @@ public final class FootstepLibrary {
         FOOTPRINT_MATERIAL.add(Material.CLAY);
         FOOTPRINT_MATERIAL.add(Material.EARTH);
         FOOTPRINT_MATERIAL.add(Material.SPONGE);
-        FOOTPRINT_MATERIAL.add(Material.ICE);
-        FOOTPRINT_MATERIAL.add(Material.PACKED_ICE);
         FOOTPRINT_MATERIAL.add(Material.SAND);
         FOOTPRINT_MATERIAL.add(Material.SNOW_BLOCK);
         FOOTPRINT_MATERIAL.add(Material.SNOW);
@@ -458,40 +456,33 @@ public final class FootstepLibrary {
             // Load up the variators
             Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "variators.json");
 
-            for (final IResourceAccessor accessor : configs) {
-                LOGGER.debug("Loading configuration %s", accessor.location());
-                try {
-                    final Map<String, VariatorConfig> cfg = accessor.as(FootstepLibrary.variatorType);
-                    for (final Map.Entry<String, VariatorConfig> kvp : cfg.entrySet()) {
-                        variators.put(kvp.getKey(), new Variator(kvp.getValue()));
-                    }
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Unable to load %s", accessor.location());
+            IResourceAccessor.process(configs, accessor -> {
+                final Map<String, VariatorConfig> cfg = accessor.as(FootstepLibrary.variatorType);
+                for (final Map.Entry<String, VariatorConfig> kvp : cfg.entrySet()) {
+                    variators.put(kvp.getKey(), new Variator(kvp.getValue()));
                 }
-            }
+            });
 
             defaultVariator = getVariator("default");
             childVariator = getVariator("child");
             playerVariator = getVariator(Config.CLIENT.footsteps.get_firstPersonFootstepCadence() ? "player_slow" : "player");
             playerQuadrupedVariator = getVariator(Config.CLIENT.footsteps.get_firstPersonFootstepCadence() ? "quadruped_slow" : "quadruped");
 
+            configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "footsteps.json");
+
+            IResourceAccessor.process(configs, accessor -> {
+                initFromConfig(accessor.as(FootstepConfig.class));
+            });
+        }
+
+        @Override
+        public void log() {
             if (Config.CLIENT.logging.get_enableLogging()) {
                 LOGGER.info("Registered Variators");
                 LOGGER.info("====================");
 
                 for (final String v : variators.keySet()) {
                     LOGGER.info(v);
-                }
-            }
-
-            configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "footsteps.json");
-
-            for (final IResourceAccessor accessor : configs) {
-                LOGGER.debug("Loading configuration %s", accessor.location());
-                try {
-                    initFromConfig(accessor.as(FootstepConfig.class));
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Unable to load %s", accessor.location());
                 }
             }
         }

@@ -22,7 +22,7 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-public abstract class ResourceAccessorBase implements IResourceAccessor {
+abstract class ResourceAccessorBase implements IResourceAccessor {
 
     private final ResourceLocation location;
     private byte[] bytes;
@@ -44,4 +44,9 @@ public abstract class ResourceAccessorBase implements IResourceAccessor {
     }
 
     abstract protected byte[] getAsset();
+
+    @Override
+    public String toString() {
+        return this.location.toString();
+    }
 }

@@ -264,21 +264,15 @@ public final class AudioEffectLibrary {
 
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "effects.json");
 
-            for (final IResourceAccessor accessor : configs) {
-                LOGGER.debug("Loading configuration %s", accessor.location());
-                try {
-                    final EffectOptions cfg = accessor.as(EffectOptions.class);
-                    // Occlusions values determine how effectively a sound gets blocked from the listener
-                    processOcclusions(cfg);
-                    // Refelectivity governs how much reverb will be generated when a sound bounces off it's surface
-                    processReflectivity(cfg);
-                    // Lowpass filter gets applied when a player head is inside the block - think fluids.
-                    processLowpass(cfg);
-
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Unable to load %s", accessor.location());
-                }
-            }
+            IResourceAccessor.process(configs, accessor -> {
+                final EffectOptions cfg = accessor.as(EffectOptions.class);
+                // Occlusions values determine how effectively a sound gets blocked from the listener
+                processOcclusions(cfg);
+                // Refelectivity governs how much reverb will be generated when a sound bounces off it's surface
+                processReflectivity(cfg);
+                // Lowpass filter gets applied when a player head is inside the block - think fluids.
+                processLowpass(cfg);
+            });
         }
 
         @Override

@@ -205,14 +205,9 @@ public final class ItemLibrary {
 
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "armor_accents.json");
 
-            for (final IResourceAccessor accessor : configs) {
-                LOGGER.debug("Loading configuration %s", accessor.location());
-                try {
-                    initFromConfig(accessor.as(ItemLibrary.entityConfigType));
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Unable to load %s", accessor.location());
-                }
-            }
+            IResourceAccessor.process(configs, accessor -> {
+                initFromConfig(accessor.as(ItemLibrary.entityConfigType));
+            });
 
             // Iterate through the list of registered Items to see if we know about them, or can infer based on class
             // matching.

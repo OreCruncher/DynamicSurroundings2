@@ -239,8 +239,13 @@ public final class AudioEffectLibrary {
         }
     }
 
-    private static class AudioEffectLibraryService implements IClientService
-    {
+    private static class AudioEffectLibraryService implements IClientService {
+
+        @Override
+        public String name() {
+            return "AudioEffectLibrary";
+        }
+
         @Override
         public void start() {
             // Occlusion setup

@@ -194,6 +194,11 @@ public final class ItemLibrary {
     private static class ItemLibraryService implements IClientService {
 
         @Override
+        public String name() {
+            return "ItemLibrary";
+        }
+
+        @Override
         public void start() {
             for (final ItemData ic : CACHE.values())
                 classMap.put(ic, new ReferenceOpenHashSet<>(SET_CAPACITY));

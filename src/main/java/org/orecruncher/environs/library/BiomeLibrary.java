@@ -166,6 +166,11 @@ public final class BiomeLibrary {
 	static class BiomeLibraryService implements IClientService
 	{
 		@Override
+		public String name() {
+			return "BiomeLibrary";
+		}
+
+		@Override
 		public void start() {
 
 			ForgeUtils.getBiomes().forEach(b -> {

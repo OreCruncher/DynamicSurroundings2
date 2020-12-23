@@ -119,6 +119,11 @@ public final class EffectLibrary {
     private static class EffectLibraryService implements IClientService {
 
         @Override
+        public String name() {
+            return "MobEffectsLibrary";
+        }
+
+        @Override
         public void start() {
 
             // Seed our configuration with known entities that have defaults

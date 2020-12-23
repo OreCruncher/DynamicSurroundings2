@@ -24,6 +24,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public interface IClientService {
 
+    String name();
+
     void start();
 
     void stop();

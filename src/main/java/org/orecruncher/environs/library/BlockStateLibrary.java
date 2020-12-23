@@ -158,6 +158,11 @@ public final class BlockStateLibrary {
     private static class BlockStateLibraryService implements IClientService
     {
         @Override
+        public String name() {
+            return "BlockStateLibrary";
+        }
+
+        @Override
         public void start() {
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "blocks.json");
 

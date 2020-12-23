@@ -24,10 +24,12 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.Singleton;
 import org.orecruncher.lib.collections.ObjectArray;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientServiceManager {
@@ -58,9 +60,8 @@ public class ClientServiceManager {
     /**
      * Instructs configured services to reload configuration
      */
-    public void reload()
-    {
-        services.forEach(IClientService::reload);
+    public void reload() {
+        performAction("reload", IClientService::reload);
     }
 
     /**
@@ -68,9 +69,8 @@ public class ClientServiceManager {
      * @param event Event that is raised
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onStart(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event)
-    {
-        services.forEach(IClientService::start);
+    public void onStart(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
+        performAction("start", IClientService::start);
     }
 
     /**
@@ -78,8 +78,22 @@ public class ClientServiceManager {
      * @param event Event that is raised
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event)
-    {
-        services.forEach(IClientService::stop);
+    public void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
+        performAction("stop", IClientService::stop);
+    }
+
+    private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IClientService> action) {
+        long start = System.nanoTime();
+        long duration = 0;
+
+        for (final IClientService svc : services) {
+            long begin = System.nanoTime();
+            action.accept(svc);
+            duration = System.nanoTime() - begin;
+            Lib.LOGGER.info("Action '%s::%s' took %dmsecs", svc.name(), actionName, (long) (duration / 1000000D));
+        }
+
+        duration = System.nanoTime() - start;
+        Lib.LOGGER.info("Overall Action '%s' took %dmsecs", actionName, (long) (duration / 1000000D));
     }
 }

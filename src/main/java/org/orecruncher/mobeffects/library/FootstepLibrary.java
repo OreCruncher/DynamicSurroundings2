@@ -448,6 +448,11 @@ public final class FootstepLibrary {
     private static class FootstepLibraryService implements IClientService {
 
         @Override
+        public String name() {
+            return "FootstepLibrary";
+        }
+
+        @Override
         public void start() {
 
             // Load up the variators

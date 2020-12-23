@@ -118,6 +118,11 @@ public final class DimensionLibrary {
 	private static class DimensionLibraryService implements IClientService {
 
 		@Override
+		public String name() {
+			return "DimensionLibrary";
+		}
+
+		@Override
 		public void start() {
 
 			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "dimensions.json");

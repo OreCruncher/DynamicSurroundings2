@@ -122,6 +122,9 @@ public final class ParticleHooks {
         }
     }
 
+    // Fudge factor because the height algo is off.
+    private static final double LIQUID_HEIGHT_ADJUST = (1D / 9D) + 0.1D;
+
     /**
      * Similar to drip handling, but generically handles the event of a fluid type falling and hitting a surface, wether
      * solid or liquid.
@@ -168,7 +171,7 @@ public final class ParticleHooks {
                     }
                 } else {
                     // There will be a water ripple
-                    Collections.addWaterRipple(world, particlePos.x, particlePos.y + 0.01D, particlePos.z);
+                    Collections.addWaterRipple(world, particlePos.x, actualHeight + LIQUID_HEIGHT_ADJUST, particlePos.z);
                     if (isDripLava) {
                         createSteamCloud(world, particlePos);
                         acoustic = STEAM_HISS_ACOUSTIC;

@@ -19,17 +19,15 @@
 package org.orecruncher.environs.effects.particles;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.opengl.GL11;
 import org.orecruncher.environs.Environs;
-import org.orecruncher.lib.opengl.OpenGlUtil;
 import org.orecruncher.lib.particles.*;
 
 import javax.annotation.Nonnull;
@@ -39,13 +37,19 @@ public final class Collections {
 
     private static final IParticleRenderType RIPPLE_RENDER =
             new ParticleRenderType(new ResourceLocation(Environs.MOD_ID,"textures/particles/ripple.png")) {
+
+                @Override
+                protected ResourceLocation getTexture() {
+                    return RippleStyle.get().getTexture();
+                }
+
                 @Override
                 public void beginRender(@Nonnull BufferBuilder buffer, @Nonnull TextureManager textureManager) {
-                    RenderHelper.disableStandardItemLighting();
-                    textureManager.bindTexture(RippleStyle.get().getTexture());
-                    buffer.begin(GL11.GL_QUADS, getVertexFormat());
-                    GlStateManager.depthMask(false);
-                    OpenGlUtil.setStandardBlend();
+                    super.beginRender(buffer, textureManager);
+                    RenderSystem.depthMask(true);
+                    RenderSystem.enableBlend();
+                    RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+                    RenderSystem.alphaFunc(516, 0.003921569F);
                 }
             };
 

@@ -49,8 +49,12 @@ public class ParticleRenderType implements IParticleRenderType {
     @Override
     public void beginRender(@Nonnull final BufferBuilder buffer, @Nonnull final TextureManager textureManager) {
         RenderHelper.disableStandardItemLighting();
-        textureManager.bindTexture(this.texture);
+        textureManager.bindTexture(getTexture());
         buffer.begin(GL11.GL_QUADS, getVertexFormat());
+    }
+
+    protected ResourceLocation getTexture() {
+        return this.texture;
     }
 
     @Override

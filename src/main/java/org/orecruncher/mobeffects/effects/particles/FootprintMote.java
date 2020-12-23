@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Mob Effects
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.world.IBlockReader;
@@ -119,7 +118,7 @@ public class FootprintMote extends AgeableMote {
     protected void update() {
         if (this.isSnowLayer && world.getBlockState(this.position).getBlock() != Blocks.SNOW) {
             kill();
-        } else if (!WorldUtils.isBlockSolid(this.world, this.downPos)) {
+        } else if (!WorldUtils.isTopSolid(this.world, this.downPos)) {
             kill();
         }
     }

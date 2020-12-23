@@ -98,19 +98,6 @@ public interface IResourceAccessor {
     };
 
     /**
-     * Creates a reference to a resource that can be cached on the local disk.  If it does not exist on the local disk
-     * it will be obtained from the JAR.
-     *
-     * @param rootContainer The location within the asset folder where data can be found.  Typically it's the mod ID.
-     * @param root          The location on the local file system where config data can be cached.
-     * @param location      The resource location of the data that needs to be retrieved.
-     * @return Reference to a resource accessor to obtain the necessary data.
-     */
-    static IResourceAccessor createCachedResource(@Nonnull final String rootContainer, @Nonnull final File root, @Nonnull final ResourceLocation location) {
-        return new ResourceAccessorCached(rootContainer, root, location);
-    }
-
-    /**
      * Creates a reference to a resource accessor that can be used to retrieve data embedded in the JAR.
      *
      * @param rootContainer The location within the asset folder where data can be found.  Typically it's the mod ID.
@@ -119,6 +106,11 @@ public interface IResourceAccessor {
      */
     static IResourceAccessor createJarResource(@Nonnull final String rootContainer, @Nonnull final ResourceLocation location) {
         return new ResourceAccessorJar(rootContainer, location);
+    }
+
+    static IResourceAccessor createJarResource(@Nonnull IFormatterCallback formatter, @Nonnull final ResourceLocation location) {
+        String asset = formatter.format(location);
+        return new ResourceAccessorJar(location, asset);
     }
 
     /**
@@ -130,5 +122,10 @@ public interface IResourceAccessor {
      */
     static IResourceAccessor createExternalResource(@Nonnull File root, @Nonnull ResourceLocation location) {
         return new ResourceAccessorExternal(root, location);
+    }
+
+    @FunctionalInterface
+    interface IFormatterCallback {
+        String format(@Nonnull final ResourceLocation location);
     }
 }

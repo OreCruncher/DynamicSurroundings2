@@ -1,5 +1,5 @@
 /*
- * Dynamic Surroundings: Sound Control
+ * Dynamic Surroundings
  * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,8 +30,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
+import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.gui.Color;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class ShaderProgram {
@@ -190,8 +193,9 @@ public class ShaderProgram {
 
 	protected void initialize(final ResourceLocation vertexResource, final ResourceLocation fragmentResource)
 			throws Exception {
-		final String vertex = ResourceUtils.readResource("shaders", vertexResource);
-		final String fragment = ResourceUtils.readResource("shaders", fragmentResource);
+		final IResourceAccessor.IFormatterCallback cb = location -> String.format("/assets/%s/shaders/%s", location.getNamespace(), location.getPath());
+		final String vertex = IResourceAccessor.createJarResource(cb, vertexResource).asString();
+		final String fragment = IResourceAccessor.createJarResource(cb, fragmentResource).asString();
 		this.initialize(vertex, fragment);
 	}
 

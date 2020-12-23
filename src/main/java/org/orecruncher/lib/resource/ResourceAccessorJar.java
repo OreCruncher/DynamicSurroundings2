@@ -30,8 +30,12 @@ final class ResourceAccessorJar extends ResourceAccessorBase {
     final String asset;
 
     public ResourceAccessorJar(@Nonnull final String rootContainer, @Nonnull ResourceLocation location) {
+        this(location, String.format("/assets/%s/%s/%s", rootContainer, location.getNamespace(), location.getPath()));
+    }
+
+    public ResourceAccessorJar(@Nonnull final ResourceLocation location, @Nonnull final String asset) {
         super(location);
-        this.asset = String.format("/assets/%s/%s/%s", rootContainer, location.getNamespace(), location.getPath());
+        this.asset = asset;
     }
 
     @Override

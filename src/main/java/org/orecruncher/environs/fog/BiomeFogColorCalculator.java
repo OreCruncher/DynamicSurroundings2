@@ -134,8 +134,7 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
         // WorldProvider.getFogColor() - need to calculate the scale based
         // on sunlight and stuff.
         final float partialTicks = (float) event.getRenderPartialTicks();
-        // TODO: Change in celestial angle name to include radians - did the calc change?
-        final float celestialAngle = world.getCelestialAngleRadians(partialTicks);
+        final float celestialAngle = world.func_242415_f(partialTicks);
         final float baseScale = MathStuff.clamp1(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F);
 
         double rScale = baseScale * 0.94F + 0.06F;

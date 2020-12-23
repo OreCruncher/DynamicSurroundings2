@@ -196,8 +196,7 @@ public final class Config {
             }
 
             public boolean get_enableFootprintParticles() {
-                return false;
-                //return this._enableFootprintParticles;
+                return this._enableFootprintParticles;
             }
 
             public boolean get_firstPersonFootstepCadence() {

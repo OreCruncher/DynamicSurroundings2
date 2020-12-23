@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,6 +102,11 @@ final class ParticleCollection extends BaseParticle {
             }
         }
         this.tick.end();
+    }
+
+    @Override
+    public boolean shouldCull() {
+        return false;
     }
 
     @Override

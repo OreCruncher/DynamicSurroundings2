@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Environs
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,12 @@ package org.orecruncher.environs.effects.particles;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.client.renderer.BufferBuilder;
 import org.orecruncher.lib.biomes.BiomeUtilities;
 import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.particles.MotionMote;
@@ -35,6 +36,7 @@ import org.orecruncher.lib.random.XorShiftRandom;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
+// TODO: Should this be animated?  Seems to overlap.
 @OnlyIn(Dist.CLIENT)
 public class MoteWaterSpray extends MotionMote {
 
@@ -44,7 +46,6 @@ public class MoteWaterSpray extends MotionMote {
 
 	protected final float texU1, texU2;
 	protected final float texV1, texV2;
-	protected final float f4;
 
 	public MoteWaterSpray(final IBlockReader world, final double x, final double y, final double z, final double dX,
 						  final double dY, final double dZ) {
@@ -52,7 +53,7 @@ public class MoteWaterSpray extends MotionMote {
 		super(world, x, y, z, dX, dY, dZ);
 
 		this.maxAge = (int) (8.0F / (RANDOM.nextFloat() * 0.8F + 0.2F));
-		this.scale = (RANDOM.nextFloat() * 0.5F + 0.5F) * 2.0F;
+		this.scale = (RANDOM.nextFloat() * 0.5F + 0.5F) * 2.0F * 0.07F;
 
 		final int textureIdx = RANDOM.nextInt(4);
 		final int texX = textureIdx % 2;
@@ -61,10 +62,6 @@ public class MoteWaterSpray extends MotionMote {
 		this.texU2 = this.texU1 + 0.5F;
 		this.texV1 = texY * 0.5F;
 		this.texV2 = this.texV1 + 0.5F;
-
-		// Tweak the constant to change the size of the raindrop
-		this.f4 = 0.07F * this.scale;
-
 	}
 
 	@Override
@@ -86,25 +83,31 @@ public class MoteWaterSpray extends MotionMote {
 	@Override
 	public void renderParticle(@Nonnull IVertexBuilder buffer, @Nonnull ActiveRenderInfo info, float partialTicks) {
 
-		final float x = this.renderX(info, partialTicks);
-		final float y = this.renderY(info, partialTicks);
-		final float z = this.renderZ(info, partialTicks);
+		final float x = renderX(info, partialTicks);
+		final float y = renderY(info, partialTicks);
+		final float z = renderZ(info, partialTicks);
 
-		float rotX = info.getRotation().getX();
-		float rotY = info.getRotation().getY();
-		float rotZ = info.getRotation().getZ();
-		float rotYZ = 0.0F;
-		float rotXY = 0.0F;
-		float rotXZ = 0.0F;
+		Quaternion quaternion = info.getRotation();
 
-		drawVertex(buffer, x + (-rotX * this.f4 - rotXY * this.f4), y + (-rotZ * this.f4),
-				z + (-rotYZ * this.f4 - rotXZ * this.f4), this.texU2, this.texV2);
-		drawVertex(buffer, x + (-rotX * this.f4 + rotXY * this.f4), y + (rotZ * this.f4),
-				z + (-rotYZ * this.f4 + rotXZ * this.f4), this.texU2, this.texV1);
-		drawVertex(buffer, x + (rotX * this.f4 + rotXY * this.f4), y + (rotZ * this.f4),
-				z + (rotYZ * this.f4 + rotXZ * this.f4), this.texU1, this.texV1);
-		drawVertex(buffer, x + (rotX * this.f4 - rotXY * this.f4), y + (-rotZ * this.f4),
-				z + (rotYZ * this.f4 - rotXZ * this.f4), this.texU1, this.texV2);
+		Vector3f vector3f1 = new Vector3f(-1.0F, -1.0F, 0.0F);
+		vector3f1.transform(quaternion);
+		Vector3f[] avector3f = new Vector3f[]{
+				new Vector3f(-1.0F, -1.0F, 0.0F),
+				new Vector3f(-1.0F, 1.0F, 0.0F),
+				new Vector3f(1.0F, 1.0F, 0.0F),
+				new Vector3f(1.0F, -1.0F, 0.0F)};
+
+		for (int i = 0; i < 4; ++i) {
+			Vector3f vector3f = avector3f[i];
+			vector3f.transform(quaternion);
+			vector3f.mul(this.scale);
+			vector3f.add(x, y, z);
+		}
+
+		drawVertex(buffer, avector3f[0].getX(), avector3f[0].getY(), avector3f[0].getZ(), this.texU2, this.texV2);
+		drawVertex(buffer, avector3f[1].getX(), avector3f[1].getY(), avector3f[1].getZ(), this.texU2, this.texV1);
+		drawVertex(buffer, avector3f[2].getX(), avector3f[2].getY(), avector3f[2].getZ(), this.texU1, this.texV1);
+		drawVertex(buffer, avector3f[3].getX(), avector3f[3].getY(), avector3f[3].getZ(), this.texU1, this.texV2);
 	}
 
 }

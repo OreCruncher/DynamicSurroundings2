@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,10 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -160,32 +161,33 @@ public abstract class AnimatedMote extends MotionMote {
 	}
 
 	@Override
-	public void renderParticle(@Nonnull final IVertexBuilder buffer, @Nonnull final ActiveRenderInfo info, float partialTicks)
-	{
-		final double x = renderX(info, partialTicks);
-		final double y = renderY(info, partialTicks);
-		final double z = renderZ(info, partialTicks);
+	public void renderParticle(@Nonnull final IVertexBuilder buffer, @Nonnull final ActiveRenderInfo info, float partialTicks) {
 
-		final float rotX = info.getRotation().getX();
-		final float rotY = info.getRotation().getY();
-		final float rotZ = info.getRotation().getZ();
+		final float x = renderX(info, partialTicks);
+		final float y = renderY(info, partialTicks);
+		final float z = renderZ(info, partialTicks);
 
-		final float rotYZ = 0f;
-		final float rotXY = 0f;
-		final float rotXZ = 0f;
+		Quaternion quaternion = info.getRotation();
 
-		drawVertex(buffer, x + (-rotX * this.particleScale - rotXY * this.particleScale),
-				y + (-rotZ * this.particleScale),
-				z + (-rotYZ * this.particleScale - rotXZ * this.particleScale), this.texU2, this.texV2);
-		drawVertex(buffer, x + (-rotX * this.particleScale + rotXY * this.particleScale),
-				y + (rotZ * this.particleScale),
-				z + (-rotYZ * this.particleScale + rotXZ * this.particleScale), this.texU2, this.texV1);
-		drawVertex(buffer, x + (rotX * this.particleScale + rotXY * this.particleScale),
-				y + (rotZ * this.particleScale),
-				z + (rotYZ * this.particleScale + rotXZ * this.particleScale), this.texU1, this.texV1);
-		drawVertex(buffer, x + (rotX * this.particleScale - rotXY * this.particleScale),
-				y + (-rotZ * this.particleScale),
-				z + (rotYZ * this.particleScale - rotXZ * this.particleScale), this.texU1, this.texV2);
+		Vector3f vector3f1 = new Vector3f(-1.0F, -1.0F, 0.0F);
+		vector3f1.transform(quaternion);
+		Vector3f[] avector3f = new Vector3f[]{
+				new Vector3f(-1.0F, -1.0F, 0.0F),
+				new Vector3f(-1.0F, 1.0F, 0.0F),
+				new Vector3f(1.0F, 1.0F, 0.0F),
+				new Vector3f(1.0F, -1.0F, 0.0F)};
+
+		for (int i = 0; i < 4; ++i) {
+			Vector3f vector3f = avector3f[i];
+			vector3f.transform(quaternion);
+			vector3f.mul(this.particleScale);
+			vector3f.add(x, y, z);
+		}
+
+		drawVertex(buffer, avector3f[0].getX(), avector3f[0].getY(), avector3f[0].getZ(), this.texU2, this.texV2);
+		drawVertex(buffer, avector3f[1].getX(), avector3f[1].getY(), avector3f[1].getZ(), this.texU2, this.texV1);
+		drawVertex(buffer, avector3f[2].getX(), avector3f[2].getY(), avector3f[2].getZ(), this.texU1, this.texV1);
+		drawVertex(buffer, avector3f[3].getX(), avector3f[3].getY(), avector3f[3].getZ(), this.texU1, this.texV2);
 	}
 
 	public void setParticleTexture() {

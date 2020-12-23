@@ -274,8 +274,7 @@ public final class Config {
             }
 
             public boolean get_enableFireFlies() {
-                return false;
-                //return this._enableFireFlies;
+                return this._enableFireFlies;
             }
 
             public boolean get_enableSteamJets() {
@@ -291,8 +290,7 @@ public final class Config {
             }
 
             public boolean get_enableDustJets() {
-                return false;
-                //return this._enableDustJets;
+                return this._enableDustJets;
             }
 
             public boolean get_enableFountainJets() {
@@ -300,8 +298,7 @@ public final class Config {
             }
 
             public boolean get_enableWaterSplashJets() {
-                return false;
-                //return this._enableWaterSplashJets;
+                return this._enableWaterSplashJets;
             }
 
             public boolean get_disableUnderwaterParticles() {

@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,17 +64,17 @@ public abstract class MotionMote extends AgeableMote {
 
 	@Override
 	protected float renderX(ActiveRenderInfo info, final float partialTicks) {
-		return (float) (MathHelper.lerp(partialTicks, this.prevX, this.posX) - interpX(info));
+		return (float)(MathHelper.lerp(partialTicks, this.prevX, this.posX) - info.getProjectedView().getX());
 	}
 
 	@Override
 	protected float renderY(ActiveRenderInfo info, final float partialTicks) {
-		return (float) (MathHelper.lerp(partialTicks, this.prevY, this.posY) - interpY(info));
+		return (float)(MathHelper.lerp(partialTicks, this.prevY, this.posY) - info.getProjectedView().getY());
 	}
 
 	@Override
 	protected float renderZ(ActiveRenderInfo info, final float partialTicks) {
-		return (float) (MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - interpZ(info));
+		return (float)(MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - info.getProjectedView().getZ());
 	}
 
 	/**

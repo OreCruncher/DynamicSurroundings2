@@ -19,13 +19,9 @@
 package org.orecruncher.lib.fml;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,7 +31,6 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.orecruncher.lib.GameUtils;
-import org.orecruncher.lib.Lib;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,7 +39,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-@SuppressWarnings("unused")
 public final class ForgeUtils {
     private ForgeUtils() {
 
@@ -131,29 +125,6 @@ public final class ForgeUtils {
                 .distinct()
                 .map(e -> new ResourceLocation(e, path))
                 .collect(Collectors.toList());
-    }
-
-    public static Map<ResourceLocation, Class<? extends Entity>> getRegisteredEntities() {
-        final Map<ResourceLocation, Class<? extends Entity>> results = new HashMap<>();
-
-        // TODO: Sort this out - dynamically handle at runtime?
-        /*
-        final World fake = FakeWorld.create("Fake");
-        final Collection<EntityType<?>> f = ForgeRegistries.ENTITIES.getValues();
-        for (final EntityType<?> et : f) {
-            try {
-                // May not work 100%.  Regular vanilla just needs a viable world reference to create.  Modded entities
-                // may behave differently.
-                final Entity entity = et.create(fake);
-                if (entity instanceof LivingEntity) {
-                    results.put(et.getRegistryName(), entity.getClass());
-                }
-            } catch (@Nonnull final Throwable t) {
-                Lib.LOGGER.warn("Unable to instantiate '%s'", et.getRegistryName().toString());
-            }
-        }
-*/
-        return results;
     }
 
     @Nonnull

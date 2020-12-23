@@ -99,8 +99,7 @@ public final class DynamicSurroundings {
 
     @SubscribeEvent
     public void onPlayerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
-        // TODO:  getString()?
-        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName().getString());
+        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName());
         if (Config.CLIENT.logging.get_onlineVersionCheck())
             UpdateChecker.doCheck(event, MOD_ID);
     }

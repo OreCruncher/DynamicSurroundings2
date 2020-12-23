@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.handlers.CommonState;
@@ -77,8 +76,7 @@ public final class CeilingCoverage {
 	public void tick() {
 		if (TickCounter.getTickCount() % SURVEY_INTERVAL == 0) {
 			final DimensionInfo dimInfo = DimensionLibrary.getData(GameUtils.getWorld());
-			// TODO: Figure out whether to do scan to save time based on dimension id.
-			if (/*dimInfo.getId() == -1 ||*/ dimInfo.alwaysOutside()) {
+			if (dimInfo.alwaysOutside()) {
 				this.reallyInside = false;
 			} else {
 				final BlockPos pos = CommonState.getPlayerPosition();

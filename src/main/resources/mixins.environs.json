@@ -9,6 +9,7 @@
   ],
   "client": [
     "MixinBlockState",
-    "MixinBiome"
+    "MixinBiome",
+    "MixinDripParticleDripping"
   ]
 }

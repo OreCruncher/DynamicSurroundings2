@@ -74,7 +74,6 @@ public class Inspector {
                                         final BlockPos pos) {
 
         if (!stack.isEmpty()) {
-            // TODO: Is getString() correct?
             text.add(TextFormatting.RED + stack.getDisplayName().getString());
             final String itemName = stack.getItem().getName().getString();
             if (!StringUtils.isEmpty(itemName)) {

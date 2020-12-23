@@ -414,10 +414,6 @@
     "_comment": "Player explicit set",
     "acoustics": [
       {
-        "acoustic": "dimension/nether",
-        "conditions": "dim.getId() == 'minecraft:the_nether'"
-      },
-      {
         "acoustic": "dimension/theend",
         "conditions": "dim.getId() == 'minecraft:the_end'"
       }

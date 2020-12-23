@@ -1,6 +1,7 @@
 {
   "package": "org.orecruncher.mobeffects.mixins",
-  "refmap": "mixins.mobeffects.refmap.json",
+  "required": true,
+  "refmap": "mixins.dsurround.refmap.json",
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",

@@ -1,5 +1,4 @@
 {
-  "biome": "transformers/biome.js",
   "dripparticle": "transformers/dripparticle.js",
   "abstractarrowentity": "transformers/arrow.js"
 }

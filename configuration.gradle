@@ -8,14 +8,14 @@ def snapshot     	= '20201028-1.16.3'
 
 // General Mod version stuff
 project.group           	= 'org.orecruncher'
-project.archivesBaseName	= 'DynamicSurroundings2'
+project.archivesBaseName	= 'DynamicSurroundings'
 project.version         	= "${mcVersion}-${modVersion}${modDesignator}"
 
 //project.ext.ssVersion     	= "3.0.0.74"
 project.ext.bopVersion      = "13.0.0.425"
 project.ext.jeiVersion    	= "7.6.0.62"
 
-project.ext.modId        	= 'dsurround2'
+project.ext.modId        	= 'dsurround'
 project.ext.mcVersion    	= mcVersion
 project.ext.modVersion   	= modVersion
 project.ext.forgeVersion	= forgeVersion

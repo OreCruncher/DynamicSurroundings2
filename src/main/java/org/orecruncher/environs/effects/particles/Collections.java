@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Environs
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
@@ -44,11 +43,9 @@ public final class Collections {
                 public void beginRender(@Nonnull BufferBuilder buffer, @Nonnull TextureManager textureManager) {
                     RenderHelper.disableStandardItemLighting();
                     textureManager.bindTexture(RippleStyle.get().getTexture());
+                    buffer.begin(GL11.GL_QUADS, getVertexFormat());
                     GlStateManager.depthMask(false);
-                    GlStateManager.enableDepthTest();
                     OpenGlUtil.setStandardBlend();
-                    GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
-                    buffer.begin(GL11.GL_QUADS, this.getVertexFormat());
                 }
             };
 

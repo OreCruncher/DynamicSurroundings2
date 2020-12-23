@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,8 +113,9 @@ public final class AudioEngine {
     public static void play(@Nonnull final ISoundInstance sound) {
         Objects.requireNonNull(sound);
         // If the sound is already queued return it's current active state.
-        if (!playingSounds.contains(sound))
+        if (!playingSounds.contains(sound)) {
             playSound0(sound);
+        }
     }
 
     private static void playSound0(@Nonnull ISoundInstance sound) {
@@ -255,23 +256,18 @@ public final class AudioEngine {
 
     public static void initialize() {
         MinecraftForge.EVENT_BUS.register(AudioEngine.class);
-        GameUtils.getSoundHander().addListener(new SoundListener());
     }
 
     /**
-     * Tap into the sound play process to figure out which sound actually gets played.  Use the SoundListener rather
-     * than the event method because this callback will happen later in the process when things are more diffinitive.
-     * The sound engine could decide to not play a sound after the Forge event fires.
+     * Hook that is called when the sound is actually being queued down into the engine.  Use this to determine
+     * what actually got played and to perform logging.  The standard sound listener will not receive callbacks if
+     * the sound is too far away (based on the sound instance distance value).
+     * @param sound Sound that is being queued into the audio engine
      */
-    private static class SoundListener implements ISoundEventListener {
-
-        @Override
-        public void onPlaySound(@Nonnull final ISound soundIn, @Nonnull final SoundEventAccessor accessor) {
-            playedSound = soundIn;
-
-            if (!(playedSound instanceof ISoundInstance)) {
-                LOGGER.debug(Config.Trace.BASIC_SOUND_PLAY, () -> String.format("PLAYING: [%s]", SoundUtils.debugString(playedSound)));
-            }
+    public static void onPlaySound(@Nonnull final ISound sound) {
+        playedSound = sound;
+        if (!(playedSound instanceof ISoundInstance)) {
+            LOGGER.debug(Config.Trace.BASIC_SOUND_PLAY, () -> String.format("PLAYING: [%s]", SoundUtils.debugString(playedSound)));
         }
     }
 }

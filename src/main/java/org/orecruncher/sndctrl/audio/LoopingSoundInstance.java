@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,6 @@ public class LoopingSoundInstance extends WrappedSoundInstance {
 
     @Override
     public boolean canRepeat() {
-        // ASM is used to increase the buffer size 16x.  Reason is the loop code in the sound engine loops on cached
-        // buffers, meaning the entire sound has to be loaded.  If for some reason this breaks you will get a choppy
-        // termination before restarting the loop.
         return true;
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 package org.orecruncher.environs.shaders.aurora;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -65,8 +66,6 @@ public class AuroraShaderBand extends AuroraBase {
 
 		this.auroraWidth = this.band.getNodeList().length * this.band.getNodeWidth();
 		this.panelTexWidth = this.band.getNodeWidth() / this.auroraWidth;
-
-		//this.buffer = createList();
 	}
 
 	@Override
@@ -81,16 +80,17 @@ public class AuroraShaderBand extends AuroraBase {
 	protected float getAuroraHeight() {
 		return AuroraBand.AURORA_AMPLITUDE;
 	}
-	
+
 	// Build out our aurora render area so we can reapply it each
 	// render pass.  I am thinking there is a better way but
 	// I don't know alot about this area of Minecraft.
-	protected BufferBuilder createList() {
-		final BufferBuilder renderer = new BufferBuilder(4096);
+	protected BufferBuilder generateBand() {
+
+		final BufferBuilder renderer = Tessellator.getInstance().getBuffer();
 		final Panel[] array = this.band.getNodeList();
 		
 		renderer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX);
-		
+
 		// Get the strip started
 		final double posY = array[0].getModdedY();
 		final double posX = array[0].tetX;
@@ -124,7 +124,7 @@ public class AuroraShaderBand extends AuroraBase {
 		}
 		
 		renderer.finishDrawing();
-		
+
 		return renderer;
 	}
 
@@ -153,8 +153,7 @@ public class AuroraShaderBand extends AuroraBase {
 				GlStateManager.pushMatrix();
 				GlStateManager.translated(tranX, tranY, tranZ + this.offset * b);
 				GlStateManager.scaled(0.5D, 10.0D, 0.5D);
-				WorldVertexBufferUploader.draw(createList());
-				//this.buffer.reset();
+				WorldVertexBufferUploader.draw(generateBand());
 				GlStateManager.popMatrix();
 			}
 

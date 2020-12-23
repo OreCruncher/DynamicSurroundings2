@@ -70,8 +70,7 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
 
         final GameSettings settings = GameUtils.getGameSettings();
         int distance = 6;
-        // TODO: What is fabulous vs. previous fancy?
-        if (settings.graphicFanciness == GraphicsFanciness.FABULOUS) {
+        if (settings.graphicFanciness != GraphicsFanciness.FAST) {
             distance = BLEND_RANGES[MathStuff.clamp(settings.renderDistanceChunks, 0, BLEND_RANGES.length - 1)];
         }
 

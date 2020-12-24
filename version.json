@@ -4,7 +4,7 @@
 		"4.0.1.0": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md"
 	},
 	"promos": {
-		"1.16.4-latest": "4.0.1.0",
-		"1.16.4-recommended": "4.0.1.0"
+		"1.16.4-latest": "1.16.4-4.0.1.0",
+		"1.16.4-recommended": "`.`6.4-4.0.1.0"
 	}
 }

@@ -208,9 +208,7 @@
     "minecraft:snow+carpet": "snow",
     "minecraft:lily_pad": "waterfine",
     "minecraft:lily_pad+carpet": "waterfine",
-    "minecraft:dead_bush": "not_emitter",
-    "minecraft:dead_bush+messy": "messy_ground",
-    "minecraft:dead_bush+foliage": "straw",
+    "minecraft:dead_bush": "#deadbush",
     "minecraft:large_fern": "#tallplant",
     "minecraft:tall_grass": "#tallplant",
     "minecraft:sugar_cane": "#reed",
@@ -252,6 +250,9 @@
     "minecraft:cauldron[level=3]": "metalbar,waterfine",
 
     "minecraft:glowstone": "glowstone",
+
+    "minecraft:weeping_vines": "#vine",
+    "minecraft:crimson_roots": "#deadbush",
 
     "minecraft:ladder": "ladder_default"
   }

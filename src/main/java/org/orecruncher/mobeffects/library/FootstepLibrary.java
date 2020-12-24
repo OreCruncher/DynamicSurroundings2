@@ -135,6 +135,12 @@ public final class FootstepLibrary {
         entries.add(new MacroEntry("foliage", "brush_straw_transition"));
         macros.put("#bush", entries);
 
+        entries = new ArrayList<>(3);
+        entries.add(new MacroEntry(null, "not_emitter"));
+        entries.add(MESSY);
+        entries.add(new MacroEntry("foliage", "straw"));
+        macros.put("#deadbush", entries);
+
         entries = new ArrayList<>(2);
         entries.add(NOT_EMITTER);
         entries.add(new MacroEntry("bigger", "bluntwood"));
@@ -201,10 +207,10 @@ public final class FootstepLibrary {
     }
 
     static void initFromConfig(@Nonnull final FootstepConfig mod) {
-        // Handle our primitives first
+        // Handle our primitives first.  These will overwrite existing entries in the acoustic library
         for (final Map.Entry<String, String> kvp : mod.primitives.entrySet()) {
             final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
-            Library.resolve(loc, kvp.getValue());
+            Library.resolve(loc, kvp.getValue(), true);
         }
 
         // Apply acoustics based on configured tagging
@@ -250,7 +256,6 @@ public final class FootstepLibrary {
                 builder.append("]");
                 return builder.toString();
             } catch(@Nonnull final Throwable t) {
-                int x = 0;
             }
             return "ERROR";
         }).sorted();

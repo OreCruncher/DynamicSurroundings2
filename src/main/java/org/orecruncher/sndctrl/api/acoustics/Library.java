@@ -69,7 +69,12 @@ public final class Library {
 
     @Nonnull
     public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nullable final String definition) {
-        return AcousticLibrary.resolve(acousticName, definition);
+        return resolve(acousticName, definition, false);
+    }
+
+    @Nonnull
+    public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nullable final String definition, final boolean overwrite) {
+        return AcousticLibrary.resolve(acousticName, definition, overwrite);
     }
 
     @Nonnull

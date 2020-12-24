@@ -148,7 +148,18 @@ public final class AcousticLibrary {
 
     @Nonnull
     public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nullable final String definition) {
-        IAcoustic result = compiled.get(acousticName.toString());
+        return resolve(acousticName, definition, false);
+    }
+
+    @Nonnull
+    public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nullable final String definition, final boolean overwrite) {
+        IAcoustic result = null;
+
+        result = compiled.get(acousticName.toString());
+
+        if (overwrite)
+            result = null;
+
         if (result == null) {
             result = parseDefinition(acousticName, definition, null);
             addAcoustic(acousticName, result);
@@ -180,6 +191,9 @@ public final class AcousticLibrary {
 
     @Nullable
     private static IAcoustic generateAcoustic(@Nonnull final ResourceLocation name) {
+        if (name.toString().contains("block.stone.step")) {
+            int x = 0;
+        }
         IAcoustic a = compiled.get(name.toString());
         if (a == null) {
             // Nope. Doesn't exist yet. It could be a sound name based on location.

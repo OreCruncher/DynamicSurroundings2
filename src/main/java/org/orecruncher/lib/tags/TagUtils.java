@@ -22,17 +22,33 @@ import net.minecraft.block.Block;
 import net.minecraft.tags.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.GameUtils;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import org.orecruncher.dsurround.DynamicSurroundings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = DynamicSurroundings.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class TagUtils {
 
     private TagUtils() {
 
+    }
+
+    private static ITagCollectionSupplier supplier;
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void tagsUpdated(@Nonnull final TagsUpdatedEvent event) {
+        supplier = event.getTagManager();
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void playerLoggedOut(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
+        supplier = null;
     }
 
     @Nullable
@@ -42,6 +58,6 @@ public final class TagUtils {
 
     @Nullable
     public static ITag<Block> getBlockTag(@Nonnull final ResourceLocation res) {
-        return GameUtils.getWorld().getTags().getBlockTags().get(res);
+        return supplier.getBlockTags().get(res);
     }
 }

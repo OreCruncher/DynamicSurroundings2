@@ -73,10 +73,7 @@ public class ClientServiceManager {
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStart(@Nonnull final TagsUpdatedEvent event) {
-        performAction("start", IClientService::start);
-
-        for (@Nonnull final IClientService svc : this.services)
-            svc.log();
+        reload();
     }
 
     /**

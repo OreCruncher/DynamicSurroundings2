@@ -1,4 +1,13 @@
-### DynamicSurroundings-1.16.4-4.0.1.0
+> ### DynamicSurroundings-1.16.4-4.0.1.1
+**Requirements**
+* Forge 1.16.4-35.1.10
+* 100% client side; no server side deployment needed
+
+**Fixes**
+* Crash when connecting to a remote server.
+* Version update being indicated when you have the current version installed.
+
+> ### DynamicSurroundings-1.16.4-4.0.1.0
 **Requirements**
 * Forge 1.16.4-35.1.10
 * 100% client side; no server side deployment needed

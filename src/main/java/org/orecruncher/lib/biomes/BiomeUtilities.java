@@ -54,7 +54,7 @@ public class BiomeUtilities {
     public static String getBiomeName(@Nonnull final Biome biome) {
         ResourceLocation loc = biome.getRegistryName();
         if (loc == null) {
-            final Biome forgeBiome = getBiome(biome);
+            final Biome forgeBiome = getClientBiome(biome);
             if (forgeBiome != null)
                 loc = forgeBiome.getRegistryName();
         }
@@ -90,7 +90,7 @@ public class BiomeUtilities {
         try {
             ResourceLocation loc = biome.getRegistryName();
             if (loc == null) {
-                final Biome forgeBiome = getBiome(biome);
+                final Biome forgeBiome = getClientBiome(biome);
                 if (forgeBiome != null)
                     loc = forgeBiome.getRegistryName();
             }
@@ -105,7 +105,8 @@ public class BiomeUtilities {
         return ImmutableSet.of();
     }
 
-    public static Biome getBiome(@Nonnull BlockPos pos) {
+    @Nullable
+    public static Biome getClientBiome(@Nonnull BlockPos pos) {
         final ClientWorld world = GameUtils.getWorld();
         assert world != null;
         final ResourceLocation loc = world.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(world.getBiome(pos));
@@ -113,7 +114,7 @@ public class BiomeUtilities {
     }
 
     @Nullable
-    public static Biome getBiome(@Nonnull final Biome biome) {
+    public static Biome getClientBiome(@Nonnull final Biome biome) {
         final ClientWorld world = GameUtils.getWorld();
         assert world != null;
         final ResourceLocation loc = world.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);

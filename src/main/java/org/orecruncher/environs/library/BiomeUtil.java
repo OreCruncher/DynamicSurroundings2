@@ -35,7 +35,7 @@ public final class BiomeUtil {
         BiomeInfo result = ((IMixinBiomeData) (Object) biome).getInfo();
         if (result == null) {
             // Get the data from the Forge registries
-            final Biome forge = BiomeUtilities.getBiome(biome);
+            final Biome forge = BiomeUtilities.getClientBiome(biome);
             if (forge != null) {
                 result = ((IMixinBiomeData) (Object) forge).getInfo();
             }

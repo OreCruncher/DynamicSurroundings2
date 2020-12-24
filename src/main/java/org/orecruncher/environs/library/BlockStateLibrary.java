@@ -31,7 +31,7 @@ import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.effects.BlockEffectType;
 import org.orecruncher.environs.library.config.*;
-import org.orecruncher.lib.TagUtils;
+import org.orecruncher.lib.tags.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
 import org.orecruncher.lib.fml.ForgeUtils;

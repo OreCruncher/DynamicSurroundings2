@@ -32,10 +32,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
-import org.orecruncher.lib.TagUtils;
+import org.orecruncher.lib.tags.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
 import org.orecruncher.lib.blockstate.BlockStateParser;
@@ -323,11 +322,16 @@ public final class FootstepLibrary {
 
         final ITag<Block> blockTag = TagUtils.getBlockTag(tagName);
         if (blockTag != null) {
-            for (final Block b : blockTag.getAllElements()) {
-                String blockName = Objects.requireNonNull(b.getRegistryName()).toString();
-                if (substrate != null)
-                    blockName = blockName + "+" + substrate;
-                register(blockName, acousticList);
+            final List<Block> elements = blockTag.getAllElements();
+            if (elements.size() == 0) {
+                LOGGER.info("No blocks associated with tag '%s'", tagName);
+            } else {
+                for (final Block b : blockTag.getAllElements()) {
+                    String blockName = Objects.requireNonNull(b.getRegistryName()).toString();
+                    if (substrate != null)
+                        blockName = blockName + "+" + substrate;
+                    register(blockName, acousticList);
+                }
             }
         } else {
             LOGGER.warn("Unable to identify block tag '%s'", tagName);

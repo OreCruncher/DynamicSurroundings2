@@ -22,6 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.lib.Lib;
@@ -71,7 +72,7 @@ public class ClientServiceManager {
      * @param event Event that is raised
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onStart(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
+    public void onStart(@Nonnull final TagsUpdatedEvent event) {
         performAction("start", IClientService::start);
 
         for (@Nonnull final IClientService svc : this.services)

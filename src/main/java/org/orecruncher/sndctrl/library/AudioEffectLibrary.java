@@ -31,7 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.MaterialUtils;
-import org.orecruncher.lib.TagUtils;
+import org.orecruncher.lib.tags.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
@@ -150,14 +150,15 @@ public final class AudioEffectLibrary {
                 }
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
-                final ITag<Block> tag = TagUtils.getBlockTag(name.substring(1));
+                final String tagName = name.substring(1);
+                final ITag<Block> tag = TagUtils.getBlockTag(tagName);
                 if (tag != null) {
                     for (final Block block : tag.getAllElements()) {
                         for (final BlockState state : block.getStateContainer().getValidStates())
                             blockStateOcclusionMap.put(state, kvp.getValue());
                     }
                 } else {
-                    LOGGER.warn("Unrecognized block tag: %s", name);
+                    LOGGER.warn("Unrecognized block tag: %s", tagName);
                 }
             } else {
                 try {
@@ -176,7 +177,7 @@ public final class AudioEffectLibrary {
 
     private static void processReflectivity(@Nonnull final EffectOptions options) {
 
-        for (final Map.Entry<String, Float> kvp : options.refectitivity.entrySet()) {
+        for (final Map.Entry<String, Float> kvp : options.reflectivity.entrySet()) {
             final String name = kvp.getKey();
             final float val = MathStuff.clamp(kvp.getValue(), 0, 2F);
             if (name.startsWith(MATERIAL_PREFIX)) {
@@ -223,7 +224,7 @@ public final class AudioEffectLibrary {
         @SerializedName("occlusions")
         public Map<String, Float> occlusions = ImmutableMap.of();
         @SerializedName("reflectivity")
-        public Map<String, Float> refectitivity = ImmutableMap.of();
+        public Map<String, Float> reflectivity = ImmutableMap.of();
         @SerializedName("fluid")
         public Map<String, Float> fluid = ImmutableMap.of();
     }

@@ -106,9 +106,6 @@ public final class ItemLibrary {
         }
     }
 
-    static void complete() {
-    }
-
     private static ItemData resolveClass(@Nonnull final Item item) {
         for (final ItemData ic : CACHE.values()) {
             final Set<Class<?>> itemSet = classMap.get(ic);

@@ -33,7 +33,5 @@ public final class Libraries {
     }
 
     public static void complete() {
-        FootstepLibrary.complete();
-        ItemLibrary.complete();
     }
 }

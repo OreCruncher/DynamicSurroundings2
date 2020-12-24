@@ -185,6 +185,7 @@ public final class BlockStateLibrary {
 
         @Override
         public void stop() {
+            registry.clear();
             ForgeUtils.getBlockStates().forEach(state -> BlockStateUtil.setData(state, null));
         }
     }

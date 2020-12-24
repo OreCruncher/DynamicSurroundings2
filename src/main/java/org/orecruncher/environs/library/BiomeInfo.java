@@ -96,7 +96,8 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 	}
 
 	public ResourceLocation getKey() {
-		return this.biome.getKey();
+		ResourceLocation key = this.biome.getKey();
+		return key;
 	}
 
 	public Biome getBiome() {
@@ -117,7 +118,8 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 	}
 
 	public String getBiomeName() {
-		return this.biome.getName();
+		final String name = this.biome.getName();
+		return name == null ? "UNKNOWN" : name;
 	}
 
 	public Biome.RainType getPrecipitationType() {

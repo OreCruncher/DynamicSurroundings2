@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@ package org.orecruncher.environs.library;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.environs.misc.IMixinBiomeData;
+import org.orecruncher.lib.biomes.BiomeUtilities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,7 +35,7 @@ public final class BiomeUtil {
         BiomeInfo result = ((IMixinBiomeData) (Object) biome).getInfo();
         if (result == null) {
             // Get the data from the Forge registries
-            final Biome forge = ForgeRegistries.BIOMES.getValue(biome.getRegistryName());
+            final Biome forge = BiomeUtilities.getBiome(biome);
             if (forge != null) {
                 result = ((IMixinBiomeData) (Object) forge).getInfo();
             }

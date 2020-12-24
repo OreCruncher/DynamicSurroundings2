@@ -32,6 +32,7 @@ import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.environs.library.BiomeInfo;
 import org.orecruncher.environs.library.BiomeUtil;
 import org.orecruncher.lib.TickCounter;
+import org.orecruncher.lib.biomes.BiomeUtilities;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -81,7 +82,10 @@ public final class BiomeScanner {
 				for (int dZ = -BIOME_SURVEY_RANGE; dZ <= BIOME_SURVEY_RANGE; dZ++) {
 					for (int dX = -BIOME_SURVEY_RANGE; dX <= BIOME_SURVEY_RANGE; dX++) {
 						this.mutable.setPos(this.surveyedPosition.getX() + dX, 0, this.surveyedPosition.getZ() + dZ);
-						final Biome biome = provider.getBiome(this.mutable);
+						final Biome biome = BiomeUtilities.getBiome(this.mutable);
+						if (biome.getRegistryName() == null) {
+							continue;
+						}
 						final BiomeInfo info = BiomeUtil.getBiomeData(biome);
 						this.weights.addTo(info, 1);
 					}

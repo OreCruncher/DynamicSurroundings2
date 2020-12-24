@@ -32,12 +32,14 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
 import org.orecruncher.lib.blockstate.BlockStateParser;
+import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
@@ -221,10 +223,6 @@ public final class FootstepLibrary {
             if (matcher != BlockStateMatcher.AIR)
                 FOOTPRINT_STATES.put(matcher, true);
         }
-    }
-
-    static void complete() {
-        substrateMap.forEach((key, value) -> value.trim());
     }
 
     @SubscribeEvent
@@ -453,7 +451,6 @@ public final class FootstepLibrary {
         @Override
         public void start() {
 
-            // Load up the variators
             Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "variators.json");
 
             IResourceAccessor.process(configs, accessor -> {
@@ -473,6 +470,8 @@ public final class FootstepLibrary {
             IResourceAccessor.process(configs, accessor -> {
                 initFromConfig(accessor.as(FootstepConfig.class));
             });
+
+            substrateMap.forEach((key, value) -> value.trim());
         }
 
         @Override
@@ -494,6 +493,8 @@ public final class FootstepLibrary {
 
             for (final BlockAcousticMap m : substrateMap.values())
                 m.clear();
+
+            ForgeUtils.getBlockStates().forEach(state -> ((IMixinFootstepData) state).setAcoustics(null));
         }
     }
 

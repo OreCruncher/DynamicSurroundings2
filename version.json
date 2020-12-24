@@ -1,17 +1,10 @@
 {
-	"homepage": "https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings-soundcontrol",
-	"1.14.4": {
-		"0.1.0.0": "See https://github.com/OreCruncher/SoundControl/blob/master/CHANGELOG.md"
-	},
-	"1.15.2": {
-		"1.0.0.0": "See https://github.com/OreCruncher/SoundControl/blob/master/CHANGELOG.md",
-		"1.0.0.1": "See https://github.com/OreCruncher/SoundControl/blob/master/CHANGELOG.md",
-		"1.0.0.2": "See https://github.com/OreCruncher/SoundControl/blob/master/CHANGELOG.md"
+	"homepage": "https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings",
+	"1.16.4": {
+		"4.0.1.0": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md"
 	},
 	"promos": {
-		"1.14.4-latest": "0.1.0.0",
-		"1.14.4-recommended": "0.1.0.0",
-		"1.15.2-latest": "1.0.0.2",
-		"1.15-2-recommended": "1.0.0.2"
+		"1.16.4-latest": "4.0.1.0",
+		"1.16.4-recommended": "4.0.1.0"
 	}
 }

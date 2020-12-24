@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Environs
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -35,6 +37,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.environs.handlers.Manager;
 import org.orecruncher.environs.library.Constants;
 import org.orecruncher.environs.library.Libraries;
@@ -56,6 +60,10 @@ public final class Environs {
     public static final ModLog LOGGER = new ModLog(Environs.class);
 
     public Environs() {
+
+        // Since we are 100% client side
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+
         if (FMLEnvironment.dist == Dist.CLIENT) {
             // Various event bus registrations
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);

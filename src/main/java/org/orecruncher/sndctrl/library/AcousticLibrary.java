@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @OnlyIn(Dist.CLIENT)
 public final class AcousticLibrary {
@@ -48,6 +49,10 @@ public final class AcousticLibrary {
 
     AcousticLibrary() {
 
+    }
+
+    public static Stream<String> dump() {
+        return compiled.entrySet().stream().map(kvp -> String.format("%s -> %s", kvp.getKey(), kvp.getValue().toString())).sorted();
     }
 
     /**

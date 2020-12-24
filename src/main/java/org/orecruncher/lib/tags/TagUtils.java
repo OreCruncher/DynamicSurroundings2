@@ -31,6 +31,8 @@ import org.orecruncher.dsurround.DynamicSurroundings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = DynamicSurroundings.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class TagUtils {
@@ -59,5 +61,18 @@ public final class TagUtils {
     @Nullable
     public static ITag<Block> getBlockTag(@Nonnull final ResourceLocation res) {
         return supplier.getBlockTags().get(res);
+    }
+
+    public static Stream<String> dumpBlockTags() {
+        final ITagCollection<Block> collection = supplier.getBlockTags();
+
+        return collection.getRegisteredTags().stream().map(loc -> {
+            final StringBuilder builder = new StringBuilder();
+            builder.append(loc.toString()).append(" -> ");
+            final ITag<Block> tag = collection.get(loc);
+            final String text = tag.getAllElements().stream().map(l -> l.getRegistryName().toString()).collect(Collectors.joining(","));
+            builder.append(text);
+            return builder.toString();
+        }).sorted();
     }
 }

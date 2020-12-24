@@ -18,12 +18,12 @@
 
 package org.orecruncher.dsurround;
 
-import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -31,6 +31,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
@@ -63,7 +65,16 @@ public final class DynamicSurroundings {
      */
     public static final File DATA_PATH = Paths.get(CONFIG_PATH.toString(), "configs").toFile();
 
+    /**
+     * Path to the external folder for dumping data
+     */
+    public static final File DUMP_PATH = Paths.get(CONFIG_PATH.toString(), "dumps").toFile();
+
     public DynamicSurroundings() {
+
+        // Since we are 100% client side
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+
         if (FMLEnvironment.dist == Dist.CLIENT) {
             // Various event bus registrations
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
@@ -75,12 +86,18 @@ public final class DynamicSurroundings {
             // Initialize our configuration
             Config.setup();
 
-            if (!DATA_PATH.exists()) {
-                try {
-                    DATA_PATH.mkdirs();
-                } catch (@Nonnull final Throwable t) {
-                    LOGGER.error(t, "Unable to create configuration data path");
-                }
+            // Create additional data paths if needed
+            createPath(DATA_PATH);
+            createPath(DUMP_PATH);
+        }
+    }
+
+    private static void createPath(@Nonnull final File path) {
+        if (!path.exists()) {
+            try {
+                path.mkdirs();
+            } catch (@Nonnull final Throwable t) {
+                LOGGER.error(t, "Unable to create data path %s", path.toString());
             }
         }
     }

@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -115,6 +116,11 @@ public final class DimensionLibrary {
 		return dimInfo;
 	}
 
+	public static Stream<String> dump()
+	{
+		return cache.stream().map(Object::toString).sorted();
+	}
+
 	private static class DimensionLibraryService implements IClientService {
 
 		@Override
@@ -136,7 +142,7 @@ public final class DimensionLibrary {
 		public void log() {
 			if (Config.CLIENT.logging.get_enableLogging()) {
 				LOGGER.info("*** DIMENSION REGISTRY (cache) ***");
-				cache.stream().map(Object::toString).forEach(LOGGER::info);
+				dump().forEach(LOGGER::info);
 			}
 		}
 

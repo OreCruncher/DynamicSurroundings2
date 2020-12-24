@@ -62,6 +62,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FootstepLibrary {
@@ -224,6 +225,37 @@ public final class FootstepLibrary {
         }
     }
 
+    /**
+     * This is pretty heavy - it will blow out all blockstates to get their values
+     */
+    public static Stream<String> dump() {
+        return ForgeUtils.getBlockStates().stream().map(state -> {
+            try {
+                final StringBuilder builder = new StringBuilder();
+                builder.append(BlockStateMatcher.create(state).toString()).append(" -> [");
+                IAcoustic[] cached = getCachedAcoustics(state);
+                if (cached != null) {
+                    for (final Substrate sub : Substrate.values()) {
+                        IAcoustic acoustic = cached[sub.ordinal()];
+                        builder.append(sub.name()).append("=");
+                        if (acoustic != null)
+                            builder.append(acoustic.toString());
+                        else
+                            builder.append("NOT SET");
+                        builder.append(", ");
+                    }
+                } else {
+                    builder.append("No acoustics defined");
+                }
+                builder.append("]");
+                return builder.toString();
+            } catch(@Nonnull final Throwable t) {
+                int x = 0;
+            }
+            return "ERROR";
+        }).sorted();
+    }
+
     @SubscribeEvent
     public static void onInspectionEvent(@Nonnull final BlockInspectionEvent evt) {
         evt.data.add(TEXT_FOOTSTEPS);
@@ -275,6 +307,20 @@ public final class FootstepLibrary {
             result = cached[substrate.ordinal()] = substrateMap.get(substrate).getBlockAcoustics(state);
         }
         return result;
+    }
+
+    private static IAcoustic[] getCachedAcoustics(@Nonnull final BlockState state) {
+        IAcoustic[] cached = ((IMixinFootstepData)state).getAcoustics();
+        if (cached == null) {
+            ((IMixinFootstepData) state).setAcoustics(cached = new IAcoustic[Substrate.values().length]);
+        }
+        for (final Substrate sub : Substrate.values()) {
+            IAcoustic result = cached[sub.ordinal()];
+            if (result == null) {
+                result = cached[sub.ordinal()] = substrateMap.get(sub).getBlockAcoustics(state);
+            }
+        }
+        return cached;
     }
 
     private static void put(@Nonnull final BlockStateMatcher info, @Nullable final String substrate,

@@ -21,6 +21,8 @@ package org.orecruncher.mobeffects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -28,6 +30,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.logging.ModLog;
 import org.orecruncher.mobeffects.effects.*;
 import org.orecruncher.mobeffects.library.Constants;
@@ -49,6 +53,10 @@ public final class MobEffects {
     public static final ModLog LOGGER = new ModLog(MobEffects.class);
 
     public MobEffects() {
+
+        // Since we are 100% client side
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+
         if (FMLEnvironment.dist == Dist.CLIENT) {
             // Various event bus registrations
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);

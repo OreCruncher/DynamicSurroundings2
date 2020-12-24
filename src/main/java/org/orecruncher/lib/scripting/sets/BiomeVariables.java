@@ -68,7 +68,7 @@ public class BiomeVariables extends VariableSet<IBiomeVariables> implements IBio
     public void update() {
         Biome newBiome = null;
         if (GameUtils.isInGame()) {
-            newBiome = GameUtils.getWorld().getBiome(GameUtils.getPlayer().getPosition());
+            newBiome = BiomeUtilities.getClientBiome(GameUtils.getPlayer().getPosition());
         } else {
             newBiome = BiomeRegistry.PLAINS;
         }

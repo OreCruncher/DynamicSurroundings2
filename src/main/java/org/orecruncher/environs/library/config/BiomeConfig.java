@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,14 +32,8 @@ public final class BiomeConfig {
 	public String conditions = StringUtils.EMPTY;
 	@SerializedName("_comment")
 	public String comment = null;
-	@SerializedName("dust")
-	public Boolean hasDust = null;
 	@SerializedName("aurora")
 	public Boolean hasAurora = null;
-	@SerializedName("fog")
-	public Boolean hasFog = null;
-	@SerializedName("dustColor")
-	public String dustColor = null;
 	@SerializedName("fogColor")
 	public String fogColor = null;
 	@SerializedName("fogDensity")

@@ -45,20 +45,15 @@ import org.orecruncher.sndctrl.api.acoustics.Library;
 @OnlyIn(Dist.CLIENT)
 public final class BiomeInfo implements Comparable<BiomeInfo> {
 
-	private final static float DEFAULT_FOG_DENSITY = 0.4F;
-	private final static Color DEFAULT_FOG_COLOR = new Color(64, 96, 64);
-	private final static Color DEFAULT_DUST_COLOR = new Color(255, 234, 151);
+	private final static float DEFAULT_FOG_DENSITY = 0F;
 
 	public final static int DEFAULT_SPOT_CHANCE = 1000 / 4;
 
 	protected final IBiome biome;
 
-	protected boolean hasDust;
 	protected boolean hasAurora;
-	protected boolean hasFog;
 
-	private Color dustColor = DEFAULT_DUST_COLOR;
-	private Color fogColor = DEFAULT_FOG_COLOR;
+	private Color fogColor;
 	private float fogDensity = DEFAULT_FOG_DENSITY;
 
 	protected int spotSoundChance = DEFAULT_SPOT_CHANCE;
@@ -96,8 +91,7 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 	}
 
 	public ResourceLocation getKey() {
-		ResourceLocation key = this.biome.getKey();
-		return key;
+		return this.biome.getKey();
 	}
 
 	public Biome getBiome() {
@@ -129,14 +123,6 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 		return this.biome.getPrecipitationType();
 	}
 
-	public boolean getHasDust() {
-		return this.hasDust;
-	}
-
-	void setHasDust(final boolean flag) {
-		this.hasDust = flag;
-	}
-
 	public boolean getHasAurora() {
 		return this.hasAurora;
 	}
@@ -145,28 +131,16 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 		this.hasAurora = flag;
 	}
 
-	public boolean getHasFog() {
-		return this.hasFog;
-	}
-
-	void setHasFog(final boolean flag) {
-		this.hasFog = flag;
-	}
-
-	public Color getDustColor() {
-		return this.dustColor;
-	}
-
-	void setDustColor(final Color color) {
-		this.dustColor = color;
-	}
-
 	public Color getFogColor() {
 		return this.fogColor;
 	}
 
 	void setFogColor(@Nonnull final Color color) {
 		this.fogColor = color;
+	}
+
+	public boolean getHasFog() {
+		return this.fogColor != null;
 	}
 
 	public float getFogDensity() {
@@ -233,10 +207,6 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 
 		if (entry.hasAurora != null)
 			setHasAurora(entry.hasAurora);
-		if (entry.hasDust != null)
-			setHasDust(entry.hasDust);
-		if (entry.hasFog != null)
-			setHasFog(entry.hasFog);
 		if (entry.fogDensity != null)
 			setFogDensity(entry.fogDensity);
 
@@ -244,12 +214,6 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 			final int[] rgb = Utilities.splitToInts(entry.fogColor, ',');
 			if (rgb.length == 3)
 				setFogColor(new Color(rgb[0], rgb[1], rgb[2]));
-		}
-
-		if (entry.dustColor != null) {
-			final int[] rgb = Utilities.splitToInts(entry.dustColor, ',');
-			if (rgb.length == 3)
-				setDustColor(new Color(rgb[0], rgb[1], rgb[2]));
 		}
 
 		if (entry.soundReset != null && entry.soundReset) {
@@ -288,7 +252,7 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 		final String registryName = rl == null ? (isFake() ? "FAKE" : "UNKNOWN") : rl.toString();
 
 		final StringBuilder builder = new StringBuilder();
-		builder.append("Biome [").append(getBiomeName()).append('/').append(registryName).append("] (");
+		builder.append("Biome [").append(getBiomeName()).append('/').append(registryName).append("]");
 		if (!isFake()) {
 			builder.append("\n+ ").append('<');
 			builder.append(getBiomeTraits());
@@ -297,15 +261,9 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 			builder.append(" rain: ").append(getRainfall());
 		}
 
-		if (this.hasDust)
-			builder.append(" DUST");
 		if (this.hasAurora)
 			builder.append(" AURORA");
-		if (this.hasFog)
-			builder.append(" FOG");
-		if (this.hasDust && this.dustColor != null)
-			builder.append(" dustColor:").append(this.dustColor.toString());
-		if (this.hasFog && this.fogColor != null) {
+		if (this.fogColor != null) {
 			builder.append(" fogColor:").append(this.fogColor.toString());
 			builder.append(" fogDensity:").append(this.fogDensity);
 		}

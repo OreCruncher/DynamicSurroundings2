@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.fog.*;
 import org.orecruncher.lib.events.DiagnosticEvent;
-import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.math.LoggingTimerEMA;
 
 import javax.annotation.Nonnull;
@@ -40,7 +39,6 @@ public class FogHandler extends HandlerBase {
     protected final LoggingTimerEMA renderColor = new LoggingTimerEMA("Render Fog Color");
     protected final LoggingTimerEMA render = new LoggingTimerEMA("Render Fog");
 
-    protected HolisticFogColorCalculator fogColor = new HolisticFogColorCalculator();
     protected HolisticFogRangeCalculator fogRange = new HolisticFogRangeCalculator();
 
     public FogHandler() {
@@ -56,24 +54,8 @@ public class FogHandler extends HandlerBase {
 
         if (doFog()) {
             this.fogRange.tick();
-            this.fogColor.tick();
         }
 
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
-        if (doFog()) {
-            this.renderColor.begin();
-            final FluidState fluidState = event.getInfo().getFluidState();
-            if (fluidState.isEmpty()) {
-                final Color color = this.fogColor.calculate(event);
-                event.setRed(color.red());
-                event.setGreen(color.green());
-                event.setBlue(color.blue());
-            }
-            this.renderColor.end();
-        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -95,7 +77,6 @@ public class FogHandler extends HandlerBase {
         if (Config.CLIENT.logging.get_enableLogging()) {
             if (doFog()) {
                 event.getLeft().add("Fog Range: " + this.fogRange.toString());
-                event.getLeft().add("Fog Color: " + this.fogColor.toString());
                 event.addRenderTimer(this.renderColor);
                 event.addRenderTimer(this.render);
             } else
@@ -105,11 +86,9 @@ public class FogHandler extends HandlerBase {
 
     @Override
     public void onConnect() {
-        this.fogColor = new HolisticFogColorCalculator();
         this.fogRange = new HolisticFogRangeCalculator();
 
         if (Config.CLIENT.fog.get_enableBiomeFog()) {
-            this.fogColor.add(new BiomeFogColorCalculator());
             this.fogRange.add(new BiomeFogRangeCalculator());
         }
 

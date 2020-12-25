@@ -44,7 +44,6 @@ import javax.annotation.Nonnull;
 public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
 
     protected static final int DISTANCE = 20;
-    protected static final float DUST_FOG_IMPACT = 0.9F;
 
     protected final BlockPos.Mutable pos = new BlockPos.Mutable();
     protected final Context[] context = {new Context(), new Context()};
@@ -75,7 +74,6 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
         float fpDistanceBiomeFog = 0F;
         float weightBiomeFog = 0;
 
-        final boolean isRaining = rainStr > 0;
         ctx.rain = rainStr;
         ctx.doScan = false;
 
@@ -98,10 +96,8 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
                 float distancePart = 1F;
                 final float weightPart = 1;
 
-                if (isRaining && biome.getHasDust()) {
-                    distancePart = 1F - DUST_FOG_IMPACT * rainStr;
-                } else if (biome.getHasFog()) {
-                    distancePart = biome.getFogDensity();
+                if (biome.getHasFog()) {
+                    distancePart = 1F - biome.getFogDensity();
                 }
 
                 fpDistanceBiomeFog += distancePart;

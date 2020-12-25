@@ -322,7 +322,7 @@
     "acoustics": [
       {
         "acoustic": "biome/underground",
-        "conditions": "state.isInside() && player.getY() < 33"
+        "conditions": "state.isInside() && player.getY() < 50"
       },
       {
         "acoustic": "rockfall",

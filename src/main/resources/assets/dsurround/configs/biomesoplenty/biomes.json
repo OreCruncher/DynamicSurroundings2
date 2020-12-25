@@ -5,14 +5,14 @@
       "_comment": "BoP Cold Desert fog explicit set",
       "fog": true,
       "fogColor": "220,219,223",
-      "fogDensity": 0.4
+      "visibility": 0.4
     },
     {
       "conditions": "biome.id == 'biomesoplenty:ghost_forest'",
       "_comment": "BoP Ghost Forest fog explicit set",
       "fog": true,
       "fogColor": "220,219,223",
-      "fogDensity": 0.4
+      "visibility": 0.4
     },
     {
       "conditions": "lib.oneof(biome.id, 'biomesoplenty:marsh', 'biomesoplenty:mangrove')",

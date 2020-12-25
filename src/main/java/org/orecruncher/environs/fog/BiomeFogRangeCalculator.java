@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,22 +18,18 @@
 
 package org.orecruncher.environs.fog;
 
-import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.util.CubicSampler;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeRegistry;
+import net.minecraft.world.biome.BiomeManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.environs.library.BiomeInfo;
 import org.orecruncher.environs.library.BiomeUtil;
 import org.orecruncher.lib.GameUtils;
-import org.orecruncher.lib.WorldUtils;
-import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
 
@@ -43,10 +39,7 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
 
-    protected static final int DISTANCE = 20;
-
-    protected final BlockPos.Mutable pos = new BlockPos.Mutable();
-    protected final Context[] context = {new Context(), new Context()};
+    protected final FogResult cached = new FogResult();
 
     public BiomeFogRangeCalculator() {
         super("BiomeFogRangeCalculator");
@@ -57,88 +50,26 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
     public FogResult calculate(@Nonnull final EntityViewRenderEvent.RenderFogEvent event) {
 
         final PlayerEntity player = GameUtils.getPlayer();
-        final World world = GameUtils.getWorld();
+        final ClientWorld world = GameUtils.getWorld();
 
         assert player != null && world != null;
 
-        final double partialTicks = event.getRenderPartialTicks();
-        final int playerX = MathStuff.floor(player.getPosX());
-        final int playerZ = MathStuff.floor(player.getPosZ());
-        final float rainStr = WorldUtils.getRainStrength(world, (float) partialTicks);
+        BiomeManager biomemanager = world.getBiomeManager();
+        Vector3d vector3d1 = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView().subtract(2.0D, 2.0D, 2.0D).scale(0.25D);
+        Vector3d visibilitySurvey = CubicSampler.func_240807_a_(vector3d1, (x, y, z) -> {
+            final Biome b = biomemanager.getBiomeAtPosition(x, y, z);
+            final BiomeInfo info = BiomeUtil.getBiomeData(b);
+            return new Vector3d(info.getVisibility(), 0, 0);
+        });
 
-        final Context ctx = this.context[event.getType() == FogRenderer.FogType.FOG_SKY ? 0 : 1];
+        // Lower values means less visibility
+        final double visibility = visibilitySurvey.getX();
+        double farPlaneDistance = visibility * event.getFarPlaneDistance();
+        final double farPlaneDistanceScaleBiome = 0.1D * (1D - visibility) + FogResult.DEFAULT_PLANE_SCALE * visibility;
 
-        if (ctx.returnCached(playerX, playerZ, rainStr, event))
-            return ctx.cached;
+        this.cached.setScaled((float) farPlaneDistance, (float) farPlaneDistanceScaleBiome);
 
-        float fpDistanceBiomeFog = 0F;
-        float weightBiomeFog = 0;
-
-        ctx.rain = rainStr;
-        ctx.doScan = false;
-
-        final IWorldReader reader = CommonState.getBlockReader();
-
-        for (int z = -DISTANCE; z <= DISTANCE; ++z) {
-            for (int x = -DISTANCE; x <= DISTANCE; ++x) {
-
-                this.pos.setPos(playerX + x, 0, playerZ + z);
-
-                final BiomeInfo biome;
-                if (world.isBlockPresent(this.pos)) {
-                    final Biome b = reader.getBiome(this.pos);
-                    biome = BiomeUtil.getBiomeData(b);
-                } else {
-                    ctx.doScan = true;
-                    biome = BiomeUtil.getBiomeData(BiomeRegistry.PLAINS);
-                }
-
-                float distancePart = 1F;
-                final float weightPart = 1;
-
-                if (biome.getHasFog()) {
-                    distancePart = 1F - biome.getFogDensity();
-                }
-
-                fpDistanceBiomeFog += distancePart;
-                weightBiomeFog += weightPart;
-            }
-        }
-
-        final float weightMixed = (DISTANCE * 2 + 1) * (DISTANCE * 2 + 1);
-        final float weightDefault = weightMixed - weightBiomeFog;
-
-        final float fpDistanceBiomeFogAvg = (weightBiomeFog == 0) ? 0 : fpDistanceBiomeFog / weightBiomeFog;
-
-        final float rangeConst = Math.max(240, event.getFarPlaneDistance() - 16);
-        float farPlaneDistance = (fpDistanceBiomeFog * rangeConst + event.getFarPlaneDistance() * weightDefault)
-                / weightMixed;
-        final float farPlaneDistanceScaleBiome = (0.1f * (1 - fpDistanceBiomeFogAvg) + 0.75f * fpDistanceBiomeFogAvg);
-        final float farPlaneDistanceScale = (farPlaneDistanceScaleBiome * weightBiomeFog + 0.75f * weightDefault)
-                / weightMixed;
-
-        ctx.posX = playerX;
-        ctx.posZ = playerZ;
-        ctx.lastFarPlane = event.getFarPlaneDistance();
-        farPlaneDistance = Math.min(farPlaneDistance, event.getFarPlaneDistance());
-
-        ctx.cached.set(event.getType(), farPlaneDistance, farPlaneDistanceScale);
-
-        return ctx.cached;
+        return cached;
     }
 
-    private static class Context {
-        public final FogResult cached = new FogResult();
-        public int posX;
-        public int posZ;
-        public float rain;
-        public float lastFarPlane;
-        public boolean doScan = true;
-
-        public boolean returnCached(final int pX, final int pZ, final float r,
-                                    @Nonnull final EntityViewRenderEvent.RenderFogEvent event) {
-            return !this.doScan && pX == this.posX && pZ == this.posZ && r == this.rain
-                    && this.lastFarPlane == event.getFarPlaneDistance() && this.cached.isValid(event);
-        }
-    }
 }

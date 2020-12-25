@@ -36,8 +36,8 @@ public final class BiomeConfig {
 	public Boolean hasAurora = null;
 	@SerializedName("fogColor")
 	public String fogColor = null;
-	@SerializedName("fogDensity")
-	public Float fogDensity = null;
+	@SerializedName("visibility")
+	public Float visibility = null;
 	@SerializedName("soundReset")
 	public Boolean soundReset = null;
 	@SerializedName("spotSoundChance")

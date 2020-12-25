@@ -45,7 +45,7 @@ import org.orecruncher.sndctrl.api.acoustics.Library;
 @OnlyIn(Dist.CLIENT)
 public final class BiomeInfo implements Comparable<BiomeInfo> {
 
-	private final static float DEFAULT_FOG_DENSITY = 0F;
+	private final static float DEFAULT_VISIBILITY = 1F;
 
 	public final static int DEFAULT_SPOT_CHANCE = 1000 / 4;
 
@@ -54,7 +54,7 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 	protected boolean hasAurora;
 
 	private Color fogColor;
-	private float fogDensity = DEFAULT_FOG_DENSITY;
+	private float visibility = DEFAULT_VISIBILITY;
 
 	protected int spotSoundChance = DEFAULT_SPOT_CHANCE;
 
@@ -143,12 +143,12 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 		return this.fogColor != null;
 	}
 
-	public float getFogDensity() {
-		return this.fogDensity;
+	public float getVisibility() {
+		return this.visibility;
 	}
 
-	void setFogDensity(final float density) {
-		this.fogDensity = density;
+	void setVisibility(final float density) {
+		this.visibility = density;
 	}
 
 	void setSpotSoundChance(final int chance) {
@@ -207,8 +207,8 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 
 		if (entry.hasAurora != null)
 			setHasAurora(entry.hasAurora);
-		if (entry.fogDensity != null)
-			setFogDensity(entry.fogDensity);
+		if (entry.visibility != null)
+			setVisibility(entry.visibility);
 
 		if (entry.fogColor != null) {
 			final int[] rgb = Utilities.splitToInts(entry.fogColor, ',');
@@ -265,7 +265,7 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 			builder.append(" AURORA");
 		if (this.fogColor != null) {
 			builder.append(" fogColor:").append(this.fogColor.toString());
-			builder.append(" fogDensity:").append(this.fogDensity);
+			builder.append(" fogDensity:").append(this.visibility);
 		}
 
 		if (this.sounds.size() > 0) {

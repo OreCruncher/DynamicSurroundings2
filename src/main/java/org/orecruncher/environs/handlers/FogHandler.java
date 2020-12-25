@@ -19,6 +19,7 @@
 package org.orecruncher.environs.handlers;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,7 +37,6 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class FogHandler extends HandlerBase {
 
-    protected final LoggingTimerEMA renderColor = new LoggingTimerEMA("Render Fog Color");
     protected final LoggingTimerEMA render = new LoggingTimerEMA("Render Fog");
 
     protected HolisticFogRangeCalculator fogRange = new HolisticFogRangeCalculator();
@@ -60,7 +60,7 @@ public class FogHandler extends HandlerBase {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
-        if (doFog()) {
+        if (event.getType() == FogRenderer.FogType.FOG_TERRAIN && doFog()) {
             this.render.begin();
             final FluidState fluidState = event.getInfo().getFluidState();
             if (fluidState.isEmpty()) {
@@ -77,7 +77,6 @@ public class FogHandler extends HandlerBase {
         if (Config.CLIENT.logging.get_enableLogging()) {
             if (doFog()) {
                 event.getLeft().add("Fog Range: " + this.fogRange.toString());
-                event.addRenderTimer(this.renderColor);
                 event.addRenderTimer(this.render);
             } else
                 event.getLeft().add("FOG: IGNORED");

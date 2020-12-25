@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ public class BedrockFogRangeCalculator extends VanillaFogRangeCalculator {
                 }
             }
 
-            this.cached.set(event.getType(), end, FogResult.DEFAULT_PLANE_SCALE);
+            this.cached.setScaled(end, FogResult.DEFAULT_PLANE_SCALE);
         }
 
         return this.cached;

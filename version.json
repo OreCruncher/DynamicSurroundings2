@@ -2,10 +2,11 @@
 	"homepage": "https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings",
 	"1.16.4": {
 		"4.0.1.0": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md",
-		"4.0.1.1": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md"
+		"4.0.1.1": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md",
+		"4.0.1.2": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md"
 	},
 	"promos": {
-		"1.16.4-latest": "1.16.4-4.0.1.1",
-		"1.16.4-recommended": "1.16.4-4.0.1.1"
+		"1.16.4-latest": "1.16.4-4.0.1.2",
+		"1.16.4-recommended": "1.16.4-4.0.1.2"
 	}
 }

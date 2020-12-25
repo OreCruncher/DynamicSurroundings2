@@ -1,3 +1,16 @@
+> ### DynamicSurroundings-1.16.4-4.0.1.2
+**Requirements**
+* Forge 1.16.4-35.1.10
+* 100% client side; no server side deployment needed
+
+**What's New**
+* Started roughing in the /dsdump command.  The intent is to have the ability to dump out the various registries and runtime configurations to disk.  This is WIP.
+
+**Fixes**
+* Crash with the Undergarden dimension from the Undergarden mod
+* Issue with primitive sound handling.  This means a better default sound behavior for blocks that do not have a specific configuration.
+* Incremental work on supporting the new MC 1.16.4 blocks
+
 > ### DynamicSurroundings-1.16.4-4.0.1.1
 **Requirements**
 * Forge 1.16.4-35.1.10

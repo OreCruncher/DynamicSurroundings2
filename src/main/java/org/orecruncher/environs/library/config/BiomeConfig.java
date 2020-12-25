@@ -51,4 +51,9 @@ public final class BiomeConfig {
 	@SerializedName("acoustics")
 	public List<AcousticConfig> acoustics = ImmutableList.of();
 
+	@Override
+	public String toString() {
+		return this.comment == null ? this.conditions : this.comment;
+	}
+
 }

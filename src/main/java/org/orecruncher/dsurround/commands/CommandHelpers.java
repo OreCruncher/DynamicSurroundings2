@@ -52,9 +52,9 @@ public class CommandHelpers {
         scheduler.deferTask(runnable);
     }
 
-    public static void sendSuccess(@Nonnull final CommandSource source, @Nonnull final String command) {
+    public static void sendSuccess(@Nonnull final CommandSource source, @Nonnull final String command, @Nonnull String operation, @Nonnull String target) {
         final String key = String.format("command.dsurround.%s.success", command);
-        source.sendFeedback(new TranslationTextComponent(key), true);
+        source.sendFeedback(new TranslationTextComponent(key, operation, target), true);
     }
 
     public static void sendFailure(@Nonnull final CommandSource source, @Nonnull final String command) {

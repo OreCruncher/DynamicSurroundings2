@@ -101,9 +101,11 @@ public class DumpCommand {
     private static int handle(@Nonnull final CommandSource source, @Nonnull final String cmdString, @Nonnull final Supplier<Stream<String>> supplier) {
         try {
             if (GameUtils.getMC().isSingleplayer()) {
+                final String operation = cmdString.substring(5);
+                final String fileName = operation + ".txt";
+                File target = new File(DynamicSurroundings.DUMP_PATH, fileName);
+
                 CommandHelpers.scheduleOnClientThread(() -> {
-                    final String fileName = cmdString.substring(5) + ".txt";
-                    File target = new File(DynamicSurroundings.DUMP_PATH, fileName);
                     try (PrintStream out = new PrintStream(target)) {
                         final Stream<String> strm = supplier.get();
                         strm.forEach(out::println);
@@ -112,7 +114,7 @@ public class DumpCommand {
                         DynamicSurroundings.LOGGER.error(t, "Error writing dump file '%s'", target.toString());
                     }
                 });
-                CommandHelpers.sendSuccess(source, cmdString);
+                CommandHelpers.sendSuccess(source, "dump", operation, target.toString());
             } else {
                 CommandHelpers.sendFailure(source, cmdString);
             }

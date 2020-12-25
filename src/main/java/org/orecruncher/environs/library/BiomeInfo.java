@@ -65,7 +65,7 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 
 	protected final ObjectArray<AcousticEntry> sounds = new ObjectArray<>();
 	protected final ObjectArray<WeightedAcousticEntry> spotSounds = new ObjectArray<>();
-	protected ObjectArray<String> comments = new ObjectArray<>();
+	protected ObjectArray<String> comments;
 
 	protected final boolean isRiver;
 	protected final boolean isOcean;
@@ -113,8 +113,11 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 	}
 
 	void addComment(@Nonnull final String comment) {
-		if (!StringUtils.isEmpty(comment))
+		if (!StringUtils.isEmpty(comment)) {
+			if (this.comments == null)
+				this.comments = new ObjectArray<>();
 			this.comments.add(comment);
+		}
 	}
 
 	public String getBiomeName() {

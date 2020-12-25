@@ -4,7 +4,7 @@
     "minecraft:block.bamboo.step": "mobeffects:planks",
     "minecraft:block.basalt.step": "mobeffects:brickstone",
     "minecraft:block.bone_block.step": "mobeffects:sandstone",
-    "minecraft:block.gilded_blackstone.step": "mobeffects:quartz",
+    "minecraft:block.gilded_blackstone.step": "mobeffects:marble",
     "minecraft:block.lodestone.step": "mobeffects:metalcompressed",
     "minecraft:block.nether_bricks.step": "mobeffects:brickstone",
     "minecraft:block.stem.step": "mobeffects:organic_dry",
@@ -54,7 +54,6 @@
     "minecraft:beehives": "organic_dry",
     "minecraft:tall_flowers": "#tallplant",
     "minecraft:wart_blocks": "organic",
-    "minecraft:end_stone": "stone",
 
     "minecraft:banners": "rug,straw,squeakywood",
     "minecraft:banners+foliage": "rug,straw,squeakywood",
@@ -75,6 +74,7 @@
     "forge:netherrack": "grass,quicksand",
     "forge:gravel": "gravel",
     "forge:obsidian": "obsidian",
+    "forge:end_stones": "stone",
 
     "forge:storage_blocks/diamond": "composite",
     "forge:storage_blocks/emerald": "composite"
@@ -254,7 +254,8 @@
     "minecraft:weeping_vines": "#vine",
     "minecraft:crimson_roots": "#deadbush",
     "minecraft:warped_roots": "#deadbush",
-    "minecraft:twisting_vine": "#reed",
+    "minecraft:twisting_vines": "#reed",
+    "minecraft:twisting_vines_plant": "#reed",
 
     "minecraft:ladder": "ladder_default"
   }

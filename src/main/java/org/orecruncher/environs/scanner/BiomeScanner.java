@@ -83,7 +83,7 @@ public final class BiomeScanner {
 					for (int dX = -BIOME_SURVEY_RANGE; dX <= BIOME_SURVEY_RANGE; dX++) {
 						this.mutable.setPos(this.surveyedPosition.getX() + dX, 0, this.surveyedPosition.getZ() + dZ);
 						final Biome biome = BiomeUtilities.getClientBiome(this.mutable);
-						if (biome.getRegistryName() == null) {
+						if (biome == null || biome.getRegistryName() == null) {
 							continue;
 						}
 						final BiomeInfo info = BiomeUtil.getBiomeData(biome);

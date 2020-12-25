@@ -34,7 +34,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.Environs;
@@ -44,7 +43,6 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import org.orecruncher.lib.resource.IResourceAccessor;
@@ -178,11 +176,9 @@ public final class BiomeLibrary {
 				BiomeUtil.setBiomeData(b, new BiomeInfo(handler));
 			});
 
-			// Make sure the default PLAINS biome is set.
-			final ResourceLocation plainsLoc = new ResourceLocation("plains");
-			final Biome plains = ForgeRegistries.BIOMES.getValue(plainsLoc);
-			final BiomeInfo info = BiomeUtil.getBiomeData(plains);
-			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, info);
+			// Make sure the default biomes are set
+			BiomeUtil.getBiomeData(BiomeRegistry.PLAINS);
+			BiomeUtil.getBiomeData(BiomeRegistry.THE_VOID);
 
 			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "biomes.json");
 
@@ -205,6 +201,7 @@ public final class BiomeLibrary {
 		public void stop() {
 			ForgeUtils.getBiomes().forEach(b -> BiomeUtil.setBiomeData(b, null));
 			BiomeUtil.setBiomeData(BiomeRegistry.PLAINS, null);
+			BiomeUtil.setBiomeData(BiomeRegistry.THE_VOID, null);
 		}
 	}
 

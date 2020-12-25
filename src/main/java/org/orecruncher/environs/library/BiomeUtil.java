@@ -34,7 +34,7 @@ public final class BiomeUtil {
     public static BiomeInfo getBiomeData(@Nonnull final Biome biome) {
         BiomeInfo result = ((IMixinBiomeData) (Object) biome).getInfo();
         if (result == null) {
-            // Get the data from the Forge registries
+            // Get the data from the client side dynamic registries
             final Biome forge = BiomeUtilities.getClientBiome(biome);
             if (forge != null) {
                 result = ((IMixinBiomeData) (Object) forge).getInfo();

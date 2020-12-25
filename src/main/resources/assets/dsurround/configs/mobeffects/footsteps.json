@@ -253,6 +253,8 @@
 
     "minecraft:weeping_vines": "#vine",
     "minecraft:crimson_roots": "#deadbush",
+    "minecraft:warped_roots": "#deadbush",
+    "minecraft:twisting_vine_plant": "#reed",
 
     "minecraft:ladder": "ladder_default"
   }

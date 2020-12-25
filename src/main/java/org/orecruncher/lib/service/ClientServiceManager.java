@@ -74,6 +74,9 @@ public class ClientServiceManager {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStart(@Nonnull final TagsUpdatedEvent event) {
         reload();
+
+        for (final IClientService svc : services)
+            svc.log();
     }
 
     /**

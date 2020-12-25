@@ -28,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
@@ -106,18 +107,25 @@ public class BiomeUtilities {
     }
 
     @Nullable
-    public static Biome getClientBiome(@Nonnull BlockPos pos) {
+    public static Biome getClientBiome(@Nonnull final BlockPos pos) {
         final ClientWorld world = GameUtils.getWorld();
-        assert world != null;
-        final ResourceLocation loc = world.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(world.getBiome(pos));
-        return ForgeRegistries.BIOMES.getValue(loc);
+        if (world == null)
+            return BiomeRegistry.THE_VOID;
+        final Biome biome = world.getBiome(pos);
+        return getClientBiome(biome);
     }
 
     @Nullable
     public static Biome getClientBiome(@Nonnull final Biome biome) {
         final ClientWorld world = GameUtils.getWorld();
-        assert world != null;
-        final ResourceLocation loc = world.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);
-        return ForgeRegistries.BIOMES.getValue(loc);
+        if (world == null)
+            return BiomeRegistry.THE_VOID;
+        ResourceLocation loc = world.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);
+        if (loc == null)
+            return BiomeRegistry.THE_VOID;
+        final Biome result = ForgeRegistries.BIOMES.getValue(loc);
+        if (result == null)
+            return BiomeRegistry.THE_VOID;
+        return result;
     }
 }

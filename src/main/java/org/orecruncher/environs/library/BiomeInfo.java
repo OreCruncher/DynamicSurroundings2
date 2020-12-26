@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.BiomeConfig;
 import org.orecruncher.environs.library.config.AcousticConfig;
-import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.WeightTable;
 
 import net.minecraft.util.ResourceLocation;
@@ -39,6 +38,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.gui.Color;
+import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 
@@ -148,7 +148,7 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 	}
 
 	void setVisibility(final float density) {
-		this.visibility = density;
+		this.visibility = MathStuff.clamp(density, 0, 1);
 	}
 
 	void setSpotSoundChance(final int chance) {
@@ -211,9 +211,7 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 			setVisibility(entry.visibility);
 
 		if (entry.fogColor != null) {
-			final int[] rgb = Utilities.splitToInts(entry.fogColor, ',');
-			if (rgb.length == 3)
-				setFogColor(new Color(rgb[0], rgb[1], rgb[2]));
+			setFogColor(Color.parse(entry.fogColor));
 		}
 
 		if (entry.soundReset != null && entry.soundReset) {
@@ -265,8 +263,9 @@ public final class BiomeInfo implements Comparable<BiomeInfo> {
 			builder.append(" AURORA");
 		if (this.fogColor != null) {
 			builder.append(" fogColor:").append(this.fogColor.toString());
-			builder.append(" fogDensity:").append(this.visibility);
 		}
+
+		builder.append(" visibility:").append(this.visibility);
 
 		if (this.sounds.size() > 0) {
 			builder.append("\n+ sounds [\n");

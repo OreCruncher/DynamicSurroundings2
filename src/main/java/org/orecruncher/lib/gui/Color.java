@@ -23,6 +23,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
@@ -98,6 +99,24 @@ public class Color {
 
     public Color(final double red, final double green, final double blue, final double alpha) {
         this((float) red, (float) green, (float) blue, (float) alpha);
+    }
+
+    public static Color parse(@Nonnull final String input) {
+        if (input.startsWith("#")) {
+            return new Color(Integer.parseInt(input.substring(1), 16));
+        }
+
+        int[] parts = Utilities.splitToInts(input, ',');
+
+        if (parts.length < 3) {
+            throw new IllegalArgumentException(String.format("'%s' is not a valid color definition", input));
+        }
+
+        return new Color(
+                MathStuff.clamp(parts[0], 0, 255),
+                MathStuff.clamp(parts[1], 0, 255),
+                MathStuff.clamp(parts[2], 0, 255)
+        );
     }
 
     protected static float blnd(final float c1, final float c2, final float factor) {

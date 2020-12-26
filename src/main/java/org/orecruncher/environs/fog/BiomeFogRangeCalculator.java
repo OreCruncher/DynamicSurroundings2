@@ -19,7 +19,6 @@
 package org.orecruncher.environs.fog;
 
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.CubicSampler;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.biome.Biome;
@@ -49,14 +48,12 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
     @Nonnull
     public FogResult calculate(@Nonnull final EntityViewRenderEvent.RenderFogEvent event) {
 
-        final PlayerEntity player = GameUtils.getPlayer();
         final ClientWorld world = GameUtils.getWorld();
+        assert world != null;
 
-        assert player != null && world != null;
-
-        BiomeManager biomemanager = world.getBiomeManager();
-        Vector3d vector3d1 = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView().subtract(2.0D, 2.0D, 2.0D).scale(0.25D);
-        Vector3d visibilitySurvey = CubicSampler.func_240807_a_(vector3d1, (x, y, z) -> {
+        final BiomeManager biomemanager = world.getBiomeManager();
+        final Vector3d origin = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView().subtract(2.0D, 2.0D, 2.0D).scale(0.25D);
+        final Vector3d visibilitySurvey = CubicSampler.func_240807_a_(origin, (x, y, z) -> {
             final Biome b = biomemanager.getBiomeAtPosition(x, y, z);
             final BiomeInfo info = BiomeUtil.getBiomeData(b);
             return new Vector3d(info.getVisibility(), 0, 0);
@@ -64,7 +61,7 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
 
         // Lower values means less visibility
         final double visibility = visibilitySurvey.getX();
-        double farPlaneDistance = visibility * event.getFarPlaneDistance();
+        final double farPlaneDistance = visibility * event.getFarPlaneDistance();
         final double farPlaneDistanceScaleBiome = 0.1D * (1D - visibility) + FogResult.DEFAULT_PLANE_SCALE * visibility;
 
         this.cached.setScaled((float) farPlaneDistance, (float) farPlaneDistanceScaleBiome);

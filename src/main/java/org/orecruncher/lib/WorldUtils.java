@@ -29,10 +29,11 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
-//import org.orecruncher.sndctrl.misc.ModEnvironment;
+import org.orecruncher.sndctrl.misc.ModEnvironment;
 //import sereneseasons.season.SeasonHooks;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Method;
 
 @SuppressWarnings("unused")
 public final class WorldUtils {
@@ -75,13 +76,28 @@ public final class WorldUtils {
     private static final IWeatherAspect THUNDER_OCCURING;
 
     static {
-        /*
-        if (ModEnvironment.SereneSeasons.isLoaded())
-            TEMP = (world, pos) -> SeasonHooks.getBiomeTemperature(world, world.getBiome(pos), pos);
-        else
+        ITemperatureHandler TEMP1;
+        if (ModEnvironment.SereneSeasons.isLoaded()) {
+            try {
+                final Class<?> clazz = Class.forName("sereneseasons.season.SeasonHooks");
+                final Method method = clazz.getMethod("getBiomeTemperature", World.class, Biome.class, BlockPos.class);
+                TEMP1 = (world, pos) -> {
+                    try {
+                        return (float)method.invoke(null, world, world.getBiome(pos), pos);
+                    } catch(@Nonnull final Throwable t) {
+                        return world.getBiome(pos).getTemperature(pos);
+                    }
+                };
+                Lib.LOGGER.info("Hooked SereneSeasons getBiomeTemperature()");
+            } catch(@Nonnull final Throwable t) {
+                Lib.LOGGER.warn("Unable to hook SereneSeasons getBiomeTemperature()!");
+                TEMP1 = (world, pos) -> world.getBiome(pos).getTemperature(pos);
+            }
+        } else {
+            TEMP1 = (world, pos) -> world.getBiome(pos).getTemperature(pos);
+        }
 
-         */
-            TEMP = (world, pos) -> world.getBiome(pos).getTemperature(pos);
+        TEMP = TEMP1;
 
         // Place holder for future
         RAIN_STRENGTH = World::getRainStrength;

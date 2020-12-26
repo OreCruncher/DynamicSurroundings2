@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 import org.orecruncher.lib.Localization;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.misc.ModEnvironment;
-// import sereneseasons.api.season.ISeasonState;
+import sereneseasons.api.season.ISeasonState;
 
 import javax.annotation.Nonnull;
 
@@ -83,7 +83,6 @@ public enum Season {
     @Nonnull
     private static Season getSereneSeason(@Nonnull final World world) {
         Season season = Season.NONE;
-        /*
         final ISeasonState state = sereneseasons.api.season.SeasonHelper.getSeasonState(world);
         if (state != null) {
             switch (state.getSubSeason()) {
@@ -126,7 +125,6 @@ public enum Season {
             }
         }
 
-         */
         return season;
     }
 

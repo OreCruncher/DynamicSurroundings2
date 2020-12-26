@@ -72,6 +72,11 @@ public final class NullAcoustic implements IAcoustic {
     }
 
     @Override
+    public void playNear(@Nonnull final Entity entity, @Nonnull final AcousticEvent event, final int minRange, final int maxRange) {
+
+    }
+
+    @Override
     public void playBackground(@Nonnull final AcousticEvent event) {
 
     }

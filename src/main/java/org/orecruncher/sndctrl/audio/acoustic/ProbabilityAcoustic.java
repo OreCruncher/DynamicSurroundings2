@@ -88,6 +88,11 @@ public class ProbabilityAcoustic implements IAcoustic {
     }
 
     @Override
+    public void playNear(@Nonnull Entity entity, @Nonnull final AcousticEvent event, final int minRange, final int maxRange) {
+        select().ifPresent(a -> a.playNear(entity, event, minRange, maxRange));
+    }
+
+    @Override
     public void playBackground(@Nonnull final AcousticEvent event) {
         select().ifPresent(a -> a.playBackground(event));
     }

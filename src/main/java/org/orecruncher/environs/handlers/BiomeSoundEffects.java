@@ -33,6 +33,7 @@ import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.audio.AudioEngine;
+import org.orecruncher.sndctrl.audio.acoustic.AcousticFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -41,6 +42,8 @@ import java.util.Collection;
 public class BiomeSoundEffects extends HandlerBase {
 
     public static final int SCAN_INTERVAL = 4;
+    public static final int SPOT_SOUND_MIN_RANGE = 8;
+    public static final int SPOT_SOUND_MAX_RANGE = AcousticFactory.SOUND_RANGE;
 
     // Reusable map for biome acoustic work
     private static final Reference2FloatOpenHashMap<IAcoustic> WORK_MAP = new Reference2FloatOpenHashMap<>(8, 1F);
@@ -118,12 +121,12 @@ public class BiomeSoundEffects extends HandlerBase {
                 final BiomeInfo playerBiome = CommonState.getPlayerBiome();
                 final IAcoustic sound = playerBiome.getSpotSound(RANDOM);
                 if (sound != null)
-                    sound.playNear(player);
+                    sound.playNear(player, SPOT_SOUND_MIN_RANGE, SPOT_SOUND_MAX_RANGE);
             }
 
             final IAcoustic sound = BiomeLibrary.PLAYER_INFO.getSpotSound(RANDOM);
             if (sound != null)
-                sound.playNear(player);
+                sound.playNear(player, SPOT_SOUND_MIN_RANGE, SPOT_SOUND_MAX_RANGE);
         }
 
         queueAmbientSounds();

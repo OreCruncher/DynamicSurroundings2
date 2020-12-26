@@ -71,7 +71,13 @@ public interface IAcoustic {
         playNear(entity, AcousticEvent.NONE);
     }
 
+    default void playNear(@Nonnull final Entity entity, final int minRange, final int maxRange) {
+        playNear(entity, AcousticEvent.NONE, minRange, maxRange);
+    }
+
     void playNear(@Nonnull final Entity entity, @Nonnull final AcousticEvent event);
+
+    void playNear(@Nonnull final Entity entity, @Nonnull final AcousticEvent event, final int minRange, final int maxRange);
 
     /**
      * Play the acoustic in the background

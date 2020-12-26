@@ -23,6 +23,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.*;
 import net.minecraft.client.audio.ChannelManager.Entry;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -163,7 +164,16 @@ public final class AudioEngine {
             }
         }
 
-        LOGGER.debug(Config.Trace.SOUND_PLAY, () -> String.format("%sQUEUED: [%s]", sound.getState().isActive() ? StringUtils.EMPTY : "NOT ", sound));
+        LOGGER.debug(Config.Trace.SOUND_PLAY, () -> {
+            final double distance;
+            if (GameUtils.getPlayer() != null) {
+                final Vector3d location = new Vector3d(sound.getX(), sound.getY(), sound.getZ());
+                distance = Math.sqrt(GameUtils.getPlayer().getDistanceSq(location));
+            } else {
+                distance = 0;
+            }
+            return String.format("%sQUEUED: [%s] (distance: %f)", sound.getState().isActive() ? StringUtils.EMPTY : "NOT ", sound, distance);
+        });
     }
 
     /**

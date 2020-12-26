@@ -89,6 +89,12 @@ public class SimultaneousAcoustic implements IAcoustic {
     }
 
     @Override
+    public void playNear(@Nonnull final Entity entity, @Nonnull final AcousticEvent event, final int minRange, final int maxRange) {
+        for (final IAcoustic a : this.acoustics)
+            a.playNear(entity, event, minRange, maxRange);
+    }
+
+    @Override
     public void playBackground(@Nonnull final AcousticEvent event) {
         for (final IAcoustic a : this.acoustics)
             a.playBackground(event);

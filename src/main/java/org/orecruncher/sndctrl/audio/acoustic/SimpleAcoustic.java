@@ -85,6 +85,11 @@ public class SimpleAcoustic implements IAcoustic {
     }
 
     @Override
+    public void playNear(@Nonnull final Entity entity, @Nonnull final AcousticEvent ignored, final int minRange, final int maxRange) {
+        play(this.factory.createSoundNear(entity, minRange, maxRange));
+    }
+
+    @Override
     public void playBackground(@Nonnull final AcousticEvent ignored) {
         play(this.factory.createBackgroundSound());
     }

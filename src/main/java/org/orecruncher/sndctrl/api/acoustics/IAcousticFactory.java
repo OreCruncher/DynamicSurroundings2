@@ -55,6 +55,12 @@ public interface IAcousticFactory {
     ISoundInstance createSoundNear(@Nonnull final Entity entity);
 
     /**
+     * Creates a sound instance within a random range centered on the specified entity.
+     */
+    @Nonnull
+    ISoundInstance createSoundNear(@Nonnull final Entity entity, final int minRange, final int maxRange);
+
+    /**
      * Attaches a sound instance to the specified entity, and will move as the entity moves.
      */
     @Nonnull

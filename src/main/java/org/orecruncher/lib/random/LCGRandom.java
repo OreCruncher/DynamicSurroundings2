@@ -54,4 +54,12 @@ public final class LCGRandom {
         this.v = (2862933555777941757L * this.v + 3037000493L);
         return ((int) ((this.v >> 32) & 0x7FFFFFFF)) % bound;
     }
+
+    /**
+     * Generates a random boolean value.
+     * @return true or false
+     */
+    public boolean nextBool() {
+        return this.nextInt(1) == 0;
+    }
 }

@@ -1,7 +1,7 @@
 //  Basics defined up here to make life easier
 //  Tweak the defs, not the others!
 def mcVersion    	= '1.16.4'
-def modVersion   	= '4.0.1.2'
+def modVersion   	= '4.0.1.3'
 def modDesignator	= ''
 def forgeVersion 	= '35.1.10'
 def snapshot     	= '20201028-1.16.3'
@@ -11,7 +11,7 @@ project.group           	= 'org.orecruncher'
 project.archivesBaseName	= 'DynamicSurroundings'
 project.version         	= "${mcVersion}-${modVersion}${modDesignator}"
 
-//project.ext.ssVersion     	= "3.0.0.74"
+project.ext.ssVersion     	= "4.0.0.80"
 project.ext.bopVersion      = "13.0.0.425"
 project.ext.jeiVersion    	= "7.6.0.62"
 

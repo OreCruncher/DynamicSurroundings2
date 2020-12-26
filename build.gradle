@@ -70,6 +70,8 @@ minecraft {
     // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
+            //property 'mixin.env.disableRefMap', 'true'
+
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
@@ -171,7 +173,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     //compile fg.deobf("com.github.glitchfiend.biomesoplenty:BiomesOPlenty:${mcVersion}-${project.bopVersion}:universal")
-    //compile fg.deobf("com.github.glitchfiend.biomesoplenty:SereneSeasons:${mcVersion}-${project.ssVersion}:universal")
+    compile fg.deobf("com.github.glitchfiend.biomesoplenty:SereneSeasons:${mcVersion}-${project.ssVersion}:api")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mcVersion}:${project.jeiVersion}")
     runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.0.6-8")

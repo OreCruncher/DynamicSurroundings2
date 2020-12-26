@@ -1,3 +1,16 @@
+> ### DynamicSurroundings-1.16.4-4.0.1.3
+**Requirements**
+* Forge 1.16.4-35.1.10
+* 100% client side; no server side deployment needed
+
+**Changes**
+* Cleaned up biome fog processing
+  * Use Minecraft's fog color calculations since it is now doing fancy things
+  * Use Minecraft/datapack fog colors as a default rather than "white". 
+  * Simplified fog visibility calculations.
+* Activated support for Serene Seasons.
+* Adjusted underground biome sound to activate at Y < 50 rather than 33.
+
 > ### DynamicSurroundings-1.16.4-4.0.1.2
 **Requirements**
 * Forge 1.16.4-35.1.10
@@ -7,9 +20,9 @@
 * Started roughing in the /dsdump command.  The intent is to have the ability to dump out the various registries and runtime configurations to disk.  This is WIP.
 
 **Fixes**
-* Crash with the Undergarden dimension from the Undergarden mod
+* Crash with the Undergarden dimension from the The Undergarden mod.
 * Issue with primitive sound handling.  This means a better default sound behavior for blocks that do not have a specific configuration.
-* Incremental work on supporting the new MC 1.16.4 blocks
+* Incremental work on supporting the new MC 1.16.4 blocks.
 
 > ### DynamicSurroundings-1.16.4-4.0.1.1
 **Requirements**

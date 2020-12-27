@@ -1,3 +1,16 @@
+> ### DynamicSurroundings-1.16.4-4.0.1.4
+**Requirements**
+* Forge 1.16.4-35.1.10
+* 100% client side; no server side deployment needed
+
+**Fixes**
+* Fixed calculations related to block occlusion processing
+  * Now set to enabled as a default
+  * To enable set "Enable Sound Occlusion Calculations" in sndctrl-client.toml to true
+
+**Changes**
+* Changed logic where spot sounds play around the player.  They should play a bit further away, lessening the sound impact of some bird sounds (like crows and raptors).
+
 > ### DynamicSurroundings-1.16.4-4.0.1.3
 **Requirements**
 * Forge 1.16.4-35.1.10

@@ -325,7 +325,7 @@ public final class MathStuff {
      */
     @Nonnull
     public static Vector3d addScaled(@Nonnull final Vector3d base, @Nonnull final Vector3d addened, final double scale) {
-        return new Vector3d(base.x + addened.x * scale, base.y + addened.y * scale, base.z + addened.z * scale);
+        return base.add(addened.getX() * scale, addened.getY() * scale, addened.getZ() * scale);
     }
 
     /**
@@ -336,10 +336,6 @@ public final class MathStuff {
      */
     @Nonnull
     public static Vector3d normalize(@Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
-        final double x = target.x - origin.x;
-        final double y = target.y - origin.y;
-        final double z = target.z - origin.z;
-        final double d0 = Math.sqrt(x * x + y * y + z * z);
-        return d0 < 1.0E-4D ? Vector3d.ZERO : new Vector3d(x / d0, y / d0, z / d0);
+        return target.subtract(origin).normalize();
     }
 }

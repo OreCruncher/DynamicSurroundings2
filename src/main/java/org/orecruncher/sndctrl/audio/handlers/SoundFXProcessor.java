@@ -258,8 +258,10 @@ public final class SoundFXProcessor {
             final ForkJoinPool pool = threadPool.get();
             for (int i = 0; i < SoundUtils.getMaxSounds(); i++) {
                 final SourceContext ctx = sources[i];
-                if (ctx != null && ctx.shouldExecute())
+                if (ctx != null && ctx.shouldExecute()) {
+                    ctx.reinitialize();
                     pool.execute(ctx);
+                }
             }
             pool.awaitQuiescence(5, TimeUnit.MINUTES);
         } catch (@Nonnull final Throwable t) {

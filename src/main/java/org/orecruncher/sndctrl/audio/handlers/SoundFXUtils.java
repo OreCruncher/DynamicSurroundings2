@@ -55,7 +55,7 @@ import java.util.Iterator;
 public final class SoundFXUtils {
 
     /**
-     * Maximum number of segements to check when ray tracing for occlusion.
+     * Maximum number of segments to check when ray tracing for occlusion.
      */
     private static final int OCCLUSION_RAYS = 10;
     /**
@@ -380,7 +380,7 @@ public final class SoundFXUtils {
     }
 
     private static Vector3d offsetPositionIfSolid(@Nonnull final IWorldReader world, @Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
-        if (WorldUtils.isAirBlock(world, new BlockPos(origin))) {
+        if (!WorldUtils.isAirBlock(world, new BlockPos(origin))) {
             return MathStuff.addScaled(origin, MathStuff.normalize(origin, target), 0.876F);
         }
         return origin;

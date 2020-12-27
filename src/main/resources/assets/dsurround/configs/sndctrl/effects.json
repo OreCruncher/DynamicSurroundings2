@@ -1,7 +1,12 @@
 {
   "occlusions": {
-    "#minecraft:wool": 4,
-    "#forge:netherrack": 0.7
+    "+ORGANIC": 0.2,
+    "+PLANTS": 0.2,
+    "#minecraft:wool": 1,
+    "#minecraft:beehives": 0.3,
+    "#forge:netherrack": 0.7,
+    "#forge:fences": 0.2,
+    "#forge:chests": 0.4
   },
   "reflectivity": {
     "+PORTAL": 0.95,
@@ -46,7 +51,13 @@
     "+CAKE": 0,
     "#minecraft:logs": 0.7,
     "#minecraft:planks": 0.7,
-    "#forge:netherrack": 0.5
+    "#forge:netherrack": 0.5,
+    "#forge:sandstone": 0.7,
+    "#forge:sand": 0.3,
+    "#forge:gravel": 0.5,
+    "#forge:fences": 0.2,
+    "#forge:cobblestone": 0.75,
+    "#minecraft:beehives": 0.3
   },
   "fluid": {
     "minecraft:water": 0.6,

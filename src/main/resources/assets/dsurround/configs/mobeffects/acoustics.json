@@ -556,9 +556,7 @@
   "log": {
     "type": "event",
     "walk": {
-      "name": "wood.wood_walk",
-      "pitch_min": 55,
-      "pitch_max": 60
+      "name": "wood.log_walk"
     },
     "wander": "dirt.dirt_wander",
     "land": {
@@ -566,11 +564,9 @@
       "array": [
         "wood.wood_walk",
         {
-          "name": "wood.wood_walk",
+          "name": "wood.log_walk",
           "type": "delayed",
-          "delay": 1,
-          "pitch_min": 55,
-          "pitch_max": 60
+          "delay": 1
         }
       ]
     }

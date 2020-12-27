@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.misc;
+package org.orecruncher.lib;
 
 import net.minecraftforge.fml.ModList;
 
@@ -24,19 +24,35 @@ import javax.annotation.Nonnull;
 
 public enum ModEnvironment {
 
-    SoundPhysics("soundphysics"),
-    SereneSeasons("sereneseasons");
+    SereneSeasons("sereneseasons"),
+    ClothConfig("me.shedaniel.clothconfig2.forge.api.ConfigBuilder", true);
 
     protected final String modId;
     protected boolean isLoaded;
+    protected boolean isAPI;
 
     ModEnvironment(@Nonnull final String modId) {
-        this.modId = modId;
+        this(modId, false);
     }
 
-    public static void initialize() {
-        for (final ModEnvironment me : ModEnvironment.values())
-            me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
+    ModEnvironment(@Nonnull final String modId, final boolean isAPI) {
+        this.modId = modId;
+        this.isAPI = isAPI;
+    }
+
+    static {
+        for (final ModEnvironment me : ModEnvironment.values()) {
+            if (me.isAPI) {
+                try {
+                    Class<?> clazz = Class.forName(me.modId);
+                    me.isLoaded = true;
+                } catch (@Nonnull final Throwable t) {
+                    me.isLoaded = false;
+                }
+            } else {
+                me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
+            }
+        }
     }
 
     public boolean isLoaded() {

@@ -43,7 +43,7 @@ import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
-import org.orecruncher.sndctrl.misc.ModEnvironment;
+import org.orecruncher.lib.ModEnvironment;
 
 import javax.annotation.Nonnull;
 
@@ -78,7 +78,7 @@ public final class SoundControl {
     }
 
     private void commonSetup(@Nonnull final FMLCommonSetupEvent event) {
-        ModEnvironment.initialize();
+        //ModEnvironment.initialize();
         CapabilityEntityFXData.register();
     }
 

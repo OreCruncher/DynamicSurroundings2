@@ -19,7 +19,7 @@
 package org.orecruncher.environs.shaders.aurora;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.*;
 import net.minecraft.util.math.vector.Matrix4f;
@@ -27,15 +27,12 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import org.lwjgl.opengl.GL11;
 import org.orecruncher.environs.shaders.Shaders;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.math.MathStuff;
 
-import org.orecruncher.lib.opengl.OpenGlUtil;
-import org.orecruncher.lib.shaders.ShaderProgram;
-
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 /*
  * Renders a shader generated aurora along a curved path.  Makes it ribbon like.
@@ -47,25 +44,24 @@ public class AuroraShaderBand extends AuroraBase {
 	private static final float v1 = 0;
 	private static final float v2 = 1F;
 	
-	protected ShaderProgram program;
-	protected ShaderProgram.IShaderUseCallback callback;
+	protected Shaders.Programs program;
+	protected Consumer<Shaders.ShaderCallContext> callback;
+
 	protected final float auroraWidth;
 	protected final float panelTexWidth;
 	
-	//protected final BufferBuilder buffer;
-
 	public AuroraShaderBand(final long seed) {
 		super(seed, true);
 
-		this.program = Shaders.AURORA;
+		this.program = Shaders.Programs.AURORA;
 
-		this.callback = shader -> {
-			shader.set("time", AuroraUtils.getTimeSeconds() * 0.75F);
-			shader.set("resolution", AuroraShaderBand.this.getAuroraWidth(), AuroraShaderBand.this.getAuroraHeight());
-			shader.set("topColor", AuroraShaderBand.this.getFadeColor());
-			shader.set("middleColor", AuroraShaderBand.this.getMiddleColor());
-			shader.set("bottomColor", AuroraShaderBand.this.getBaseColor());
-			shader.set("alpha", AuroraShaderBand.this.getAlpha());
+		this.callback = shaderCallContext -> {
+			shaderCallContext.set("time", AuroraUtils.getTimeSeconds() * 0.75F);
+			shaderCallContext.set("resolution", AuroraShaderBand.this.getAuroraWidth(), AuroraShaderBand.this.getAuroraHeight());
+			shaderCallContext.set("topColor", AuroraShaderBand.this.getFadeColor());
+			shaderCallContext.set("middleColor", AuroraShaderBand.this.getMiddleColor());
+			shaderCallContext.set("bottomColor", AuroraShaderBand.this.getBaseColor());
+			shaderCallContext.set("alpha", AuroraShaderBand.this.getAlpha());
 		};
 
 		this.auroraWidth = this.band.getNodeList().length * this.band.getNodeWidth();
@@ -84,6 +80,7 @@ public class AuroraShaderBand extends AuroraBase {
 	protected float getAuroraHeight() {
 		return AuroraBand.AURORA_AMPLITUDE;
 	}
+
 
 	// Build out our aurora render area so we can reapply it each
 	// render pass.  I am thinking there is a better way but
@@ -127,6 +124,7 @@ public class AuroraShaderBand extends AuroraBase {
 			renderer.pos(matrix, posX2, posY2, posZ2).tex(u2, v2).endVertex();
 		}
 
+		RenderSystem.disableDepthTest();
 		buffer.finish(AuroraRenderType.RENDER_TYPE);
 	}
 
@@ -142,7 +140,7 @@ public class AuroraShaderBand extends AuroraBase {
 
 		final Vector3d view = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView();
 		matrixStack.push();
-		matrixStack.translate(view.getX(), view.getY(), view.getZ());
+		matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
 
 		final double tranY = getTranslationY(view, partialTick);
 		final double tranX = getTranslationX(view, partialTick);
@@ -153,9 +151,12 @@ public class AuroraShaderBand extends AuroraBase {
 		//OpenGlUtil.setAuroraBlend();
 		//GL11.glFrontFace(GL11.GL_CW);
 
+		// Can't define a TextureState to do this
+		RenderSystem.enableTexture();
+
 		try {
 
-			this.program.use(this.callback);
+			Shaders.useShader(this.program, this.callback);
 
 			for (int b = 0; b < this.bandCount; b++) {
 				matrixStack.push();
@@ -171,7 +172,7 @@ public class AuroraShaderBand extends AuroraBase {
 		} finally {
 			try {
 				if (this.program != null)
-					this.program.unUse();
+					Shaders.releaseShader();
 			} catch (final Throwable ignored) {
 				;
 			}

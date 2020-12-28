@@ -96,18 +96,15 @@ public abstract class AuroraBase implements IAurora {
 	}
 
 	protected double getTranslationX(@Nonnull final Vector3d view, final float partialTick) {
-		return 0;
-		//return this.player.getPosX() - MathHelper.lerp(partialTick, this.player.lastTickPosX, this.player.getPosX());
+		return MathHelper.lerp(partialTick, this.player.lastTickPosX, this.player.getPosX());
 	}
 
 	protected double getTranslationZ(@Nonnull final Vector3d view, final float partialTick) {
-		return -60;
-		// return -AuroraUtils.PLAYER_FIXED_Z_OFFSET;
-		//return this.player.getPosZ() - AuroraUtils.PLAYER_FIXED_Z_OFFSET - MathHelper.lerp(partialTick, this.player.lastTickPosZ, this.player.getPosZ());
+		return MathHelper.lerp(partialTick, this.player.lastTickPosZ, this.player.getPosZ()) - AuroraUtils.PLAYER_FIXED_Z_OFFSET;
 	}
 
 	protected double getTranslationY(@Nonnull final Vector3d view, final float partialTick) {
-		final double posY = view.getY(); //MathHelper.lerp(partialTick, this.player.lastTickPosY, this.player.getPosY());
+		final double posY = MathHelper.lerp(partialTick, this.player.lastTickPosY, this.player.getPosY());
 		if (posY > dimInfo.getSeaLevel()) {
 			final double limit = (this.dimInfo.getSkyHeight() + this.dimInfo.getCloudHeight()) / 2D;
 			final double d1 = limit - this.dimInfo.getSeaLevel();

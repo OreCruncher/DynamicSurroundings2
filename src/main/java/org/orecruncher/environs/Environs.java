@@ -42,6 +42,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.environs.handlers.Manager;
 import org.orecruncher.environs.library.Constants;
 import org.orecruncher.environs.library.Libraries;
+import org.orecruncher.environs.shaders.Shaders;
 import org.orecruncher.lib.logging.ModLog;
 import org.orecruncher.sndctrl.api.IMC;
 
@@ -74,6 +75,8 @@ public final class Environs {
 
             // Initialize our configuration
             Config.setup();
+
+            Shaders.initShaders();
         }
     }
 

@@ -81,9 +81,6 @@ public final class AuroraHandler extends HandlerBase {
 	@Override
 	public void process(@Nonnull final PlayerEntity player) {
 
-		if (!Shaders.areShadersSupported())
-			return;
-
 		// Process the current aurora
 		if (this.current != null) {
 			// If completed or the player changed dimensions we want to kill
@@ -127,7 +124,7 @@ public final class AuroraHandler extends HandlerBase {
 	@SubscribeEvent
 	public void diagnostic(@Nonnull final DiagnosticEvent event) {
 		if (Config.CLIENT.logging.get_enableLogging()) {
-			if (Shaders.areShadersSupported()) {
+			if (Shaders.areSupported()) {
 				event.getLeft().add("Aurora: " + (this.current == null ? "NONE" : this.current.toString()));
 				event.getRenderTimers().add(this.render);
 			} else {

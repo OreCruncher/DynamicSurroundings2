@@ -76,4 +76,10 @@ public interface ISoundInstance extends ISound {
         return getPlayDelay() > 0;
     }
 
+    /**
+     * Sets the volume scale that gets applied to the underlying sound
+     * @param scale The amount to scale the volume by
+     */
+    default void scaleVolume(final float scale) {
+    }
 }

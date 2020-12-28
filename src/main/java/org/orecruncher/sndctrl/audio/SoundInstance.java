@@ -40,7 +40,7 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     @Nonnull
     private SoundState state;
     @Nonnull
-    private ISoundCategory category;
+    private final ISoundCategory category;
 
     private int playDelay;
 
@@ -117,6 +117,10 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
 
     public void setVolume(final float v) {
         this.volume = v;
+    }
+
+    public void scaleVolume(final float v) {
+        this.volume *= v;
     }
 
     public void setGlobal(final boolean flag) {

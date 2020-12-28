@@ -32,12 +32,16 @@ import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 import org.orecruncher.sndctrl.audio.AudioEngine;
 import org.orecruncher.sndctrl.audio.BackgroundSoundInstance;
+import org.orecruncher.sndctrl.audio.PlayerCenteredSoundInstance;
+import org.orecruncher.sndctrl.audio.WrappedSoundInstance;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class ItemData {
+
+    private static final float OTHER_PLAYER_VOLUME_SCALE = 0.75F;
 
     @Nonnull
     private final String name;
@@ -122,11 +126,10 @@ public class ItemData {
         if (factory != null) {
             final ISoundInstance sound;
             if (pos == null) {
-                final IFadableSoundInstance instance = new BackgroundSoundInstance(factory.createSound(), Constants.TOOLBAR);
-                instance.noFade();
-                sound = instance;
+                sound = new PlayerCenteredSoundInstance(factory.createSound(), Constants.TOOLBAR);
             } else {
                 sound = factory.createSoundAt(pos);
+                sound.scaleVolume(OTHER_PLAYER_VOLUME_SCALE);
             }
             AudioEngine.play(sound);
         }

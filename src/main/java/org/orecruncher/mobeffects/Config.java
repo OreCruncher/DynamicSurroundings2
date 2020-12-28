@@ -279,7 +279,7 @@ public final class Config {
                 this.toolbarVolume = builder
                         .comment("Toolbar master volume scale")
                         .translation("mobeffects.cfg.effects.ToolbarVolume")
-                        .defineInRange("Toolbar Volume Scale", 50, 0, 100);
+                        .defineInRange("Toolbar Volume Scale", 35, 0, 100);
 
                 builder.pop();
             }

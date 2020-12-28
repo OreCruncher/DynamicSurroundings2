@@ -23,8 +23,11 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.environs.library.DimensionInfo;
@@ -92,21 +95,23 @@ public abstract class AuroraBase implements IAurora {
 		return (this.tracker.ageRatio() * this.band.getAlphaLimit()) / 255;
 	}
 
-	protected double getTranslationX(final float partialTick) {
-		return this.player.getPosX()
-				- (this.player.lastTickPosX + (this.player.getPosX() - this.player.lastTickPosX) * partialTick);
+	protected double getTranslationX(@Nonnull final Vector3d view, final float partialTick) {
+		return 0;
+		//return this.player.getPosX() - MathHelper.lerp(partialTick, this.player.lastTickPosX, this.player.getPosX());
 	}
 
-	protected double getTranslationZ(final float partialTick) {
-		return (this.player.getPosZ() - AuroraUtils.PLAYER_FIXED_Z_OFFSET)
-				- (this.player.lastTickPosZ + (this.player.getPosZ() - this.player.lastTickPosZ) * partialTick);
+	protected double getTranslationZ(@Nonnull final Vector3d view, final float partialTick) {
+		return -60;
+		// return -AuroraUtils.PLAYER_FIXED_Z_OFFSET;
+		//return this.player.getPosZ() - AuroraUtils.PLAYER_FIXED_Z_OFFSET - MathHelper.lerp(partialTick, this.player.lastTickPosZ, this.player.getPosZ());
 	}
 
-	protected double getTranslationY(final float partialTick) {
-		if (this.player.getPosY() > dimInfo.getSeaLevel()) {
+	protected double getTranslationY(@Nonnull final Vector3d view, final float partialTick) {
+		final double posY = view.getY(); //MathHelper.lerp(partialTick, this.player.lastTickPosY, this.player.getPosY());
+		if (posY > dimInfo.getSeaLevel()) {
 			final double limit = (this.dimInfo.getSkyHeight() + this.dimInfo.getCloudHeight()) / 2D;
 			final double d1 = limit - this.dimInfo.getSeaLevel();
-			final double d2 = player.getPosY() - this.dimInfo.getSeaLevel();
+			final double d2 = posY - this.dimInfo.getSeaLevel();
 			return AuroraUtils.PLAYER_FIXED_Y_OFFSET * (d1 - d2) / d1;
 		}
 
@@ -129,7 +134,7 @@ public abstract class AuroraBase implements IAurora {
 	}
 
 	@Override
-	public abstract void render(final float partialTick);
+	public abstract void render(@Nonnull final RenderWorldLastEvent event);
 
 	@Override
 	public String toString() {

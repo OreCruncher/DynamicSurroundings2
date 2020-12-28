@@ -119,7 +119,7 @@ public final class AuroraHandler extends HandlerBase {
 	public void doRender(@Nonnull final RenderWorldLastEvent event) {
 		this.render.begin();
 		if (this.current != null) {
-			this.current.render(event.getPartialTicks());
+			this.current.render(event);
 		}
 		this.render.end();
 	}

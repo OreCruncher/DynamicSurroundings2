@@ -18,20 +18,24 @@
 
 package org.orecruncher.environs.shaders.aurora;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldVertexBufferUploader;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.*;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
 import org.orecruncher.environs.shaders.Shaders;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.math.MathStuff;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.orecruncher.lib.opengl.OpenGlState;
 import org.orecruncher.lib.opengl.OpenGlUtil;
 import org.orecruncher.lib.shaders.ShaderProgram;
+
+import javax.annotation.Nonnull;
 
 /*
  * Renders a shader generated aurora along a curved path.  Makes it ribbon like.
@@ -39,7 +43,7 @@ import org.orecruncher.lib.shaders.ShaderProgram;
 @OnlyIn(Dist.CLIENT)
 public class AuroraShaderBand extends AuroraBase {
 
-	private static final double zero = 0;
+	private static final float zero = 0;
 	private static final float v1 = 0;
 	private static final float v2 = 1F;
 	
@@ -84,28 +88,28 @@ public class AuroraShaderBand extends AuroraBase {
 	// Build out our aurora render area so we can reapply it each
 	// render pass.  I am thinking there is a better way but
 	// I don't know alot about this area of Minecraft.
-	protected BufferBuilder generateBand() {
+	protected void generateBand(@Nonnull final Matrix4f matrix) {
 
-		final BufferBuilder renderer = Tessellator.getInstance().getBuffer();
+		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
+		final IVertexBuilder renderer = buffer.getBuffer(AuroraRenderType.RENDER_TYPE);
 		final Panel[] array = this.band.getNodeList();
 		
-		renderer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX);
-
 		// Get the strip started
-		final double posY = array[0].getModdedY();
-		final double posX = array[0].tetX;
-		final double posZ = array[0].tetZ;
-		renderer.pos(posX, zero, posZ).tex(0, 0).endVertex();
-		renderer.pos(posX, posY, posZ).tex(0, 1F).endVertex();
+		final float posY = array[0].getModdedY();
+		final float posX = array[0].tetX;
+		final float posZ = array[0].tetZ;
+
+		renderer.pos(matrix, posX, zero, posZ).tex(0, 0).endVertex();
+		renderer.pos(matrix, posX, posY, posZ).tex(0, 1F).endVertex();
 		
 		for (int i = 0; i < array.length - 1; i++) {
 
 			final float u1 = i * this.panelTexWidth;
 			final float u2 = u1 + this.panelTexWidth;
 
-			final double posX2;
-			final double posZ2;
-			final double posY2;
+			final float posX2;
+			final float posZ2;
+			final float posY2;
 
 			if (i < array.length - 2) {
 				final Panel nodePlus = array[i + 1];
@@ -116,45 +120,49 @@ public class AuroraShaderBand extends AuroraBase {
 				final Panel node = array[i];
 				posX2 = node.posX;
 				posZ2 = node.getModdedZ();
-				posY2 = 0.0D;
+				posY2 = 0.0F;
 			}
 
-			renderer.pos(posX2, zero, posZ2).tex(u2, v1).endVertex();
-			renderer.pos(posX2, posY2, posZ2).tex(u2, v2).endVertex();
+			renderer.pos(matrix, posX2, zero, posZ2).tex(u2, v1).endVertex();
+			renderer.pos(matrix, posX2, posY2, posZ2).tex(u2, v2).endVertex();
 		}
-		
-		renderer.finishDrawing();
 
-		return renderer;
+		buffer.finish(AuroraRenderType.RENDER_TYPE);
 	}
 
 	@Override
-	public void render(final float partialTick) {
+	public void render(@Nonnull final RenderWorldLastEvent event) {
 
 		if (this.program == null)
 			return;
 
+		final MatrixStack matrixStack = event.getMatrixStack();
+		final float partialTick = event.getPartialTicks();
 		this.band.translate(partialTick);
 
-		final double tranY = getTranslationY(partialTick);
-		final double tranX = getTranslationX(partialTick);
-		final double tranZ = getTranslationZ(partialTick);
+		final Vector3d view = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView();
+		matrixStack.push();
+		matrixStack.translate(view.getX(), view.getY(), view.getZ());
 
-		final OpenGlState glState = OpenGlState.push();
-		GlStateManager.disableLighting();
-		OpenGlUtil.setAuroraBlend();
-		GL11.glFrontFace(GL11.GL_CW);
+		final double tranY = getTranslationY(view, partialTick);
+		final double tranX = getTranslationX(view, partialTick);
+		final double tranZ = getTranslationZ(view, partialTick);
+
+		//GlStateManager.disableLighting();
+		//GlStateManager.disableBlend();
+		//OpenGlUtil.setAuroraBlend();
+		//GL11.glFrontFace(GL11.GL_CW);
 
 		try {
 
 			this.program.use(this.callback);
 
 			for (int b = 0; b < this.bandCount; b++) {
-				GlStateManager.pushMatrix();
-				GlStateManager.translated(tranX, tranY, tranZ + this.offset * b);
-				GlStateManager.scaled(0.5D, 10.0D, 0.5D);
-				WorldVertexBufferUploader.draw(generateBand());
-				GlStateManager.popMatrix();
+				matrixStack.push();
+				matrixStack.translate(tranX, tranY, tranZ + this.offset * b);
+				matrixStack.scale(0.5F, 10F, 0.5F);
+				generateBand(matrixStack.getLast().getMatrix());
+				matrixStack.pop();
 			}
 
 		} catch (final Exception ex) {
@@ -169,8 +177,8 @@ public class AuroraShaderBand extends AuroraBase {
 			}
 		}
 
-		GL11.glFrontFace(GL11.GL_CCW);
-		OpenGlState.pop(glState);
+		matrixStack.pop();
+		//GL11.glFrontFace(GL11.GL_CCW);
 	}
 
 	@Override

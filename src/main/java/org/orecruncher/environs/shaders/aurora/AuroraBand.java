@@ -33,6 +33,7 @@ public class AuroraBand {
 
 	protected static final float AURORA_SPEED = 0.75F;
 	public static final float AURORA_AMPLITUDE = 18.0F;
+	public static final float AURORA_HEIGHT = AURORA_AMPLITUDE * 4;
 
 	protected final Random random;
 
@@ -137,7 +138,7 @@ public class AuroraBand {
 			for (int k = 7; k >= 0; k--) {
 				final int idx = i * 8 + k;
 				if (idx == bound) {
-					nodeList[idx] = new Panel(0.0F, AURORA_AMPLITUDE, 0.0F);
+					nodeList[idx] = new Panel(0.0F, AURORA_HEIGHT, 0.0F);
 					angles[idx] = angle;
 				} else {
 					final Panel node = nodeList[idx + 1];
@@ -146,7 +147,7 @@ public class AuroraBand {
 					final float z = node.posZ - (MathStuff.sin(subAngleRads) * this.nodeLength);
 					final float x = node.posX - (MathStuff.cos(subAngleRads) * this.nodeLength);
 
-					nodeList[idx] = new Panel(x, AURORA_AMPLITUDE, z);
+					nodeList[idx] = new Panel(x, AURORA_HEIGHT, z);
 					angles[idx] = subAngle;
 				}
 			}
@@ -167,7 +168,7 @@ public class AuroraBand {
 				final float subAngleRads = MathStuff.toRadians(subAngle);
 				final float z = node.posZ + (MathStuff.sin(subAngleRads) * this.nodeLength);
 				final float x = node.posX + (MathStuff.cos(subAngleRads) * this.nodeLength);
-				nodeList[idx + 1] = new Panel(x, AURORA_AMPLITUDE, z);
+				nodeList[idx + 1] = new Panel(x, AURORA_HEIGHT, z);
 				angles[idx + 1] = subAngle;
 			}
 		}

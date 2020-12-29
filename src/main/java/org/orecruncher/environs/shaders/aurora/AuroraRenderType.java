@@ -23,7 +23,6 @@ import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
@@ -44,41 +43,25 @@ public class AuroraRenderType extends RenderType {
     });
 
     private static final LayerState PROJECTION_LAYERING = field_239235_M_;
-    private static final LayerState VIEW_OFFSET_Z_LAYERING = field_239235_M_;
 
     private static final TargetState ITEM_ENTITY_TARGET = field_241712_U_;
     private static final TargetState CLOUDS_TARGET = field_239239_V_;
     private static final TargetState WEATHER_TARGET = field_239238_U_;
 
-    public static RenderType RENDER_TYPE_QUAD =RenderType.makeType(
-            "aurora_render_type",
-            DefaultVertexFormats.POSITION_TEX,
+    public static final RenderType QUAD_LINES = makeType(
+            "aurora_render_lines",
+            DefaultVertexFormats.POSITION_COLOR,
             GL11.GL_QUADS,
             256,
             RenderType.State.getBuilder()
                     .layer(PROJECTION_LAYERING)
-                    .transparency(AURORA_TRANSPARENCY) // TRANSLUCENT_TRANSPARENCY
-                    .texture(new TextureState(new ResourceLocation("environs:textures/particles/none.png"), false, false))
-                    //.depthTest(DEPTH_LEQUAL)
-                    .depthTest(DEPTH_ALWAYS)
-                    .cull(CULL_DISABLED)
+                    .transparency(TRANSLUCENT_TRANSPARENCY)
+                    .texture(NO_TEXTURE)
+                    //.alpha(ZERO_ALPHA)
+                    .depthTest(DEPTH_ALWAYS) // DEPTH_ALWAYS
+                    .cull(RenderState.CULL_DISABLED)
                     .lightmap(LIGHTMAP_DISABLED)
-                    .writeMask(DEPTH_WRITE)
+                    .writeMask(COLOR_WRITE)
                     .build(false));
 
-    public static RenderType RENDER_TYPE = RenderType.makeType(
-            "aurora_render_type",
-            DefaultVertexFormats.POSITION_TEX,
-            GL11.GL_TRIANGLE_STRIP,
-            256,
-            RenderType.State.getBuilder()
-                    .layer(PROJECTION_LAYERING)
-                    .transparency(TRANSLUCENT_TRANSPARENCY) // TRANSLUCENT_TRANSPARENCY
-                    .texture(new TextureState(new ResourceLocation("environs:textures/particles/none.png"), false, false))
-                    //.depthTest(DEPTH_LEQUAL)
-                    .depthTest(DEPTH_ALWAYS)
-                    //.cull(CULL_DISABLED)
-                    .lightmap(LIGHTMAP_DISABLED)
-                    .writeMask(DEPTH_WRITE)
-                    .build(false));
 }

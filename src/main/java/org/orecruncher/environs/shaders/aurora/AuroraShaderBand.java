@@ -70,6 +70,12 @@ public class AuroraShaderBand extends AuroraBase {
 	}
 
 	@Override
+	public void update() {
+		super.update();
+		this.band.update();
+	}
+
+	@Override
 	protected float getAlpha() {
 		return MathStuff.clamp((this.band.getAlphaLimit() / 255F) * this.tracker.ageRatio() * 2.0F, 0F, 1F);
 	}
@@ -82,11 +88,36 @@ public class AuroraShaderBand extends AuroraBase {
 		return AuroraBand.AURORA_AMPLITUDE;
 	}
 
+	protected void generateBandQuadLines(@Nonnull final Matrix4f matrix) {
+
+		final RenderType renderType = AuroraRenderType.QUAD_LINES;
+		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
+		final IVertexBuilder renderer = buffer.getBuffer(renderType);
+
+		for (int i = 0; ; i++) {
+			final Vector3f[] quad = this.band.getPanelQuad(i);
+			if (quad == null)
+				break;
+
+			final float u1 = i * this.panelTexWidth;
+			final float u2 = u1 + this.panelTexWidth;
+
+			renderer.pos(matrix, quad[0].getX(), quad[0].getY(), quad[0].getZ()).color(0, 255, 0, 254).endVertex();
+			renderer.pos(matrix, quad[1].getX(), quad[1].getY(), quad[1].getZ()).color(0, 255, 0, 254).endVertex();
+			renderer.pos(matrix, quad[2].getX(), quad[2].getY(), quad[2].getZ()).color(0, 255, 0, 254).endVertex();
+			renderer.pos(matrix, quad[3].getX(), quad[3].getY(), quad[3].getZ()).color(0, 255, 0, 254).endVertex();
+		}
+
+		RenderSystem.disableDepthTest();
+		buffer.finish(renderType);
+
+	}
 
 	protected void generateBandQuad(@Nonnull final Matrix4f matrix) {
 
+		final RenderType renderType = AuroraRenderType.QUADS;
 		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
-		final IVertexBuilder renderer = buffer.getBuffer(AuroraRenderType.RENDER_TYPE_QUAD);
+		final IVertexBuilder renderer = buffer.getBuffer(renderType);
 
 		for (int i = 0; ; i++) {
 			final Vector3f[] quad = this.band.getPanelQuad(i);
@@ -103,7 +134,7 @@ public class AuroraShaderBand extends AuroraBase {
 		}
 
 		RenderSystem.disableDepthTest();
-		buffer.finish(AuroraRenderType.RENDER_TYPE_QUAD);
+		buffer.finish(renderType);
 	}
 
 	// Build out our aurora render area so we can reapply it each
@@ -166,38 +197,33 @@ public class AuroraShaderBand extends AuroraBase {
 		matrixStack.push();
 		matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
 
-		final double tranY = getTranslationY(view, partialTick);
-		final double tranX = getTranslationX(view, partialTick);
-		final double tranZ = getTranslationZ(view, partialTick);
+		final double tranY = getTranslationY(partialTick);
+		final double tranX = getTranslationX(partialTick);
+		final double tranZ = getTranslationZ(partialTick);
 
 		//GlStateManager.disableLighting();
 		//GlStateManager.disableBlend();
 		//OpenGlUtil.setAuroraBlend();
 		//GL11.glFrontFace(GL11.GL_CW);
 
-		try {
+		//Shaders.useShader(this.program, this.callback);
 
-			Shaders.useShader(this.program, this.callback);
+		try {
 
 			for (int b = 0; b < this.bandCount; b++) {
 				matrixStack.push();
 				matrixStack.translate(tranX, tranY, tranZ + this.offset * b);
-				matrixStack.scale(0.5F, 10F, 0.5F);
-				generateBandQuad(matrixStack.getLast().getMatrix());
+				//matrixStack.scale(1F, 10F, 1F);
+				generateBandQuadLines(matrixStack.getLast().getMatrix());
 				matrixStack.pop();
 			}
 
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 			this.program = null;
-		} finally {
-			try {
-				if (this.program != null)
-					Shaders.releaseShader();
-			} catch (final Throwable ignored) {
-				;
-			}
 		}
+
+		Shaders.releaseShader();
 
 		matrixStack.pop();
 		//GL11.glFrontFace(GL11.GL_CCW);

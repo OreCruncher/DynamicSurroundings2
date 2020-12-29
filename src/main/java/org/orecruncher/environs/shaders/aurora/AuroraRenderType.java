@@ -50,6 +50,22 @@ public class AuroraRenderType extends RenderType {
     private static final TargetState CLOUDS_TARGET = field_239239_V_;
     private static final TargetState WEATHER_TARGET = field_239238_U_;
 
+    public static RenderType RENDER_TYPE_QUAD =RenderType.makeType(
+            "aurora_render_type",
+            DefaultVertexFormats.POSITION_TEX,
+            GL11.GL_QUADS,
+            256,
+            RenderType.State.getBuilder()
+                    .layer(PROJECTION_LAYERING)
+                    .transparency(AURORA_TRANSPARENCY) // TRANSLUCENT_TRANSPARENCY
+                    .texture(new TextureState(new ResourceLocation("environs:textures/particles/none.png"), false, false))
+                    //.depthTest(DEPTH_LEQUAL)
+                    .depthTest(DEPTH_ALWAYS)
+                    .cull(CULL_DISABLED)
+                    .lightmap(LIGHTMAP_DISABLED)
+                    .writeMask(DEPTH_WRITE)
+                    .build(false));
+
     public static RenderType RENDER_TYPE = RenderType.makeType(
             "aurora_render_type",
             DefaultVertexFormats.POSITION_TEX,

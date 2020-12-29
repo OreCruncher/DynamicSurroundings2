@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,8 +18,6 @@
 
 package org.orecruncher.environs.shaders.aurora;
 
-import javax.annotation.Nonnull;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
@@ -30,39 +28,32 @@ final class Panel {
 	private static final float COS_DEG90_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F);
 	private static final float COS_DEG270_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
 	private static final float SIN_DEG90_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F);
-	private static final float SIN_DEG270_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
 
-	public float dZ = 0.0F;
-	public float dY = 0.0F;
+	private float dZ = 0.0F;
+	private float dY = 0.0F;
 
-	public float cosDeg90 = 0.0F;
-	public float cosDeg270 = 0.0F;
-	public float sinDeg90 = 0.0F;
-	public float sinDeg270 = 0.0F;
+	private float sinDeg90 = 0.0F;
 
-	public float angle;
-	public float posX;
-	public float posY;
-	public float posZ;
+	public final float posX;
+	public final float posY;
+	public final float posZ;
 
 	public float tetX = 0.0F;
 	public float tetX2 = 0.0F;
 	public float tetZ = 0.0F;
-	public float tetZ2 = 0.0F;
 
-	public Panel(@Nonnull final Panel template, final int offset) {
-		final float rads = MathStuff.toRadians(90.0F + template.angle);
-		this.posX = template.posX + MathStuff.cos(rads) * offset;
-		this.posY = template.posY - 2.0F;
-		this.posZ = template.posZ + MathStuff.sin(rads) * offset;
-		this.angle = template.angle;
-	}
-
-	public Panel(final float x, final float y, final float z, final float theta) {
+	public Panel(final float x, final float y, final float z) {
 		this.posX = x;
 		this.posY = y;
 		this.posZ = z;
-		this.angle = theta;
+	}
+
+	public void translate(final float dY, final float dZ) {
+		this.dZ = dZ;
+		this.dY = dY;
+
+		final float mZ = this.getModdedZ();
+		this.tetZ = mZ + this.sinDeg90;
 	}
 
 	public float getModdedZ() {
@@ -75,13 +66,13 @@ final class Panel {
 	}
 
 	public void setWidth(final float w) {
-		this.cosDeg270 = COS_DEG270_FACTOR * w;
-		this.cosDeg90 = COS_DEG90_FACTOR * w;
-		this.sinDeg270 = SIN_DEG270_FACTOR * w;
+		final float cosDeg270 = COS_DEG270_FACTOR * w;
+		final float cosDeg90 = COS_DEG90_FACTOR * w;
+
 		this.sinDeg90 = SIN_DEG90_FACTOR * w;
 		
-		this.tetX = this.posX + this.cosDeg90;
-		this.tetX2 = this.posX + this.cosDeg270;
+		this.tetX = this.posX + cosDeg90;
+		this.tetX2 = this.posX + cosDeg270;
 	}
 
 }

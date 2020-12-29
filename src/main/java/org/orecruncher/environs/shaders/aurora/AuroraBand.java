@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,9 @@ package org.orecruncher.environs.shaders.aurora;
 import java.util.Random;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
@@ -29,8 +31,6 @@ import org.orecruncher.lib.math.MathStuff;
 @OnlyIn(Dist.CLIENT)
 public class AuroraBand {
 
-	protected static final float ANGLE1 = MathStuff.PI_F / 16.0F;
-	protected static final float ANGLE2 = MathStuff.toRadians(90.0F / 7.0F);
 	protected static final float AURORA_SPEED = 0.75F;
 	public static final float AURORA_AMPLITUDE = 18.0F;
 
@@ -44,26 +44,10 @@ public class AuroraBand {
 	protected float nodeWidth;
 
 	public AuroraBand(final Random random,
-					  final AuroraFactory.AuroraGeometry geo, final boolean noTaper,
-					  final boolean fixedHeight) {
+					  final AuroraFactory.AuroraGeometry geo) {
 		this.random = random;
 		preset(geo);
-		generateBands(noTaper, fixedHeight);
-		translate(0);
-	}
-
-	public AuroraBand(final Random random, final AuroraFactory.AuroraGeometry geo) {
-		this(random, geo, false, false);
-	}
-
-	protected AuroraBand(final Panel[] nodes, final AuroraBand band) {
-		this.random = band.random;
-		this.nodes = nodes;
-		this.cycle = band.cycle;
-		this.length = band.length;
-		this.nodeLength = band.nodeLength;
-		this.nodeWidth = band.nodeWidth;
-		this.alphaLimit = band.alphaLimit;
+		generateBands();
 		translate(0);
 	}
 
@@ -80,20 +64,30 @@ public class AuroraBand {
 		return this.nodeWidth;
 	}
 
-	public float getCycle() {
-		return this.cycle;
+	public int getPanelCount() {
+		return this.nodes.length - 1;
 	}
-	
+
+	@Nullable
+	public Vector3f[] getPanelQuad(final int panelNumber) {
+		if (panelNumber < 0 || panelNumber >= getPanelCount())
+			return null;
+
+		final Vector3f[] nodes = new Vector3f[4];
+		final Panel panelA = this.nodes[panelNumber];
+		final Panel panelB = this.nodes[panelNumber + 1];
+
+		nodes[0] = new Vector3f(panelA.tetX, 0, panelA.tetZ);
+		nodes[1] = new Vector3f(panelB.tetX, 0, panelB.tetZ);
+		nodes[2] = new Vector3f(panelB.tetX, panelB.getModdedY(), panelB.tetZ);
+		nodes[3] = new Vector3f(panelA.tetX, panelA.getModdedY(), panelA.tetZ);
+
+		return nodes;
+	}
+
 	public void update() {
 		if ((this.cycle += AURORA_SPEED) >= 360.0F)
 			this.cycle -= 360.0F;
-	}
-
-	public AuroraBand copy(final int offset) {
-		final Panel[] newNodes = new Panel[this.nodes.length];
-		for (int i = 0; i < this.nodes.length; i++)
-			newNodes[i] = new Panel(this.nodes[i], offset);
-		return new AuroraBand(newNodes, this);
 	}
 
 	/*
@@ -103,16 +97,8 @@ public class AuroraBand {
 		final float c = this.cycle + AURORA_SPEED * partialTick;
 		for (int i = 0; i < this.nodes.length; i++) {
 			// Travelling sine wave: https://en.wikipedia.org/wiki/Wavelength
-			// final float f = MathStuff.cos(MathStuff.toRadians(AURORA_WAVELENGTH * i +
-			// c));
 			final float f = MathStuff.cos(MathStuff.toRadians((i << 3) + c));
-			final Panel node = this.nodes[i];
-			node.dZ = f * AURORA_AMPLITUDE;
-			node.dY = f * 3.0F;
-
-			final float mZ = node.getModdedZ();
-			node.tetZ = mZ + node.sinDeg90;
-			node.tetZ2 = mZ + node.sinDeg270;
+			this.nodes[i].translate(f * 3.0F, f * AURORA_AMPLITUDE);
 		}
 	}
 
@@ -123,34 +109,20 @@ public class AuroraBand {
 		this.alphaLimit = geo.alphaLimit;
 	}
 
-	protected void generateBands(final boolean noTaper, final boolean fixedHeight) {
-		this.nodes = populate(noTaper, fixedHeight);
-		final float factor = MathStuff.PI_F / (this.length / 4);
-		final int lowerBound = this.length / 8 + 1;
-		final int upperBound = this.length * 7 / 8 - 1;
+	protected void generateBands() {
+		this.nodes = populate();
 
-		int count = 0;
 		for (int i = 0; i < this.length; i++) {
-			// Scale the widths at the head and tail of the
-			// aurora band. This makes them taper.
-			float width;
-			if (noTaper) {
-				width = this.nodeWidth;
-			} else if (i < lowerBound) {
-				width = MathStuff.sin(factor * count++) * this.nodeWidth;
-			} else if (i > upperBound) {
-				width = MathStuff.sin(factor * count--) * this.nodeWidth;
-			} else {
-				width = this.nodeWidth;
-			}
-
-			this.nodes[i].setWidth(width);
+			this.nodes[i].setWidth(this.nodeWidth);
 		}
 	}
 
 	@Nonnull
-	protected Panel[] populate(final boolean noTaper, final boolean fixedHeight) {
+	protected Panel[] populate() {
+
 		final Panel[] nodeList = new Panel[this.length];
+		final float[] angles = new float[this.length];
+
 		final int bound = this.length / 2 - 1;
 
 		float angleTotal = 0.0F;
@@ -165,24 +137,17 @@ public class AuroraBand {
 			for (int k = 7; k >= 0; k--) {
 				final int idx = i * 8 + k;
 				if (idx == bound) {
-					final float amplitude = fixedHeight ? AURORA_AMPLITUDE : (7.0F + this.random.nextFloat());
-					nodeList[idx] = new Panel(0.0F, amplitude, 0.0F, angle);
+					nodeList[idx] = new Panel(0.0F, AURORA_AMPLITUDE, 0.0F);
+					angles[idx] = angle;
 				} else {
-					float y;
-					if (fixedHeight)
-						y = AURORA_AMPLITUDE;
-					else if (i == 0)
-						y = MathStuff.sin(ANGLE1 * k) * 7.0F + this.random.nextFloat() / 2.0F;
-					else
-						y = 10.0F + this.random.nextFloat() * 5.0F;
-
 					final Panel node = nodeList[idx + 1];
-					final float subAngle = node.angle + angle;
+					final float subAngle = angles[idx + 1] + angle;
 					final float subAngleRads = MathStuff.toRadians(subAngle);
 					final float z = node.posZ - (MathStuff.sin(subAngleRads) * this.nodeLength);
 					final float x = node.posX - (MathStuff.cos(subAngleRads) * this.nodeLength);
 
-					nodeList[idx] = new Panel(x, y, z, subAngle);
+					nodeList[idx] = new Panel(x, AURORA_AMPLITUDE, z);
+					angles[idx] = subAngle;
 				}
 			}
 		}
@@ -196,21 +161,14 @@ public class AuroraBand {
 				angleTotal += angle;
 			}
 			for (int h = 0; h < 8; h++) {
-				float y;
-				if (fixedHeight) {
-					y = AURORA_AMPLITUDE;
-				} else if (j == this.length / 8 - 1)
-					y = MathStuff.cos(ANGLE2 * h) * 7.0F + this.random.nextFloat() / 2.0F;
-				else
-					y = 10.0F + this.random.nextFloat() * 5.0F;
-
-				final Panel node = nodeList[j * 8 + h - 1];
-				final float subAngle = node.angle + angle;
+				final int idx = j * 8 + h - 1;
+				final Panel node = nodeList[idx];
+				final float subAngle = angles[idx] + angle;
 				final float subAngleRads = MathStuff.toRadians(subAngle);
 				final float z = node.posZ + (MathStuff.sin(subAngleRads) * this.nodeLength);
 				final float x = node.posX + (MathStuff.cos(subAngleRads) * this.nodeLength);
-
-				nodeList[j * 8 + h] = new Panel(x, y, z, subAngle);
+				nodeList[idx + 1] = new Panel(x, AURORA_AMPLITUDE, z);
+				angles[idx + 1] = subAngle;
 			}
 		}
 

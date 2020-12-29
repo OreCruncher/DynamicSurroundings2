@@ -48,18 +48,18 @@ public abstract class AuroraBase implements IAurora {
 	protected final PlayerEntity player;
 	protected final DimensionInfo dimInfo;
 
-	public AuroraBase(final long seed, final boolean flag) {
-		this(new XorShiftRandom(seed), flag);
+	public AuroraBase(final long seed) {
+		this(new XorShiftRandom(seed));
 	}
 
-	public AuroraBase(final Random rand, final boolean flag) {
+	public AuroraBase(final Random rand) {
 		this.random = rand;
 		this.bandCount = Math.min(this.random.nextInt(3) + 1, Config.CLIENT.aurora.get_maxBands());
 		this.offset = this.random.nextInt(20) + 20;
 		this.colors = AuroraColor.get(this.random);
 
 		final AuroraFactory.AuroraGeometry geo = AuroraFactory.AuroraGeometry.get(this.random);
-		this.band = new AuroraBand(this.random, geo, flag, flag);
+		this.band = new AuroraBand(this.random, geo);
 		this.tracker = new AuroraLifeTracker(AuroraUtils.AURORA_PEAK_AGE, AuroraUtils.AURORA_AGE_RATE);
 
 		this.player = GameUtils.getPlayer();

@@ -24,6 +24,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.*;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -40,9 +41,9 @@ import java.util.function.Consumer;
 @OnlyIn(Dist.CLIENT)
 public class AuroraShaderBand extends AuroraBase {
 
-	private static final float zero = 0;
-	private static final float v1 = 0;
-	private static final float v2 = 1F;
+	private static final float ZERO = 0;
+	private static final float V1 = 0;
+	private static final float V2 = 1F;
 	
 	protected Shaders.Programs program;
 	protected Consumer<Shaders.ShaderCallContext> callback;
@@ -51,7 +52,7 @@ public class AuroraShaderBand extends AuroraBase {
 	protected final float panelTexWidth;
 	
 	public AuroraShaderBand(final long seed) {
-		super(seed, true);
+		super(seed);
 
 		this.program = Shaders.Programs.AURORA;
 
@@ -82,6 +83,29 @@ public class AuroraShaderBand extends AuroraBase {
 	}
 
 
+	protected void generateBandQuad(@Nonnull final Matrix4f matrix) {
+
+		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
+		final IVertexBuilder renderer = buffer.getBuffer(AuroraRenderType.RENDER_TYPE_QUAD);
+
+		for (int i = 0; ; i++) {
+			final Vector3f[] quad = this.band.getPanelQuad(i);
+			if (quad == null)
+				break;
+
+			final float u1 = i * this.panelTexWidth;
+			final float u2 = u1 + this.panelTexWidth;
+
+			renderer.pos(matrix, quad[0].getX(), quad[0].getY(), quad[0].getZ()).tex(u2, V2).endVertex();
+			renderer.pos(matrix, quad[1].getX(), quad[1].getY(), quad[1].getZ()).tex(u2, V1).endVertex();
+			renderer.pos(matrix, quad[2].getX(), quad[2].getY(), quad[2].getZ()).tex(u1, V1).endVertex();
+			renderer.pos(matrix, quad[3].getX(), quad[3].getY(), quad[3].getZ()).tex(u1, V2).endVertex();
+		}
+
+		RenderSystem.disableDepthTest();
+		buffer.finish(AuroraRenderType.RENDER_TYPE_QUAD);
+	}
+
 	// Build out our aurora render area so we can reapply it each
 	// render pass.  I am thinking there is a better way but
 	// I don't know alot about this area of Minecraft.
@@ -96,7 +120,7 @@ public class AuroraShaderBand extends AuroraBase {
 		final float posX = array[0].tetX;
 		final float posZ = array[0].tetZ;
 
-		renderer.pos(matrix, posX, zero, posZ).tex(0, 0).endVertex();
+		renderer.pos(matrix, posX, ZERO, posZ).tex(0, 0).endVertex();
 		renderer.pos(matrix, posX, posY, posZ).tex(0, 1F).endVertex();
 		
 		for (int i = 0; i < array.length - 1; i++) {
@@ -120,8 +144,8 @@ public class AuroraShaderBand extends AuroraBase {
 				posY2 = 0.0F;
 			}
 
-			renderer.pos(matrix, posX2, zero, posZ2).tex(u2, v1).endVertex();
-			renderer.pos(matrix, posX2, posY2, posZ2).tex(u2, v2).endVertex();
+			renderer.pos(matrix, posX2, ZERO, posZ2).tex(u2, V1).endVertex();
+			renderer.pos(matrix, posX2, posY2, posZ2).tex(u2, V2).endVertex();
 		}
 
 		RenderSystem.disableDepthTest();
@@ -151,9 +175,6 @@ public class AuroraShaderBand extends AuroraBase {
 		//OpenGlUtil.setAuroraBlend();
 		//GL11.glFrontFace(GL11.GL_CW);
 
-		// Can't define a TextureState to do this
-		RenderSystem.enableTexture();
-
 		try {
 
 			Shaders.useShader(this.program, this.callback);
@@ -162,7 +183,7 @@ public class AuroraShaderBand extends AuroraBase {
 				matrixStack.push();
 				matrixStack.translate(tranX, tranY, tranZ + this.offset * b);
 				matrixStack.scale(0.5F, 10F, 0.5F);
-				generateBand(matrixStack.getLast().getMatrix());
+				generateBandQuad(matrixStack.getLast().getMatrix());
 				matrixStack.pop();
 			}
 

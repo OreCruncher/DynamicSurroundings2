@@ -102,7 +102,7 @@ public class AuroraShaderBand extends AuroraBase {
 		RenderSystem.disableCull();
 
 		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(GL11.GL_LESS);
+		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 		RenderSystem.depthMask(true);
 
 		RenderSystem.pushMatrix();

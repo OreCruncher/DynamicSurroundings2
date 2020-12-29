@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2020  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,29 +12,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
 package org.orecruncher.lib.shaders;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+
 @OnlyIn(Dist.CLIENT)
-public class ShaderException extends Exception {
+public interface IShaderResourceProvider {
+    @Nonnull
+    ResourceLocation getVertex();
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -1543373731942335193L;
-
-	ShaderException(final String txt) {
-		super(txt);
-	}
-
-	ShaderException(final String shaderName, final String txt) {
-		super(shaderName + ": " + txt);
-	}
-
+    @Nonnull
+    ResourceLocation getFragment();
 }

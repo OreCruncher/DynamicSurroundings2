@@ -30,7 +30,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
-import org.orecruncher.environs.shaders.Shaders;
+import org.orecruncher.environs.shaders.ShaderPrograms;
+import org.orecruncher.lib.shaders.Shaders;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.math.MathStuff;
 
@@ -47,7 +48,7 @@ public class AuroraShaderBand extends AuroraBase {
 	private static final float V1 = 0;
 	private static final float V2 = 1F;
 	
-	protected Shaders.Programs program;
+	protected ShaderPrograms program;
 	protected Consumer<Shaders.ShaderCallContext> callback;
 
 	protected final float auroraWidth;
@@ -56,7 +57,7 @@ public class AuroraShaderBand extends AuroraBase {
 	public AuroraShaderBand(final long seed) {
 		super(seed);
 
-		this.program = Shaders.Programs.AURORA;
+		this.program = ShaderPrograms.AURORA;
 
 		this.callback = shaderCallContext -> {
 			shaderCallContext.set("time", AuroraUtils.getTimeSeconds() * 0.75F);
@@ -105,8 +106,6 @@ public class AuroraShaderBand extends AuroraBase {
 		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 		RenderSystem.depthMask(true);
 
-		RenderSystem.pushMatrix();
-
 		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
 		for (int i = 0; ; i++) {
@@ -130,7 +129,6 @@ public class AuroraShaderBand extends AuroraBase {
 		RenderSystem.enableCull();
 		RenderSystem.disableAlphaTest();
 		RenderSystem.disableBlend();
-		RenderSystem.popMatrix();
 		RenderSystem.depthMask(true);
 	}
 
@@ -152,7 +150,7 @@ public class AuroraShaderBand extends AuroraBase {
 		final double tranX = getTranslationX(partialTick);
 		final double tranZ = getTranslationZ(partialTick);
 
-		Shaders.useShader(this.program, this.callback);
+		ShaderPrograms.MANAGER.useShader(this.program, this.callback);
 
 		try {
 
@@ -168,7 +166,7 @@ public class AuroraShaderBand extends AuroraBase {
 			this.program = null;
 		}
 
-		Shaders.releaseShader();
+		ShaderPrograms.MANAGER.releaseShader();
 
 		matrixStack.pop();
 	}

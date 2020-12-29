@@ -27,7 +27,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.Environs;
-import org.orecruncher.environs.shaders.Shaders;
+import org.orecruncher.lib.shaders.Shaders;
 import org.orecruncher.environs.shaders.aurora.AuroraFactory;
 import org.orecruncher.environs.shaders.aurora.AuroraUtils;
 import org.orecruncher.environs.shaders.aurora.IAurora;

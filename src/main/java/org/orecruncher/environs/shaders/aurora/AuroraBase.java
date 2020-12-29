@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ public abstract class AuroraBase implements IAurora {
 	}
 
 	protected double getTranslationZ(final float partialTick) {
-		return MathHelper.lerp(partialTick, this.player.lastTickPosZ, this.player.getPosZ()) - 2* AuroraUtils.PLAYER_FIXED_Z_OFFSET;
+		return MathHelper.lerp(partialTick, this.player.lastTickPosZ, this.player.getPosZ()) - AuroraUtils.PLAYER_FIXED_Z_OFFSET;
 	}
 
 	protected double getTranslationY(final float partialTick) {

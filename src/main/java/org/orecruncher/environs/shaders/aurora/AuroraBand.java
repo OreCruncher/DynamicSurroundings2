@@ -32,8 +32,8 @@ import org.orecruncher.lib.math.MathStuff;
 public class AuroraBand {
 
 	protected static final float AURORA_SPEED = 0.75F;
-	public static final float AURORA_AMPLITUDE = 18.0F;
-	public static final float AURORA_HEIGHT = AURORA_AMPLITUDE * 4;
+	protected static final float AURORA_WAVELENGTH = 18.0F;
+	public static final float AURORA_AMPLITUDE = 180.0F;
 
 	protected final Random random;
 
@@ -56,11 +56,6 @@ public class AuroraBand {
 		return this.alphaLimit;
 	}
 
-	@Nonnull
-	public Panel[] getNodeList() {
-		return this.nodes;
-	}
-
 	public float getNodeWidth() {
 		return this.nodeWidth;
 	}
@@ -69,6 +64,13 @@ public class AuroraBand {
 		return this.nodes.length - 1;
 	}
 
+	/**
+	 * Retrieves the points that define the panel.  Ordering of the points are lower left, lower right, upper right,
+	 * and then upper left.
+	 *
+	 * @param panelNumber  The panel in the sequence that is being queried
+	 * @return A quad defining the panel region, null if there is no such panel
+	 */
 	@Nullable
 	public Vector3f[] getPanelQuad(final int panelNumber) {
 		if (panelNumber < 0 || panelNumber >= getPanelCount())
@@ -99,7 +101,7 @@ public class AuroraBand {
 		for (int i = 0; i < this.nodes.length; i++) {
 			// Travelling sine wave: https://en.wikipedia.org/wiki/Wavelength
 			final float f = MathStuff.cos(MathStuff.toRadians((i << 3) + c));
-			this.nodes[i].translate(f * 3.0F, f * AURORA_AMPLITUDE);
+			this.nodes[i].translate(f * 3.0F, f * AURORA_WAVELENGTH);
 		}
 	}
 
@@ -138,7 +140,7 @@ public class AuroraBand {
 			for (int k = 7; k >= 0; k--) {
 				final int idx = i * 8 + k;
 				if (idx == bound) {
-					nodeList[idx] = new Panel(0.0F, AURORA_HEIGHT, 0.0F);
+					nodeList[idx] = new Panel(0.0F, AURORA_AMPLITUDE, 0.0F);
 					angles[idx] = angle;
 				} else {
 					final Panel node = nodeList[idx + 1];
@@ -147,7 +149,7 @@ public class AuroraBand {
 					final float z = node.posZ - (MathStuff.sin(subAngleRads) * this.nodeLength);
 					final float x = node.posX - (MathStuff.cos(subAngleRads) * this.nodeLength);
 
-					nodeList[idx] = new Panel(x, AURORA_HEIGHT, z);
+					nodeList[idx] = new Panel(x, AURORA_AMPLITUDE, z);
 					angles[idx] = subAngle;
 				}
 			}
@@ -168,7 +170,7 @@ public class AuroraBand {
 				final float subAngleRads = MathStuff.toRadians(subAngle);
 				final float z = node.posZ + (MathStuff.sin(subAngleRads) * this.nodeLength);
 				final float x = node.posX + (MathStuff.cos(subAngleRads) * this.nodeLength);
-				nodeList[idx + 1] = new Panel(x, AURORA_HEIGHT, z);
+				nodeList[idx + 1] = new Panel(x, AURORA_AMPLITUDE, z);
 				angles[idx + 1] = subAngle;
 			}
 		}

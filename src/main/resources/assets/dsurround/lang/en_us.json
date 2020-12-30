@@ -1,5 +1,6 @@
 {
 	"dsurround.modname": "Dynamic Surroundings",
+	"dsurround.modname.tooltip": "Family of mods that enhances the player's visual and aural experience",
 	"dsurround.msg.NewVersion": "[\"§6Update Available: §9[\",{\"text\":\"§2%1$s §ev%2$s§f\",\"color\":\"gold\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"Click for CurseForge Project Page\",\"color\":\"aqua\"}},\"clickEvent\":{\"action\":\"open_url\",\"value\":\"%3$s\"}},\"§9]\"]",
 	"dsurround.cfg.logging": "Logging Options",
 	"dsurround.cfg.logging.tooltip": "Defines how logging will behave",

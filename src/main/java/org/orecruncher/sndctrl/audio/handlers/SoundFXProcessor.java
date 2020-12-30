@@ -236,7 +236,7 @@ public final class SoundFXProcessor {
 
         // If there is no context attached and conversion is enabled do it.  This can happen if enhanced sound
         // processing is turned off.  If there is a context, make sure that the sound is attenuated.
-        boolean doConversion = ctx == null | (ctx.getSound() != null && ctx.getSound().getAttenuationType() != ISound.AttenuationType.NONE);
+        boolean doConversion = ctx == null || (ctx.getSound() != null && ctx.getSound().getAttenuationType() != ISound.AttenuationType.NONE);
 
         if (doConversion)
             return Conversion.convert(buffer);

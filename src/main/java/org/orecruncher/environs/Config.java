@@ -39,15 +39,13 @@ import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = Environs.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
-    @Nonnull
     public static final Client CLIENT;
     private static final String CLIENT_CONFIG = DynamicSurroundings.MOD_ID + File.separator + Environs.MOD_ID + "-client.toml";
-    @Nonnull
-    private static final ForgeConfigSpec clientSpec;
+    public static final ForgeConfigSpec SPEC;
 
     static {
         final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
-        clientSpec = specPair.getRight();
+        SPEC = specPair.getRight();
         CLIENT = specPair.getLeft();
     }
 
@@ -74,7 +72,7 @@ public final class Config {
 
     public static void setup() {
         // The subdir with the mod ID name should have already been created
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.clientSpec, CLIENT_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.SPEC, CLIENT_CONFIG);
     }
 
     public static class Client {
@@ -106,8 +104,8 @@ public final class Config {
 
         public static class Logging {
 
-            private final BooleanValue enableLogging;
-            private final IntValue flagMask;
+            public final BooleanValue enableLogging;
+            public final IntValue flagMask;
 
             private boolean _enableLogging;
             private int _flagMask;
@@ -145,8 +143,8 @@ public final class Config {
 
         public static class Biome {
 
-            private final IntValue worldSealevelOverride;
-            private final ForgeConfigSpec.ConfigValue<List<? extends String>> biomeSoundBlacklist;
+            public final IntValue worldSealevelOverride;
+            public final ForgeConfigSpec.ConfigValue<List<? extends String>> biomeSoundBlacklist;
 
             private int _worldSealevelOverride;
             private Set<ResourceLocation> _biomeSoundBlacklist;
@@ -184,14 +182,14 @@ public final class Config {
 
         public static class Effects {
 
-            private final BooleanValue enableFireFlies;
-            private final BooleanValue enableSteamJets;
-            private final BooleanValue enableFireJets;
-            private final BooleanValue enableBubbleJets;
-            private final BooleanValue enableDustJets;
-            private final BooleanValue enableFountainJets;
-            private final BooleanValue enableWaterSplashJets;
-            private final BooleanValue disableUnderwaterParticles;
+            public final BooleanValue enableFireFlies;
+            public final BooleanValue enableSteamJets;
+            public final BooleanValue enableFireJets;
+            public final BooleanValue enableBubbleJets;
+            public final BooleanValue enableDustJets;
+            public final BooleanValue enableFountainJets;
+            public final BooleanValue enableWaterSplashJets;
+            public final BooleanValue disableUnderwaterParticles;
 
             private boolean _enableFireFlies;
             private boolean _enableSteamJets;
@@ -309,8 +307,8 @@ public final class Config {
 
         public static class Aurora {
 
-            private final BooleanValue auroraEnabled;
-            private final IntValue maxBands;
+            public final BooleanValue auroraEnabled;
+            public final IntValue maxBands;
 
             private boolean _auroraEnabled;
             private int _maxBands;
@@ -351,13 +349,13 @@ public final class Config {
 
         public static class Fog {
 
-            private final BooleanValue enableFog;
-            private final BooleanValue enableBiomeFog;
-            private final BooleanValue enableElevationHaze;
-            private final BooleanValue enableMorningFog;
-            private final BooleanValue enableBedrockFog;
-            private final BooleanValue enableWeatherFog;
-            private final IntValue morningFogChance;
+            public final BooleanValue enableFog;
+            public final BooleanValue enableBiomeFog;
+            public final BooleanValue enableElevationHaze;
+            public final BooleanValue enableMorningFog;
+            public final BooleanValue enableBedrockFog;
+            public final BooleanValue enableWeatherFog;
+            public final IntValue morningFogChance;
 
             private boolean _enableFog;
             private boolean _enableBiomeFog;
@@ -457,8 +455,8 @@ public final class Config {
 
         public static class Sound {
 
-            private final IntValue biomeSoundVolume;
-            private final IntValue spotSoundVolume;
+            public final IntValue biomeSoundVolume;
+            public final IntValue spotSoundVolume;
             private float _biomeSoundVolume;
             private float _spotSoundVolume;
 

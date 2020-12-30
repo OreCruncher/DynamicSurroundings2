@@ -43,6 +43,7 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         final ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
         ConfigCategory category = createRootCategory(builder);
+        SubCategoryBuilder modRoot = createSubCategory(entryBuilder, "dsurround.modname", false);
         SubCategoryBuilder subCategory = createSubCategory(entryBuilder, "dsurround.cfg.logging", true);
 
         BooleanToggleBuilder boolBuilder = createBoolean(
@@ -65,6 +66,13 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
                 0,
                 Integer.MAX_VALUE);
         subCategory.add(intBuilder.build());
-        category.addEntry(subCategory.build());
+        modRoot.add(subCategory.build());
+
+        category.addEntry(modRoot.build());
+
+        // Build child mod menus
+        category.addEntry(org.orecruncher.sndctrl.ConfigGenerator.generate(builder, entryBuilder).build());
+        category.addEntry(org.orecruncher.environs.ConfigGenerator.generate(builder, entryBuilder).build());
+        category.addEntry(org.orecruncher.mobeffects.ConfigGenerator.generate(builder, entryBuilder).build());
     }
 }

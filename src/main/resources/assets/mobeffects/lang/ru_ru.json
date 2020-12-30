@@ -1,5 +1,6 @@
 {
 	"mobeffects.modname": "Dynamic Surrounding: Mob Effects",
+	"mobeffects.modname.tooltip": "Enhances players and mobs with sound and visual effects",
 	"mobeffects.cfg.logging": "Настройки логирования",
 	"mobeffects.cfg.logging.tooltip": "Определяет как будет вести лог",
 	"mobeffects.cfg.logging.EnableDebug": "Отладка",

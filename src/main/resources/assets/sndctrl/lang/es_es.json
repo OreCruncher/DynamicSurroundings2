@@ -1,5 +1,6 @@
 {
 	"sndctrl.modname": "Dynamic Surroundings: Sound Control",
+	"sndctrl.modname.tooltip": "Enhances sound with reverb and occlusion when played",
 	"sndctrl.format.Play": "Reproducir",
 	"sndctrl.format.Stop": "Detener",
 	"sndctrl.format.Block": "Bloquear",

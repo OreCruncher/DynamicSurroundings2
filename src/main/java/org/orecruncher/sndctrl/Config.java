@@ -118,14 +118,14 @@ public final class Config {
 
         public static class Sound {
 
-            private final BooleanValue enableEnhancedSounds;
-            private final BooleanValue enableOcclusionCalcs;
-            private final BooleanValue enableMonoConversion;
-            private final IntValue cullInterval;
-            private final IntValue backgroundThreadWorkers;
-            private final BooleanValue enhancedWeather;
-            private final ConfigValue<List<? extends String>> individualSounds;
-            private final ConfigValue<List<? extends String>> startupSoundList;
+            public final BooleanValue enableEnhancedSounds;
+            public final BooleanValue enableOcclusionCalcs;
+            public final BooleanValue enableMonoConversion;
+            public final IntValue cullInterval;
+            public final IntValue backgroundThreadWorkers;
+            public final BooleanValue enhancedWeather;
+            public final ConfigValue<List<? extends String>> individualSounds;
+            public final ConfigValue<List<? extends String>> startupSoundList;
 
             private boolean _enableEnhancedSounds;
             private boolean _enableOcclusionCalcs;
@@ -232,8 +232,8 @@ public final class Config {
 
         public static class Effects {
 
-            private final BooleanValue fixupRandoms;
-            private final IntValue effectRange;
+            public final BooleanValue fixupRandoms;
+            public final IntValue effectRange;
 
             private boolean _fixupRandoms;
             private int _effectRange;
@@ -273,8 +273,8 @@ public final class Config {
 
         public static class Logging {
 
-            private final BooleanValue enableLogging;
-            private final IntValue flagMask;
+            public final BooleanValue enableLogging;
+            public final IntValue flagMask;
 
             private boolean _enableLogging;
             private int _flagMask;

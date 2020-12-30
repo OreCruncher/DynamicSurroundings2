@@ -18,11 +18,11 @@
 
 package org.orecruncher.lib.fml;
 
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.VersionChecker.CheckResult;
 import net.minecraftforge.fml.VersionChecker.Status;
@@ -31,46 +31,28 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
-import java.util.UUID;
 
+/**
+ * Simple update checker that can be registered with the ClientLoginChecks manager to provide feedback to the player
+ * in the chat window if a newer version of a mod is available.
+ */
 @OnlyIn(Dist.CLIENT)
-public final class UpdateChecker {
+public final class UpdateChecker implements ClientLoginChecks.ICallbackHandler {
 
     private final String modId;
     private final String messageId;
 
-    private UpdateChecker(@Nonnull final String id, @Nonnull final String messageId) {
+    public UpdateChecker(@Nonnull final String modId) {
+        this(modId, modId + ".msg.NewVersion");
+    }
+
+    public UpdateChecker(@Nonnull final String id, @Nonnull final String messageId) {
         this.modId = id;
         this.messageId = messageId;
     }
 
-    private static boolean shouldPrintMessage(@Nonnull final CheckResult result) {
+    private boolean shouldPrintMessage(@Nonnull final CheckResult result) {
         return result.status == Status.OUTDATED;
-    }
-
-    /**
-     * Checks the Forge update state for the specified mod, and report the need of an update to the
-     * chat output of Minecraft.
-     *
-     * @param event The PlayerLoggedInEvent
-     * @param modId Id of the mod in question
-     */
-    public static void doCheck(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event, @Nonnull String modId) {
-        doCheck(event, modId, modId + ".msg.NewVersion");
-    }
-
-    /**
-     * Checks the Forge update state for the specified mod, and report the need of an update to the
-     * chat output of Minecraft.
-     *
-     * @param event The PlayerLoggedInEvent
-     * @param modId Id of the mod in question
-     * @param msgId Resource string of the update message to display in chat
-     */
-    public static void doCheck(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event, @Nonnull String modId, @Nonnull String msgId) {
-        if (event.getPlayer() != null) {
-            new UpdateChecker(modId, msgId).playerLogin(event);
-        }
     }
 
     @Nullable
@@ -86,18 +68,17 @@ public final class UpdateChecker {
         return I18n.format(this.messageId, mod.get().getDisplayName(), t, u);
     }
 
-    private void playerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
-        if (event.getPlayer() != null) {
-            final String updateMessage = getUpdateMessage(this.modId);
-            if (updateMessage != null) {
-                try {
-                    final ITextComponent component = ITextComponent.Serializer.getComponentFromJson(updateMessage);
-                    if (component != null)
-                        event.getPlayer().sendMessage(component, UUID.randomUUID());
-                } catch (@Nonnull final Throwable t) {
-                    t.printStackTrace();
-                }
+    @Nullable
+    @Override
+    public ITextComponent onLogin(@Nonnull final ClientPlayerEntity player) {
+        final String updateMessage = getUpdateMessage(this.modId);
+        if (updateMessage != null) {
+            try {
+                return ITextComponent.Serializer.getComponentFromJson(updateMessage);
+            } catch (@Nonnull final Throwable t) {
+                t.printStackTrace();
             }
         }
+        return null;
     }
 }

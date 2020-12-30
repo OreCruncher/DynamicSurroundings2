@@ -19,9 +19,7 @@
 package org.orecruncher.dsurround;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -33,6 +31,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orecruncher.lib.fml.ClientLoginChecks;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
@@ -89,6 +88,9 @@ public final class DynamicSurroundings {
             // Create additional data paths if needed
             createPath(DATA_PATH);
             createPath(DUMP_PATH);
+
+            if (Config.CLIENT.logging.get_onlineVersionCheck())
+                ClientLoginChecks.register(new UpdateChecker(DynamicSurroundings.MOD_ID));
         }
     }
 
@@ -114,10 +116,4 @@ public final class DynamicSurroundings {
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
     }
 
-    @SubscribeEvent
-    public void onPlayerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
-        LOGGER.debug("Player login: %s", event.getPlayer().getDisplayName());
-        if (Config.CLIENT.logging.get_onlineVersionCheck())
-            UpdateChecker.doCheck(event, MOD_ID);
-    }
 }

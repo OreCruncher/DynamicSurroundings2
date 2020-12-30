@@ -18,6 +18,9 @@
 
 package org.orecruncher.dsurround;
 
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -31,12 +34,15 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orecruncher.lib.config.ConfigGui;
+import org.orecruncher.mobeffects.compat.ModEnvironment;
 import org.orecruncher.lib.fml.ClientLoginChecks;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,6 +94,9 @@ public final class DynamicSurroundings {
             // Create additional data paths if needed
             createPath(DATA_PATH);
             createPath(DUMP_PATH);
+
+            if (ModEnvironment.ClothAPI.isLoaded())
+                ConfigGui.registerConfigGui(new ConfigMenuBuilder());
         }
     }
 
@@ -107,6 +116,16 @@ public final class DynamicSurroundings {
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
         if (Config.CLIENT.logging.get_onlineVersionCheck())
             ClientLoginChecks.register(new UpdateChecker(DynamicSurroundings.MOD_ID));
+
+        ClientLoginChecks.register(new ClientLoginChecks.ICallbackHandler() {
+            @Nullable
+            @Override
+            public ITextComponent onClientLogin(@Nonnull ClientPlayerEntity player) {
+                if (ModEnvironment.ClothAPI.isLoaded())
+                    return new StringTextComponent("ClothAPI is available");
+                return new StringTextComponent("ClothAPI is NOT available");
+            }
+        });
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

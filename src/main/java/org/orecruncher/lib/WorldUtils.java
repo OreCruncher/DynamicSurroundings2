@@ -29,6 +29,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
+import org.orecruncher.mobeffects.compat.ModEnvironment;
 //import sereneseasons.season.SeasonHooks;
 
 import javax.annotation.Nonnull;

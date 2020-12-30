@@ -16,32 +16,25 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.lib;
+package org.orecruncher.lib.config;
 
-import net.minecraftforge.fml.ModList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 
 import javax.annotation.Nonnull;
+import java.util.function.BiFunction;
 
-public enum ModEnvironment {
+@OnlyIn(Dist.CLIENT)
+public class ConfigGui {
 
-    SoundPhysics("soundphysics"),
-    SoundFilters("soundfilters"),
-    SereneSeasons("sereneseasons");
-
-    protected final String modId;
-    protected boolean isLoaded;
-
-    ModEnvironment(@Nonnull final String modId) {
-        this.modId = modId;
+    public static void registerConfigGui(@Nonnull final BiFunction<Minecraft, Screen, Screen> factory) {
+        final ModLoadingContext context = ModLoadingContext.get();
+        context.registerExtensionPoint(
+                ExtensionPoint.CONFIGGUIFACTORY,
+                () -> factory);
     }
-
-    static {
-        for (final ModEnvironment me : ModEnvironment.values())
-            me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
-    }
-
-    public boolean isLoaded() {
-        return this.isLoaded;
-    }
-
 }

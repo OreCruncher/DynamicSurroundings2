@@ -20,7 +20,6 @@ package org.orecruncher.sndctrl;
 
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -34,7 +33,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.system.CallbackI;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.effects.EntityEffectHandler;
 import org.orecruncher.lib.fml.ClientLoginChecks;
@@ -48,7 +46,7 @@ import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
-import org.orecruncher.lib.ModEnvironment;
+import org.orecruncher.mobeffects.compat.ModEnvironment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

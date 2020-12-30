@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,10 @@ import javax.annotation.Nonnull;
 
 public enum ModEnvironment {
 
+    SoundPhysics("soundphysics"),
+    SoundFilters("soundfilters"),
     SereneSeasons("sereneseasons"),
-    EnderIO("EnderIO"),
-    Chisel("chisel"),
-    ChiselAPI("ctm-api"),
-    CoFHCore("cofhcore"),
-    CosmeticArmorReworked("cosmeticarmorreworked"),
-    ForgeMultipartCBE("forgemultipartcbe"),
-    ConnectedTextures("ctm"),
-    LittleTiles("littletiles"),
-    ConstructArmory("conarm");
+    ClothAPI("me.shedaniel.clothconfig2.forge.api.ConfigBuilder");
 
     protected final String modId;
     protected boolean isLoaded;
@@ -42,9 +36,18 @@ public enum ModEnvironment {
         this.modId = modId;
     }
 
-    public static void initialize() {
-        for (final ModEnvironment me : ModEnvironment.values())
+    static {
+        for (final ModEnvironment me : ModEnvironment.values()) {
             me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
+
+            if (!me.isLoaded) {
+                try {
+                    final Class<?> clazz = Class.forName(me.modId);
+                    me.isLoaded = true;
+                } catch(@Nonnull Throwable ignore) {
+                }
+            }
+        }
     }
 
     public boolean isLoaded() {

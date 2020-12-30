@@ -33,15 +33,13 @@ import java.io.File;
 
 @Mod.EventBusSubscriber(modid = DynamicSurroundings.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
-    @Nonnull
     public static final Client CLIENT;
     private static final String CLIENT_CONFIG = DynamicSurroundings.MOD_ID + File.separator + DynamicSurroundings.MOD_ID + "-client.toml";
-    @Nonnull
-    private static final ForgeConfigSpec clientSpec;
+    public static final ForgeConfigSpec SPEC;
 
     static {
         final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
-        clientSpec = specPair.getRight();
+        SPEC = specPair.getRight();
         CLIENT = specPair.getLeft();
     }
 
@@ -68,7 +66,7 @@ public final class Config {
 
     public static void setup() {
         // The subdir with the mod ID name should have already been created
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.clientSpec, CLIENT_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.SPEC, CLIENT_CONFIG);
     }
 
     public static class Trace {
@@ -91,9 +89,9 @@ public final class Config {
 
         public static class Logging {
 
-            private final BooleanValue enableLogging;
-            private final BooleanValue onlineVersionCheck;
-            private final IntValue flagMask;
+            public final BooleanValue enableLogging;
+            public final BooleanValue onlineVersionCheck;
+            public final IntValue flagMask;
 
             private boolean _enableLogging;
             private boolean _onlineVersionCheck;

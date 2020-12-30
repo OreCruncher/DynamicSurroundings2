@@ -22,7 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.shaders.IShaderResourceProvider;
-import org.orecruncher.lib.shaders.Shaders;
+import org.orecruncher.lib.shaders.ShaderManager;
 
 import javax.annotation.Nonnull;
 
@@ -34,7 +34,7 @@ public enum ShaderPrograms implements IShaderResourceProvider {
     private final ResourceLocation vertex;
     private final ResourceLocation fragment;
 
-    public static final Shaders<ShaderPrograms> MANAGER = new Shaders<>(ShaderPrograms.class);
+    public static final ShaderManager MANAGER = new ShaderManager(ShaderPrograms.values());
 
     ShaderPrograms(@Nonnull final String vert, @Nonnull final String frag) {
         this.vertex = new ResourceLocation(vert);
@@ -51,4 +51,8 @@ public enum ShaderPrograms implements IShaderResourceProvider {
         return this.fragment;
     }
 
+    @Nonnull
+    public String getShaderName() {
+        return this.name();
+    }
 }

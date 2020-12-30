@@ -340,7 +340,8 @@ public final class Config {
             }
 
             public boolean get_auroraEnabled() {
-                return this._auroraEnabled;
+                return false;
+                //return this._auroraEnabled;
             }
 
             public int get_maxBands() {

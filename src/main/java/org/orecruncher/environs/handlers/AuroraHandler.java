@@ -27,7 +27,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.environs.Config;
 import org.orecruncher.environs.Environs;
-import org.orecruncher.lib.shaders.Shaders;
+import org.orecruncher.lib.shaders.ShaderManager;
 import org.orecruncher.environs.shaders.aurora.AuroraFactory;
 import org.orecruncher.environs.shaders.aurora.AuroraUtils;
 import org.orecruncher.environs.shaders.aurora.IAurora;
@@ -124,7 +124,7 @@ public final class AuroraHandler extends HandlerBase {
 	@SubscribeEvent
 	public void diagnostic(@Nonnull final DiagnosticEvent event) {
 		if (Config.CLIENT.logging.get_enableLogging()) {
-			if (Shaders.areSupported()) {
+			if (ShaderManager.supported()) {
 				event.getLeft().add("Aurora: " + (this.current == null ? "NONE" : this.current.toString()));
 				event.getRenderTimers().add(this.render);
 			} else {

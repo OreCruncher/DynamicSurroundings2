@@ -32,60 +32,61 @@ import net.minecraft.util.ResourceLocation;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.gui.Color;
-import sun.misc.SharedSecrets;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.EnumMap;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
-public final class Shaders<T extends Enum<T>> {
+public final class ShaderManager {
 
-	private final Class<T> enumClass;
-	private final EnumMap<T, ShaderProgram> PROGRAMS;
+	private final IShaderResourceProvider[] providers;
+	private final ShaderProgram[] PROGRAMS;
 
-	public Shaders(@Nonnull final Class<T> enumClazz) {
-		if (!IShaderResourceProvider.class.isAssignableFrom(enumClazz))
-			throw new IllegalArgumentException("Enum must implement IShaderResourceProvider");
-
-		this.enumClass = enumClazz;
-		this.PROGRAMS = new EnumMap<>(enumClazz);
+	public ShaderManager(@Nonnull final IShaderResourceProvider[] providers) {
+		this.providers = providers;
+		this.PROGRAMS = new ShaderProgram[providers.length];
 	}
 
-	public static boolean areSupported() {
+	public static boolean supported() {
 		return true;
 	}
 
-	public void useShader(@Nonnull final T shader, @Nullable final Consumer<ShaderCallContext> callback) {
+	public void useShader(final int shader, @Nullable final Consumer<ShaderCallContext> callback) {
+		if (shader < 0 || shader > this.PROGRAMS.length)
+			throw new IllegalArgumentException("The shader id provided is out of bounds");
 
-		ShaderProgram prog = null;
-
-		if (areSupported())
-			prog = PROGRAMS.get(shader);
-
-		if (prog == null) {
+		if (!supported())
 			return;
-		}
 
-		int program = prog.getProgram();
-		ShaderLinkHelper.func_227804_a_(program);
+		final ShaderProgram program = this.PROGRAMS[shader];
+
+		if (program == null)
+			return;
+
+		final int programId = program.getProgram();
+		ShaderLinkHelper.func_227804_a_(programId);
 
 		if (callback != null) {
-			callback.accept(new ShaderCallContext(program));
+			callback.accept(new ShaderCallContext(programId));
 		}
 	}
 
-	public void useShader(@Nonnull final T shader) {
-		useShader(shader, null);
+	public void useShader(@Nonnull final Enum<?> provider, @Nullable final Consumer<ShaderCallContext> callback) {
+		useShader(provider.ordinal(), callback);
+	}
+
+	public void useShader(@Nonnull final Enum<?> provider) {
+		useShader(provider, null);
 	}
 
 	public void releaseShader() {
-		if (areSupported())
+		if (supported())
 			ShaderLinkHelper.func_227804_a_(0);
 	}
 
@@ -159,41 +160,39 @@ public final class Shaders<T extends Enum<T>> {
 
 	@SuppressWarnings("deprecation")
 	public void initShaders() {
-		if (!areSupported())
+		if (!supported())
 			return;
 
 		if (GameUtils.getMC().getResourceManager() instanceof IReloadableResourceManager) {
 			((IReloadableResourceManager) GameUtils.getMC().getResourceManager()).addReloadListener(
 					(IResourceManagerReloadListener) manager -> {
-						PROGRAMS.values().forEach(ShaderLinkHelper::deleteShader);
-						PROGRAMS.clear();
+						for (final ShaderProgram prog : PROGRAMS)
+							if (prog != null)
+								ShaderLinkHelper.deleteShader(prog);
+						Arrays.fill(PROGRAMS, null);
 						loadShaders(manager);
 					});
 		}
 	}
 
 	private void loadShaders(@Nonnull final IResourceManager manager) {
-		for (final T shader : this.getEnumValues()) {
-			createProgram(manager, shader);
-		}
+		for (int i = 0; i < this.providers.length; i++)
+			this.PROGRAMS[i] = createProgram(manager, this.providers[i]);
 	}
 
-	private void createProgram(@Nonnull final IResourceManager manager, @Nonnull final T shader) {
+	@Nullable
+	private static ShaderProgram createProgram(@Nonnull final IResourceManager manager, @Nonnull final IShaderResourceProvider provider) {
 		try {
-			IShaderResourceProvider provider = (IShaderResourceProvider) shader;
-			ShaderLoader vert = createShader(manager, provider.getVertex(), ShaderLoader.ShaderType.VERTEX);
-			ShaderLoader frag = createShader(manager, provider.getFragment(), ShaderLoader.ShaderType.FRAGMENT);
-			int progId = ShaderLinkHelper.createProgram();
-			ShaderProgram prog = new ShaderProgram(progId, vert, frag);
+			final ShaderLoader vert = createShader(manager, provider.getVertex(), ShaderLoader.ShaderType.VERTEX);
+			final ShaderLoader frag = createShader(manager, provider.getFragment(), ShaderLoader.ShaderType.FRAGMENT);
+			final int progId = ShaderLinkHelper.createProgram();
+			final ShaderProgram prog = new ShaderProgram(progId, vert, frag);
 			ShaderLinkHelper.linkProgram(prog);
-			PROGRAMS.put(shader, prog);
+			return prog;
 		} catch (IOException ex) {
-			Lib.LOGGER.error(ex, "Failed to load program %s", shader.name());
+			Lib.LOGGER.error(ex, "Failed to load program %s", provider.getShaderName());
 		}
-	}
-
-	private T[] getEnumValues() {
-		return SharedSecrets.getJavaLangAccess().getEnumConstantsShared(this.enumClass);
+		return null;
 	}
 
 	private static ShaderLoader createShader(@Nonnull final IResourceManager manager, @Nonnull final ResourceLocation loc, @Nonnull final ShaderLoader.ShaderType shaderType) throws IOException {

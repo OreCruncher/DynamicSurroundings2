@@ -31,4 +31,7 @@ public interface IShaderResourceProvider {
 
     @Nonnull
     ResourceLocation getFragment();
+
+    @Nonnull
+    String getShaderName();
 }

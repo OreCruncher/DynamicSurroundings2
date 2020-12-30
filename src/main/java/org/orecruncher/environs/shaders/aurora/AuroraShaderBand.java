@@ -21,6 +21,7 @@ package org.orecruncher.environs.shaders.aurora;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.vector.Matrix4f;
@@ -29,27 +30,27 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import org.lwjgl.opengl.GL11;
 import org.orecruncher.environs.shaders.ShaderPrograms;
-import org.orecruncher.lib.shaders.Shaders;
+import org.orecruncher.lib.shaders.ShaderManager;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
+import org.lwjgl.opengl.GL11;
+
 /*
  * Renders a shader generated aurora along a curved path.  Makes it ribbon like.
  */
 @OnlyIn(Dist.CLIENT)
-@SuppressWarnings("deprecation")
 public class AuroraShaderBand extends AuroraBase {
 
 	private static final float V1 = 0;
 	private static final float V2 = 1F;
 	
 	protected ShaderPrograms program;
-	protected Consumer<Shaders.ShaderCallContext> callback;
+	protected Consumer<ShaderManager.ShaderCallContext> callback;
 
 	protected final float auroraWidth;
 	protected final float panelTexWidth;
@@ -91,22 +92,7 @@ public class AuroraShaderBand extends AuroraBase {
 		return AuroraBand.AURORA_AMPLITUDE;
 	}
 
-	protected void generateBand(@Nonnull final Matrix4f matrix) {
-
-		final BufferBuilder renderer = Tessellator.getInstance().getBuffer();
-
-		RenderSystem.enableBlend();
-		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-
-		RenderSystem.enableAlphaTest();
-		RenderSystem.defaultAlphaFunc();
-		RenderSystem.disableCull();
-
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(GL11.GL_LEQUAL);
-		RenderSystem.depthMask(true);
-
-		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+	protected void generateBand(@Nonnull final IVertexBuilder builder, @Nonnull final Matrix4f matrix) {
 
 		for (int i = 0; ; i++) {
 			final Vector3f[] quad = this.band.getPanelQuad(i);
@@ -116,20 +102,12 @@ public class AuroraShaderBand extends AuroraBase {
 			final float u1 = i * this.panelTexWidth;
 			final float u2 = u1 + this.panelTexWidth;
 
-			renderer.pos(matrix, quad[0].getX(), quad[0].getY(), quad[0].getZ()).tex(u1, V1).endVertex();
-			renderer.pos(matrix, quad[1].getX(), quad[1].getY(), quad[1].getZ()).tex(u2, V1).endVertex();
-			renderer.pos(matrix, quad[2].getX(), quad[2].getY(), quad[2].getZ()).tex(u2, V2).endVertex();
-			renderer.pos(matrix, quad[3].getX(), quad[3].getY(), quad[3].getZ()).tex(u1, V2).endVertex();
+			builder.pos(matrix, quad[0].getX(), quad[0].getY(), quad[0].getZ()).tex(u1, V1).endVertex();
+			builder.pos(matrix, quad[1].getX(), quad[1].getY(), quad[1].getZ()).tex(u2, V1).endVertex();
+			builder.pos(matrix, quad[2].getX(), quad[2].getY(), quad[2].getZ()).tex(u2, V2).endVertex();
+			builder.pos(matrix, quad[3].getX(), quad[3].getY(), quad[3].getZ()).tex(u1, V2).endVertex();
 		}
 
-		RenderSystem.disableDepthTest();
-		renderer.finishDrawing();
-		WorldVertexBufferUploader.draw(renderer);
-
-		RenderSystem.enableCull();
-		RenderSystem.disableAlphaTest();
-		RenderSystem.disableBlend();
-		RenderSystem.depthMask(true);
 	}
 
 	@Override
@@ -142,22 +120,38 @@ public class AuroraShaderBand extends AuroraBase {
 		final float partialTick = event.getPartialTicks();
 		this.band.translate(partialTick);
 
-		final Vector3d view = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView();
-		matrixStack.push();
-		matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
-
 		final double tranY = getTranslationY(partialTick);
 		final double tranX = getTranslationX(partialTick);
 		final double tranZ = getTranslationZ(partialTick);
 
-		ShaderPrograms.MANAGER.useShader(this.program, this.callback);
+		//final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
+		//final IVertexBuilder builder = buffer.getBuffer(AuroraRenderType.QUAD_TEST);
+
+		final Tessellator tessellator = Tessellator.getInstance();
+		final BufferBuilder builder = tessellator.getBuffer();
+		RenderSystem.enableBlend();
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		RenderSystem.enableAlphaTest();
+		RenderSystem.defaultAlphaFunc();
+		RenderSystem.disableCull();
+		RenderSystem.enableDepthTest();
+		RenderSystem.depthFunc(GL11.GL_LEQUAL);
+		RenderSystem.depthMask(true);
+
+		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+
+		//ShaderPrograms.MANAGER.useShader(this.program, this.callback);
+
+		final Vector3d view = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView();
+		matrixStack.push();
+		matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
 
 		try {
 
 			for (int b = 0; b < this.bandCount; b++) {
 				matrixStack.push();
 				matrixStack.translate(tranX, tranY, tranZ + this.offset * b);
-				generateBand(matrixStack.getLast().getMatrix());
+				generateBand(builder, matrixStack.getLast().getMatrix());
 				matrixStack.pop();
 			}
 
@@ -165,6 +159,20 @@ public class AuroraShaderBand extends AuroraBase {
 			ex.printStackTrace();
 			this.program = null;
 		}
+
+		RenderSystem.disableDepthTest();
+		RenderSystem.enableCull();
+		RenderSystem.disableAlphaTest();
+		RenderSystem.disableBlend();
+		RenderSystem.depthMask(true);
+
+		tessellator.draw();
+
+		//buffer.finish(AuroraRenderType.QUAD_TEST);
+//		RenderSystem.disableDepthTest();
+//		RenderSystem.enableCull();
+//		RenderSystem.disableAlphaTest();
+		//RenderSystem.disableBlend();
 
 		ShaderPrograms.MANAGER.releaseShader();
 

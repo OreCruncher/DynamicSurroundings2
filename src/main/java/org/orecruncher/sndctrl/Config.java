@@ -38,15 +38,13 @@ import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
-    @Nonnull
     public static final Client CLIENT;
     private static final String CLIENT_CONFIG = DynamicSurroundings.MOD_ID + File.separator + SoundControl.MOD_ID + "-client.toml";
-    @Nonnull
-    private static final ForgeConfigSpec clientSpec;
+    public static final ForgeConfigSpec SPEC;
 
     static {
         final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
-        clientSpec = specPair.getRight();
+        SPEC = specPair.getRight();
         CLIENT = specPair.getLeft();
     }
 
@@ -73,7 +71,7 @@ public final class Config {
 
     public static void setup() {
         // The subdir with the mod ID name should have already been created
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.clientSpec, CLIENT_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.SPEC, CLIENT_CONFIG);
     }
 
     public static class Trace {
@@ -122,7 +120,7 @@ public final class Config {
 
             private final BooleanValue enableEnhancedSounds;
             private final BooleanValue enableOcclusionCalcs;
-            private final BooleanValue muteInBackground;
+            private final BooleanValue enableMonoConversion;
             private final IntValue cullInterval;
             private final IntValue backgroundThreadWorkers;
             private final BooleanValue enhancedWeather;
@@ -131,7 +129,7 @@ public final class Config {
 
             private boolean _enableEnhancedSounds;
             private boolean _enableOcclusionCalcs;
-            private boolean _muteInBackground;
+            private boolean _enableMonoConversion;
             private int _cullInterval;
             private int _backgroundThreadWorkers;
             private boolean _enhancedWeather;
@@ -153,6 +151,11 @@ public final class Config {
                         .translation("sndctrl.cfg.sound.Occlusion")
                         .define("Enable Sound Occlusion Calculations", true);
 
+                this.enableMonoConversion = builder
+                        .comment("Enable conversion of stereo sounds to mono format for spacial play")
+                        .translation("sndctrl.cfg.sound.MonoConversion")
+                        .define("Enable Stereo to Mono Conversion", true);
+
                 this.enhancedWeather = builder
                         .worldRestart()
                         .comment("Enable enhanced sounds for weather effects")
@@ -168,11 +171,6 @@ public final class Config {
                         .comment("Possible sounds to play when client reaches main game menu")
                         .translation("sndctrl.cfg.sound.StartupSounds")
                         .defineList("Startup Sound List", defaultStartupSounds, s -> true);
-
-                this.muteInBackground = builder
-                        .comment("Mute sound when Minecraft is in the background")
-                        .translation("sndctrl.cfg.sound.Mute")
-                        .define("Mute when in Background", true);
 
                 this.cullInterval = builder
                         .comment("Ticks between culled sound events (0 to disable culling)")
@@ -192,10 +190,10 @@ public final class Config {
                 this._backgroundThreadWorkers = this.backgroundThreadWorkers.get();
                 this._enableEnhancedSounds = this.enableEnhancedSounds.get();
                 this._enableOcclusionCalcs = this.enableOcclusionCalcs.get();
+                this._enableMonoConversion = this.enableMonoConversion.get();
                 this._cullInterval = this.cullInterval.get();
                 this._enhancedWeather = this.enhancedWeather.get();
                 this._individualSounds = this.individualSounds.get().stream().map(Object::toString).collect(Collectors.toList());
-                this._muteInBackground = this.muteInBackground.get();
                 this._startupSoundList = this.startupSoundList.get().stream().map(Object::toString).collect(Collectors.toList());
             }
 
@@ -211,6 +209,10 @@ public final class Config {
                 return this._enableOcclusionCalcs;
             }
 
+            public boolean get_enableMonoConversion() {
+                return this._enableMonoConversion;
+            }
+
             public int get_cullInterval() {
                 return this._cullInterval;
             }
@@ -221,10 +223,6 @@ public final class Config {
 
             public List<String> get_individualSounds() {
                 return this._individualSounds;
-            }
-
-            public boolean get_muteInBackground() {
-                return this._muteInBackground;
             }
 
             public List<String> get_startupSoundList() {

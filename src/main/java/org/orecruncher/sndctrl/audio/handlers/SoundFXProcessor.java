@@ -227,13 +227,19 @@ public final class SoundFXProcessor {
      */
     @Nonnull
     public static AudioStreamBuffer playBuffer(@Nonnull final SoundSource source, @Nonnull final AudioStreamBuffer buffer) {
-        if (isAvailable()) {
-            final SourceContext ctx = ((IMixinSoundContext)source).getData();
-            if (ctx != null && ctx.getSound() != null) {
-                if (ctx.getSound().getAttenuationType() != ISound.AttenuationType.NONE)
-                    return Conversion.convert(buffer);
-            }
-        }
+        final SourceContext ctx = ((IMixinSoundContext) source).getData();
+
+        // If there is no context attached and conversion is enabled do it.  This can happen if enhanced sound
+        // processing is turned off.
+        boolean doConversion = ctx == null && Config.CLIENT.sound.get_enableMonoConversion();
+
+        // If the flag is not set do a more in depth check of the sound.  We do not want to do the conversion if
+        // there is no attenuation (like music).
+        doConversion = doConversion | (ctx != null && ctx.getSound() != null && ctx.getSound().getAttenuationType() != ISound.AttenuationType.NONE);
+
+        if (doConversion)
+            return Conversion.convert(buffer);
+
         return buffer;
     }
 

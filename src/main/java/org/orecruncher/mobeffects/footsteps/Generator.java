@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
 
@@ -40,6 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.orecruncher.mobeffects.Config;
+import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.effects.particles.Collections;
 import org.orecruncher.mobeffects.footsteps.accents.FootstepAccents;
 import org.orecruncher.mobeffects.library.Constants;
@@ -50,6 +52,8 @@ import org.orecruncher.sndctrl.audio.acoustic.AcousticCompiler;
 
 @OnlyIn(Dist.CLIENT)
 public class Generator {
+
+	protected static final IModLog LOGGER = MobEffects.LOGGER.createChild(Generator.class);
 
 	public static final double PROBE_DEPTH = 1F / 16F;
 
@@ -170,7 +174,13 @@ public class Generator {
 			this.prevY = entity.getPosY();
 			this.prevZ = entity.getPosZ();
 
-			final double sqrt = Math.sqrt(dX * dX + dY * dY + dZ * dZ);
+			// The amount of distance added is dependent on whether the player
+			// is on the ground (moving x/z) or not (moving x/y/z)
+			final double sqrt;
+			if (entity.isOnGround())
+				sqrt = Math.sqrt(dX * dX + dZ * dZ);
+			else
+				sqrt = Math.sqrt(dX * dX + dY * dY + dZ * dZ);
 			distance = (float) sqrt * 0.6F;
 		}
 
@@ -308,7 +318,7 @@ public class Generator {
 					}
 				}
 			}
-		} else if (!this.isFlying && this.fallDistance > 0) {
+		} else if (!this.isFlying && this.fallDistance > 0.01F) {
 			if (this.fallDistance > this.VAR.LAND_HARD_DISTANCE_MIN) {
 				playMultifoot(entity, 0d, Constants.LAND);
 			} else if (!this.stepThisFrame && !this.isSneaking) {

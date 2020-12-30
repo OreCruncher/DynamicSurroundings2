@@ -35,7 +35,12 @@ import javax.annotation.Nonnull;
 public class ConfigMenuBuilder extends ClothAPIFactory {
 
     public ConfigMenuBuilder() {
-        super(new TranslationTextComponent("dsurround.modname"), Config.SPEC::save);
+        super(new TranslationTextComponent("dsurround.modname"), () -> {
+            org.orecruncher.dsurround.Config.SPEC.save();
+            org.orecruncher.sndctrl.Config.SPEC.save();
+            org.orecruncher.environs.Config.SPEC.save();
+            org.orecruncher.mobeffects.Config.SPEC.save();
+        });
     }
 
     @Override

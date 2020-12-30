@@ -35,15 +35,13 @@ import java.io.File;
 
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
-    @Nonnull
     public static final Client CLIENT;
     private static final String CLIENT_CONFIG = DynamicSurroundings.MOD_ID + File.separator + MobEffects.MOD_ID + "-client.toml";
-    @Nonnull
-    private static final ForgeConfigSpec clientSpec;
+    public static final ForgeConfigSpec SPEC;
 
     static {
         final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
-        clientSpec = specPair.getRight();
+        SPEC = specPair.getRight();
         CLIENT = specPair.getLeft();
     }
 
@@ -70,16 +68,13 @@ public final class Config {
 
     public static void setup() {
         // The subdir with the mod ID name should have already been created
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.clientSpec, CLIENT_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.SPEC, CLIENT_CONFIG);
     }
 
     public static class Client {
 
-        @Nonnull
         public final Logging logging;
-        @Nonnull
         public final Footsteps footsteps;
-        @Nonnull
         public final Effects effects;
 
         Client(@Nonnull final ForgeConfigSpec.Builder builder) {
@@ -96,8 +91,8 @@ public final class Config {
 
         public static class Logging {
 
-            private final BooleanValue enableLogging;
-            private final IntValue flagMask;
+            public final BooleanValue enableLogging;
+            public final IntValue flagMask;
 
             private boolean _enableLogging;
             private int _flagMask;
@@ -135,12 +130,12 @@ public final class Config {
 
         public static class Footsteps {
 
-            private final BooleanValue enableFootprintParticles;
-            private final BooleanValue firstPersonFootstepCadence;
-            private final ForgeConfigSpec.EnumValue<FootprintStyle> playerFootprintStyle;
-            private final BooleanValue footstepsAsQuadruped;
-            private final IntValue footstepVolume;
-            private final BooleanValue enableFootstepAccents;
+            public final BooleanValue enableFootprintParticles;
+            public final BooleanValue firstPersonFootstepCadence;
+            public final ForgeConfigSpec.EnumValue<FootprintStyle> playerFootprintStyle;
+            public final BooleanValue footstepsAsQuadruped;
+            public final IntValue footstepVolume;
+            public final BooleanValue enableFootstepAccents;
 
             private boolean _enableFootprintParticles;
             private boolean _firstPersonFootstepCadence;
@@ -222,13 +217,13 @@ public final class Config {
 
         public static class Effects {
 
-            private final BooleanValue hidePlayerPotionParticles;
-            private final BooleanValue showBreath;
-            private final BooleanValue showArrowTrail;
-            private final BooleanValue enableToolbarEffect;
-            private final BooleanValue enableBowEffect;
-            private final BooleanValue enableSwingEffect;
-            private final IntValue toolbarVolume;
+            public final BooleanValue hidePlayerPotionParticles;
+            public final BooleanValue showBreath;
+            public final BooleanValue showArrowTrail;
+            public final BooleanValue enableToolbarEffect;
+            public final BooleanValue enableBowEffect;
+            public final BooleanValue enableSwingEffect;
+            public final IntValue toolbarVolume;
 
             private boolean _hidePlayerPotionParticles;
             private boolean _showBreath;

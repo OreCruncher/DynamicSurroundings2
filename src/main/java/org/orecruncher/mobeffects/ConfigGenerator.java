@@ -25,7 +25,6 @@ import me.shedaniel.clothconfig2.forge.impl.builders.IntFieldBuilder;
 import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.environs.Config;
 import org.orecruncher.lib.config.ClothAPIFactory;
 
 import javax.annotation.Nonnull;

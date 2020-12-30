@@ -1,3 +1,19 @@
+> ### DynamicSurroundings-1.16.4-4.0.1.5
+**Requirements**
+* Forge 1.16.4-35.1.10
+* 100% client side; no server side deployment needed
+
+**Fixes**
+* Disabling mod update status in the config now works (dsurround-client.toml)
+* Don't play step sounds when travelling up/down an elevator from Create mod
+
+**Changes**
+* More tweaks to block reflectivity and occlusion
+  * Cobblestone and sandstone are less reflective
+* Changed the wood log footstep sound.  Not as deep and the tempo is better.
+* Decrease toolbar sounds for other players by 25% when played
+* Decrease default toolbar master sound volume scale to 35% (from 50%)
+
 > ### DynamicSurroundings-1.16.4-4.0.1.4
 **Requirements**
 * Forge 1.16.4-35.1.10

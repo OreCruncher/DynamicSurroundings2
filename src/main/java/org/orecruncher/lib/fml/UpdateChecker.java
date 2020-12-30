@@ -37,22 +37,17 @@ import java.util.Optional;
  * in the chat window if a newer version of a mod is available.
  */
 @OnlyIn(Dist.CLIENT)
-public final class UpdateChecker implements ClientLoginChecks.ICallbackHandler {
+public class UpdateChecker extends Checker {
 
-    private final String modId;
-    private final String messageId;
+    protected final String messageId;
 
     public UpdateChecker(@Nonnull final String modId) {
         this(modId, modId + ".msg.NewVersion");
     }
 
     public UpdateChecker(@Nonnull final String id, @Nonnull final String messageId) {
-        this.modId = id;
+        super(id);
         this.messageId = messageId;
-    }
-
-    private boolean shouldPrintMessage(@Nonnull final CheckResult result) {
-        return result.status == Status.OUTDATED;
     }
 
     @Nullable
@@ -61,7 +56,7 @@ public final class UpdateChecker implements ClientLoginChecks.ICallbackHandler {
         if (!mod.isPresent())
             return null;
         final CheckResult result = VersionChecker.getResult(mod.get());
-        if (!shouldPrintMessage(result))
+        if (result.status != Status.OUTDATED)
             return null;
         final String t = result.target != null ? result.target.toString() : "UNKNOWN";
         final String u = result.url != null ? result.url : "UNKNOWN";

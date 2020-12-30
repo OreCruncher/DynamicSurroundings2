@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl.misc;
+package org.orecruncher.lib;
 
 import net.minecraftforge.fml.ModList;
 
@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 public enum ModEnvironment {
 
     SoundPhysics("soundphysics"),
+    SoundFilters("soundfilters"),
     SereneSeasons("sereneseasons");
 
     protected final String modId;
@@ -34,7 +35,7 @@ public enum ModEnvironment {
         this.modId = modId;
     }
 
-    public static void initialize() {
+    static {
         for (final ModEnvironment me : ModEnvironment.values())
             me.isLoaded = ModList.get().isLoaded(me.modId.toLowerCase());
     }

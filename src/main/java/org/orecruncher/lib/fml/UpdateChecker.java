@@ -70,7 +70,7 @@ public final class UpdateChecker implements ClientLoginChecks.ICallbackHandler {
 
     @Nullable
     @Override
-    public ITextComponent onLogin(@Nonnull final ClientPlayerEntity player) {
+    public ITextComponent onClientLogin(@Nonnull final ClientPlayerEntity player) {
         final String updateMessage = getUpdateMessage(this.modId);
         if (updateMessage != null) {
             try {

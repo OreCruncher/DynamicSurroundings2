@@ -50,10 +50,10 @@ public class ClientLoginChecks {
     public static void onLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
         final ClientPlayerEntity player = event.getPlayer();
         if (player != null) {
-            Lib.LOGGER.debug("Player login: %s", event.getPlayer().getName().getString());
+            Lib.LOGGER.info("Player login: %s", event.getPlayer().getName().getString());
 
             for (final ICallbackHandler callback : handlers) {
-                final ITextComponent msg = callback.onLogin(event.getPlayer());
+                final ITextComponent msg = callback.onClientLogin(event.getPlayer());
                 if (msg != null)
                     event.getPlayer().sendMessage(msg, Util.DUMMY_UUID);
             }
@@ -70,6 +70,6 @@ public class ClientLoginChecks {
          * @return Text message to display to the player, if any
          */
         @Nullable
-        ITextComponent onLogin(@Nonnull final ClientPlayerEntity player);
+        ITextComponent onClientLogin(@Nonnull final ClientPlayerEntity player);
     }
 }

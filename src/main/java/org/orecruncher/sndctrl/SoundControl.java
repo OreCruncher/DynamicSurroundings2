@@ -18,6 +18,9 @@
 
 package org.orecruncher.sndctrl;
 
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -31,8 +34,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.system.CallbackI;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.effects.EntityEffectHandler;
+import org.orecruncher.lib.fml.ClientLoginChecks;
 import org.orecruncher.lib.logging.ModLog;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.IMC;
@@ -43,9 +48,10 @@ import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
-import org.orecruncher.sndctrl.misc.ModEnvironment;
+import org.orecruncher.lib.ModEnvironment;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Mod(SoundControl.MOD_ID)
 public final class SoundControl {
@@ -74,11 +80,26 @@ public final class SoundControl {
 
             // Initialize our configuration
             Config.setup();
+
+            ClientLoginChecks.register(new ClientLoginChecks.ICallbackHandler() {
+                @Nullable
+                @Override
+                public ITextComponent onClientLogin(@Nonnull ClientPlayerEntity player) {
+                    if (ModEnvironment.SoundFilters.isLoaded()) {
+                        if (Config.CLIENT.sound.get_enableEnhancedSounds()) {
+                            SoundControl.LOGGER.warn("===============================================================================================");
+                            SoundControl.LOGGER.warn("SoundFilters is installed and will cause conflicts with Dynamic Surroundings.");
+                            SoundControl.LOGGER.warn("If you wish to use SoundFilters please turn off Dynamic Surroundings enhanced sound processing.");
+                            SoundControl.LOGGER.warn("===============================================================================================");
+                        }
+                    }
+                    return null;
+                }
+            });
         }
     }
 
     private void commonSetup(@Nonnull final FMLCommonSetupEvent event) {
-        ModEnvironment.initialize();
         CapabilityEntityFXData.register();
     }
 

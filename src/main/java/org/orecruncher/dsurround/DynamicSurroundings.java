@@ -88,9 +88,6 @@ public final class DynamicSurroundings {
             // Create additional data paths if needed
             createPath(DATA_PATH);
             createPath(DUMP_PATH);
-
-            if (Config.CLIENT.logging.get_onlineVersionCheck())
-                ClientLoginChecks.register(new UpdateChecker(DynamicSurroundings.MOD_ID));
         }
     }
 
@@ -108,6 +105,8 @@ public final class DynamicSurroundings {
     }
 
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
+        if (Config.CLIENT.logging.get_onlineVersionCheck())
+            ClientLoginChecks.register(new UpdateChecker(DynamicSurroundings.MOD_ID));
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

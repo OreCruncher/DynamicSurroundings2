@@ -21,7 +21,7 @@ package org.orecruncher.lib.seasons;
 import net.minecraft.world.World;
 import org.orecruncher.lib.Localization;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.misc.ModEnvironment;
+import org.orecruncher.lib.ModEnvironment;
 import sereneseasons.api.season.ISeasonState;
 
 import javax.annotation.Nonnull;

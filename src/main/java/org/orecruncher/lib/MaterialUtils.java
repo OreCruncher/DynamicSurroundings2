@@ -60,6 +60,7 @@ public final class MaterialUtils {
         materialMap.put(Material.SPONGE, "SPONGE");
         materialMap.put(Material.SHULKER, "SHULKER");
         materialMap.put(Material.WOOD, "WOOD");
+        materialMap.put(Material.NETHER_WOOD, "NETHER_WOOD");
         materialMap.put(Material.BAMBOO, "BAMBOO");
         materialMap.put(Material.BAMBOO_SAPLING, "BAMBOO_SAPLING");
         materialMap.put(Material.WOOL, "WOOL");

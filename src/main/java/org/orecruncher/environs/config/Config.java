@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.environs;
+package org.orecruncher.environs.config;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
+import org.orecruncher.environs.Environs;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -268,7 +269,7 @@ public final class Config {
 
             // Reach over and grab from SoundControl
             public int get_effectRange() {
-                return org.orecruncher.sndctrl.Config.CLIENT.effects.get_effectRange();
+                return org.orecruncher.sndctrl.config.Config.CLIENT.effects.get_effectRange();
             }
 
             public boolean get_enableFireFlies() {

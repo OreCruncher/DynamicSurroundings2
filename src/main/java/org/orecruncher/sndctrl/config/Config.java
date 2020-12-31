@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.sndctrl;
+package org.orecruncher.sndctrl.config;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
+import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
 import java.io.File;

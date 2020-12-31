@@ -42,7 +42,7 @@ import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.math.BlockRayTrace;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.math.RayTraceIterator;
-import org.orecruncher.sndctrl.Config;
+import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
 import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;

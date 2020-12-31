@@ -33,6 +33,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.logging.ModLog;
+import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.effects.*;
 import org.orecruncher.mobeffects.library.Constants;
 import org.orecruncher.mobeffects.library.Libraries;

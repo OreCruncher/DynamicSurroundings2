@@ -23,7 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.environs.Config;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.effects.emitters.ParticleEmitter;
 import org.orecruncher.lib.BlockPosUtil;
 

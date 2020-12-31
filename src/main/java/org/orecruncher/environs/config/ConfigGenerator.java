@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.environs;
+package org.orecruncher.environs.config;
 
 import com.google.common.collect.ImmutableList;
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;

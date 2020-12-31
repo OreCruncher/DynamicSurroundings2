@@ -21,7 +21,7 @@ package org.orecruncher.mobeffects.misc;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.mobeffects.Config;
+import org.orecruncher.mobeffects.config.Config;
 
 import javax.annotation.Nonnull;
 

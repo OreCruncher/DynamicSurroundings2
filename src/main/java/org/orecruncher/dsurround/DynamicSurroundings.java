@@ -31,6 +31,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orecruncher.dsurround.config.Config;
+import org.orecruncher.dsurround.config.ConfigMenuBuilder;
 import org.orecruncher.lib.config.ConfigGui;
 import org.orecruncher.mobeffects.compat.ModEnvironment;
 import org.orecruncher.lib.fml.ClientLoginChecks;

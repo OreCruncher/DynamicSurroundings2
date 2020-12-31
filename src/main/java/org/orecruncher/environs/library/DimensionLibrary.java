@@ -35,7 +35,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
-import org.orecruncher.environs.Config;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.DimensionConfig;
 import org.orecruncher.lib.collections.ObjectArray;

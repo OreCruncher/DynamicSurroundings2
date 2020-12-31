@@ -25,7 +25,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.lib.GameUtils;
-import org.orecruncher.mobeffects.Config;
+import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.MobEffects;
 
 import javax.annotation.Nonnull;

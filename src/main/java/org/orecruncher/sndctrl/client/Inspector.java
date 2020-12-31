@@ -44,7 +44,7 @@ import org.orecruncher.lib.MaterialUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.events.DiagnosticEvent;
-import org.orecruncher.sndctrl.Config;
+import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.events.BlockInspectionEvent;
 import org.orecruncher.sndctrl.events.EntityInspectionEvent;

@@ -33,7 +33,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.events.BlockUpdateEvent;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.math.LoggingTimerEMA;
-import org.orecruncher.sndctrl.Config;
+import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;

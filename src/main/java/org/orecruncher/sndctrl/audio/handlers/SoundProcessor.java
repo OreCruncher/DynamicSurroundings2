@@ -33,7 +33,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
-import org.orecruncher.sndctrl.Config;
+import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.SoundUtils;
 

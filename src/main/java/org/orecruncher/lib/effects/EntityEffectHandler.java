@@ -31,7 +31,7 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.math.LoggingTimerEMA;
-import org.orecruncher.sndctrl.Config;
+import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
 import org.orecruncher.lib.effects.entity.IEntityFX;

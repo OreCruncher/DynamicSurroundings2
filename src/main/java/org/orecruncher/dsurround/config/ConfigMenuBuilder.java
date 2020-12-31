@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.dsurround;
+package org.orecruncher.dsurround.config;
 
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigCategory;
@@ -27,6 +27,7 @@ import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.environs.config.ConfigGenerator;
 import org.orecruncher.lib.config.ClothAPIFactory;
 
 import javax.annotation.Nonnull;
@@ -36,10 +37,10 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
 
     public ConfigMenuBuilder() {
         super(new TranslationTextComponent("dsurround.modname"), () -> {
-            org.orecruncher.dsurround.Config.SPEC.save();
-            org.orecruncher.sndctrl.Config.SPEC.save();
-            org.orecruncher.environs.Config.SPEC.save();
-            org.orecruncher.mobeffects.Config.SPEC.save();
+            Config.SPEC.save();
+            org.orecruncher.sndctrl.config.Config.SPEC.save();
+            org.orecruncher.environs.config.Config.SPEC.save();
+            org.orecruncher.mobeffects.config.Config.SPEC.save();
         });
     }
 
@@ -76,8 +77,8 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         category.addEntry(modRoot.build());
 
         // Build child mod menus
-        category.addEntry(org.orecruncher.sndctrl.ConfigGenerator.generate(builder, entryBuilder).build());
-        category.addEntry(org.orecruncher.environs.ConfigGenerator.generate(builder, entryBuilder).build());
-        category.addEntry(org.orecruncher.mobeffects.ConfigGenerator.generate(builder, entryBuilder).build());
+        category.addEntry(org.orecruncher.sndctrl.config.ConfigGenerator.generate(builder, entryBuilder).build());
+        category.addEntry(ConfigGenerator.generate(builder, entryBuilder).build());
+        category.addEntry(org.orecruncher.mobeffects.config.ConfigGenerator.generate(builder, entryBuilder).build());
     }
 }

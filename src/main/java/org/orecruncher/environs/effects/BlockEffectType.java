@@ -21,7 +21,7 @@ package org.orecruncher.environs.effects;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.environs.Config;
+import org.orecruncher.environs.config.Config;
 
 import javax.annotation.Nonnull;
 import java.util.Map;

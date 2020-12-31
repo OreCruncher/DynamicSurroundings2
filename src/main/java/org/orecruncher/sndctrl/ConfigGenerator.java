@@ -20,10 +20,7 @@ package org.orecruncher.sndctrl;
 
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.BooleanToggleBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.IntFieldBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.StringListBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
+import me.shedaniel.clothconfig2.forge.impl.builders.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.config.ClothAPIFactory;
@@ -95,14 +92,14 @@ public class ConfigGenerator {
                 Integer.MAX_VALUE);
         subCategory.add(intBuilder.build());
 
-        intBuilder = ClothAPIFactory.createInteger(
+        IntSliderBuilder intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "sndctrl.cfg.sound.Threads",
                 0,
                 Config.CLIENT.sound.backgroundThreadWorkers,
                 0,
                 8).requireRestart();
-        subCategory.add(intBuilder.build());
+        subCategory.add(intSliderBuilder.build());
 
         StringListBuilder strListBuilder = ClothAPIFactory.createStringList(
                 builder,
@@ -128,14 +125,14 @@ public class ConfigGenerator {
                 Config.CLIENT.effects.fixupRandoms).requireRestart();
         subCategory.add(boolBuilder.build());
 
-        intBuilder = ClothAPIFactory.createInteger(
+        intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "sndctrl.cfg.effects.BlockRange",
                 24,
                 Config.CLIENT.effects.effectRange,
                 16,
                 64);
-        subCategory.add(intBuilder.build());
+        subCategory.add(intSliderBuilder.build());
 
         modCategory.add(subCategory.build());
 

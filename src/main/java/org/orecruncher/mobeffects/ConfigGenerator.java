@@ -20,10 +20,7 @@ package org.orecruncher.mobeffects;
 
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.BooleanToggleBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.EnumSelectorBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.IntFieldBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
+import me.shedaniel.clothconfig2.forge.impl.builders.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.config.ClothAPIFactory;
@@ -95,14 +92,14 @@ public class ConfigGenerator {
                 Config.CLIENT.footsteps.playerFootprintStyle);
         subCategory.add(footprintStyle.build());
 
-        intBuilder = ClothAPIFactory.createInteger(
+        IntSliderBuilder intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "mobeffects.cfg.footsteps.Volume",
                 75,
                 Config.CLIENT.footsteps.footstepVolume,
                 0,
                 100);
-        subCategory.add(intBuilder.build());
+        subCategory.add(intSliderBuilder.build());
 
         modCategory.add(subCategory.build());
 
@@ -149,14 +146,14 @@ public class ConfigGenerator {
                 Config.CLIENT.effects.enableSwingEffect);
         subCategory.add(boolBuilder.build());
 
-        intBuilder = ClothAPIFactory.createInteger(
+        intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "mobeffects.cfg.effects.ToolbarVolume",
                 35,
                 Config.CLIENT.effects.toolbarVolume,
                 0,
                 100);
-        subCategory.add(intBuilder.build());
+        subCategory.add(intSliderBuilder.build());
 
         modCategory.add(subCategory.build());
 

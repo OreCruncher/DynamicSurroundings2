@@ -21,10 +21,7 @@ package org.orecruncher.environs;
 import com.google.common.collect.ImmutableList;
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.BooleanToggleBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.IntFieldBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.StringListBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
+import me.shedaniel.clothconfig2.forge.impl.builders.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.config.ClothAPIFactory;
@@ -144,14 +141,14 @@ public class ConfigGenerator {
                 Config.CLIENT.aurora.auroraEnabled);
         subCategory.add(boolBuilder.build());
 
-        intBuilder = ClothAPIFactory.createInteger(
+        IntSliderBuilder intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "environs.cfg.aurora.MaxBands",
                 3,
                 Config.CLIENT.aurora.maxBands,
                 1,
                 3);
-        subCategory.add(intBuilder.build());
+        subCategory.add(intSliderBuilder.build());
 
         modCategory.add(subCategory.build());
 
@@ -210,23 +207,23 @@ public class ConfigGenerator {
         modCategory.add(subCategory.build());
 
         subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "environs.cfg.sound", false);
-        intBuilder = ClothAPIFactory.createInteger(
+        intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "environs.cfg.sound.BiomeVolume",
                 100,
                 Config.CLIENT.sound.biomeSoundVolume,
                 0,
                 100);
-        subCategory.add(intBuilder.build());
+        subCategory.add(intSliderBuilder.build());
 
-        intBuilder = ClothAPIFactory.createInteger(
+        intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "environs.cfg.sound.SpotVolume",
                 100,
                 Config.CLIENT.sound.spotSoundVolume,
                 0,
                 100);
-        subCategory.add(intBuilder.build());
+        subCategory.add(intSliderBuilder.build());
 
         modCategory.add(subCategory.build());
 

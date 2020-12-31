@@ -107,4 +107,13 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .setDefaultValue(defaultValue)
                 .setSaveConsumer(value::set);
     }
+
+    public static IntSliderBuilder createIntegerSlider(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, final int defaultValue, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
+        return builder.entryBuilder()
+                .startIntSlider(new TranslationTextComponent(translationKey), value.get(), min, max)
+                .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
+                .setDefaultValue(defaultValue)
+                .setSaveConsumer(value::set);
+    }
+
 }

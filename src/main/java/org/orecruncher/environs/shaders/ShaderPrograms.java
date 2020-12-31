@@ -34,7 +34,7 @@ public enum ShaderPrograms implements IShaderResourceProvider {
     private final ResourceLocation vertex;
     private final ResourceLocation fragment;
 
-    public static final ShaderManager MANAGER = new ShaderManager(ShaderPrograms.values());
+    public static final ShaderManager<ShaderPrograms> MANAGER = new ShaderManager<>(ShaderPrograms.class);
 
     ShaderPrograms(@Nonnull final String vert, @Nonnull final String frag) {
         this.vertex = new ResourceLocation(vert);

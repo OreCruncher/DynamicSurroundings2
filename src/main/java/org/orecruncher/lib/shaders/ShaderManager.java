@@ -38,33 +38,46 @@ import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
-public final class ShaderManager {
+public final class ShaderManager<T extends Enum<T>> {
 
-	private final IShaderResourceProvider[] providers;
-	private final ShaderProgram[] PROGRAMS;
+	private final Class<T> clazz;
+	private final EnumMap<T, ShaderProgram> programs;
 
-	public ShaderManager(@Nonnull final IShaderResourceProvider[] providers) {
-		this.providers = providers;
-		this.PROGRAMS = new ShaderProgram[providers.length];
+	public ShaderManager(@Nonnull final Class<T> clazz) {
+		Objects.requireNonNull(clazz);
+
+		if (!IShaderResourceProvider.class.isAssignableFrom(clazz))
+			throw new IllegalArgumentException(String.format("%s must implement IShaderResourceProvider", clazz.getName()));
+
+		this.clazz = clazz;
+		this.programs = new EnumMap<>(clazz);
+
+		// Validate the entries provide sane info
+		for (final T shader : clazz.getEnumConstants()) {
+			final String shaderName = shader.name();
+			final IShaderResourceProvider provider = (IShaderResourceProvider) shader;
+			Objects.requireNonNull(provider.getVertex(), String.format("%s provided null for vertex shader", shaderName));
+			Objects.requireNonNull(provider.getFragment(), String.format("%s provided null for fragment shader", shaderName));
+		}
 	}
 
 	public static boolean supported() {
 		return true;
 	}
 
-	public void useShader(final int shader, @Nullable final Consumer<ShaderCallContext> callback) {
-		if (shader < 0 || shader > this.PROGRAMS.length)
-			throw new IllegalArgumentException("The shader id provided is out of bounds");
+	public void useShader(@Nonnull final T shader, @Nullable final Consumer<ShaderCallContext> callback) {
+		Objects.requireNonNull(shader);
 
 		if (!supported())
 			return;
 
-		final ShaderProgram program = this.PROGRAMS[shader];
+		final ShaderProgram program = this.programs.get(shader);
 
 		if (program == null)
 			return;
@@ -77,12 +90,8 @@ public final class ShaderManager {
 		}
 	}
 
-	public void useShader(@Nonnull final Enum<?> provider, @Nullable final Consumer<ShaderCallContext> callback) {
-		useShader(provider.ordinal(), callback);
-	}
-
-	public void useShader(@Nonnull final Enum<?> provider) {
-		useShader(provider, null);
+	public void useShader(@Nonnull final T shader) {
+		useShader(shader, null);
 	}
 
 	public void releaseShader() {
@@ -166,25 +175,26 @@ public final class ShaderManager {
 		if (GameUtils.getMC().getResourceManager() instanceof IReloadableResourceManager) {
 			((IReloadableResourceManager) GameUtils.getMC().getResourceManager()).addReloadListener(
 					(IResourceManagerReloadListener) manager -> {
-						for (final ShaderProgram prog : PROGRAMS)
-							if (prog != null)
-								ShaderLinkHelper.deleteShader(prog);
-						Arrays.fill(PROGRAMS, null);
+						this.programs.values().forEach(ShaderLinkHelper::deleteShader);
+						this.programs.clear();
 						loadShaders(manager);
 					});
 		}
 	}
 
 	private void loadShaders(@Nonnull final IResourceManager manager) {
-		for (int i = 0; i < this.providers.length; i++)
-			this.PROGRAMS[i] = createProgram(manager, this.providers[i]);
+		for (final T shader : this.clazz.getEnumConstants())
+			this.programs.put(shader, createProgram(manager, shader));
 	}
 
 	@Nullable
-	private static ShaderProgram createProgram(@Nonnull final IResourceManager manager, @Nonnull final IShaderResourceProvider provider) {
+	private ShaderProgram createProgram(@Nonnull final IResourceManager manager, @Nonnull final T shader) {
+		final IShaderResourceProvider provider = (IShaderResourceProvider) shader;
 		try {
-			final ShaderLoader vert = createShader(manager, provider.getVertex(), ShaderLoader.ShaderType.VERTEX);
-			final ShaderLoader frag = createShader(manager, provider.getFragment(), ShaderLoader.ShaderType.FRAGMENT);
+			final ResourceLocation vertex = Objects.requireNonNull(provider.getVertex());
+			final ResourceLocation fragment = Objects.requireNonNull(provider.getFragment());
+			final ShaderLoader vert = createShader(manager, vertex, ShaderLoader.ShaderType.VERTEX);
+			final ShaderLoader frag = createShader(manager, fragment, ShaderLoader.ShaderType.FRAGMENT);
 			final int progId = ShaderLinkHelper.createProgram();
 			final ShaderProgram prog = new ShaderProgram(progId, vert, frag);
 			ShaderLinkHelper.linkProgram(prog);

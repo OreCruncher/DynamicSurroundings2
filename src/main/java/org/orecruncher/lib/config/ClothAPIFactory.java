@@ -21,9 +21,7 @@ package org.orecruncher.lib.config;
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigCategory;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.BooleanToggleBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.IntFieldBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
+import me.shedaniel.clothconfig2.forge.impl.builders.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;
@@ -31,9 +29,12 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.orecruncher.mobeffects.footsteps.FootprintStyle;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, Screen> {
@@ -89,5 +90,21 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .setMax(max)
                 .setSaveConsumer(value::set);
 
+    }
+
+    public static StringListBuilder createStringList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final List<String> defaultValue, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value) {
+        return builder.entryBuilder()
+                .startStrList(new TranslationTextComponent(translationKey), value.get().stream().map(Object::toString).collect(Collectors.toList()))
+                .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
+                .setDefaultValue(defaultValue)
+                .setSaveConsumer(value::set);
+    }
+
+    public static <T extends Enum<T>> EnumSelectorBuilder<T> createEnumList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull Class<T> clazz, @Nonnull final T defaultValue, @Nonnull final ForgeConfigSpec.EnumValue<T> value) {
+        return builder.entryBuilder()
+                .startEnumSelector(new TranslationTextComponent(translationKey), clazz, defaultValue)
+                .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
+                .setDefaultValue(defaultValue)
+                .setSaveConsumer(value::set);
     }
 }

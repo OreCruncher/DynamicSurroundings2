@@ -81,7 +81,7 @@ public final class Config {
 
     public static class Client {
 
-        private static final List<String> defaultSoundConfig = ImmutableList.<String>builder()
+        public static final List<String> defaultSoundConfig = ImmutableList.<String>builder()
                 .add("minecraft:entity.sheep.ambient cull")
                 .add("minecraft:entity.chicken.ambient cull")
                 .add("minecraft:entity.cow.ambient cull")
@@ -91,7 +91,7 @@ public final class Config {
                 .add("minecraft:entity.ender_dragon.death cull 25")
                 .build();
 
-        private static final List<String> defaultStartupSounds = ImmutableList.<String>builder()
+        public static final List<String> defaultStartupSounds = ImmutableList.<String>builder()
                 .add("minecraft:entity.experience_orb.pickup")
                 .add("minecraft:entity.chicken.egg")
                 .add("minecraft:ambient.underwater.exit")

@@ -191,9 +191,6 @@ public final class AcousticLibrary {
 
     @Nullable
     private static IAcoustic generateAcoustic(@Nonnull final ResourceLocation name) {
-        if (name.toString().contains("block.stone.step")) {
-            int x = 0;
-        }
         IAcoustic a = compiled.get(name.toString());
         if (a == null) {
             // Nope. Doesn't exist yet. It could be a sound name based on location.

@@ -29,7 +29,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
-import org.orecruncher.mobeffects.footsteps.FootprintStyle;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -42,7 +41,7 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
     private final ITextComponent title;
     private final Runnable save;
 
-    public ClothAPIFactory(@Nonnull ITextComponent title, @Nonnull final Runnable save) {
+    public ClothAPIFactory(@Nonnull final ITextComponent title, @Nonnull final Runnable save) {
         this.title = title;
         this.save = save;
     }
@@ -73,6 +72,14 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .setExpanded(expanded);
     }
 
+    public static StringFieldBuilder createString(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, final String defaultValue, @Nonnull final ForgeConfigSpec.ConfigValue<String> value) {
+        return builder.entryBuilder()
+                .startStrField(new TranslationTextComponent(translationKey), value.get())
+                .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
+                .setDefaultValue(defaultValue)
+                .setSaveConsumer(value::set);
+    }
+
     public static BooleanToggleBuilder createBoolean(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, final boolean defaultValue, @Nonnull final ForgeConfigSpec.BooleanValue value) {
         return builder.entryBuilder()
                 .startBooleanToggle(new TranslationTextComponent(translationKey), value.get())
@@ -89,7 +96,6 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .setMin(min)
                 .setMax(max)
                 .setSaveConsumer(value::set);
-
     }
 
     public static StringListBuilder createStringList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final List<String> defaultValue, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value) {

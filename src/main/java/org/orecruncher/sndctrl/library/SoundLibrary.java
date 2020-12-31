@@ -31,6 +31,7 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundMetadata;
+import org.orecruncher.sndctrl.audio.handlers.SoundProcessor;
 import org.orecruncher.sndctrl.library.config.SoundMetadataConfig;
 
 import javax.annotation.Nonnull;
@@ -78,10 +79,16 @@ public final class SoundLibrary {
         }
 
         LOGGER.info("Number of SoundEvents cached: %d", myRegistry.size());
+
+        // Log for posterity
+        LOGGER.info("Individual Sound Configurations");
+        LOGGER.info("===============================");
+        for (SoundProcessor.IndividualSoundConfig cfg : SoundProcessor.getSortedSoundConfigurations())
+            if (!cfg.isDefault())
+                LOGGER.info(cfg.toString());
     }
 
-    // Package internal!
-    static Map<ResourceLocation, SoundEvent> getRegisteredSounds() {
+    public static Map<ResourceLocation, SoundEvent> getRegisteredSounds() {
         return myRegistry;
     }
 

@@ -31,8 +31,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
@@ -98,12 +101,17 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .setSaveConsumer(value::set);
     }
 
-    public static StringListBuilder createStringList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final List<String> defaultValue, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value) {
-        return builder.entryBuilder()
+    public static StringListBuilder createStringList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final List<String> defaultValue, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value, @Nullable final Function<String, Optional<ITextComponent>> validator) {
+        StringListBuilder result = builder.entryBuilder()
                 .startStrList(new TranslationTextComponent(translationKey), value.get().stream().map(Object::toString).collect(Collectors.toList()))
                 .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
                 .setDefaultValue(defaultValue)
                 .setSaveConsumer(value::set);
+
+        if (validator != null)
+            result.setCellErrorSupplier(validator);
+
+        return result;
     }
 
     public static <T extends Enum<T>> EnumSelectorBuilder<T> createEnumList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull Class<T> clazz, @Nonnull final T defaultValue, @Nonnull final ForgeConfigSpec.EnumValue<T> value) {

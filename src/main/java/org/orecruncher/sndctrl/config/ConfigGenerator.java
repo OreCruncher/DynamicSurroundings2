@@ -21,11 +21,15 @@ package org.orecruncher.sndctrl.config;
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.forge.impl.builders.*;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.config.ClothAPIFactory;
+import org.orecruncher.sndctrl.library.IndividualSoundConfig;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigGenerator {
@@ -105,14 +109,20 @@ public class ConfigGenerator {
                 builder,
                 "sndctrl.cfg.sound.Individual",
                 Config.Client.defaultSoundConfig,
-                Config.CLIENT.sound.individualSounds);
+                Config.CLIENT.sound.individualSounds,
+                (value) -> {
+                    if (!IndividualSoundConfig.isValid(value))
+                        return Optional.of(new TranslationTextComponent("sndctrl.message.cfg.soundconfig.invalid"));
+                    return Optional.empty();
+                });
         subCategory.add(strListBuilder.build());
 
         strListBuilder = ClothAPIFactory.createStringList(
                 builder,
                 "sndctrl.cfg.sound.StartupSounds",
                 Config.Client.defaultStartupSounds,
-                Config.CLIENT.sound.startupSoundList);
+                Config.CLIENT.sound.startupSoundList,
+                null);
         subCategory.add(strListBuilder.build());
 
         modCategory.add(subCategory.build());

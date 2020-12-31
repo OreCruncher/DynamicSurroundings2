@@ -51,6 +51,7 @@
 	"sndctrl.season.winter": "Зима",
 	"sndctrl.season.early": "Начало",
 	"sndctrl.season.mid": "Середина",
-	"sndctrl.season.late": "Конец"
+	"sndctrl.season.late": "Конец",
+	"sndctrl.message.cfg.soundconfig.invalid": "The sound configuration is invalid."
 
 }

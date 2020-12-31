@@ -51,6 +51,7 @@
 	"sndctrl.season.winter": "Invierno",
 	"sndctrl.season.early": "Principios",
 	"sndctrl.season.mid": "Mediados",
-	"sndctrl.season.late": "Finales"
+	"sndctrl.season.late": "Finales",
+	"sndctrl.message.cfg.soundconfig.invalid": "The sound configuration is invalid."
 
 }

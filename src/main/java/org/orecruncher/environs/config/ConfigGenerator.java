@@ -69,7 +69,8 @@ public class ConfigGenerator {
                 builder,
                 "environs.cfg.biomes.DimBlacklist",
                 ImmutableList.of(),
-                Config.CLIENT.biome.biomeSoundBlacklist);
+                Config.CLIENT.biome.biomeSoundBlacklist,
+                null);
         subCategory.add(strListBuilder.build());
 
         modCategory.add(subCategory.build());

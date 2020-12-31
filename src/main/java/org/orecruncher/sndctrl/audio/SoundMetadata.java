@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 package org.orecruncher.sndctrl.audio;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -37,16 +37,16 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public final class SoundMetadata {
 
-    private static final TextComponent NO_STRING = new StringTextComponent(StringUtils.EMPTY);
+    private static final ITextComponent NO_STRING = new StringTextComponent(StringUtils.EMPTY);
 
     @Nonnull
-    private final TextComponent title;
+    private final ITextComponent title;
     @Nonnull
-    private final TextComponent caption;
+    private final ITextComponent caption;
     @Nonnull
     private final ISoundCategory category;
     @Nonnull
-    private final List<TextComponent> credits;
+    private final List<ITextComponent> credits;
 
     public SoundMetadata() {
         this.title = NO_STRING;
@@ -81,7 +81,7 @@ public final class SoundMetadata {
      * @return Configured title, or EMPTY if not present.
      */
     @Nonnull
-    public TextComponent getTitle() {
+    public ITextComponent getTitle() {
         return this.title;
     }
 
@@ -91,7 +91,7 @@ public final class SoundMetadata {
      * @return Configured caption, or EMPTY if not present.
      */
     @Nonnull
-    public TextComponent getCaption() {
+    public ITextComponent getCaption() {
         return this.caption;
     }
 
@@ -101,7 +101,7 @@ public final class SoundMetadata {
      * @return List containing 0 or more strings describing the sound credits.
      */
     @Nonnull
-    public List<TextComponent> getCredits() {
+    public List<ITextComponent> getCredits() {
         return this.credits;
     }
 

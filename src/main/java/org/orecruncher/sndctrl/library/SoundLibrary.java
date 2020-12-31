@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,11 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundMetadata;
-import org.orecruncher.sndctrl.audio.handlers.SoundProcessor;
+import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.library.config.SoundMetadataConfig;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,11 +46,12 @@ import java.util.stream.Collectors;
  */
 @OnlyIn(Dist.CLIENT)
 public final class SoundLibrary {
-    private static final ResourceLocation MISSING_RESOURCE = new ResourceLocation(SoundControl.MOD_ID, "missing_sound");
-    public static final SoundEvent MISSING = new SoundEvent(MISSING_RESOURCE);
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundLibrary.class);
+    private static final ResourceLocation MISSING_RESOURCE = new ResourceLocation(SoundControl.MOD_ID, "missing_sound");
     private static final Object2ObjectOpenHashMap<ResourceLocation, SoundEvent> myRegistry = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<ResourceLocation, SoundMetadata> soundMetadata = new Object2ObjectOpenHashMap<>();
+
+    public static final SoundEvent MISSING = new SoundEvent(MISSING_RESOURCE);
 
     static {
         myRegistry.defaultReturnValue(SoundLibrary.MISSING);
@@ -80,16 +78,35 @@ public final class SoundLibrary {
 
         LOGGER.info("Number of SoundEvents cached: %d", myRegistry.size());
 
-        // Log for posterity
         LOGGER.info("Individual Sound Configurations");
         LOGGER.info("===============================");
-        for (SoundProcessor.IndividualSoundConfig cfg : SoundProcessor.getSortedSoundConfigurations())
-            if (!cfg.isDefault())
-                LOGGER.info(cfg.toString());
+        Config.CLIENT.sound.get_individualSounds().stream()
+                .filter(cfg -> !cfg.isDefault())
+                .forEach(cfg -> LOGGER.info(cfg.toString()));
     }
 
-    public static Map<ResourceLocation, SoundEvent> getRegisteredSounds() {
+    static Map<ResourceLocation, SoundEvent> getRegisteredSounds() {
         return myRegistry;
+    }
+
+    @SuppressWarnings("unused")
+    @Nonnull
+    public static Collection<IndividualSoundConfig> getSortedSoundConfigurations() {
+
+        final SortedMap<ResourceLocation, IndividualSoundConfig> map = new TreeMap<>();
+
+        // Get a list of all the sounds and set to defaults.  Each gets it's own state in case caller
+        // wants to manipulate.
+        for (final Map.Entry<ResourceLocation, SoundEvent> kvp : myRegistry.entrySet()) {
+            map.put(kvp.getKey(), new IndividualSoundConfig(kvp.getKey()));
+        }
+
+        // Override with the defaults from configuration.  Make a copy of the original so it doesn't change.
+        for (final IndividualSoundConfig cfg : Config.CLIENT.sound.get_individualSounds()) {
+            map.put(cfg.getLocation(), new IndividualSoundConfig(cfg));
+        }
+
+        return map.values();
     }
 
     public static void registerSoundFile(@Nonnull final ResourceLocation soundFile) {
@@ -119,6 +136,7 @@ public final class SoundLibrary {
         return Optional.of(se);
     }
 
+    @SuppressWarnings("unused")
     @Nonnull
     public static SoundMetadata getSoundMetadata(@Nonnull final ResourceLocation sound) {
         return soundMetadata.get(Objects.requireNonNull(sound));

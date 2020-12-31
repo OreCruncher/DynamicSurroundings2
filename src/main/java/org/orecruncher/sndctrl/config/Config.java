@@ -31,10 +31,12 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.library.IndividualSoundConfig;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -134,7 +136,7 @@ public final class Config {
             private int _cullInterval;
             private int _backgroundThreadWorkers;
             private boolean _enhancedWeather;
-            private List<String> _individualSounds;
+            private List<IndividualSoundConfig> _individualSounds;
             private List<String> _startupSoundList;
 
             Sound(@Nonnull final ForgeConfigSpec.Builder builder) {
@@ -194,7 +196,7 @@ public final class Config {
                 this._enableMonoConversion = this.enableMonoConversion.get();
                 this._cullInterval = this.cullInterval.get();
                 this._enhancedWeather = this.enhancedWeather.get();
-                this._individualSounds = this.individualSounds.get().stream().map(Object::toString).collect(Collectors.toList());
+                this._individualSounds = this.individualSounds.get().stream().map(IndividualSoundConfig::createFrom).filter(Objects::nonNull).collect(Collectors.toList());
                 this._startupSoundList = this.startupSoundList.get().stream().map(Object::toString).collect(Collectors.toList());
             }
 
@@ -222,7 +224,7 @@ public final class Config {
                 return this._enhancedWeather;
             }
 
-            public List<String> get_individualSounds() {
+            public List<IndividualSoundConfig> get_individualSounds() {
                 return this._individualSounds;
             }
 

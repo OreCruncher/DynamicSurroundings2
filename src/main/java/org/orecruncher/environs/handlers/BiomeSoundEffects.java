@@ -170,7 +170,7 @@ public class BiomeSoundEffects extends HandlerBase {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void diagnostics(@Nonnull final DiagnosticEvent event) {
-        if (Config.CLIENT.logging.get_enableLogging())
+        if (Config.CLIENT.logging.enableLogging.get())
             this.emitters.forEach(backgroundAcousticEmitter -> event.getLeft().add("EMITTER: " + backgroundAcousticEmitter.toString()));
     }
 }

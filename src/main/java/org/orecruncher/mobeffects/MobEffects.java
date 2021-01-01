@@ -111,13 +111,13 @@ public final class MobEffects {
 
         // Register our effect handlers
         IMC.registerEffectFactoryHandler(EntityFootprintEffect.FACTORY);
-        if (Config.CLIENT.effects.get_showBreath())
+        if (Config.CLIENT.effects.showBreath.get())
             IMC.registerEffectFactoryHandler(EntityBreathEffect.FACTORY);
-        if (Config.CLIENT.effects.get_enableBowEffect())
+        if (Config.CLIENT.effects.enableBowEffect.get())
             IMC.registerEffectFactoryHandler(EntityBowEffect.FACTORY);
-        if (Config.CLIENT.effects.get_enableToolbarEffect())
+        if (Config.CLIENT.effects.enableToolbarEffect.get())
             IMC.registerEffectFactoryHandler(PlayerToolbarEffect.FACTORY);
-        if (Config.CLIENT.effects.get_enableSwingEffect())
+        if (Config.CLIENT.effects.enableSwingEffect.get())
             IMC.registerEffectFactoryHandler(EntitySwingEffect.FACTORY);
 
         // Callback for completions

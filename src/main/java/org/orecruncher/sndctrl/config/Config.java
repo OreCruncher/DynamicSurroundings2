@@ -31,13 +31,10 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.library.IndividualSoundConfig;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
@@ -55,9 +52,8 @@ public final class Config {
     }
 
     private static void applyConfig() {
-        CLIENT.update();
-        SoundControl.LOGGER.setDebug(Config.CLIENT.logging.get_enableLogging());
-        SoundControl.LOGGER.setTraceMask(Config.CLIENT.logging.get_flagMask());
+        SoundControl.LOGGER.setDebug(Config.CLIENT.logging.enableLogging.get());
+        SoundControl.LOGGER.setTraceMask(Config.CLIENT.logging.flagMask.get());
     }
 
     @SubscribeEvent
@@ -100,23 +96,14 @@ public final class Config {
                 .add("minecraft:ambient.underwater.exit")
                 .build();
 
-        @Nonnull
         public final Sound sound;
-        @Nonnull
         public final Logging logging;
-        @Nonnull
         public final Effects effects;
 
         Client(@Nonnull final ForgeConfigSpec.Builder builder) {
             this.sound = new Sound(builder);
             this.effects = new Effects(builder);
             this.logging = new Logging(builder);
-        }
-
-        void update() {
-            this.sound.update();
-            this.effects.update();
-            this.logging.update();
         }
 
         public static class Sound {
@@ -129,15 +116,6 @@ public final class Config {
             public final BooleanValue enhancedWeather;
             public final ConfigValue<List<? extends String>> individualSounds;
             public final ConfigValue<List<? extends String>> startupSoundList;
-
-            private boolean _enableEnhancedSounds;
-            private boolean _enableOcclusionCalcs;
-            private boolean _enableMonoConversion;
-            private int _cullInterval;
-            private int _backgroundThreadWorkers;
-            private boolean _enhancedWeather;
-            private List<IndividualSoundConfig> _individualSounds;
-            private List<String> _startupSoundList;
 
             Sound(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("General options for defining sound effects")
@@ -188,58 +166,12 @@ public final class Config {
 
                 builder.pop();
             }
-
-            void update() {
-                this._backgroundThreadWorkers = this.backgroundThreadWorkers.get();
-                this._enableEnhancedSounds = this.enableEnhancedSounds.get();
-                this._enableOcclusionCalcs = this.enableOcclusionCalcs.get();
-                this._enableMonoConversion = this.enableMonoConversion.get();
-                this._cullInterval = this.cullInterval.get();
-                this._enhancedWeather = this.enhancedWeather.get();
-                this._individualSounds = this.individualSounds.get().stream().map(IndividualSoundConfig::createFrom).filter(Objects::nonNull).collect(Collectors.toList());
-                this._startupSoundList = this.startupSoundList.get().stream().map(Object::toString).collect(Collectors.toList());
-            }
-
-            public int get_backgroundThreadWorkers() {
-                return this._backgroundThreadWorkers;
-            }
-
-            public boolean get_enableEnhancedSounds() {
-                return this._enableEnhancedSounds;
-            }
-
-            public boolean get_enableOcclusionCalcs() {
-                return this._enableOcclusionCalcs;
-            }
-
-            public boolean get_enableMonoConversion() {
-                return this._enableMonoConversion;
-            }
-
-            public int get_cullInterval() {
-                return this._cullInterval;
-            }
-
-            public boolean get_enhancedWeather() {
-                return this._enhancedWeather;
-            }
-
-            public List<IndividualSoundConfig> get_individualSounds() {
-                return this._individualSounds;
-            }
-
-            public List<String> get_startupSoundList() {
-                return this._startupSoundList;
-            }
         }
 
         public static class Effects {
 
             public final BooleanValue fixupRandoms;
             public final IntValue effectRange;
-
-            private boolean _fixupRandoms;
-            private int _effectRange;
 
             Effects(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines parameters for special effects")
@@ -259,28 +191,12 @@ public final class Config {
 
                 builder.pop();
             }
-
-            void update() {
-                this._fixupRandoms = this.fixupRandoms.get();
-                this._effectRange = this.effectRange.get();
-            }
-
-            public boolean get_fixupRandoms() {
-                return this._fixupRandoms;
-            }
-
-            public int get_effectRange() {
-                return this._effectRange;
-            }
         }
 
         public static class Logging {
 
             public final BooleanValue enableLogging;
             public final IntValue flagMask;
-
-            private boolean _enableLogging;
-            private int _flagMask;
 
             Logging(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines how Sound Control logging will behave")
@@ -297,19 +213,6 @@ public final class Config {
                         .defineInRange("Debug Flag Mask", 0, 0, Integer.MAX_VALUE);
 
                 builder.pop();
-            }
-
-            void update() {
-                this._enableLogging = this.enableLogging.get();
-                this._flagMask = this.flagMask.get();
-            }
-
-            public boolean get_enableLogging() {
-                return this._enableLogging;
-            }
-
-            public int get_flagMask() {
-                return this._flagMask;
             }
         }
     }

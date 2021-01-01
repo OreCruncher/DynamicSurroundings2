@@ -53,7 +53,7 @@ public abstract class AuroraBase implements IAurora {
 
 	public AuroraBase(final Random rand) {
 		this.random = rand;
-		this.bandCount = Math.min(this.random.nextInt(3) + 1, Config.CLIENT.aurora.get_maxBands());
+		this.bandCount = Math.min(this.random.nextInt(3) + 1, Config.CLIENT.aurora.maxBands.get());
 		this.offset = this.random.nextInt(20) + 20;
 		this.colors = AuroraColor.get(this.random);
 

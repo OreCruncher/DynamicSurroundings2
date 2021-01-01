@@ -123,7 +123,7 @@ public class Manager {
 
     @SubscribeEvent
     public static void diagnosticEvent(@Nonnull final DiagnosticEvent event) {
-        if (Config.CLIENT.logging.get_enableLogging())
+        if (Config.CLIENT.logging.enableLogging.get())
             instance().effectHandlers.forEach(h -> event.addTimer(h.getTimer()));
     }
 

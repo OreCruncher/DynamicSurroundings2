@@ -85,7 +85,7 @@ public final class SoundControl {
                 @Override
                 public ITextComponent onClientLogin(@Nonnull ClientPlayerEntity player) {
                     if (ModEnvironment.SoundFilters.isLoaded()) {
-                        if (Config.CLIENT.sound.get_enableEnhancedSounds()) {
+                        if (Config.CLIENT.sound.enableEnhancedSounds.get()) {
                             SoundControl.LOGGER.warn("===============================================================================================");
                             SoundControl.LOGGER.warn("SoundFilters is installed and will cause conflicts with Dynamic Surroundings.");
                             SoundControl.LOGGER.warn("If you wish to use SoundFilters please turn off Dynamic Surroundings enhanced sound processing.");
@@ -103,7 +103,7 @@ public final class SoundControl {
     }
 
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
-        if (Config.CLIENT.effects.get_fixupRandoms()) {
+        if (Config.CLIENT.effects.fixupRandoms.get()) {
             GameUtils.getMC().gameRenderer.random = new XorShiftRandom();
         }
 

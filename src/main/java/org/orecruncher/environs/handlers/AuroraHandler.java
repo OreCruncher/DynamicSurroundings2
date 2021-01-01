@@ -69,7 +69,7 @@ public final class AuroraHandler extends HandlerBase {
 	}
 
 	private boolean canAuroraStay() {
-		if (!Config.CLIENT.aurora.get_auroraEnabled())
+		if (!Config.CLIENT.aurora.auroraEnabled.get())
 			return false;
 
 		return isAuroraTimeOfDay()
@@ -86,7 +86,7 @@ public final class AuroraHandler extends HandlerBase {
 			// If completed or the player changed dimensions we want to kill
 			// outright
 			if (this.current.isComplete() || this.dimensionId != CommonState.getDimensionId()
-					|| !Config.CLIENT.aurora.get_auroraEnabled()) {
+					|| !Config.CLIENT.aurora.auroraEnabled.get()) {
 				this.current = null;
 			} else {
 				this.current.update();
@@ -123,7 +123,7 @@ public final class AuroraHandler extends HandlerBase {
 
 	@SubscribeEvent
 	public void diagnostic(@Nonnull final DiagnosticEvent event) {
-		if (Config.CLIENT.logging.get_enableLogging()) {
+		if (Config.CLIENT.logging.enableLogging.get()) {
 			if (ShaderManager.supported()) {
 				event.getLeft().add("Aurora: " + (this.current == null ? "NONE" : this.current.toString()));
 				event.getRenderTimers().add(this.render);

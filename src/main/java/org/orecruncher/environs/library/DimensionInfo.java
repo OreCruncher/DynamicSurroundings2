@@ -68,10 +68,10 @@ public class DimensionInfo {
         }
 
         // Force sea level based on known world types that give heartburn
-        if (dt.isNatural() && Config.CLIENT.biome.get_worldSealevelOverride() > 0)
-            this.seaLevel = Config.CLIENT.biome.get_worldSealevelOverride();
+        if (dt.isNatural() && Config.CLIENT.biome.worldSealevelOverride.get() > 0)
+            this.seaLevel = Config.CLIENT.biome.worldSealevelOverride.get();
 
-        if (Config.CLIENT.biome.get_biomeSoundBlacklist().contains(this.name))
+        if (Config.CLIENT.biome.biomeSoundBlacklist.get().contains(this.name.toString()))
             this.playBiomeSounds = false;
 
         // Override based on player config settings

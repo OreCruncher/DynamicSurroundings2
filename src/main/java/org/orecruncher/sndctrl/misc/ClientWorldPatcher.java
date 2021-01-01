@@ -38,7 +38,7 @@ public final class ClientWorldPatcher {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onWorldLoad(@Nonnull final WorldEvent.Load event) {
-        if (Config.CLIENT.effects.get_fixupRandoms()) {
+        if (Config.CLIENT.effects.fixupRandoms.get()) {
             final IWorld world = event.getWorld();
             if (world.isRemote() && world instanceof World) {
                 final World w = (World) world;

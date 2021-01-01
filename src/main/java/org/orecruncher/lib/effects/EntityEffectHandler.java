@@ -89,7 +89,8 @@ public final class EntityEffectHandler {
             final long start = System.nanoTime();
 
             entity.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent(cap -> {
-                final int effectDistSq = Config.CLIENT.effects.get_effectRange() * Config.CLIENT.effects.get_effectRange();
+                final int range = Config.CLIENT.effects.effectRange.get();
+                final int effectDistSq = range * range;
                 final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= effectDistSq;
                 final EntityEffectManager mgr = cap.get();
                 if (mgr != null && !inRange) {
@@ -133,7 +134,7 @@ public final class EntityEffectHandler {
 
     @SubscribeEvent
     public static void onDiagnostics(@Nonnull final DiagnosticEvent event) {
-        if (Config.CLIENT.logging.get_enableLogging())
+        if (Config.CLIENT.logging.enableLogging.get())
             event.getRenderTimers().add(timer);
     }
 

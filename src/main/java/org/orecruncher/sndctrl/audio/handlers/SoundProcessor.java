@@ -39,6 +39,7 @@ import org.orecruncher.sndctrl.library.IndividualSoundConfig;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class SoundProcessor {
@@ -75,9 +76,16 @@ public final class SoundProcessor {
         blockedSounds.clear();
         volumeControl.clear();
 
-        cullInterval = Config.CLIENT.sound.get_cullInterval();
+        cullInterval = Config.CLIENT.sound.cullInterval.get();
 
-        for (final IndividualSoundConfig cfg : Config.CLIENT.sound.get_individualSounds()) {
+        final List<IndividualSoundConfig> configs = Config.CLIENT.sound.individualSounds.get()
+                .stream()
+                .map(IndividualSoundConfig::createFrom)
+                .filter(Objects::nonNull)
+                .filter(cfg -> !cfg.isDefault())
+                .collect(Collectors.toList());
+
+        for (final IndividualSoundConfig cfg : configs) {
             if (cfg.isBocked())
                 blockedSounds.add(cfg.getLocation());
             if (cfg.isCulled())

@@ -410,7 +410,7 @@ public final class FootstepLibrary {
         if (entity.isChild()) {
             var = childVariator;
         } else if (entity instanceof PlayerEntity) {
-            var = Config.CLIENT.footsteps.get_footstepsAsQuadruped() ? playerQuadrupedVariator : playerVariator;
+            var = Config.CLIENT.footsteps.footstepsAsQuadruped.get() ? playerQuadrupedVariator : playerVariator;
         } else {
             var = getVariator(entity.getType().getRegistryName().toString());
         }
@@ -517,8 +517,8 @@ public final class FootstepLibrary {
 
             defaultVariator = getVariator("default");
             childVariator = getVariator("child");
-            playerVariator = getVariator(Config.CLIENT.footsteps.get_firstPersonFootstepCadence() ? "player_slow" : "player");
-            playerQuadrupedVariator = getVariator(Config.CLIENT.footsteps.get_firstPersonFootstepCadence() ? "quadruped_slow" : "quadruped");
+            playerVariator = getVariator(Config.CLIENT.footsteps.firstPersonFootstepCadence.get() ? "player_slow" : "player");
+            playerQuadrupedVariator = getVariator(Config.CLIENT.footsteps.firstPersonFootstepCadence.get() ? "quadruped_slow" : "quadruped");
 
             configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "footsteps.json");
 
@@ -531,7 +531,7 @@ public final class FootstepLibrary {
 
         @Override
         public void log() {
-            if (Config.CLIENT.logging.get_enableLogging()) {
+            if (Config.CLIENT.logging.enableLogging.get()) {
                 LOGGER.info("Registered Variators");
                 LOGGER.info("====================");
 

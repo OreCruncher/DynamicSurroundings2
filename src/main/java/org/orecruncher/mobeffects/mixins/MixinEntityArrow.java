@@ -41,6 +41,6 @@ public abstract class MixinEntityArrow extends Entity {
 
     @Redirect(method = "tick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/AbstractArrowEntity;getIsCritical()Z"))
     private boolean isCriticalCheck(AbstractArrowEntity self) {
-        return Config.CLIENT.effects.get_showArrowTrail() && self.getIsCritical();
+        return self.getIsCritical() && Config.CLIENT.effects.showArrowTrail.get();
     }
 }

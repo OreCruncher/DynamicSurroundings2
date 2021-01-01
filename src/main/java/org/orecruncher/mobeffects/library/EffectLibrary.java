@@ -166,7 +166,7 @@ public final class EffectLibrary {
 
         @Override
         public void log() {
-            if (Config.CLIENT.logging.get_enableLogging()) {
+            if (Config.CLIENT.logging.enableLogging.get()) {
                 MobEffects.LOGGER.debug("MobEffect Registry");
                 MobEffects.LOGGER.debug("==================");
                 for (final Object2ObjectMap.Entry<ResourceLocation, EntityEffectInfo> kvp : effectConfiguration.object2ObjectEntrySet()) {

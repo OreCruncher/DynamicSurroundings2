@@ -30,6 +30,6 @@ public final class Constants {
 
     }
 
-    public static final ISoundCategory BIOMES = new Category("biomes", Config.CLIENT.sound::get_biomeSoundVolume);
-    public static final ISoundCategory SPOT_SOUNDS = new Category("spot", Config.CLIENT.sound::get_spotSoundVolume);
+    public static final ISoundCategory BIOMES = new Category("biomes", () -> Config.CLIENT.sound.biomeSoundVolume.get() / 100F);
+    public static final ISoundCategory SPOT_SOUNDS = new Category("spot", () -> Config.CLIENT.sound.spotSoundVolume.get() / 100F);
 }

@@ -35,8 +35,8 @@ public final class Constants {
 
     }
 
-    public static final ISoundCategory FOOTSTEPS = new Category("footsteps", Config.CLIENT.footsteps::get_footstepVolumeScale);
-    public static final ISoundCategory TOOLBAR = new Category("toolbar", Config.CLIENT.effects::get_toolbarVolumeScale);
+    public static final ISoundCategory FOOTSTEPS = new Category("footsteps", () -> Config.CLIENT.footsteps.footstepVolume.get() / 100F);
+    public static final ISoundCategory TOOLBAR = new Category("toolbar", () -> Config.CLIENT.effects.toolbarVolume.get() / 100F);
 
     public static final ResourceLocation NONE = new ResourceLocation(MobEffects.MOD_ID, "empty");
 

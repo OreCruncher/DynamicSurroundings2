@@ -129,7 +129,7 @@ class CommonStateHandler extends HandlerBase {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void diagnostics(@Nonnull final DiagnosticEvent event) {
-        if (Config.CLIENT.logging.get_enableLogging()) {
+        if (Config.CLIENT.logging.enableLogging.get()) {
             for (final String s : scripts) {
                 final String result = ConditionEvaluator.INSTANCE.eval(s).toString();
                 event.getLeft().add(TextFormatting.DARK_AQUA + result);

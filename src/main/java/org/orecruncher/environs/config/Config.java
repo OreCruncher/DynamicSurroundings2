@@ -18,7 +18,6 @@
 
 package org.orecruncher.environs.config;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -35,8 +34,6 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = Environs.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
@@ -54,9 +51,8 @@ public final class Config {
     }
 
     private static void applyConfig() {
-        CLIENT.update();
-        Environs.LOGGER.setDebug(Config.CLIENT.logging.get_enableLogging());
-        Environs.LOGGER.setTraceMask(Config.CLIENT.logging.get_flagMask());
+        Environs.LOGGER.setDebug(Config.CLIENT.logging.enableLogging.get());
+        Environs.LOGGER.setTraceMask(Config.CLIENT.logging.flagMask.get());
     }
 
     @SubscribeEvent
@@ -94,22 +90,10 @@ public final class Config {
             this.sound = new Sound(builder);
         }
 
-        void update() {
-            this.logging.update();
-            this.biome.update();
-            this.effects.update();
-            this.aurora.update();
-            this.fog.update();
-            this.sound.update();
-        }
-
         public static class Logging {
 
             public final BooleanValue enableLogging;
             public final IntValue flagMask;
-
-            private boolean _enableLogging;
-            private int _flagMask;
 
             Logging(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines how logging will behave")
@@ -127,28 +111,12 @@ public final class Config {
 
                 builder.pop();
             }
-
-            void update() {
-                this._enableLogging = this.enableLogging.get();
-                this._flagMask = this.flagMask.get();
-            }
-
-            public boolean get_enableLogging() {
-                return this._enableLogging;
-            }
-
-            public int get_flagMask() {
-                return this._flagMask;
-            }
         }
 
         public static class Biome {
 
             public final IntValue worldSealevelOverride;
             public final ForgeConfigSpec.ConfigValue<List<? extends String>> biomeSoundBlacklist;
-
-            private int _worldSealevelOverride;
-            private Set<ResourceLocation> _biomeSoundBlacklist;
 
             Biome(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options for controlling biome sound/effects")
@@ -166,19 +134,6 @@ public final class Config {
 
                 builder.pop();
             }
-
-            public void update() {
-                this._worldSealevelOverride = this.worldSealevelOverride.get();
-                this._biomeSoundBlacklist = this.biomeSoundBlacklist.get().stream().map(ResourceLocation::new).collect(Collectors.toSet());
-            }
-
-            public int get_worldSealevelOverride() {
-                return this._worldSealevelOverride;
-            }
-
-            public Set<ResourceLocation> get_biomeSoundBlacklist() {
-                return this._biomeSoundBlacklist;
-            }
         }
 
         public static class Effects {
@@ -191,15 +146,6 @@ public final class Config {
             public final BooleanValue enableFountainJets;
             public final BooleanValue enableWaterSplashJets;
             public final BooleanValue disableUnderwaterParticles;
-
-            private boolean _enableFireFlies;
-            private boolean _enableSteamJets;
-            private boolean _enableFireJets;
-            private boolean _enableBubbleJets;
-            private boolean _enableDustJets;
-            private boolean _enableFountainJets;
-            private boolean _enableWaterSplashJets;
-            private boolean _disableUnderwaterParticles;
 
             Effects(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options for controlling various effects")
@@ -256,52 +202,9 @@ public final class Config {
                 builder.pop();
             }
 
-            public void update() {
-                this._enableFireFlies = this.enableFireFlies.get();
-                this._enableBubbleJets = this.enableBubbleJets.get();
-                this._enableFireJets = this.enableFireJets.get();
-                this._enableSteamJets = this.enableSteamJets.get();
-                this._enableDustJets = this.enableDustJets.get();
-                this._enableFountainJets = this.enableFountainJets.get();
-                this._enableWaterSplashJets = this.enableWaterSplashJets.get();
-                this._disableUnderwaterParticles = this.disableUnderwaterParticles.get();
-            }
-
             // Reach over and grab from SoundControl
             public int get_effectRange() {
-                return org.orecruncher.sndctrl.config.Config.CLIENT.effects.get_effectRange();
-            }
-
-            public boolean get_enableFireFlies() {
-                return this._enableFireFlies;
-            }
-
-            public boolean get_enableSteamJets() {
-                return this._enableSteamJets;
-            }
-
-            public boolean get_enableFireJets() {
-                return this._enableFireJets;
-            }
-
-            public boolean get_enableBubbleJets() {
-                return this._enableBubbleJets;
-            }
-
-            public boolean get_enableDustJets() {
-                return this._enableDustJets;
-            }
-
-            public boolean get_enableFountainJets() {
-                return this._enableFountainJets;
-            }
-
-            public boolean get_enableWaterSplashJets() {
-                return this._enableWaterSplashJets;
-            }
-
-            public boolean get_disableUnderwaterParticles() {
-                return this._disableUnderwaterParticles;
+                return org.orecruncher.sndctrl.config.Config.CLIENT.effects.effectRange.get();
             }
 
         }
@@ -310,9 +213,6 @@ public final class Config {
 
             public final BooleanValue auroraEnabled;
             public final IntValue maxBands;
-
-            private boolean _auroraEnabled;
-            private int _maxBands;
 
             Aurora(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options for controlling various effects")
@@ -332,20 +232,6 @@ public final class Config {
 
                 builder.pop();
             }
-
-            public void update() {
-                this._auroraEnabled = this.auroraEnabled.get();
-                this._maxBands = this.maxBands.get();
-            }
-
-            public boolean get_auroraEnabled() {
-                return false;
-                //return this._auroraEnabled;
-            }
-
-            public int get_maxBands() {
-                return this._maxBands;
-            }
         }
 
         public static class Fog {
@@ -357,14 +243,6 @@ public final class Config {
             public final BooleanValue enableBedrockFog;
             public final BooleanValue enableWeatherFog;
             public final IntValue morningFogChance;
-
-            private boolean _enableFog;
-            private boolean _enableBiomeFog;
-            private boolean _enableElevationHaze;
-            private boolean _enableMorningFog;
-            private boolean _enableBedrockFog;
-            private boolean _enableWeatherFog;
-            private int _morningFogChance;
 
             Fog(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options that control the various fog effects in the client")
@@ -414,52 +292,12 @@ public final class Config {
 
                 builder.pop();
             }
-
-            public void update() {
-                this._enableFog = this.enableFog.get();
-                this._enableBiomeFog = this.enableBiomeFog.get();
-                this._enableElevationHaze = this.enableElevationHaze.get();
-                this._enableMorningFog = this.enableMorningFog.get();
-                this._enableBedrockFog = this.enableBedrockFog.get();
-                this._enableWeatherFog = this.enableWeatherFog.get();
-                this._morningFogChance = this.morningFogChance.get();
-            }
-
-            public boolean get_enableFog() {
-                return this._enableFog;
-            }
-
-            public boolean get_enableBiomeFog() {
-                return this._enableBiomeFog;
-            }
-
-            public boolean get_enableElevationHaze() {
-                return this._enableElevationHaze;
-            }
-
-            public boolean get_enableMorningFog() {
-                return this._enableMorningFog;
-            }
-
-            public boolean get_enableBedrockFog() {
-                return this._enableBedrockFog;
-            }
-
-            public boolean get_enableWeatherFog() {
-                return this._enableWeatherFog;
-            }
-
-            public int get_morningFogChance() {
-                return this._morningFogChance;
-            }
         }
 
         public static class Sound {
 
             public final IntValue biomeSoundVolume;
             public final IntValue spotSoundVolume;
-            private float _biomeSoundVolume;
-            private float _spotSoundVolume;
 
             Sound(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options for defining sound behavior")
@@ -476,19 +314,6 @@ public final class Config {
                         .defineInRange("Spot Sound Volume", 100, 0, 100);
 
                 builder.pop();
-            }
-
-            public void update() {
-                this._biomeSoundVolume = this.biomeSoundVolume.get() / 100F;
-                this._spotSoundVolume = this.spotSoundVolume.get() / 100F;
-            }
-
-            public float get_biomeSoundVolume() {
-                return this._biomeSoundVolume;
-            }
-
-            public float get_spotSoundVolume() {
-                return this._spotSoundVolume;
             }
         }
     }

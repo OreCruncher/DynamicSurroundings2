@@ -58,7 +58,7 @@ public final class CollectionManager {
 
     @SubscribeEvent
     public static void diagnostics(@Nonnull final DiagnosticEvent event) {
-        if (Config.CLIENT.logging.get_enableLogging()) {
+        if (Config.CLIENT.logging.enableLogging.get()) {
             helpers.forEach(h -> {
                 event.getLeft().add(TextFormatting.AQUA + h.toString());
                 h.getRenderTimer().ifPresent(event::addRenderTimer);

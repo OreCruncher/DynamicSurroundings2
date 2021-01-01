@@ -180,7 +180,7 @@ public final class SoundUtils {
             final long device = soundSystem.device;
 
             boolean hasFX = false;
-            if (Config.CLIENT.sound.get_enableEnhancedSounds()) {
+            if (Config.CLIENT.sound.enableEnhancedSounds.get()) {
                 LOGGER.info("Enhanced sounds are enabled.  Will perform sound engine reconfiguration.");
                 final ALCCapabilities deviceCaps = ALC.createCapabilities(device);
                 hasFX = deviceCaps.ALC_EXT_EFX;

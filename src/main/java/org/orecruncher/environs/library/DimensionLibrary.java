@@ -140,7 +140,7 @@ public final class DimensionLibrary {
 
 		@Override
 		public void log() {
-			if (Config.CLIENT.logging.get_enableLogging()) {
+			if (Config.CLIENT.logging.enableLogging.get()) {
 				LOGGER.info("*** DIMENSION REGISTRY (cache) ***");
 				dump().forEach(LOGGER::info);
 			}

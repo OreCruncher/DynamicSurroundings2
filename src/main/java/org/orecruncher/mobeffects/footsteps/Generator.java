@@ -388,7 +388,7 @@ public class Generator {
 
 	protected boolean shouldProducePrint(@Nonnull final LivingEntity entity) {
 		return this.VAR.HAS_FOOTPRINT
-				&& Config.CLIENT.footsteps.get_enableFootprintParticles()
+				&& Config.CLIENT.footsteps.enableFootprintParticles.get()
 				&& (entity.isOnGround() || !(this.isJumping || entity.isAirBorne))
 				&& !entity.isInvisibleToPlayer(GameUtils.getPlayer());
 	}
@@ -426,7 +426,7 @@ public class Generator {
 				FootprintStyle style = this.VAR.FOOTPRINT_STYLE;
 
 				if (entity instanceof PlayerEntity) {
-					style = Config.CLIENT.footsteps.get_playerFootprintStyle();
+					style = Config.CLIENT.footsteps.playerFootprintStyle.get();
 				}
 
 				final Footprint print = Footprint.produce(
@@ -492,7 +492,7 @@ public class Generator {
 	@Nullable
 	protected Association addFootstepAccent(@Nonnull final LivingEntity entity, @Nullable Association assoc) {
 		// Don't apply overlays if the entity is not on the ground
-		if (Config.CLIENT.footsteps.get_enableFootstepAccents() && entity.isOnGround()) {
+		if (Config.CLIENT.footsteps.enableFootstepAccents.get() && entity.isOnGround()) {
 			accents.clear();
 			final BlockPos pos = assoc != null ? assoc.getStepPos() : entity.getPosition();
 			FootstepAccents.provide(entity, pos, accents);

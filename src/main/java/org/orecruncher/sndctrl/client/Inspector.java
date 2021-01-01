@@ -121,7 +121,7 @@ public class Inspector {
 
             diagnostics = ImmutableList.of();
 
-            if (Config.CLIENT.logging.get_enableLogging() && isHolding()) {
+            if (Config.CLIENT.logging.enableLogging.get() && isHolding()) {
                 final World world = GameUtils.getWorld();
                 if (GameUtils.getMC().pointedEntity != null) {
                     final EntityInspectionEvent evt = new EntityInspectionEvent(GameUtils.getMC().pointedEntity);

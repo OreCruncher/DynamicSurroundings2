@@ -46,7 +46,7 @@ public class FogHandler extends HandlerBase {
     }
 
     private boolean doFog() {
-        return Config.CLIENT.fog.get_enableFog() && CommonState.getDimensionInfo().hasFog();
+        return Config.CLIENT.fog.enableFog.get() && CommonState.getDimensionInfo().hasFog();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class FogHandler extends HandlerBase {
 
     @SubscribeEvent
     public void diagnostics(final DiagnosticEvent event) {
-        if (Config.CLIENT.logging.get_enableLogging()) {
+        if (Config.CLIENT.logging.enableLogging.get()) {
             if (doFog()) {
                 event.getLeft().add("Fog Range: " + this.fogRange.toString());
                 event.addRenderTimer(this.render);
@@ -87,21 +87,21 @@ public class FogHandler extends HandlerBase {
     public void onConnect() {
         this.fogRange = new HolisticFogRangeCalculator();
 
-        if (Config.CLIENT.fog.get_enableBiomeFog()) {
+        if (Config.CLIENT.fog.enableBiomeFog.get()) {
             this.fogRange.add(new BiomeFogRangeCalculator());
         }
 
-        if (Config.CLIENT.fog.get_enableElevationHaze())
+        if (Config.CLIENT.fog.enableElevationHaze.get())
             this.fogRange.add(new HazeFogRangeCalculator());
 
-        if (Config.CLIENT.fog.get_enableMorningFog()) {
+        if (Config.CLIENT.fog.enableMorningFog.get()) {
             this.fogRange.add(new MorningFogRangeCalculator());
         }
 
-        if (Config.CLIENT.fog.get_enableBedrockFog())
+        if (Config.CLIENT.fog.enableBedrockFog.get())
             this.fogRange.add(new BedrockFogRangeCalculator());
 
-        if (Config.CLIENT.fog.get_enableWeatherFog())
+        if (Config.CLIENT.fog.enableWeatherFog.get())
             this.fogRange.add(new WeatherFogRangeCalculator());
 
 //		if (this.theme.doFixedFog())

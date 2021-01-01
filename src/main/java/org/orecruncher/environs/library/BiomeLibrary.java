@@ -189,7 +189,7 @@ public final class BiomeLibrary {
 
 		@Override
 		public void log() {
-			if (Config.CLIENT.logging.get_enableLogging()) {
+			if (Config.CLIENT.logging.enableLogging.get()) {
 				LOGGER.info("*** BIOME REGISTRY ***");
 				getCombinedStream().stream().sorted().map(Object::toString).forEach(LOGGER::info);
 			}

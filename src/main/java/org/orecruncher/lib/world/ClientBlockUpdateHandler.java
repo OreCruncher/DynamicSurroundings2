@@ -100,7 +100,7 @@ public final class ClientBlockUpdateHandler {
 
     @SubscribeEvent
     public static void onDiagnostics(@Nonnull final DiagnosticEvent event) {
-        if (Config.CLIENT.logging.get_enableLogging())
+        if (Config.CLIENT.logging.enableLogging.get())
             event.addRenderTimer(timer);
     }
 }

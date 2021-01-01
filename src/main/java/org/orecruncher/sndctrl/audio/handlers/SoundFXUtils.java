@@ -334,7 +334,7 @@ public final class SoundFXUtils {
 
         float accum = 0F;
 
-        if (Config.CLIENT.sound.get_enableOcclusionCalcs()) {
+        if (Config.CLIENT.sound.enableOcclusionCalcs.get()) {
             final BlockRayTrace traceContext = new BlockRayTrace(ctx.world, origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
             final Iterator<BlockRayTraceResult> itr = new RayTraceIterator(traceContext);
             for (int i = 0; i < OCCLUSION_RAYS; i++) {

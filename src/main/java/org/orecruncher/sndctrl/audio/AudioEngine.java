@@ -261,7 +261,7 @@ public final class AudioEngine {
     }
 
     private static boolean processDiagnostics() {
-        return Config.CLIENT.logging.get_enableLogging();
+        return Config.CLIENT.logging.enableLogging.get();
     }
 
     public static void initialize() {

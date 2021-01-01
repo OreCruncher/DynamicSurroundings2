@@ -48,9 +48,8 @@ public final class Config {
     }
 
     private static void applyConfig() {
-        CLIENT.update();
-        DynamicSurroundings.LOGGER.setDebug(Config.CLIENT.logging.get_enableLogging());
-        DynamicSurroundings.LOGGER.setTraceMask(Config.CLIENT.logging.get_flagMask());
+        DynamicSurroundings.LOGGER.setDebug(Config.CLIENT.logging.enableLogging.get());
+        DynamicSurroundings.LOGGER.setTraceMask(Config.CLIENT.logging.flagMask.get());
     }
 
     @SubscribeEvent
@@ -77,15 +76,10 @@ public final class Config {
 
     public static class Client {
 
-        @Nonnull
         public final Logging logging;
 
         Client(@Nonnull final ForgeConfigSpec.Builder builder) {
             this.logging = new Logging(builder);
-        }
-
-        void update() {
-            this.logging.update();
         }
 
         public static class Logging {
@@ -93,10 +87,6 @@ public final class Config {
             public final BooleanValue enableLogging;
             public final BooleanValue onlineVersionCheck;
             public final IntValue flagMask;
-
-            private boolean _enableLogging;
-            private boolean _onlineVersionCheck;
-            private int _flagMask;
 
             Logging(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines how Sound Control logging will behave")
@@ -118,24 +108,6 @@ public final class Config {
                         .defineInRange("Debug Flag Mask", 0, 0, Integer.MAX_VALUE);
 
                 builder.pop();
-            }
-
-            void update() {
-                this._enableLogging = this.enableLogging.get();
-                this._onlineVersionCheck = this.onlineVersionCheck.get();
-                this._flagMask = this.flagMask.get();
-            }
-
-            public boolean get_enableLogging() {
-                return this._enableLogging;
-            }
-
-            public boolean get_onlineVersionCheck() {
-                return this._onlineVersionCheck;
-            }
-
-            public int get_flagMask() {
-                return this._flagMask;
             }
         }
     }

@@ -54,7 +54,7 @@ public final class SoundEventHandling {
 
             hasPlayed = true;
 
-            final List<String> possibles = Config.CLIENT.sound.get_startupSoundList()
+            final List<String> possibles = Config.CLIENT.sound.startupSoundList.get()
                     .stream()
                     .map(StringUtils::trim)
                     .filter(s -> s.length() > 0)

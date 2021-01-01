@@ -80,9 +80,17 @@ public final class SoundLibrary {
 
         LOGGER.info("Individual Sound Configurations");
         LOGGER.info("===============================");
-        Config.CLIENT.sound.get_individualSounds().stream()
-                .filter(cfg -> !cfg.isDefault())
+        getIndividualSoundConfig()
                 .forEach(cfg -> LOGGER.info(cfg.toString()));
+    }
+
+    static List<IndividualSoundConfig> getIndividualSoundConfig() {
+        return Config.CLIENT.sound.individualSounds.get()
+                .stream()
+                .map(IndividualSoundConfig::createFrom)
+                .filter(Objects::nonNull)
+                .filter(e -> !e.isDefault())
+                .collect(Collectors.toList());
     }
 
     static Map<ResourceLocation, SoundEvent> getRegisteredSounds() {
@@ -102,9 +110,7 @@ public final class SoundLibrary {
         }
 
         // Override with the defaults from configuration.  Make a copy of the original so it doesn't change.
-        for (final IndividualSoundConfig cfg : Config.CLIENT.sound.get_individualSounds()) {
-            map.put(cfg.getLocation(), new IndividualSoundConfig(cfg));
-        }
+        getIndividualSoundConfig().forEach(cfg -> map.put(cfg.getLocation(), new IndividualSoundConfig(cfg)));
 
         return map.values();
     }

@@ -32,6 +32,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -75,37 +76,39 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .setExpanded(expanded);
     }
 
-    public static StringFieldBuilder createString(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, final String defaultValue, @Nonnull final ForgeConfigSpec.ConfigValue<String> value) {
+    public static StringFieldBuilder createString(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final ForgeConfigSpec.ConfigValue<String> value) {
         return builder.entryBuilder()
                 .startStrField(new TranslationTextComponent(translationKey), value.get())
                 .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
-                .setDefaultValue(defaultValue)
+                .setDefaultValue(value.get())
                 .setSaveConsumer(value::set);
     }
 
-    public static BooleanToggleBuilder createBoolean(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, final boolean defaultValue, @Nonnull final ForgeConfigSpec.BooleanValue value) {
+    public static BooleanToggleBuilder createBoolean(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final ForgeConfigSpec.BooleanValue value) {
         return builder.entryBuilder()
                 .startBooleanToggle(new TranslationTextComponent(translationKey), value.get())
                 .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
-                .setDefaultValue(defaultValue)
+                .setDefaultValue(value.get())
                 .setSaveConsumer(value::set);
     }
 
-    public static IntFieldBuilder createInteger(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, final int defaultValue, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
+    public static IntFieldBuilder createInteger(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
         return builder.entryBuilder()
                 .startIntField(new TranslationTextComponent(translationKey), value.get())
                 .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
-                .setDefaultValue(defaultValue)
+                .setDefaultValue(value.get())
                 .setMin(min)
                 .setMax(max)
                 .setSaveConsumer(value::set);
     }
 
-    public static StringListBuilder createStringList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final List<String> defaultValue, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value, @Nullable final Function<String, Optional<ITextComponent>> validator) {
+    public static StringListBuilder createStringList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value, @Nullable final Function<String, Optional<ITextComponent>> validator) {
+        final List<String> list = value.get().stream().map(Object::toString).collect(Collectors.toList());
+        final List<String> defaults = new ArrayList<>(list);
         StringListBuilder result = builder.entryBuilder()
-                .startStrList(new TranslationTextComponent(translationKey), value.get().stream().map(Object::toString).collect(Collectors.toList()))
+                .startStrList(new TranslationTextComponent(translationKey), list)
                 .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
-                .setDefaultValue(defaultValue)
+                .setDefaultValue(defaults)
                 .setSaveConsumer(value::set);
 
         if (validator != null)
@@ -114,19 +117,19 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         return result;
     }
 
-    public static <T extends Enum<T>> EnumSelectorBuilder<T> createEnumList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull Class<T> clazz, @Nonnull final T defaultValue, @Nonnull final ForgeConfigSpec.EnumValue<T> value) {
+    public static <T extends Enum<T>> EnumSelectorBuilder<T> createEnumList(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull Class<T> clazz, @Nonnull final ForgeConfigSpec.EnumValue<T> value) {
         return builder.entryBuilder()
-                .startEnumSelector(new TranslationTextComponent(translationKey), clazz, defaultValue)
+                .startEnumSelector(new TranslationTextComponent(translationKey), clazz, value.get())
                 .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
-                .setDefaultValue(defaultValue)
+                .setDefaultValue(value.get())
                 .setSaveConsumer(value::set);
     }
 
-    public static IntSliderBuilder createIntegerSlider(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, final int defaultValue, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
+    public static IntSliderBuilder createIntegerSlider(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
         return builder.entryBuilder()
                 .startIntSlider(new TranslationTextComponent(translationKey), value.get(), min, max)
                 .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
-                .setDefaultValue(defaultValue)
+                .setDefaultValue(value.get())
                 .setSaveConsumer(value::set);
     }
 

@@ -40,14 +40,12 @@ public class ConfigGenerator {
         BooleanToggleBuilder boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.logging.EnableDebug",
-                false,
                 Config.CLIENT.logging.enableLogging);
         subCategory.add(boolBuilder.build());
 
         IntFieldBuilder intBuilder = ClothAPIFactory.createInteger(
                 builder,
                 "mobeffects.cfg.logging.FlagMask",
-                0,
                 Config.CLIENT.logging.flagMask,
                 0,
                 Integer.MAX_VALUE);
@@ -59,28 +57,24 @@ public class ConfigGenerator {
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.footsteps.Enable",
-                true,
                 Config.CLIENT.footsteps.enableFootprintParticles);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.footsteps.Accents",
-                true,
                 Config.CLIENT.footsteps.enableFootstepAccents);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.footsteps.Cadence",
-                true,
                 Config.CLIENT.footsteps.firstPersonFootstepCadence);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.footsteps.Quadruped",
-                false,
                 Config.CLIENT.footsteps.footstepsAsQuadruped);
         subCategory.add(boolBuilder.build());
 
@@ -88,14 +82,12 @@ public class ConfigGenerator {
                 builder,
                 "mobeffects.cfg.footsteps.PlayerStyle",
                 FootprintStyle.class,
-                FootprintStyle.LOWRES_SQUARE,
                 Config.CLIENT.footsteps.playerFootprintStyle);
         subCategory.add(footprintStyle.build());
 
         IntSliderBuilder intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "mobeffects.cfg.footsteps.Volume",
-                75,
                 Config.CLIENT.footsteps.footstepVolume,
                 0,
                 100);
@@ -107,49 +99,42 @@ public class ConfigGenerator {
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.effects.PotionParticles",
-                false,
                 Config.CLIENT.effects.hidePlayerPotionParticles);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.effects.Breath",
-                true,
                 Config.CLIENT.effects.showBreath);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.effects.Arrow",
-                false,
                 Config.CLIENT.effects.showArrowTrail);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.effects.Toolbar",
-                true,
                 Config.CLIENT.effects.enableToolbarEffect);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.effects.Bow",
-                true,
                 Config.CLIENT.effects.enableBowEffect);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "mobeffects.cfg.effects.Swing",
-                true,
                 Config.CLIENT.effects.enableSwingEffect);
         subCategory.add(boolBuilder.build());
 
         intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "mobeffects.cfg.effects.ToolbarVolume",
-                35,
                 Config.CLIENT.effects.toolbarVolume,
                 0,
                 100);

@@ -42,14 +42,12 @@ public class ConfigGenerator {
         BooleanToggleBuilder boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "sndctrl.cfg.logging.EnableDebug",
-                false,
                 Config.CLIENT.logging.enableLogging);
         subCategory.add(boolBuilder.build());
 
         IntFieldBuilder intBuilder = ClothAPIFactory.createInteger(
                 builder,
                 "sndctrl.cfg.logging.FlagMask",
-                0,
                 Config.CLIENT.logging.flagMask,
                 0,
                 Integer.MAX_VALUE);
@@ -61,35 +59,30 @@ public class ConfigGenerator {
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "sndctrl.cfg.sound.EnhancedSounds",
-                true,
                 Config.CLIENT.sound.enableEnhancedSounds).requireRestart();
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "sndctrl.cfg.sound.Occlusion",
-                true,
                 Config.CLIENT.sound.enableOcclusionCalcs).requireRestart();
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "sndctrl.cfg.sound.MonoConversion",
-                true,
                 Config.CLIENT.sound.enableMonoConversion);
         subCategory.add(boolBuilder.build());
 
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "sndctrl.cfg.sound.EnhancedWeather",
-                true,
                 Config.CLIENT.sound.enhancedWeather);
         subCategory.add(boolBuilder.build());
 
         intBuilder = ClothAPIFactory.createInteger(
                 builder,
                 "sndctrl.cfg.sound.CullInterval",
-                20,
                 Config.CLIENT.sound.cullInterval,
                 0,
                 Integer.MAX_VALUE);
@@ -98,7 +91,6 @@ public class ConfigGenerator {
         IntSliderBuilder intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "sndctrl.cfg.sound.Threads",
-                0,
                 Config.CLIENT.sound.backgroundThreadWorkers,
                 0,
                 8).requireRestart();
@@ -107,10 +99,9 @@ public class ConfigGenerator {
         StringListBuilder strListBuilder = ClothAPIFactory.createStringList(
                 builder,
                 "sndctrl.cfg.sound.Individual",
-                Config.Client.defaultSoundConfig,
                 Config.CLIENT.sound.individualSounds,
-                (value) -> {
-                    if (!IndividualSoundConfig.isValid(value))
+                (v) -> {
+                    if (!IndividualSoundConfig.isValid(v))
                         return Optional.of(new TranslationTextComponent("sndctrl.message.cfg.soundconfig.invalid"));
                     return Optional.empty();
                 });
@@ -119,7 +110,6 @@ public class ConfigGenerator {
         strListBuilder = ClothAPIFactory.createStringList(
                 builder,
                 "sndctrl.cfg.sound.StartupSounds",
-                Config.Client.defaultStartupSounds,
                 Config.CLIENT.sound.startupSoundList,
                 null);
         subCategory.add(strListBuilder.build());
@@ -130,14 +120,12 @@ public class ConfigGenerator {
         boolBuilder = ClothAPIFactory.createBoolean(
                 builder,
                 "sndctrl.cfg.effects.Randoms",
-                true,
                 Config.CLIENT.effects.fixupRandoms).requireRestart();
         subCategory.add(boolBuilder.build());
 
         intSliderBuilder = ClothAPIFactory.createIntegerSlider(
                 builder,
                 "sndctrl.cfg.effects.BlockRange",
-                24,
                 Config.CLIENT.effects.effectRange,
                 16,
                 64);

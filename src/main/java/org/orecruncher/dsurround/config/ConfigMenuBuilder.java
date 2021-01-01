@@ -55,19 +55,16 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         BooleanToggleBuilder boolBuilder = createBoolean(
                 builder,
                 "dsurround.cfg.logging.VersionCheck",
-                true,
                 Config.CLIENT.logging.onlineVersionCheck);
         subCategory.add(boolBuilder.build());
         boolBuilder = createBoolean(
                 builder,
                 "dsurround.cfg.logging.EnableDebug",
-                false,
                 Config.CLIENT.logging.enableLogging);
         subCategory.add(boolBuilder.build());
         IntFieldBuilder intBuilder = createInteger(
                 builder,
                 "dsurround.cfg.logging.FlagMask",
-                0,
                 Config.CLIENT.logging.flagMask,
                 0,
                 Integer.MAX_VALUE);

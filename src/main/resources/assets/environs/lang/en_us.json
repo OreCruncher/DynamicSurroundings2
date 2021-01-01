@@ -1,5 +1,5 @@
 {
-	"environs.modname": "§6Environs",
+	"environs.modname": "Environs",
 	"environs.modname.tooltip": "Adds biome sounds and block effects",
 	"environs.cfg.logging": "Logging Options",
 	"environs.cfg.logging.tooltip": "Defines how logging will behave",

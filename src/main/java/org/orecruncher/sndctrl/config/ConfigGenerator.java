@@ -21,6 +21,7 @@ package org.orecruncher.sndctrl.config;
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.forge.impl.builders.*;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -36,9 +37,9 @@ public class ConfigGenerator {
     @Nonnull
     public static SubCategoryBuilder generate(@Nonnull final ConfigBuilder builder, @Nonnull final ConfigEntryBuilder entryBuilder) {
 
-        SubCategoryBuilder modCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.modname", false);
+        SubCategoryBuilder modCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.modname", TextFormatting.GOLD, false);
 
-        SubCategoryBuilder subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.logging", false);
+        SubCategoryBuilder subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.logging", TextFormatting.YELLOW, false);
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
@@ -53,7 +54,7 @@ public class ConfigGenerator {
 
         modCategory.add(subCategory.build());
 
-        subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.sound", false);
+        subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.sound", TextFormatting.YELLOW, false);
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
@@ -106,7 +107,7 @@ public class ConfigGenerator {
 
         modCategory.add(subCategory.build());
 
-        subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.effects", false);
+        subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.effects", TextFormatting.YELLOW, false);
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,

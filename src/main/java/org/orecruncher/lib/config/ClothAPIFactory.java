@@ -27,6 +27,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -80,11 +82,16 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
     }
 
     public static ConfigCategory createCategory(@Nonnull final ConfigBuilder builder, @Nonnull final String translationKey) {
-        return builder.getOrCreateCategory(new TranslationTextComponent(translationKey));
+        return builder.getOrCreateCategory(transformText(translationKey, TextFormatting.GOLD));
     }
 
     public static SubCategoryBuilder createSubCategory(@Nonnull final ConfigEntryBuilder entryBuilder, @Nonnull final String translationKey, final boolean expanded) {
-        return entryBuilder.startSubCategory(new TranslationTextComponent(translationKey))
+        return createSubCategory(entryBuilder, translationKey, null, expanded);
+    }
+
+    public static SubCategoryBuilder createSubCategory(@Nonnull final ConfigEntryBuilder entryBuilder, @Nonnull final String translationKey, @Nullable final TextFormatting color, final boolean expanded) {
+        final ITextComponent label = transformText(translationKey, color);
+        return entryBuilder.startSubCategory(label)
                 .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
                 .setExpanded(expanded);
     }
@@ -190,5 +197,14 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
             result.requireRestart();
 
         return result.build();
+    }
+
+    private static ITextComponent transformText(@Nonnull final String key, @Nullable final TextFormatting color) {
+        ITextComponent result = new TranslationTextComponent(key);
+        if (color != null) {
+            final String text = color + new TranslationTextComponent(key).getString();
+            result = new StringTextComponent(text);
+        }
+        return result;
     }
 }

@@ -23,6 +23,7 @@ import me.shedaniel.clothconfig2.forge.api.ConfigCategory;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -48,8 +49,8 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         final ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
         ConfigCategory category = createRootCategory(builder);
-        SubCategoryBuilder modRoot = createSubCategory(entryBuilder, "dsurround.modname", false);
-        SubCategoryBuilder subCategory = createSubCategory(entryBuilder, "dsurround.cfg.logging", true);
+        SubCategoryBuilder modRoot = createSubCategory(entryBuilder, "dsurround.modname", TextFormatting.GOLD, false);
+        SubCategoryBuilder subCategory = createSubCategory(entryBuilder, "dsurround.cfg.logging", TextFormatting.YELLOW, true);
 
         subCategory.add(
                 createBoolean(

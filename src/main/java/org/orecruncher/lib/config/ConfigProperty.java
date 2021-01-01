@@ -20,8 +20,8 @@ package org.orecruncher.lib.config;
 
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.orecruncher.lib.reflection.ObjectField;
@@ -52,7 +52,7 @@ public final class ConfigProperty {
     }
 
     @Nonnull
-    public ITextComponent getConfigName() {
+    public IFormattableTextComponent getConfigName() {
         final String key = getTranslationKey();
         if (StringUtils.isNullOrEmpty(key)) {
             return new StringTextComponent(this.name);
@@ -67,7 +67,7 @@ public final class ConfigProperty {
     }
 
     @Nullable
-    public ITextComponent getTooltip() {
+    public IFormattableTextComponent getTooltip() {
         IFormattableTextComponent result;
         String key = getTranslationKey();
         if (StringUtils.isNullOrEmpty(key)) {
@@ -80,8 +80,11 @@ public final class ConfigProperty {
         }
 
         final Object theDefault = getDefault();
-        if (theDefault != null)
-            result.append(new TranslationTextComponent("dsurround.msg.format.default", trimDown(theDefault.toString())));
+        if (theDefault != null) {
+            String text = trimDown(theDefault.toString());
+            text = new TranslationTextComponent("dsurround.msg.format.default", text).getString();
+            result.append(new StringTextComponent(text));
+        }
 
         return result;
     }
@@ -103,7 +106,7 @@ public final class ConfigProperty {
     }
 
     @Nonnull
-    public static <T> ConfigProperty getPropertyInfo(@Nonnull final ForgeConfigSpec.ConfigValue<T> configEntry) {
+    public static ConfigProperty getPropertyInfo(@Nonnull final ForgeConfigSpec.ConfigValue<?> configEntry) {
         return new ConfigProperty(configEntry);
     }
 

@@ -69,6 +69,8 @@ public final class AuroraHandler extends HandlerBase {
 	}
 
 	private boolean canAuroraStay() {
+		return false;
+		/*
 		if (!Config.CLIENT.aurora.auroraEnabled.get())
 			return false;
 
@@ -76,6 +78,8 @@ public final class AuroraHandler extends HandlerBase {
 				&& AuroraUtils.getChunkRenderDistance() >= 6
 				&& AuroraUtils.dimensionHasAuroras()
 				&& CommonState.getTruePlayerBiome().getHasAurora();
+				
+		 */
 	}
 
 	@Override

@@ -39,97 +39,97 @@ public class ConfigGenerator {
         SubCategoryBuilder modCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.modname", false);
 
         SubCategoryBuilder subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.logging", false);
-        BooleanToggleBuilder boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "sndctrl.cfg.logging.EnableDebug",
-                Config.CLIENT.logging.enableLogging);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.logging.enableLogging));
 
-        IntFieldBuilder intBuilder = ClothAPIFactory.createInteger(
-                builder,
-                "sndctrl.cfg.logging.FlagMask",
-                Config.CLIENT.logging.flagMask,
-                0,
-                Integer.MAX_VALUE);
-        subCategory.add(intBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createInteger(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.logging.flagMask,
+                        0,
+                        Integer.MAX_VALUE));
 
         modCategory.add(subCategory.build());
 
         subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.sound", false);
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "sndctrl.cfg.sound.EnhancedSounds",
-                Config.CLIENT.sound.enableEnhancedSounds).requireRestart();
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.sound.enableEnhancedSounds));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "sndctrl.cfg.sound.Occlusion",
-                Config.CLIENT.sound.enableOcclusionCalcs).requireRestart();
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.sound.enableOcclusionCalcs));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "sndctrl.cfg.sound.MonoConversion",
-                Config.CLIENT.sound.enableMonoConversion);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.sound.enableMonoConversion));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "sndctrl.cfg.sound.EnhancedWeather",
-                Config.CLIENT.sound.enhancedWeather);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.sound.enhancedWeather));
 
-        intBuilder = ClothAPIFactory.createInteger(
-                builder,
-                "sndctrl.cfg.sound.CullInterval",
-                Config.CLIENT.sound.cullInterval,
-                0,
-                Integer.MAX_VALUE);
-        subCategory.add(intBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createInteger(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.sound.cullInterval,
+                        0,
+                        Integer.MAX_VALUE));
 
-        IntSliderBuilder intSliderBuilder = ClothAPIFactory.createIntegerSlider(
-                builder,
-                "sndctrl.cfg.sound.Threads",
-                Config.CLIENT.sound.backgroundThreadWorkers,
-                0,
-                8).requireRestart();
-        subCategory.add(intSliderBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createIntegerSlider(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.sound.backgroundThreadWorkers,
+                        0,
+                        8));
 
-        StringListBuilder strListBuilder = ClothAPIFactory.createStringList(
-                builder,
-                "sndctrl.cfg.sound.Individual",
-                Config.CLIENT.sound.individualSounds,
-                (v) -> {
-                    if (!IndividualSoundConfig.isValid(v))
-                        return Optional.of(new TranslationTextComponent("sndctrl.message.cfg.soundconfig.invalid"));
-                    return Optional.empty();
-                });
-        subCategory.add(strListBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createStringList(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.sound.individualSounds,
+                        (v) -> {
+                            if (!IndividualSoundConfig.isValid(v))
+                                return Optional.of(new TranslationTextComponent("sndctrl.message.cfg.soundconfig.invalid"));
+                            return Optional.empty();
+                        }));
 
-        strListBuilder = ClothAPIFactory.createStringList(
-                builder,
-                "sndctrl.cfg.sound.StartupSounds",
-                Config.CLIENT.sound.startupSoundList,
-                null);
-        subCategory.add(strListBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createStringList(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.sound.startupSoundList,
+                        null));
 
         modCategory.add(subCategory.build());
 
         subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "sndctrl.cfg.effects", false);
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "sndctrl.cfg.effects.Randoms",
-                Config.CLIENT.effects.fixupRandoms).requireRestart();
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.fixupRandoms));
 
-        intSliderBuilder = ClothAPIFactory.createIntegerSlider(
-                builder,
-                "sndctrl.cfg.effects.BlockRange",
-                Config.CLIENT.effects.effectRange,
-                16,
-                64);
-        subCategory.add(intSliderBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createIntegerSlider(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.effectRange,
+                        16,
+                        64));
 
         modCategory.add(subCategory.build());
 

@@ -21,8 +21,6 @@ package org.orecruncher.dsurround.config;
 import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigCategory;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.BooleanToggleBuilder;
-import me.shedaniel.clothconfig2.forge.impl.builders.IntFieldBuilder;
 import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -52,23 +50,26 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         SubCategoryBuilder modRoot = createSubCategory(entryBuilder, "dsurround.modname", false);
         SubCategoryBuilder subCategory = createSubCategory(entryBuilder, "dsurround.cfg.logging", true);
 
-        BooleanToggleBuilder boolBuilder = createBoolean(
-                builder,
-                "dsurround.cfg.logging.VersionCheck",
-                Config.CLIENT.logging.onlineVersionCheck);
-        subCategory.add(boolBuilder.build());
-        boolBuilder = createBoolean(
-                builder,
-                "dsurround.cfg.logging.EnableDebug",
-                Config.CLIENT.logging.enableLogging);
-        subCategory.add(boolBuilder.build());
-        IntFieldBuilder intBuilder = createInteger(
-                builder,
-                "dsurround.cfg.logging.FlagMask",
-                Config.CLIENT.logging.flagMask,
-                0,
-                Integer.MAX_VALUE);
-        subCategory.add(intBuilder.build());
+        subCategory.add(
+                createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.logging.onlineVersionCheck));
+
+        subCategory.add(
+                createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.logging.enableLogging));
+
+        subCategory.add(
+                createInteger(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.logging.flagMask,
+                        0,
+                        Integer.MAX_VALUE));
+
         modRoot.add(subCategory.build());
 
         category.addEntry(modRoot.build());

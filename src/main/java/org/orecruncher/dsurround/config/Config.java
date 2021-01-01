@@ -18,6 +18,7 @@
 
 package org.orecruncher.dsurround.config;
 
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;

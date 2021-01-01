@@ -124,12 +124,12 @@ public final class Config {
 
                 this.worldSealevelOverride = builder
                         .comment("Sealevel to set for Overworld (0 use default for World)")
-                        .translation("environs.cfg.biome.Sealevel")
+                        .translation("environs.cfg.biomes.Sealevel")
                         .defineInRange("Overworld Sealevel Override", 0, 0, 256);
 
                 this.biomeSoundBlacklist = builder
                         .comment("Dimension IDs where biome sounds will not be played")
-                        .translation("environs.cfg.biome.DimBlackList")
+                        .translation("environs.cfg.biomes.DimBlacklist")
                         .defineList("Dimension Blacklist", ArrayList::new, s -> true);
 
                 builder.pop();

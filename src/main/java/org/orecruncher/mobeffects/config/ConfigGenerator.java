@@ -37,112 +37,110 @@ public class ConfigGenerator {
         SubCategoryBuilder modCategory = ClothAPIFactory.createSubCategory(entryBuilder, "mobeffects.modname", false);
 
         SubCategoryBuilder subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "mobeffects.cfg.logging", false);
-        BooleanToggleBuilder boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.logging.EnableDebug",
-                Config.CLIENT.logging.enableLogging);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.logging.enableLogging));
 
-        IntFieldBuilder intBuilder = ClothAPIFactory.createInteger(
-                builder,
-                "mobeffects.cfg.logging.FlagMask",
-                Config.CLIENT.logging.flagMask,
-                0,
-                Integer.MAX_VALUE);
-        subCategory.add(intBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createInteger(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.logging.flagMask,
+                        0,
+                        Integer.MAX_VALUE));
 
         modCategory.add(subCategory.build());
 
         subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "mobeffects.cfg.footsteps", false);
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.footsteps.Enable",
-                Config.CLIENT.footsteps.enableFootprintParticles);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.footsteps.enableFootprintParticles));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.footsteps.Accents",
-                Config.CLIENT.footsteps.enableFootstepAccents);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.footsteps.enableFootstepAccents));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.footsteps.Cadence",
-                Config.CLIENT.footsteps.firstPersonFootstepCadence);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.footsteps.firstPersonFootstepCadence));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.footsteps.Quadruped",
-                Config.CLIENT.footsteps.footstepsAsQuadruped);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.footsteps.footstepsAsQuadruped));
 
-        EnumSelectorBuilder<FootprintStyle> footprintStyle = ClothAPIFactory.createEnumList(
-                builder,
-                "mobeffects.cfg.footsteps.PlayerStyle",
-                FootprintStyle.class,
-                Config.CLIENT.footsteps.playerFootprintStyle);
-        subCategory.add(footprintStyle.build());
+        subCategory.add(
+                ClothAPIFactory.createEnumList(
+                        builder,
+                        Config.SPEC,
+                        FootprintStyle.class,
+                        Config.CLIENT.footsteps.playerFootprintStyle));
 
-        IntSliderBuilder intSliderBuilder = ClothAPIFactory.createIntegerSlider(
-                builder,
-                "mobeffects.cfg.footsteps.Volume",
-                Config.CLIENT.footsteps.footstepVolume,
-                0,
-                100);
-        subCategory.add(intSliderBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createIntegerSlider(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.footsteps.footstepVolume,
+                        0,
+                        100));
 
         modCategory.add(subCategory.build());
 
         subCategory = ClothAPIFactory.createSubCategory(entryBuilder, "mobeffects.cfg.effects", false);
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.effects.PotionParticles",
-                Config.CLIENT.effects.hidePlayerPotionParticles);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.hidePlayerPotionParticles));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.effects.Breath",
-                Config.CLIENT.effects.showBreath);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.showBreath));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.effects.Arrow",
-                Config.CLIENT.effects.showArrowTrail);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.showArrowTrail));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.effects.Toolbar",
-                Config.CLIENT.effects.enableToolbarEffect);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.enableToolbarEffect));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.effects.Bow",
-                Config.CLIENT.effects.enableBowEffect);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.enableBowEffect));
 
-        boolBuilder = ClothAPIFactory.createBoolean(
-                builder,
-                "mobeffects.cfg.effects.Swing",
-                Config.CLIENT.effects.enableSwingEffect);
-        subCategory.add(boolBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.enableSwingEffect));
 
-        intSliderBuilder = ClothAPIFactory.createIntegerSlider(
-                builder,
-                "mobeffects.cfg.effects.ToolbarVolume",
-                Config.CLIENT.effects.toolbarVolume,
-                0,
-                100);
-        subCategory.add(intSliderBuilder.build());
+        subCategory.add(
+                ClothAPIFactory.createIntegerSlider(
+                        builder,
+                        Config.SPEC,
+                        Config.CLIENT.effects.toolbarVolume,
+                        0,
+                        100));
 
         modCategory.add(subCategory.build());
-
-        // Add other sections...
 
         return modCategory;
     }

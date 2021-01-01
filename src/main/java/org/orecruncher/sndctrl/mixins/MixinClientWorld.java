@@ -1,5 +1,5 @@
 /*
- * Dynamic Surroundings: Sound Control
+ * Dynamic Surroundings
  * Copyright (C) 2020 OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,12 +33,16 @@ public class MixinClientWorld {
     /**
      * Inserts a hook into client side BlockState processing so that block changes can be monitored and listeners
      * notified of such changes.
-     * @param pos Position of the block change that has occurred
-     * @param state New state of the position in the world
-     * @param cbInfo Ignored
+     *
+     * @param pos      Position of the block change that has occurred
+     * @param oldState The old blockState
+     * @param newState The new blockState
+     * @param flags    Update flags
+     * @param ci       Ignored
      */
-    @Inject(method = "invalidateRegionAndSetBlock(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V", at = @At("HEAD"))
-    public void blockUpdateCallback(BlockPos pos, BlockState state, CallbackInfo cbInfo) {
-        ClientBlockUpdateHandler.blockUpdateCallback((ClientWorld) ((Object) this), pos, state);
+    @Inject(method = "notifyBlockUpdate(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;I)V", at = @At("RETURN"))
+    public void blockUpdateCallback(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
+        if (oldState != newState)
+            ClientBlockUpdateHandler.blockUpdateCallback((ClientWorld) ((Object) this), pos, newState);
     }
 }

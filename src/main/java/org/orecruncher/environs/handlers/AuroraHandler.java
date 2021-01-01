@@ -78,7 +78,7 @@ public final class AuroraHandler extends HandlerBase {
 				&& AuroraUtils.getChunkRenderDistance() >= 6
 				&& AuroraUtils.dimensionHasAuroras()
 				&& CommonState.getTruePlayerBiome().getHasAurora();
-				
+
 		 */
 	}
 

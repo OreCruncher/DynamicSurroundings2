@@ -47,7 +47,7 @@ import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
-import org.orecruncher.mobeffects.compat.ModEnvironment;
+import org.orecruncher.lib.compat.ModEnvironment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.mobeffects.compat;
+package org.orecruncher.lib.compat;
 
 import net.minecraftforge.fml.ModList;
 

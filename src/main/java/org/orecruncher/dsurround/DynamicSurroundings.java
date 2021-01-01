@@ -34,7 +34,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.config.Config;
 import org.orecruncher.dsurround.config.ConfigMenuBuilder;
 import org.orecruncher.lib.config.ConfigGui;
-import org.orecruncher.mobeffects.compat.ModEnvironment;
+import org.orecruncher.lib.compat.ModEnvironment;
 import org.orecruncher.lib.fml.ClientLoginChecks;
 import org.orecruncher.lib.fml.ConfigUtils;
 import org.orecruncher.lib.fml.UpdateChecker;

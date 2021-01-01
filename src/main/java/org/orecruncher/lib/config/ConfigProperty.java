@@ -19,10 +19,12 @@
 package org.orecruncher.lib.config;
 
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.orecruncher.lib.reflection.ObjectField;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,8 +32,14 @@ import java.util.List;
 
 public final class ConfigProperty {
 
+    private static final ObjectField<ForgeConfigSpec.ConfigValue, ForgeConfigSpec> specAccessor = new ObjectField<>(ForgeConfigSpec.ConfigValue.class, () -> null, "spec");
+
     private final ForgeConfigSpec.ValueSpec valueSpec;
     private final String name;
+
+    private ConfigProperty(@Nonnull final ForgeConfigSpec.ConfigValue<?> configEntry) {
+        this(specAccessor.get(configEntry), configEntry);
+    }
 
     private ConfigProperty(@Nonnull final ForgeConfigSpec spec, @Nonnull final ForgeConfigSpec.ConfigValue<?> configEntry) {
         final List<String> path = configEntry.getPath();
@@ -60,23 +68,43 @@ public final class ConfigProperty {
 
     @Nullable
     public ITextComponent getTooltip() {
+        IFormattableTextComponent result;
         String key = getTranslationKey();
         if (StringUtils.isNullOrEmpty(key)) {
             key = getComment();
             if (StringUtils.isNullOrEmpty(key))
                 return null;
-            return new StringTextComponent(key);
+            result = new StringTextComponent(key);
+        } else {
+            result = new TranslationTextComponent(key + ".tooltip");
         }
-        return new TranslationTextComponent(key + ".tooltip");
+
+        final Object theDefault = getDefault();
+        if (theDefault != null)
+            result.append(new TranslationTextComponent("dsurround.msg.format.default", trimDown(theDefault.toString())));
+
+        return result;
+    }
+
+    private static String trimDown(@Nonnull final String txt) {
+        final int maxLength = 48;
+        if (txt.length() < maxLength)
+            return txt;
+        return txt.substring(0, maxLength - 3) + "...";
     }
 
     public boolean getNeedsWorldRestart() {
         return this.valueSpec.needsWorldRestart();
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T getDefault() {
+        return (T) this.valueSpec.getDefault();
+    }
+
     @Nonnull
-    public static <T> ConfigProperty getPropertyInfo(@Nonnull final ForgeConfigSpec spec, @Nonnull final ForgeConfigSpec.ConfigValue<T> configEntry) {
-        return new ConfigProperty(spec, configEntry);
+    public static <T> ConfigProperty getPropertyInfo(@Nonnull final ForgeConfigSpec.ConfigValue<T> configEntry) {
+        return new ConfigProperty(configEntry);
     }
 
 }

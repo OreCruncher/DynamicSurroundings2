@@ -22,10 +22,10 @@ import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigCategory;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.environs.config.ConfigGenerator;
 import org.orecruncher.lib.config.ClothAPIFactory;
 
 import javax.annotation.Nonnull;
@@ -35,11 +35,12 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
 
     public ConfigMenuBuilder() {
         super(new TranslationTextComponent("dsurround.modname"), () -> {
-            Config.SPEC.save();
-            org.orecruncher.sndctrl.config.Config.SPEC.save();
-            org.orecruncher.environs.config.Config.SPEC.save();
-            org.orecruncher.mobeffects.config.Config.SPEC.save();
-        });
+                    Config.SPEC.save();
+                    org.orecruncher.sndctrl.config.Config.SPEC.save();
+                    org.orecruncher.environs.config.Config.SPEC.save();
+                    org.orecruncher.mobeffects.config.Config.SPEC.save();
+                },
+                new ResourceLocation("minecraft:textures/block/cobblestone.png"));
     }
 
     @Override
@@ -53,19 +54,16 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         subCategory.add(
                 createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.onlineVersionCheck));
 
         subCategory.add(
                 createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.enableLogging));
 
         subCategory.add(
                 createInteger(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.flagMask,
                         0,
                         Integer.MAX_VALUE));
@@ -76,7 +74,7 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
 
         // Build child mod menus
         category.addEntry(org.orecruncher.sndctrl.config.ConfigGenerator.generate(builder, entryBuilder).build());
-        category.addEntry(ConfigGenerator.generate(builder, entryBuilder).build());
+        category.addEntry(org.orecruncher.environs.config.ConfigGenerator.generate(builder, entryBuilder).build());
         category.addEntry(org.orecruncher.mobeffects.config.ConfigGenerator.generate(builder, entryBuilder).build());
     }
 }

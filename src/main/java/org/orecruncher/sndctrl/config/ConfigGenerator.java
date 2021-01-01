@@ -42,13 +42,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.enableLogging));
 
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.flagMask,
                         0,
                         Integer.MAX_VALUE));
@@ -59,31 +57,26 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.enableEnhancedSounds));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.enableOcclusionCalcs));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.enableMonoConversion));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.enhancedWeather));
 
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.cullInterval,
                         0,
                         Integer.MAX_VALUE));
@@ -91,7 +84,6 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.backgroundThreadWorkers,
                         0,
                         8));
@@ -99,7 +91,6 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createStringList(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.individualSounds,
                         (v) -> {
                             if (!IndividualSoundConfig.isValid(v))
@@ -110,7 +101,6 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createStringList(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.startupSoundList,
                         null));
 
@@ -120,13 +110,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.fixupRandoms));
 
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.effectRange,
                         16,
                         64));

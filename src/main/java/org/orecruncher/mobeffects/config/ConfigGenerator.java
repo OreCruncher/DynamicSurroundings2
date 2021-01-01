@@ -40,13 +40,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.enableLogging));
 
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.flagMask,
                         0,
                         Integer.MAX_VALUE));
@@ -57,38 +55,32 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.footsteps.enableFootprintParticles));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.footsteps.enableFootstepAccents));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.footsteps.firstPersonFootstepCadence));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.footsteps.footstepsAsQuadruped));
 
         subCategory.add(
                 ClothAPIFactory.createEnumList(
                         builder,
-                        Config.SPEC,
                         FootprintStyle.class,
                         Config.CLIENT.footsteps.playerFootprintStyle));
 
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.footsteps.footstepVolume,
                         0,
                         100));
@@ -99,43 +91,36 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.hidePlayerPotionParticles));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.showBreath));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.showArrowTrail));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableToolbarEffect));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableBowEffect));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableSwingEffect));
 
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.toolbarVolume,
                         0,
                         100));

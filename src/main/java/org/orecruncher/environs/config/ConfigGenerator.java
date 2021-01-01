@@ -39,13 +39,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.enableLogging));
 
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.logging.flagMask,
                         0,
                         Integer.MAX_VALUE));
@@ -56,7 +54,6 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.biome.worldSealevelOverride,
                         0,
                         Integer.MAX_VALUE));
@@ -64,7 +61,6 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createStringList(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.biome.biomeSoundBlacklist,
                         null));
 
@@ -74,49 +70,41 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableFireFlies));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableSteamJets));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableFireJets));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableBubbleJets));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableDustJets));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableFountainJets));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.enableWaterSplashJets));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.effects.disableUnderwaterParticles));
 
         modCategory.add(subCategory.build());
@@ -125,13 +113,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.aurora.auroraEnabled));
 
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.aurora.maxBands,
                         1,
                         3));
@@ -142,31 +128,26 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.fog.enableFog));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.fog.enableBiomeFog));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.fog.enableElevationHaze));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.fog.enableMorningFog));
 
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.fog.morningFogChance,
                         0,
                         Integer.MAX_VALUE));
@@ -174,13 +155,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.fog.enableBedrockFog));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.fog.enableWeatherFog));
 
         modCategory.add(subCategory.build());
@@ -189,7 +168,6 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.biomeSoundVolume,
                         0,
                         100));
@@ -197,7 +175,6 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.SPEC,
                         Config.CLIENT.sound.spotSoundVolume,
                         0,
                         100));

@@ -25,6 +25,7 @@ import me.shedaniel.clothconfig2.forge.gui.entries.*;
 import me.shedaniel.clothconfig2.forge.impl.builders.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -45,10 +46,16 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
 
     private final ITextComponent title;
     private final Runnable save;
+    private final ResourceLocation background;
 
     public ClothAPIFactory(@Nonnull final ITextComponent title, @Nonnull final Runnable save) {
+        this(title, save, null);
+    }
+
+    public ClothAPIFactory(@Nonnull final ITextComponent title, @Nonnull final Runnable save, @Nullable final ResourceLocation background) {
         this.title = title;
         this.save = save;
+        this.background = background;
     }
 
     @Override
@@ -57,6 +64,11 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .setParentScreen(screen)
                 .setTitle(this.title)
                 .setSavingRunnable(this.save);
+
+        if (this.background != null) {
+            builder.setDefaultBackgroundTexture(this.background);
+        }
+
         generate(builder);
         return builder.build();
     }
@@ -77,8 +89,8 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .setExpanded(expanded);
     }
 
-    public static StringListEntry createString(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec spec, @Nonnull final ForgeConfigSpec.ConfigValue<String> value) {
-        final ConfigProperty property = ConfigProperty.getPropertyInfo(spec, value);
+    public static StringListEntry createString(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.ConfigValue<String> value) {
+        final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
         final ITextComponent tooltip = property.getTooltip();
         final StringFieldBuilder result = builder.entryBuilder()
@@ -93,8 +105,8 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         return result.build();
     }
 
-    public static BooleanListEntry createBoolean(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec spec, @Nonnull final ForgeConfigSpec.BooleanValue value) {
-        final ConfigProperty property = ConfigProperty.getPropertyInfo(spec, value);
+    public static BooleanListEntry createBoolean(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.BooleanValue value) {
+        final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
         final ITextComponent tooltip = property.getTooltip();
         final BooleanToggleBuilder result = builder.entryBuilder()
@@ -109,8 +121,8 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         return result.build();
     }
 
-    public static IntegerListEntry createInteger(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec spec, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
-        final ConfigProperty property = ConfigProperty.getPropertyInfo(spec, value);
+    public static IntegerListEntry createInteger(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
+        final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
         final ITextComponent tooltip = property.getTooltip();
         final IntFieldBuilder result = builder.entryBuilder()
@@ -127,8 +139,8 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         return result.build();
     }
 
-    public static StringListListEntry createStringList(@Nonnull final ConfigBuilder builder, @Nonnull ForgeConfigSpec spec, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value, @Nullable final Function<String, Optional<ITextComponent>> validator) {
-        final ConfigProperty property = ConfigProperty.getPropertyInfo(spec, value);
+    public static StringListListEntry createStringList(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value, @Nullable final Function<String, Optional<ITextComponent>> validator) {
+        final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
         final ITextComponent tooltip = property.getTooltip();
         final List<String> list = value.get().stream().map(Object::toString).collect(Collectors.toList());
@@ -148,8 +160,8 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         return result.build();
     }
 
-    public static <T extends Enum<T>> EnumListEntry<T> createEnumList(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec spec, @Nonnull Class<T> clazz, @Nonnull final ForgeConfigSpec.EnumValue<T> value) {
-        final ConfigProperty property = ConfigProperty.getPropertyInfo(spec, value);
+    public static <T extends Enum<T>> EnumListEntry<T> createEnumList(@Nonnull final ConfigBuilder builder, @Nonnull Class<T> clazz, @Nonnull final ForgeConfigSpec.EnumValue<T> value) {
+        final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
         final ITextComponent tooltip = property.getTooltip();
         final EnumSelectorBuilder<T> result = builder.entryBuilder()
@@ -164,8 +176,8 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         return result.build();
     }
 
-    public static IntegerSliderEntry createIntegerSlider(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec spec, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
-        final ConfigProperty property = ConfigProperty.getPropertyInfo(spec, value);
+    public static IntegerSliderEntry createIntegerSlider(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
+        final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
         final ITextComponent tooltip = property.getTooltip();
         final IntSliderBuilder result = builder.entryBuilder()

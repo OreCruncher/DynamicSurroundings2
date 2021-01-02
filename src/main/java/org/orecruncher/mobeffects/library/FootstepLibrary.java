@@ -144,7 +144,12 @@ public final class FootstepLibrary {
         entries = new ArrayList<>(2);
         entries.add(NOT_EMITTER);
         entries.add(new MacroEntry("bigger", "bluntwood"));
-        macros.put("#fence", entries);
+        macros.put("#woodfence", entries);
+
+        entries = new ArrayList<>(2);
+        entries.add(NOT_EMITTER);
+        entries.add(new MacroEntry("bigger", "brickstone"));
+        macros.put("#stonewall", entries);
 
         entries = new ArrayList<>(2);
         entries.add(NOT_EMITTER);

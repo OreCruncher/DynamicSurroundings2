@@ -118,8 +118,10 @@ public class FootprintMote extends AgeableMote {
     protected void update() {
         if (this.isSnowLayer && world.getBlockState(this.position).getBlock() != Blocks.SNOW) {
             kill();
-        } else if (!WorldUtils.isTopSolid(this.world, this.downPos)) {
-            kill();
+        } else {
+            final BlockState state = this.world.getBlockState(this.downPos);
+            if (!state.getMaterial().isSolid())
+                kill();
         }
     }
 

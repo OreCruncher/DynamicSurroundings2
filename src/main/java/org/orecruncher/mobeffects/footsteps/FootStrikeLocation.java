@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -126,28 +126,38 @@ public final class FootStrikeLocation {
 	@Nullable
 	protected Vector3d footprintPosition() {
 		final World world = this.entity.getEntityWorld();
-		final BlockState state = world.getBlockState(this.stepPos);
-		if (hasFootstepImprint(world, state, this.strike)) {
-			final double entityY = this.entity.getBoundingBox().minY;
-			final double blockY = getBoundingBoxY(entityY, world, state, this.stepPos);
-			return new Vector3d(this.strike.x, Math.max(entityY, blockY), this.strike.z);
+
+		// The foot strike is just inside the block that was stepped on.
+		BlockState state = world.getBlockState(this.stepPos);
+
+		// If its an air block just return
+		if (state.getMaterial() == Material.AIR)
+			return null;
+
+		// Check the block above - it could be a snow layer or carpet
+		BlockPos feetPos = this.stepPos.up();
+		BlockState upState = world.getBlockState(feetPos);
+		if (upState.getMaterial() != Material.AIR) {
+			state = upState;
+		} else {
+			feetPos = this.stepPos;
 		}
-		return null;
-	}
 
-	protected double getBoundingBoxY(final double baseY, @Nonnull final IWorldReader world,
-			@Nonnull final BlockState state, @Nonnull final BlockPos pos) {
-		final VoxelShape shape = state.getCollisionShape(world, pos);
-		final double boundingY = state.getShape(world, pos).getEnd(Direction.Axis.Y);
+		// if we get here the feetpos location is what has the block the player is stepping on, and state
+		// should be the blockState.
+		if (!hasFootstepImprint(state, feetPos))
+			return null;
+
+		final VoxelShape shape = state.getCollisionShape(world, feetPos);
+		final double boundingY = state.getShape(world, feetPos).getEnd(Direction.Axis.Y);
 		final double collisionY = shape.isEmpty() ? 0 : shape.getEnd(Direction.Axis.Y);
-		if (boundingY == collisionY)
-			return baseY;
-		return Math.max(baseY, pos.getY() + Math.max(boundingY, collisionY));
+		final double maxYblock = feetPos.getY() + Math.max(boundingY, collisionY);
+		// Should we get the max of strike.Y and maxYblock?
+		return new Vector3d(this.strike.getX(), maxYblock, this.strike.getZ());
 	}
 
-	protected boolean hasFootstepImprint(@Nonnull final World world, @Nonnull final BlockState state,
-			@Nonnull final Vector3d pos) {
-		final BlockState footstepState = FacadeHelper.resolveState(this.entity, state, world, pos, Direction.UP);
+	protected boolean hasFootstepImprint(@Nonnull final BlockState state, @Nonnull final BlockPos pos) {
+		final BlockState footstepState = FacadeHelper.resolveState(this.entity, state, this.entity.getEntityWorld(), Vector3d.copyCentered(pos), Direction.UP);
 		return FootstepLibrary.hasFootprint(footstepState);
 	}
 }

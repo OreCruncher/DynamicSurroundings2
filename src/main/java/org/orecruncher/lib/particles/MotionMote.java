@@ -21,11 +21,9 @@ package org.orecruncher.lib.particles;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -92,14 +90,25 @@ public abstract class MotionMote extends AgeableMote {
 		if (state.getMaterial() == Material.AIR)
 			return Optional.empty();
 
-		// Water logged blocks will block movement, but yet could have water
-		boolean isWaterLogged = false;
-		if (state.getBlock() instanceof IWaterLoggable) {
-			isWaterLogged = state.get(BlockStateProperties.WATERLOGGED);
+		// Check fluid state because the particle could have landed in fluid
+		final FluidState fluid = state.getFluidState();
+		if (!fluid.isEmpty()) {
+			// Potential of collision with a liquid
+			final double height = fluid.getHeight() + this.position.getY();
+			if (height >= this.posY) {
+				// Hit the surface of liquid
+				return Optional.of(new ParticleCollisionResult(
+						this.world,
+						new Vector3d(this.posX, height, this.posZ),
+						state,
+						false,
+						fluid
+				));
+			}
 		}
 
 		// If the current position blocks movement then it will block a particle
-		if (!isWaterLogged && state.getMaterial().blocksMovement()) {
+		if (state.getMaterial().blocksMovement()) {
 			final VoxelShape shape = state.getCollisionShape(this.world, this.position, ISelectionContext.dummy());
 			if (!shape.isEmpty()) {
 				final double height = shape.getEnd(Direction.Axis.Y) + this.position.getY();
@@ -116,23 +125,6 @@ public abstract class MotionMote extends AgeableMote {
 			}
 			// Hasn't collided yet
 			return Optional.empty();
-		}
-
-		// Check fluid state because the particle could have landed in fluid
-		final FluidState fluid = state.getFluidState();
-		if (!fluid.isEmpty()) {
-			// Potential of collision with a liquid
-			final double height = fluid.getHeight() + this.position.getY();
-			if (height >= this.posY) {
-				// Hit the surface of liquid
-				return Optional.of(new ParticleCollisionResult(
-						this.world,
-						new Vector3d(this.posX, height, this.posZ),
-						state,
-						false,
-						fluid
-				));
-			}
 		}
 
 		return Optional.empty();

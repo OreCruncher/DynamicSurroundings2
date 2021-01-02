@@ -1,3 +1,25 @@
+> ### DynamicSurroundings-1.16.4-4.0.2.0
+**Requirements**
+* Forge 1.16.4-35.1.10
+* 100% client side; no server side deployment needed
+
+**What's New**
+* Added configuration menus.
+  * You will need to add [Cloth Config API Forge](https://www.curseforge.com/minecraft/mc-mods/cloth-config-forge) to get config menus.  Make sure it's the Forge version.
+  * If you forget you will get a dialog when you navigate to the config menu for Dynamic Surroundings.
+  * Some modpacks already includes the Cloth API (Direwolf20 1.16 for example)
+* Added option to disable footstep sounds (WIP).  If disabled:
+  * Vanilla step sounds will be played as defined by the underlying block step sound type.
+  * Armor/water splash sounds will still be played unless disabled.
+  * Walking through items such as vines and reeds will still play effects.
+
+**Fixes**
+* Config had the wrong default setting for hiding player potion particles.  It should have been disabled.
+* Sometimes persistent particle effects would not disappear when conditions changed.
+
+**Changes**
+* Sound stream conversion to mono if configured to do so.  Conversion will happen even if enhanced sound processing is disabled.  There is a config setting to independently enable/disable conversion.
+
 > ### DynamicSurroundings-1.16.4-4.0.1.5
 **Requirements**
 * Forge 1.16.4-35.1.10

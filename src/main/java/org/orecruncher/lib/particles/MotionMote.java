@@ -21,9 +21,11 @@ package org.orecruncher.lib.particles;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -90,8 +92,14 @@ public abstract class MotionMote extends AgeableMote {
 		if (state.getMaterial() == Material.AIR)
 			return Optional.empty();
 
+		// Water logged blocks will block movement, but yet could have water
+		boolean isWaterLogged = false;
+		if (state.getBlock() instanceof IWaterLoggable) {
+			isWaterLogged = state.get(BlockStateProperties.WATERLOGGED);
+		}
+
 		// If the current position blocks movement then it will block a particle
-		if (state.getMaterial().blocksMovement()) {
+		if (!isWaterLogged && state.getMaterial().blocksMovement()) {
 			final VoxelShape shape = state.getCollisionShape(this.world, this.position, ISelectionContext.dummy());
 			if (!shape.isEmpty()) {
 				final double height = shape.getEnd(Direction.Axis.Y) + this.position.getY();

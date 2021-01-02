@@ -36,6 +36,9 @@ import java.io.File;
 
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
+
+    public static final int FOOTSTEP_VOLUME_DEFAULT = 75;
+
     public static final Client CLIENT;
     private static final String CLIENT_CONFIG = DynamicSurroundings.MOD_ID + File.separator + MobEffects.MOD_ID + "-client.toml";
     public static final ForgeConfigSpec SPEC;
@@ -148,7 +151,7 @@ public final class Config {
                 this.footstepVolume = builder
                         .comment("Footstep master volume scale")
                         .translation("mobeffects.cfg.footsteps.Volume")
-                        .defineInRange("Footstep Volume Scale", 75, 0, 100);
+                        .defineInRange("Footstep Volume Scale", FOOTSTEP_VOLUME_DEFAULT, 0, 100);
 
                 this.enableFootstepAccents = builder
                         .comment("Enable armor rustle and rain splash accents for footstep acoustics")

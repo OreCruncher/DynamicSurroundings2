@@ -171,7 +171,8 @@ public class AcousticResolver {
 		if (!(state.getMaterial().isLiquid() || state.isAir(this.world, blockpos))) {
 			BlockState blockstate = this.world.getBlockState(blockpos.up());
 			SoundType soundtype = blockstate.isIn(Blocks.SNOW) ? blockstate.getSoundType(this.world, blockpos, this.loc.getEntity()) : state.getSoundType(this.world, blockpos, this.loc.getEntity());
-			final IAcoustic acoustics = SimpleAcoustic.createStepAcoustic(soundtype);
+			// Sound scaling is converted to float and is based on the FOOTSTEP sound category default
+			final IAcoustic acoustics = SimpleAcoustic.createStepAcoustic(soundtype, Constants.FOOTSTEPS, Config.FOOTSTEP_VOLUME_DEFAULT / 100F);
 			return new Association(this.loc, acoustics);
 		}
 

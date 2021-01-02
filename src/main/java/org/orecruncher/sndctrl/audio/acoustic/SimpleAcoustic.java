@@ -30,6 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.AudioEngine;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
@@ -44,6 +45,11 @@ public class SimpleAcoustic implements IAcoustic {
 
     private final AcousticFactory factory;
     private final ResourceLocation name;
+
+    public SimpleAcoustic(@Nonnull final SoundEvent event, @Nonnull final ISoundCategory category) {
+        this(event.getName(), event);
+        this.factory.setCategory(category);
+    }
 
     public SimpleAcoustic(@Nonnull final SoundEvent event) {
         this(event.getName(), event);
@@ -109,13 +115,16 @@ public class SimpleAcoustic implements IAcoustic {
 
     /**
      * Creates a simple acoustic based on the step sound of the SoundType in question.  The volume is scaled to 15%
-     * based on the reading of the footstep logic in the Entity class.
-     * @param soundType The sound type from which the step sound is obtained.
+     * based on the reading of the footstep logic in the Entity class.  It is further adjusted by scaling done by the
+     * caller as a default so that the sound volume normalizes.
+     * @param soundType The sound type from which the step acoustic is obtained.
+     * @param category The sound category the acoustic play will belong to
+     * @param defaultSoundScale Scaling factor to apply to the volume when creating the acoustic instance.
      * @return A SimpleAcoustic ready for use.
      */
-    public static SimpleAcoustic createStepAcoustic(@Nonnull final SoundType soundType) {
-        final SimpleAcoustic acoustic = new SimpleAcoustic(soundType.getStepSound());
-        acoustic.factory.setVolume(soundType.getVolume() * 0.15F);
+    public static SimpleAcoustic createStepAcoustic(@Nonnull final SoundType soundType, @Nonnull final ISoundCategory category, final float defaultSoundScale) {
+        final SimpleAcoustic acoustic = new SimpleAcoustic(soundType.getStepSound(), category);
+        acoustic.factory.setVolume(soundType.getVolume() * (0.15F / defaultSoundScale));
         acoustic.factory.setPitch(soundType.getPitch());
         return acoustic;
     }

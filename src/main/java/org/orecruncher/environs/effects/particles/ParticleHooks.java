@@ -69,24 +69,6 @@ public final class ParticleHooks {
         final BlockPos pos = new BlockPos(particle.posX, particle.posY - 0.01D, particle.posZ);
         final BlockState state = world.getBlockState(pos);
 
-        // If the particle is hitting solid ground we need to play a splat
-        if (particle.onGround) {
-            final Vector3d vecPos = new Vector3d(particle.posX, particle.posY, particle.posZ);
-            final ResourceLocation acoustic;
-            if (doSteamHiss(particle.fluid, state)) {
-                createSteamCloud(world, vecPos);
-                acoustic = STEAM_HISS_ACOUSTIC;
-                particle.setExpired();
-                // Do this to prevent the splash from generating
-                particle.onGround = false;
-            } else {
-                // Don't set expired - this will cause the logic in DripParticle to do a splash
-                acoustic = WATER_DROP_ACOUSTIC;
-            }
-            Library.resolve(acoustic).playAt(vecPos);
-            return;
-        }
-
         // Could be falling into a fluid
         final FluidState fluidState = world.getFluidState(pos);
         if (!fluidState.isEmpty()) {
@@ -118,7 +100,26 @@ public final class ParticleHooks {
 
                 Library.resolve(acoustic).playAt(vecPos);
                 particle.setExpired();
+                return;
             }
+        }
+
+        // If the particle is hitting solid ground we need to play a splat
+        if (particle.onGround) {
+            final Vector3d vecPos = new Vector3d(particle.posX, particle.posY, particle.posZ);
+            final ResourceLocation acoustic;
+            if (doSteamHiss(particle.fluid, state)) {
+                createSteamCloud(world, vecPos);
+                acoustic = STEAM_HISS_ACOUSTIC;
+                particle.setExpired();
+                // Do this to prevent the splash from generating
+                particle.onGround = false;
+            } else {
+                // Don't set expired - this will cause the logic in DripParticle to do a splash
+                acoustic = WATER_DROP_ACOUSTIC;
+            }
+            Library.resolve(acoustic).playAt(vecPos);
+            return;
         }
     }
 

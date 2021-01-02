@@ -24,6 +24,7 @@ import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.forge.gui.entries.*;
 import me.shedaniel.clothconfig2.forge.impl.builders.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -120,6 +121,7 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .startBooleanToggle(name, value.get())
                 .setTooltip(tooltip)
                 .setDefaultValue(value.get())
+                .setYesNoTextSupplier(DialogTexts::optionsEnabled)
                 .setSaveConsumer(value::set);
 
         if (property.getNeedsWorldRestart())

@@ -18,10 +18,10 @@
 
 package org.orecruncher.lib.config;
 
+import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.orecruncher.lib.reflection.ObjectField;
@@ -81,7 +81,13 @@ public final class ConfigProperty {
 
         final Object theDefault = getDefault();
         if (theDefault != null) {
-            String text = trimDown(theDefault.toString());
+            String text = theDefault.toString();
+            if (text.compareToIgnoreCase("true") == 0)
+                text = DialogTexts.OPTIONS_ON.getString();
+            else if (text.compareToIgnoreCase("false") == 0)
+                text = DialogTexts.OPTIONS_OFF.getString();
+            else
+                text = trimDown(text);
             text = new TranslationTextComponent("dsurround.msg.format.default", text).getString();
             result.append(new StringTextComponent(text));
         }

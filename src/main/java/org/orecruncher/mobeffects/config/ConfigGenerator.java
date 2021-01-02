@@ -56,6 +56,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
+                        Config.CLIENT.footsteps.enableFootstepSounds));
+
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
                         Config.CLIENT.footsteps.enableFootprintParticles));
 
         subCategory.add(

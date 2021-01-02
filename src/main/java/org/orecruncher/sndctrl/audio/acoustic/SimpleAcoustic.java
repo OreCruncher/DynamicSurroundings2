@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package org.orecruncher.sndctrl.audio.acoustic;
 
 import com.google.common.base.MoreObjects;
+import net.minecraft.block.SoundType;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -41,9 +42,7 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public class SimpleAcoustic implements IAcoustic {
 
-    @Nonnull
-    private final IAcousticFactory factory;
-    @Nonnull
+    private final AcousticFactory factory;
     private final ResourceLocation name;
 
     public SimpleAcoustic(@Nonnull final SoundEvent event) {
@@ -54,7 +53,7 @@ public class SimpleAcoustic implements IAcoustic {
         this(name, new AcousticFactory(evt));
     }
 
-    public SimpleAcoustic(@Nonnull final ResourceLocation name, @Nonnull final IAcousticFactory factory) {
+    public SimpleAcoustic(@Nonnull final ResourceLocation name, @Nonnull final AcousticFactory factory) {
         this.name = Objects.requireNonNull(name);
         this.factory = factory;
     }
@@ -106,5 +105,18 @@ public class SimpleAcoustic implements IAcoustic {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).addValue(getName().toString()).toString();
+    }
+
+    /**
+     * Creates a simple acoustic based on the step sound of the SoundType in question.  The volume is scaled to 15%
+     * based on the reading of the footstep logic in the Entity class.
+     * @param soundType The sound type from which the step sound is obtained.
+     * @return A SimpleAcoustic ready for use.
+     */
+    public static SimpleAcoustic createStepAcoustic(@Nonnull final SoundType soundType) {
+        final SimpleAcoustic acoustic = new SimpleAcoustic(soundType.getStepSound());
+        acoustic.factory.setVolume(soundType.getVolume() * 0.15F);
+        acoustic.factory.setPitch(soundType.getPitch());
+        return acoustic;
     }
 }

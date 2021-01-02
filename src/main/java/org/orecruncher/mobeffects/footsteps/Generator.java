@@ -416,7 +416,7 @@ public class Generator {
 		final AcousticResolver resolver = new AcousticResolver(entity.getEntityWorld(), loc,
 				this.VAR.DISTANCE_TO_CENTER);
 
-		final Association result = addFootstepAccent(entity, resolver.findAssociationForEvent());
+		final Association result = addFootstepAccent(entity, resolver.findAssociation());
 
 		// It is possible that the association has no position, so it
 		// needs to be checked.

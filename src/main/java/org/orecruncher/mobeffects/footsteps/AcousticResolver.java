@@ -22,9 +22,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,14 +35,18 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 
 import net.minecraft.util.math.BlockPos;
+import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.footsteps.facade.FacadeHelper;
 import org.orecruncher.mobeffects.library.Constants;
 import org.orecruncher.mobeffects.library.FootstepLibrary;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.audio.acoustic.AcousticCompiler;
+import org.orecruncher.sndctrl.audio.acoustic.SimpleAcoustic;
 
 @OnlyIn(Dist.CLIENT)
 public class AcousticResolver {
+
+	private static final float PROBE_DEPTH = 1F/16F;
 
 	protected final IWorldReader world;
 	protected final FootStrikeLocation loc;
@@ -71,7 +78,10 @@ public class AcousticResolver {
 	 * association in the blockmap.
 	 */
 	@Nullable
-	public Association findAssociationForEvent() {
+	public Association findAssociation() {
+
+		if (!Config.CLIENT.footsteps.enableFootstepSounds.get())
+			return findVanillaAssociation();
 
 		final Vector3d pos = this.loc.getStrikePosition();
 
@@ -135,6 +145,37 @@ public class AcousticResolver {
 			}
 		}
 		return worked;
+	}
+
+	@Nullable
+	protected Association findVanillaAssociation() {
+
+		// Simple version - no fancy stuff.  Goal is to simulate vanilla and play vanilla block sounds
+		final Vector3d pos = this.loc.getStrikePosition();
+
+		// See what block is beneath that position
+		int posX = MathHelper.floor(pos.x);
+		int posY = MathHelper.floor(pos.y - PROBE_DEPTH);
+		int posZ = MathHelper.floor(pos.z);
+		BlockPos blockpos = new BlockPos(posX, posY, posZ);
+		if (this.world.isAirBlock(blockpos)) {
+			BlockPos blockpos1 = blockpos.down();
+			BlockState blockstate = this.world.getBlockState(blockpos1);
+			if (blockstate.collisionExtendsVertically(this.world, blockpos1, this.loc.getEntity())) {
+				blockpos = blockpos1;
+			}
+		}
+
+		// We have a position - next up figure out what sound to play
+		final BlockState state = this.world.getBlockState(blockpos);
+		if (!(state.getMaterial().isLiquid() || state.isAir(this.world, blockpos))) {
+			BlockState blockstate = this.world.getBlockState(blockpos.up());
+			SoundType soundtype = blockstate.isIn(Blocks.SNOW) ? blockstate.getSoundType(this.world, blockpos, this.loc.getEntity()) : state.getSoundType(this.world, blockpos, this.loc.getEntity());
+			final IAcoustic acoustics = SimpleAcoustic.createStepAcoustic(soundtype);
+			return new Association(this.loc, acoustics);
+		}
+
+		return null;
 	}
 
 	@Nullable

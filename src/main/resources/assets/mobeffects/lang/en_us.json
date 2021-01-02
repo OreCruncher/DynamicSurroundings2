@@ -9,6 +9,8 @@
 	"mobeffects.cfg.logging.FlagMask.tooltip": "Bitmask for toggling various debug traces",
 	"mobeffects.cfg.footsteps": "Footstep Options",
 	"mobeffects.cfg.footsteps.tooltip": "Defines footstep effect generation parameters",
+	"mobeffects.cfg.footsteps.SoundEnable": "Enable Footprint Sound Effects",
+	"mobeffects.cfg.footsteps.SoundEnable.tooltip": "Enable replacement of footstep sounds with acoustic versions",
 	"mobeffects.cfg.footsteps.Enable": "Enable Footprint particle effects",
 	"mobeffects.cfg.footsteps.Enable.tooltip": "Enable Footprint Particles",
 	"mobeffects.cfg.footsteps.Cadence": "First Person Cadence",

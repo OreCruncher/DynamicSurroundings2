@@ -108,6 +108,7 @@ public final class Config {
 
         public static class Footsteps {
 
+            public final BooleanValue enableFootstepSounds;
             public final BooleanValue enableFootprintParticles;
             public final BooleanValue firstPersonFootstepCadence;
             public final ForgeConfigSpec.EnumValue<FootprintStyle> playerFootprintStyle;
@@ -118,6 +119,11 @@ public final class Config {
             public Footsteps(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines footstep effect generation parameters")
                         .push("Footstep Options");
+
+                this.enableFootstepSounds = builder
+                        .comment("Enable replacement of footstep sounds with acoustic versions")
+                        .translation("mobeffects.cfg.footsteps.SoundEnable")
+                        .define("Enable Footprint Sound Effects", true);
 
                 this.enableFootprintParticles = builder
                         .comment("Enable Footprint particle effects")

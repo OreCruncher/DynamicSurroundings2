@@ -1626,5 +1626,259 @@
         }
       ]
     }
+  },
+  "soulsoil": {
+    "type": "event",
+    "walk": {
+      "name": "@block.soul_soil.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "run": {
+      "name": "@block.soul_soil.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "wander": "dirt.dirt_wander",
+    "land": {
+      "type": "simultaneous",
+      "array": [
+        {
+          "name": "@block.soul_soil.step",
+          "category": "footsteps",
+          "vol_min": 28,
+          "vol_max": 32
+        },
+        {
+          "name": "sand.sand_run",
+          "type": "delayed",
+          "delay": 1,
+          "vol_min": 60,
+          "vol_max": 60
+        }
+      ]
+    }
+  },
+  "soulsand": {
+    "type": "event",
+    "walk": {
+      "name": "@block.soul_sand.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "run": {
+      "name": "@block.soul_sand.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "wander": "dirt.dirt_wander",
+    "land": {
+      "type": "simultaneous",
+      "array": [
+        {
+          "name": "@block.soul_sand.step",
+          "category": "footsteps",
+          "vol_min": 28,
+          "vol_max": 32
+        },
+        {
+          "name": "sand.sand_run",
+          "type": "delayed",
+          "delay": 1,
+          "vol_min": 60,
+          "vol_max": 60
+        }
+      ]
+    }
+  },
+  "netherrack": {
+    "type": "event",
+    "walk": {
+      "name": "@block.netherrack.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "run": {
+      "name": "@block.netherrack.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "wander": "dirt.dirt_wander",
+    "land": {
+      "type": "simultaneous",
+      "array": [
+        {
+          "name": "@block.netherrack.step",
+          "category": "footsteps",
+          "vol_min": 28,
+          "vol_max": 32
+        },
+        {
+          "name": "sand.sand_run",
+          "type": "delayed",
+          "delay": 1,
+          "vol_min": 60,
+          "vol_max": 60
+        }
+      ]
+    }
+  },
+  "bone": {
+    "type": "event",
+    "run": {
+      "name": "@block.bone_block.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32,
+      "pitch_min": 90,
+      "pitch_max": 110
+    },
+    "walk": {
+      "name": "@block.bone_block.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "wander": {
+      "name": "stone.stone_wander",
+      "vol_min": 40,
+      "vol_max": 50
+    },
+    "land": {
+      "type": "simultaneous",
+      "array": [
+        "concrete.concrete_run",
+        {
+          "name": "@block.bone_block.step",
+          "category": "footsteps",
+          "vol_min": 28,
+          "vol_max": 32
+        },
+        {
+          "name": "stone.stone_run",
+          "type": "delayed",
+          "delay": 1
+        }
+      ]
+    }
+  },
+  "shroomlight": {
+    "type": "event",
+    "run": {
+      "name": "@block.shroomlight.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32,
+      "pitch_min": 90,
+      "pitch_max": 110
+    },
+    "walk": {
+      "name": "@block.shroomlight.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "wander": {
+      "name": "dirt.dirt_wander",
+      "vol_min": 40,
+      "vol_max": 50
+    },
+    "land": {
+      "type": "simultaneous",
+      "array": [
+        "concrete.concrete_run",
+        {
+          "name": "@block.shroomlight.step",
+          "category": "footsteps",
+          "vol_min": 28,
+          "vol_max": 32
+        },
+        {
+          "name": "stone.stone_run",
+          "type": "delayed",
+          "delay": 1
+        }
+      ]
+    }
+  },
+  "basalt": {
+    "type": "event",
+    "run": {
+      "name": "@block.basalt.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32,
+      "pitch_min": 90,
+      "pitch_max": 110
+    },
+    "walk": {
+      "name": "@block.basalt.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "wander": {
+      "name": "stone.stone_wander",
+      "vol_min": 40,
+      "vol_max": 50
+    },
+    "land": {
+      "type": "simultaneous",
+      "array": [
+        "concrete.concrete_run",
+        {
+          "name": "@block.basalt.step",
+          "category": "footsteps",
+          "vol_min": 28,
+          "vol_max": 32
+        },
+        {
+          "name": "stone.stone_run",
+          "type": "delayed",
+          "delay": 1
+        }
+      ]
+    }
+  },
+  "netherbrick": {
+    "type": "event",
+    "run": {
+      "name": "@block.nether_bricks.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32,
+      "pitch_min": 90,
+      "pitch_max": 110
+    },
+    "walk": {
+      "name": "@block.nether_bricks.step",
+      "category": "footsteps",
+      "vol_min": 28,
+      "vol_max": 32
+    },
+    "wander": "stone.stone_wander",
+    "land": {
+      "type": "simultaneous",
+      "array": [
+        "concrete.concrete_run",
+        {
+          "name": "@block.nether_bricks.step",
+          "category": "footsteps",
+          "vol_min": 28,
+          "vol_max": 32
+        },
+        {
+          "name": "stone.stone_run",
+          "type": "delayed",
+          "delay": 1
+        }
+      ]
+    }
   }
 }

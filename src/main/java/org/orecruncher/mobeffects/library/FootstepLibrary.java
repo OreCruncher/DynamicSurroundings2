@@ -64,11 +64,12 @@ import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FootstepLibrary {
+
+    private static final String PRIMITIVE_PREFIX = "primitive/";
 
     private static final String TEXT_FOOTSTEPS = TextFormatting.DARK_PURPLE + "<Footsteps>";
     private static final Map<Substrate, BlockAcousticMap> substrateMap = new EnumMap<>(Substrate.class);
@@ -215,17 +216,22 @@ public final class FootstepLibrary {
     }
 
     static void initFromConfig(@Nonnull final FootstepConfig mod) {
-        // Handle our primitives first.  These will overwrite existing entries in the acoustic library.  A primitive is
-        // defined by a sound type name.
+
+        // Register all the known SoundType footstep events as primitive acoustics
+        SoundTypeUtils.forEach(st -> {
+            final IAcoustic acoustic = createPrimitiveAcoustic(st);
+            final ResourceLocation loc = createPrimitiveResource(st);
+            Library.registerAcoustic(loc, acoustic);
+        });
+
+        // Load up configured primitives.  These will overwrite existing ones.
         for (final Map.Entry<String, String> kvp : mod.primitives.entrySet()) {
-            // Only want to add for valid SoundTypes
-            if (SoundTypeUtils.getSoundType(kvp.getKey()) != null) {
-                final String resourcePath = "primitive/" + kvp.getKey().toLowerCase(Locale.ROOT);
-                final ResourceLocation loc = new ResourceLocation(MobEffects.MOD_ID, resourcePath);
-                Library.resolve(loc, kvp.getValue(), true);
-            } else {
-                LOGGER.warn("'%s' is not a valid SoundType", kvp.getKey());
+            if (SoundTypeUtils.getSoundType(kvp.getKey()) == null) {
+                LOGGER.warn("'%s' is not a known SoundType; adding and praying...", kvp.getKey());
             }
+            final String resourcePath = PRIMITIVE_PREFIX + kvp.getKey().toLowerCase(Locale.ROOT);
+            final ResourceLocation loc = new ResourceLocation(MobEffects.MOD_ID, resourcePath);
+            Library.resolve(loc, kvp.getValue(), true);
         }
 
         // Apply acoustics based on configured tagging
@@ -244,6 +250,14 @@ public final class FootstepLibrary {
             if (matcher != BlockStateMatcher.AIR)
                 FOOTPRINT_STATES.put(matcher, true);
         }
+    }
+
+    private static ResourceLocation createPrimitiveResource(@Nonnull final SoundType st) {
+        return new ResourceLocation(MobEffects.MOD_ID, PRIMITIVE_PREFIX + SoundTypeUtils.getSoundTypeName(st).toLowerCase(Locale.ROOT));
+    }
+
+    private static IAcoustic createPrimitiveAcoustic(@Nonnull final SoundType type) {
+        return SimpleAcoustic.createStepAcoustic(type, Constants.FOOTSTEPS, Config.FOOTSTEP_VOLUME_DEFAULT / 100F);
     }
 
     /**
@@ -270,7 +284,7 @@ public final class FootstepLibrary {
                 }
                 builder.append("]");
                 return builder.toString();
-            } catch(@Nonnull final Throwable ignore) {
+            } catch (@Nonnull final Throwable ignore) {
             }
             return "ERROR";
         }).sorted();
@@ -318,7 +332,7 @@ public final class FootstepLibrary {
         if (state.getMaterial() == Material.AIR)
             return Constants.NOT_EMITTER;
         // Get our cached entries
-        IAcoustic[] cached = ((IMixinFootstepData)state).getAcoustics();
+        IAcoustic[] cached = ((IMixinFootstepData) state).getAcoustics();
         if (cached == null) {
             ((IMixinFootstepData) state).setAcoustics(cached = new IAcoustic[Substrate.values().length]);
         }
@@ -330,7 +344,7 @@ public final class FootstepLibrary {
     }
 
     private static IAcoustic[] getCachedAcoustics(@Nonnull final BlockState state) {
-        IAcoustic[] cached = ((IMixinFootstepData)state).getAcoustics();
+        IAcoustic[] cached = ((IMixinFootstepData) state).getAcoustics();
         if (cached == null) {
             ((IMixinFootstepData) state).setAcoustics(cached = new IAcoustic[Substrate.values().length]);
         }
@@ -461,12 +475,13 @@ public final class FootstepLibrary {
             return Constants.NOT_EMITTER;
         final String soundTypeName = SoundTypeUtils.getSoundTypeName(state.getSoundType());
         if (soundTypeName != null) {
-            final String primitivePath = "primitive/" + soundTypeName.toLowerCase(Locale.ROOT);
-            final ResourceLocation loc = new ResourceLocation(MobEffects.MOD_ID, primitivePath);
+            final ResourceLocation loc = createPrimitiveResource(state.getSoundType());
+            // Note that the acousticGenerator would rarely be called.  This can happen if a mod
+            // adds a custom sound type that the we don't know about.
             return Library.resolve(
                     loc,
                     state.getSoundType().getStepSound().getRegistryName(),
-                    (ignored) -> SimpleAcoustic.createStepAcoustic(state.getSoundType(), Constants.FOOTSTEPS, Config.FOOTSTEP_VOLUME_DEFAULT / 100F));
+                    (ignored) -> createPrimitiveAcoustic(state.getSoundType()));
         }
 
         return Constants.NOT_EMITTER;

@@ -13,7 +13,14 @@
     "sand": "mobeffects:sand",
     "snow": "mobeffects:snow",
     "ladder": "mobeffects:ladder",
-    "anvil": "mobeffects:metalcompressed,mobeffects:hardmetal"
+    "anvil": "mobeffects:metalcompressed,mobeffects:hardmetal",
+    "nether_brick": "mobeffects:netherbrick",
+    "netherrack": "mobeffects:netherrack",
+    "bone": "mobeffects:bone",
+    "soul_sand": "mobeffects:soulsand",
+    "soul_soil": "mobeffects:soulsoil",
+    "basalt": "mobeffects:basalt",
+    "shroomlight": "mobeffects:shroomlight"
   },
   "blockTags": {
     "minecraft:logs": "log",
@@ -177,7 +184,6 @@
     "minecraft:snow": "snow",
     "minecraft:snow+carpet": "snow",
     "minecraft:lily_pad": "waterfine",
-    "minecraft:lily_pad+carpet": "waterfine",
     "minecraft:dead_bush": "#deadbush",
     "minecraft:large_fern": "#tallplant",
     "minecraft:tall_grass": "#tallplant",
@@ -196,8 +202,8 @@
     "minecraft:zombie_head": "organic",
     "minecraft:creeper_head": "organic",
     "minecraft:dragon_head": "organic_dry",
-    "minecraft:skeleton_skull": "sandstone",
-    "minecraft:wither_skeleton_skull": "sandstone",
+    "minecraft:skeleton_skull": "bone",
+    "minecraft:wither_skeleton_skull": "bone",
     "minecraft:dispenser": "stonemachine",
     "minecraft:dropper": "stonemachine",
     "minecraft:observer": "stonemachine",
@@ -221,6 +227,11 @@
     "minecraft:warped_roots": "#deadbush",
     "minecraft:twisting_vines": "#reed",
     "minecraft:twisting_vines_plant": "#reed",
-    "minecraft:ladder": "ladder_default"
+    "minecraft:ladder": "ladder_default",
+    "minecraft:nether_brick_fence": "not_emitter",
+    "minecraft:nether_brick_fence+bigger": "netherbrick",
+    "minecraft:smithing_table": "metalbar",
+    "minecraft:crying_obsidian": "obsidian",
+    "minecraft:respawn_anchor": "obsidian"
   }
 }

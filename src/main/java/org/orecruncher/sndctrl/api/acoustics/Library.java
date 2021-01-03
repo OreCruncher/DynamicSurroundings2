@@ -40,6 +40,15 @@ public final class Library {
     }
 
     /**
+     * Registers an acoustic with the provided resource identifier.
+     * @param resource Resource name associated wtih the acoustic
+     * @param acoustic Acoustic to register
+     */
+    public static void registerAcoustic(@Nonnull final ResourceLocation resource, @Nonnull final IAcoustic acoustic) {
+        AcousticLibrary.addAcoustic(resource, acoustic);
+    }
+
+    /**
      * Resolves the provided name into a resource location.  The rules are:
      *
      * 1.  If the name is a fully qualified resource path it is used to create the ResourceLocation.

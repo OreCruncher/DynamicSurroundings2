@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public final class SoundTypeUtils {
@@ -53,6 +54,11 @@ public final class SoundTypeUtils {
 
     private SoundTypeUtils() {
 
+    }
+
+    public static void forEach(@Nonnull final Consumer<SoundType> consumer) {
+        for (final SoundType type : soundTypeMap.keySet())
+            consumer.accept(type);
     }
 
     @Nullable

@@ -1,7 +1,7 @@
 /*
- * Dynamic Surroundings: Sound Control
+ * Dynamic Surroundings:
  * Sound Physics
- * Copyright (C) 2019  OreCruncher
+ * Copyright (C) 2020  OreCruncher
  * Copyright SonicEther
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ public final class SoundFXUtils {
     /**
      * Maximum number of segments to check when ray tracing for occlusion.
      */
-    private static final int OCCLUSION_RAYS = 10;
+    private static final int OCCLUSION_SEGMENTS = 10;
     /**
      * Number of rays to project when doing reverb calculations.
      */
@@ -337,7 +337,7 @@ public final class SoundFXUtils {
         if (Config.CLIENT.sound.enableOcclusionCalcs.get()) {
             final BlockRayTrace traceContext = new BlockRayTrace(ctx.world, origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
             final Iterator<BlockRayTraceResult> itr = new RayTraceIterator(traceContext);
-            for (int i = 0; i < OCCLUSION_RAYS; i++) {
+            for (int i = 0; i < OCCLUSION_SEGMENTS; i++) {
                 if (itr.hasNext()) {
                     final BlockState state = ctx.world.getBlockState(itr.next().getPos());
                     accum += AudioEffectLibrary.getOcclusion(state);

@@ -52,6 +52,9 @@ public final class AudioEffectLibrary {
 
     private static final String MATERIAL_PREFIX = "+";
     private static final String TAG_PREFIX = "#";
+    private static final float DEFAULT_OPAQUE_OCCLUSION = 0.5F;
+    private static final float DEFAULT_TRANSLUCENT_OCCLUSION = 0.15F;
+    private static final float DEFAULT_REFLECTION = 0.4F;
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(AudioEffectLibrary.class);
 
@@ -109,7 +112,7 @@ public final class AudioEffectLibrary {
         Float result = blockStateReflectMap.get(state);
         if (result == null || result < 0)
             result = materialReflect.getFloat(state.getMaterial());
-        return result < 0 ? 0.5F : result;
+        return result < 0 ? DEFAULT_REFLECTION : result;
     }
 
     private static float resolveOcclusion(@Nonnull final BlockState state) {
@@ -117,7 +120,7 @@ public final class AudioEffectLibrary {
         if (result == null || result < 0) {
             result = materialOcclusion.getFloat(state.getMaterial());
             if (result < 0) {
-                result = state.getMaterial().isOpaque() ? 1F : 0.15F;
+                result = state.getMaterial().isOpaque() ? DEFAULT_OPAQUE_OCCLUSION : DEFAULT_TRANSLUCENT_OCCLUSION;
             }
         }
 
@@ -252,7 +255,7 @@ public final class AudioEffectLibrary {
             // Occlusion setup
             materialOcclusion.defaultReturnValue(-1F);
             for (final Material mat : MaterialUtils.getMaterials())
-                materialOcclusion.put(mat, mat.isOpaque() ? 0.95F : 0.15F);
+                materialOcclusion.put(mat, mat.isOpaque() ? DEFAULT_OPAQUE_OCCLUSION : DEFAULT_TRANSLUCENT_OCCLUSION);
             blockStateOcclusionMap.setDefaultValue(() -> -1F);
 
             // Reflection setup

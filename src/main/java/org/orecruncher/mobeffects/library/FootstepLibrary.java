@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Mob Effects
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
+import org.orecruncher.lib.SoundTypeUtils;
 import org.orecruncher.lib.tags.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
@@ -212,10 +213,17 @@ public final class FootstepLibrary {
     }
 
     static void initFromConfig(@Nonnull final FootstepConfig mod) {
-        // Handle our primitives first.  These will overwrite existing entries in the acoustic library
+        // Handle our primitives first.  These will overwrite existing entries in the acoustic library.  A primitive is
+        // defined by a sound type name.
         for (final Map.Entry<String, String> kvp : mod.primitives.entrySet()) {
-            final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
-            Library.resolve(loc, kvp.getValue(), true);
+            // Only want to add for valid SoundTypes
+            if (SoundTypeUtils.getSoundType(kvp.getKey()) != null) {
+                final String resourcePath = "primitive/" + kvp.getKey().toLowerCase(Locale.ROOT);
+                final ResourceLocation loc = new ResourceLocation(MobEffects.MOD_ID, resourcePath);
+                Library.resolve(loc, kvp.getValue(), true);
+            } else {
+                LOGGER.warn("'%s' is not a valid SoundType", kvp.getKey());
+            }
         }
 
         // Apply acoustics based on configured tagging
@@ -260,7 +268,7 @@ public final class FootstepLibrary {
                 }
                 builder.append("]");
                 return builder.toString();
-            } catch(@Nonnull final Throwable t) {
+            } catch(@Nonnull final Throwable ignore) {
             }
             return "ERROR";
         }).sorted();
@@ -327,7 +335,7 @@ public final class FootstepLibrary {
         for (final Substrate sub : Substrate.values()) {
             IAcoustic result = cached[sub.ordinal()];
             if (result == null) {
-                result = cached[sub.ordinal()] = substrateMap.get(sub).getBlockAcoustics(state);
+                cached[sub.ordinal()] = substrateMap.get(sub).getBlockAcoustics(state);
             }
         }
         return cached;
@@ -449,7 +457,14 @@ public final class FootstepLibrary {
         final Material mat = state.getMaterial();
         if (!mat.blocksMovement() || mat.isLiquid())
             return Constants.NOT_EMITTER;
-        return Library.resolve(Objects.requireNonNull(state.getSoundType().getStepSound().getRegistryName()));
+        final String soundTypeName = SoundTypeUtils.getSoundTypeName(state.getSoundType());
+        if (soundTypeName != null) {
+            final String primitivePath = "primitive/" + soundTypeName.toLowerCase(Locale.ROOT);
+            final ResourceLocation loc = new ResourceLocation(MobEffects.MOD_ID, primitivePath);
+            return Library.resolve(loc, state.getSoundType().getStepSound().getRegistryName().toString());
+        }
+
+        return Constants.NOT_EMITTER;
     }
 
     public static boolean hasFootprint(@Nonnull final BlockState state) {
@@ -527,9 +542,7 @@ public final class FootstepLibrary {
 
             configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "footsteps.json");
 
-            IResourceAccessor.process(configs, accessor -> {
-                initFromConfig(accessor.as(FootstepConfig.class));
-            });
+            IResourceAccessor.process(configs, accessor -> initFromConfig(accessor.as(FootstepConfig.class)));
 
             substrateMap.forEach((key, value) -> value.trim());
         }

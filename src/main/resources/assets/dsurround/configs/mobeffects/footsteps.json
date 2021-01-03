@@ -1,37 +1,19 @@
 {
   "primitives": {
-    "minecraft:block.ancient_debris.step": "mobeffects:sandstone",
-    "minecraft:block.bamboo.step": "mobeffects:planks",
-    "minecraft:block.basalt.step": "mobeffects:brickstone",
-    "minecraft:block.bone_block.step": "mobeffects:sandstone",
-    "minecraft:block.gilded_blackstone.step": "mobeffects:marble",
-    "minecraft:block.lodestone.step": "mobeffects:metalcompressed",
-    "minecraft:block.nether_bricks.step": "mobeffects:brickstone",
-    "minecraft:block.stem.step": "mobeffects:organic_dry",
-    "minecraft:block.nylium.step": "mobeffects:organic_dry",
-    "minecraft:block.fungus.step": "mobeffects:organic_dry",
-    "minecraft:block.wart_block.step": "mobeffects:organic",
-    "minecraft:block.netherrite_block.step": "mobeffects:composite",
-    "minecraft:block.netherrack.step": "mobeffects:grass,mobeffects:quicksand",
-    "minecraft:block.nether_ore.step": "mobeffects:ore",
-    "minecraft:block.scaffolding.step": "mobeffects:squeakywood",
-    "minecraft:block.shroomlight.step": "mobeffects:glowstone",
-    "minecraft:block.stone.step": "mobeffects:brickstone",
-    "minecraft:block.wood.step": "mobeffects:wood",
-    "minecraft:block.gravel.step": "mobeffects:gravel",
-    "minecraft:block.grass.step": "mobeffects:grass",
-    "minecraft:block.metal.step": "mobeffects:hardmetal",
-    "minecraft:block.glass.step": "mobeffects:glass",
-    "minecraft:block.cloth.step": "mobeffects:rug",
-    "minecraft:block.wool.step": "mobeffects:rug",
-    "minecraft:block.sand.step": "mobeffects:sand",
-    "minecraft:block.snow.step": "mobeffects:snow",
-    "minecraft:block.ladder.step": "mobeffects:ladder",
-    "minecraft:block.anvil.step": "mobeffects:metalcompressed,mobeffects:hardmetal",
-    "minecraft:block.honey_block.step": "mobeffects:mud",
-    "minecraft:block.slime_block.step": "mobeffects:mud",
-    "minecraft:block.soul_sand.step": "mobeffects:sand",
-    "minecraft:block.soul_soil.step": "mobeffects:sand"
+    "wood": "mobeffects:wood",
+    "ground": "mobeffects:gravel",
+    "plant": "mobeffects:grass",
+    "lily_pads": "mobeffects:grass",
+    "sweet_berry_bush": "mobeffects:grass",
+    "crop": "mobeffects:grass",
+    "metal": "mobeffects:hardmetal",
+    "stone": "mobeffects:brickstone",
+    "glass": "mobeffects:glass",
+    "cloth": "mobeffects:rug",
+    "sand": "mobeffects:sand",
+    "snow": "mobeffects:snow",
+    "ladder": "mobeffects:ladder",
+    "anvil": "mobeffects:metalcompressed,mobeffects:hardmetal"
   },
   "blockTags": {
     "minecraft:logs": "log",
@@ -55,10 +37,8 @@
     "minecraft:beehives": "organic_dry",
     "minecraft:tall_flowers": "#tallplant",
     "minecraft:wart_blocks": "organic",
-
     "minecraft:banners": "rug,straw,squeakywood",
     "minecraft:banners+foliage": "rug,straw,squeakywood",
-
     "forge:glass": "glass",
     "forge:stained_glass": "glass",
     "forge:glass_panes": "glass",
@@ -72,11 +52,9 @@
     "forge:cobblestone": "stone",
     "forge:sand": "sand",
     "forge:sandstone": "sandstone",
-    "forge:netherrack": "grass,quicksand",
     "forge:gravel": "gravel",
     "forge:obsidian": "obsidian",
     "forge:end_stones": "stone",
-
     "forge:storage_blocks/diamond": "composite",
     "forge:storage_blocks/emerald": "composite"
   },
@@ -112,14 +90,9 @@
     "minecraft:quartz_stairs": "marble",
     "minecraft:smooth_quartz_stairs": "marble",
     "minecraft:smooth_quartz_slab": "marble",
-    "minecraft:nether_bricks": "brickstone",
-    "minecraft:nether_brick_fence+bigger": "brickstone",
-    "minecraft:nether_brick_stairs": "brickstone",
-    "minecraft:red_nether_bricks": "brickstone",
-    "minecraft:grass_block": "grass",
-    "minecraft:bone_block": "sandstone",
-    "minecraft:scaffolding": "squeakywood",
 
+    "minecraft:grass_block": "grass",
+    "minecraft:scaffolding": "squeakywood",
     "minecraft:black_shulker_box": "marble",
     "minecraft:blue_shulker_box": "marble",
     "minecraft:brown_shulker_box": "marble",
@@ -135,7 +108,6 @@
     "minecraft:red_shulker_box": "marble",
     "minecraft:white_shulker_box": "marble",
     "minecraft:yellow_shulker_box": "marble",
-
     "minecraft:terracotta": "sandstone",
     "minecraft:white_terracotta": "sandstone",
     "minecraft:orange_terracotta": "sandstone",
@@ -153,7 +125,6 @@
     "minecraft:green_terracotta": "sandstone",
     "minecraft:red_terracotta": "sandstone",
     "minecraft:black_terracotta": "sandstone",
-
     "minecraft:black_glazed_terracotta": "stone",
     "minecraft:blue_glazed_terracotta": "stone",
     "minecraft:brown_glazed_terracotta": "stone",
@@ -169,7 +140,6 @@
     "minecraft:red_glazed_terracotta": "stone",
     "minecraft:white_glazed_terracotta": "stone",
     "minecraft:yellow_glazed_terracotta": "stone",
-
     "minecraft:white_concrete": "stone",
     "minecraft:orange_concrete": "stone",
     "minecraft:magenta_concrete": "stone",
@@ -186,7 +156,6 @@
     "minecraft:green_concrete": "stone",
     "minecraft:red_concrete": "stone",
     "minecraft:black_concrete": "stone",
-
     "minecraft:white_concrete_powder": "sand",
     "minecraft:orange_concrete_powder": "sand",
     "minecraft:magenta_concrete_powder": "sand",
@@ -203,7 +172,6 @@
     "minecraft:green_concrete_powder": "sand",
     "minecraft:red_concrete_powder": "sand",
     "minecraft:black_concrete_powder": "sand",
-
     "minecraft:snow_block": "snow",
     "minecraft:snow": "snow",
     "minecraft:snow+carpet": "snow",
@@ -219,19 +187,16 @@
     "minecraft:brown_mushroom_block": "organic_dry",
     "minecraft:red_mushroom_block": "organic_dry",
     "minecraft:sweet_berry_bush": "#bush",
-
     "minecraft:wheat": "#wheat",
     "minecraft:carrots": "#crop",
     "minecraft:potatoes": "#crop",
     "minecraft:beetroots": "#beets",
-
     "minecraft:player_head": "organic",
     "minecraft:zombie_head": "organic",
     "minecraft:creeper_head": "organic",
     "minecraft:dragon_head": "organic_dry",
     "minecraft:skeleton_skull": "sandstone",
     "minecraft:wither_skeleton_skull": "sandstone",
-
     "minecraft:dispenser": "stonemachine",
     "minecraft:dropper": "stonemachine",
     "minecraft:observer": "stonemachine",
@@ -249,15 +214,12 @@
     "minecraft:hopper": "metalbar",
     "minecraft:cauldron": "metalbar",
     "minecraft:cauldron[level=3]": "metalbar,waterfine",
-
     "minecraft:glowstone": "glowstone",
-
     "minecraft:weeping_vines": "#vine",
     "minecraft:crimson_roots": "#deadbush",
     "minecraft:warped_roots": "#deadbush",
     "minecraft:twisting_vines": "#reed",
     "minecraft:twisting_vines_plant": "#reed",
-
     "minecraft:ladder": "ladder_default"
   }
 }

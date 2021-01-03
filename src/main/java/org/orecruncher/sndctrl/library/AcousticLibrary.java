@@ -153,7 +153,7 @@ public final class AcousticLibrary {
 
     @Nonnull
     public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nullable final String definition, final boolean overwrite) {
-        IAcoustic result = null;
+        IAcoustic result;
 
         result = compiled.get(acousticName.toString());
 

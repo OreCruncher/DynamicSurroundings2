@@ -24,7 +24,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.client.renderer.BufferBuilder;
 import org.orecruncher.lib.biomes.BiomeUtilities;
 import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.particles.AgeableMote;
@@ -62,7 +61,7 @@ public class MoteWaterRipple extends AgeableMote {
 
 		this.posY -= 0.2D;
 
-		final Color waterColor = BiomeUtilities.getColorForLiquid(world, this.position);
+		final Color waterColor = BiomeUtilities.getColorForLiquid(world, this.position.down());
 		this.red = waterColor.red();
 		this.green = waterColor.green();
 		this.blue = waterColor.blue();

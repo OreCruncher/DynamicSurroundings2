@@ -187,6 +187,17 @@ public final class ParticleHooks {
         }
     }
 
+    // Hook for Rain particle effect to generate a ripple instead of a splash
+    public static boolean spawnRippleOnBlock(@Nonnull final World world, @Nonnull final Vector3d position) {
+        final BlockPos pos = new BlockPos(position.x, position.y - 0.01D, position.z);
+        final FluidState fluidState = world.getFluidState(pos);
+        if (fluidState.isEmpty())
+            return false;
+        final float actualHeight = fluidState.getActualHeight(world, pos) + pos.getY();
+        Collections.addWaterRipple(world, position.x, actualHeight + LIQUID_HEIGHT_ADJUST, position.z);
+        return true;
+    }
+
     private static void createSteamCloud(@Nonnull final IBlockReader world, @Nonnull final Vector3d pos) {
         final Particle steamCloud = new SteamCloudParticle(GameUtils.getWorld(), pos.x, pos.y + 0.01D, pos.z, 0.01D);
         GameUtils.getMC().particles.addEffect(steamCloud);

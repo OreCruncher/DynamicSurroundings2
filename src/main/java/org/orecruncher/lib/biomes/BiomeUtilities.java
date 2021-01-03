@@ -22,11 +22,13 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeRegistry;
 import net.minecraftforge.api.distmarker.Dist;
@@ -82,7 +84,13 @@ public class BiomeUtilities {
         if (fluidState.isEmpty())
             return NO_COLOR;
 
+        // If the fluid is water, need to check the biome for coloration
         final Fluid fluid = fluidState.getFluid();
+        if (fluid.isIn(FluidTags.WATER)) {
+            final Biome biome = BiomeUtilities.getClientBiome(pos);
+            if (biome != null)
+                return new Color(biome.getWaterColor());
+        }
         return new Color(fluid.getAttributes().getColor());
     }
 

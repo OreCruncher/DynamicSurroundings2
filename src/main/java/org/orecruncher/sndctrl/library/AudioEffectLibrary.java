@@ -252,7 +252,7 @@ public final class AudioEffectLibrary {
             // Occlusion setup
             materialOcclusion.defaultReturnValue(-1F);
             for (final Material mat : MaterialUtils.getMaterials())
-                materialOcclusion.put(mat, mat.isOpaque() ? 1F : 0.15F);
+                materialOcclusion.put(mat, mat.isOpaque() ? 0.95F : 0.15F);
             blockStateOcclusionMap.setDefaultValue(() -> -1F);
 
             // Reflection setup

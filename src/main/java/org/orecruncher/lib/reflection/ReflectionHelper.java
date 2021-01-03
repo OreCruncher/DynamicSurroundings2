@@ -24,6 +24,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public final class ReflectionHelper {
@@ -87,6 +90,19 @@ public final class ReflectionHelper {
         } catch (@Nonnull final Throwable ignored) {
         }
         return null;
+    }
+
+    @Nonnull
+    public static Collection<Field> getStaticFields(@Nonnull final Class<?> clazz) {
+        final List<Field> staticFields = new ArrayList<>();
+        final Field[] declaredFields = clazz.getDeclaredFields();
+        for (final Field field : declaredFields) {
+            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                staticFields.add(field);
+            }
+        }
+
+        return staticFields;
     }
 
 }

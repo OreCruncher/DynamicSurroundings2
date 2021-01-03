@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@ package org.orecruncher.lib;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.block.SoundType;
+import org.orecruncher.lib.reflection.ReflectionHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,28 +37,13 @@ public final class SoundTypeUtils {
     static {
         soundTypeMap.defaultReturnValue("CUSTOM");
 
-        soundTypeMap.put(SoundType.WOOD, "WOOD");
-        soundTypeMap.put(SoundType.GROUND, "GROUND");
-        soundTypeMap.put(SoundType.PLANT, "PLANT");
-        soundTypeMap.put(SoundType.STONE, "STONE");
-        soundTypeMap.put(SoundType.METAL, "METAL");
-        soundTypeMap.put(SoundType.GLASS, "GLASS");
-        soundTypeMap.put(SoundType.CLOTH, "CLOTH");
-        soundTypeMap.put(SoundType.SAND, "SAND");
-        soundTypeMap.put(SoundType.SNOW, "SNOW");
-        soundTypeMap.put(SoundType.LADDER, "LADDER");
-        soundTypeMap.put(SoundType.ANVIL, "ANVIL");
-        soundTypeMap.put(SoundType.SLIME, "SLIME");
-        soundTypeMap.put(SoundType.WET_GRASS, "WET_GRASS");
-        soundTypeMap.put(SoundType.CORAL, "CORAL");
-        soundTypeMap.put(SoundType.BAMBOO, "BAMBOO");
-        soundTypeMap.put(SoundType.BAMBOO_SAPLING, "BAMBOO_SAPLING");
-        soundTypeMap.put(SoundType.SCAFFOLDING, "SCAFFOLDING");
-        soundTypeMap.put(SoundType.SWEET_BERRY_BUSH, "SWEET_BERRY_BUSH");
-        soundTypeMap.put(SoundType.CROP, "CROP");
-        soundTypeMap.put(SoundType.STEM, "STEM");
-        soundTypeMap.put(SoundType.NETHER_WART, "NETHER_WART");
-        soundTypeMap.put(SoundType.LANTERN, "LANTERN");
+        for(final Field f : ReflectionHelper.getStaticFields(SoundType.class)) {
+            try {
+                final SoundType type = (SoundType) f.get(null);
+                soundTypeMap.put(type, f.getName());
+            } catch(@Nonnull final Throwable ignore) {
+            }
+        }
 
         // Create the inverse map
         for (final Map.Entry<SoundType, String> kvp : soundTypeMap.entrySet()) {

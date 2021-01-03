@@ -56,6 +56,7 @@ import org.orecruncher.mobeffects.library.config.VariatorConfig;
 import org.orecruncher.mobeffects.misc.IMixinFootstepData;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
+import org.orecruncher.sndctrl.audio.acoustic.SimpleAcoustic;
 import org.orecruncher.sndctrl.events.BlockInspectionEvent;
 
 import javax.annotation.Nonnull;
@@ -63,6 +64,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -461,7 +463,10 @@ public final class FootstepLibrary {
         if (soundTypeName != null) {
             final String primitivePath = "primitive/" + soundTypeName.toLowerCase(Locale.ROOT);
             final ResourceLocation loc = new ResourceLocation(MobEffects.MOD_ID, primitivePath);
-            return Library.resolve(loc, state.getSoundType().getStepSound().getRegistryName().toString());
+            return Library.resolve(
+                    loc,
+                    state.getSoundType().getStepSound().getRegistryName(),
+                    (ignored) -> SimpleAcoustic.createStepAcoustic(state.getSoundType(), Constants.FOOTSTEPS, Config.FOOTSTEP_VOLUME_DEFAULT / 100F));
         }
 
         return Constants.NOT_EMITTER;

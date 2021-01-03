@@ -59,6 +59,7 @@
     "forge:storage_blocks/emerald": "composite"
   },
   "footsteps": {
+    "minecraft:iron_bars": "metalbar",
     "minecraft:water": "not_emitter",
     "minecraft:vine": "#vine",
     "minecraft:bricks": "brickstone",

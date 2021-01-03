@@ -78,8 +78,13 @@ public final class Library {
     }
 
     @Nonnull
-    public static IAcoustic resolve(@Nonnull final String namespace, @Nonnull String definition, @Nullable final Function<ResourceLocation, IAcoustic> specials) {
-        return AcousticLibrary.resolve(namespace, definition, specials);
+    public static IAcoustic resolve(@Nonnull final String namespace, @Nonnull String definition, @Nullable final Function<ResourceLocation, IAcoustic> acousticGenerator) {
+        return AcousticLibrary.resolve(namespace, definition, acousticGenerator);
+    }
+
+    @Nonnull
+    public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nonnull final ResourceLocation acousticDefinition, @Nullable final Function<ResourceLocation, IAcoustic> acousticGenerator) {
+        return AcousticLibrary.resolve(acousticName, acousticDefinition, acousticGenerator);
     }
 
     /**

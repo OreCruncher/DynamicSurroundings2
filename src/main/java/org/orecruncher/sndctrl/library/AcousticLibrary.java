@@ -66,16 +66,6 @@ public final class AcousticLibrary {
     }
 
     public static void initialize() {
-        // This should be invoked from the completion phase of loading.  Need to scan the entire sound event list
-        // creating acoustic entries.
-        final Map<ResourceLocation, SoundEvent> sounds = SoundLibrary.getRegisteredSounds();
-        for (final Map.Entry<ResourceLocation, SoundEvent> kvp : sounds.entrySet()) {
-            if (!compiled.containsKey(kvp.getKey().toString())) {
-                final Optional<SoundEvent> evt = SoundLibrary.getSound(kvp.getKey());
-                evt.ifPresent(e -> addAcoustic(e.getName(), new SimpleAcoustic(e)));
-            }
-        }
-
         final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "acoustics.json");
 
         IResourceAccessor.process(configs, accessor -> {
@@ -88,7 +78,7 @@ public final class AcousticLibrary {
     }
 
     @Nonnull
-    public static IAcoustic resolve(@Nonnull final String namespace, @Nonnull String definition, @Nullable final Function<ResourceLocation, IAcoustic> specials) {
+    public static IAcoustic resolve(@Nonnull final String namespace, @Nonnull String definition, @Nullable final Function<ResourceLocation, IAcoustic> acousticGenerator) {
 
         // Reformat the definition to ensure proper sequencing, etc.
         definition = Arrays.stream(definition.toLowerCase().split(","))
@@ -98,7 +88,7 @@ public final class AcousticLibrary {
 
         IAcoustic result = compiled.get(definition);
         if (result == null) {
-            result = parseDefinition(null, definition, specials);
+            result = parseDefinition(null, definition, acousticGenerator);
         }
         compiled.put(definition, result);
         return result;
@@ -110,7 +100,7 @@ public final class AcousticLibrary {
     }
 
     @Nonnull
-    private static IAcoustic parseDefinition(@Nullable ResourceLocation acousticName, @Nullable String definition, @Nullable final Function<ResourceLocation, IAcoustic> specials) {
+    private static IAcoustic parseDefinition(@Nullable ResourceLocation acousticName, @Nullable String definition, @Nullable final Function<ResourceLocation, IAcoustic> acousticGenerator) {
         IAcoustic result;
         if (!StringUtils.isNullOrEmpty(definition)) {
             if (acousticName == null)
@@ -120,8 +110,8 @@ public final class AcousticLibrary {
                 // See if we have an acoustic for this fragment
                 final ResourceLocation fragLoc = AcousticLibrary.resolveResource(nameSpace, fragment);
                 IAcoustic a = null;
-                if (specials != null)
-                    a = specials.apply(fragLoc);
+                if (acousticGenerator != null)
+                    a = acousticGenerator.apply(fragLoc);
                 if (a == null)
                     a = generateAcoustic(fragLoc);
                 if (a == null)
@@ -149,6 +139,19 @@ public final class AcousticLibrary {
     @Nonnull
     public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nullable final String definition) {
         return resolve(acousticName, definition, false);
+    }
+
+    public static IAcoustic resolve(@Nonnull final ResourceLocation acousticName, @Nonnull final ResourceLocation definition, @Nullable final Function<ResourceLocation, IAcoustic> acousticGenerator) {
+        IAcoustic result;
+
+        result = compiled.get(acousticName.toString());
+
+        if (result == null) {
+            result = parseDefinition(acousticName, definition.toString(), acousticGenerator);
+            addAcoustic(acousticName, result);
+        }
+
+        return result;
     }
 
     @Nonnull
@@ -211,7 +214,6 @@ public final class AcousticLibrary {
         IAcoustic result = compiled.get(evt.getName().toString());
         if (result == null) {
             result = new SimpleAcoustic(evt);
-            addAcoustic(result.getName(), result);
         }
         return result;
     }

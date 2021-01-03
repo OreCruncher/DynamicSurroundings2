@@ -20,6 +20,7 @@ package org.orecruncher.sndctrl.audio.handlers;
 
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,16 +29,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.random.XorShiftRandom;
+import org.orecruncher.sndctrl.api.sound.Category;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
+import org.orecruncher.sndctrl.audio.acoustic.SimpleAcoustic;
 import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.SoundControl;
-import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
-import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
 import org.orecruncher.sndctrl.audio.*;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
-import org.orecruncher.sndctrl.library.AcousticLibrary;
+import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -71,13 +74,10 @@ public final class SoundEventHandling {
             }
 
             final ResourceLocation rl = new ResourceLocation(res);
-            final IAcoustic sound = AcousticLibrary.resolve(rl);
-            final IAcousticFactory factory = sound.getFactory();
-
-            if (factory != null) {
-                final IFadableSoundInstance instance = factory.createBackgroundSound();
-                instance.noFade();
-
+            final Optional<SoundEvent> soundEvent = SoundLibrary.getSound(rl);
+            soundEvent.ifPresent(se -> {
+                final IAcoustic acoustic = new SimpleAcoustic(se);
+                final ISoundInstance instance = new PlayerCenteredSoundInstance(acoustic.getFactory().createSound(), Category.MASTER);
                 // Queue it up on the main client thread.
                 GameUtils.getMC().enqueue(() -> {
                     try {
@@ -86,9 +86,7 @@ public final class SoundEventHandling {
                         LOGGER.error(t, "Error executing startup sound '%s'", rl.toString());
                     }
                 });
-            } else {
-                LOGGER.warn("No factory for sound %s", rl.toString());
-            }
+            });
         }
     }
 }

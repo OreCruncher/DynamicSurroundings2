@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.random.LCGRandom;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
@@ -56,8 +55,7 @@ public class AcousticFactory extends SoundBuilder implements IAcousticFactory {
         super(event, category);
     }
 
-    private static Vector3d randomPoint(int minRange, int maxRange) {
-
+    private static Vector3d randomPoint(final int minRange, final int maxRange) {
         // Establish a random unit vector
         final double x = RANDOM.nextDouble() - 0.5D;
         final double y = RANDOM.nextDouble() - 0.5D;
@@ -66,22 +64,16 @@ public class AcousticFactory extends SoundBuilder implements IAcousticFactory {
 
         // Establish the range and scaling value
         final int range = maxRange - minRange;
-        final double dX;
-        final double dY;
-        final double dZ;
+        final double magnitude;
 
-        if (range == 0) {
-            dX = minRange;
-            dY = minRange;
-            dZ = minRange;
+        if (range <= 0) {
+            magnitude = minRange;
         } else {
-            dX = minRange + RANDOM.nextDouble() * range;
-            dY = minRange + RANDOM.nextDouble() * range;
-            dZ = minRange + RANDOM.nextDouble() * range;
+            magnitude = minRange + RANDOM.nextDouble() * range;
         }
 
         // Generate a vector based on the generated scaling values
-        return vec.mul(dX, dY, dZ);
+        return vec.scale(magnitude);
     }
 
     /**
@@ -134,6 +126,7 @@ public class AcousticFactory extends SoundBuilder implements IAcousticFactory {
      * @param maxRange Maximum range from the entity
      * @return Sound instance for playing
      */
+    @Nonnull
     public ISoundInstance createSoundNear(@Nonnull final Entity entity, final int minRange, final int maxRange) {
         final Vector3d offset = randomPoint(minRange, maxRange);
         final float posX = (float) (entity.getPosX() + offset.getX());

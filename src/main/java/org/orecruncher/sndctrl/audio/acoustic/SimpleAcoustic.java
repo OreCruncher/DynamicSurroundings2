@@ -19,9 +19,7 @@
 package org.orecruncher.sndctrl.audio.acoustic;
 
 import com.google.common.base.MoreObjects;
-import net.minecraft.block.SoundType;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.IArmorMaterial;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -117,21 +115,5 @@ public class SimpleAcoustic implements IAcoustic {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).addValue(getName().toString()).toString();
-    }
-
-    /**
-     * Creates a simple acoustic based on the step sound of the SoundType in question.  The volume is scaled to 15%
-     * based on the reading of the footstep logic in the Entity class.  It is further adjusted by scaling done by the
-     * caller as a default so that the sound volume normalizes.
-     * @param soundType The sound type from which the step acoustic is obtained.
-     * @param category The sound category the acoustic play will belong to
-     * @param defaultSoundScale Scaling factor to apply to the volume when creating the acoustic instance.
-     * @return A SimpleAcoustic ready for use.
-     */
-    public static SimpleAcoustic createStepAcoustic(@Nonnull final SoundType soundType, @Nonnull final ISoundCategory category, final float defaultSoundScale) {
-        final SimpleAcoustic acoustic = new SimpleAcoustic(soundType.getStepSound(), category);
-        acoustic.factory.setVolume(soundType.getVolume() * (0.15F / defaultSoundScale));
-        acoustic.factory.setPitch(soundType.getPitch());
-        return acoustic;
     }
 }

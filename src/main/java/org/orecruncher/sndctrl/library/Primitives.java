@@ -41,6 +41,8 @@ import java.util.Optional;
 @OnlyIn(Dist.CLIENT)
 public class Primitives {
 
+    private static final float MINECRAFT_VOLUME_SCALE = 0.15F;
+
     private static final String ARMOR_EQUIP_PREFIX = "primitive/armor/equip/";
     private static final String ARMOR_ACCENT_PREFIX = "primitive/armor/accent/";
     private static final String FOOTSTEP_PREFIX = "primitive/block/step/";
@@ -74,11 +76,13 @@ public class Primitives {
         return new ResourceLocation(MobEffects.MOD_ID, safePath);
     }
 
+    @Nonnull
     private static ResourceLocation createSoundLocation(@Nonnull final ResourceLocation loc, @Nonnull final ISoundCategory category) {
         final String safePath = Utilities.safeResourcePath(SOUND_PREFIX + category.getName() + "/" + loc.toString());
         return new ResourceLocation(MobEffects.MOD_ID, safePath);
     }
 
+    @Nonnull
     public static IAcoustic getSound(@Nonnull final ResourceLocation loc, @Nonnull final ISoundCategory category) {
         final ResourceLocation resource = createSoundLocation(loc, category);
         IAcoustic acoustic = AcousticLibrary.resolve(resource);
@@ -103,6 +107,7 @@ public class Primitives {
         return acoustic;
     }
 
+    @Nonnull
     public static IAcoustic getArmorAccentAcoustic(@Nonnull final IArmorMaterial material) {
         final ResourceLocation loc = createArmorAccentResource(material);
         return footstepAcousticResolver(loc, material.getSoundEvent());
@@ -130,6 +135,7 @@ public class Primitives {
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
         if (acoustic == NullAcoustic.INSTANCE) {
             final SimpleAcoustic simple = new SimpleAcoustic(soundType, Constants.FOOTSTEPS);
+            simple.getFactory().setVolume(MINECRAFT_VOLUME_SCALE / (Config.FOOTSTEP_VOLUME_DEFAULT / 100F));
             AcousticLibrary.addAcoustic(loc, simple);
             acoustic = simple;
         }
@@ -142,7 +148,7 @@ public class Primitives {
         if (acoustic == NullAcoustic.INSTANCE) {
             final SimpleAcoustic simple = new SimpleAcoustic(soundType.getStepSound(), Constants.FOOTSTEPS);
             // Minecraft scales footstep sound volume to 15%
-            simple.getFactory().setVolume(soundType.getVolume() * (0.15F / (Config.FOOTSTEP_VOLUME_DEFAULT / 100F)));
+            simple.getFactory().setVolume(soundType.getVolume() * (MINECRAFT_VOLUME_SCALE / (Config.FOOTSTEP_VOLUME_DEFAULT / 100F)));
             simple.getFactory().setPitch(soundType.getPitch());
             AcousticLibrary.addAcoustic(loc, simple);
             acoustic = simple;

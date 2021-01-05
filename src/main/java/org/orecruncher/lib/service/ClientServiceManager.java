@@ -94,7 +94,8 @@ public class ClientServiceManager {
 
         long start = System.nanoTime();
 
-        final List<String> results = services.parallelStream().map(svc -> {
+        // parallelStream() - disabled because of concurrency issues
+        final List<String> results = services.stream().map(svc -> {
             long begin = System.nanoTime();
             action.accept(svc);
             long duration = System.nanoTime() - begin;

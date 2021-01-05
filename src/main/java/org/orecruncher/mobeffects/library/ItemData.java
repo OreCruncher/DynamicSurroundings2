@@ -20,9 +20,10 @@ package org.orecruncher.mobeffects.library;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -32,13 +33,11 @@ import org.orecruncher.sndctrl.api.acoustics.Library;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 import org.orecruncher.sndctrl.audio.AudioEngine;
 import org.orecruncher.sndctrl.audio.PlayerCenteredSoundInstance;
-import org.orecruncher.sndctrl.audio.acoustic.SimpleAcoustic;
-import org.orecruncher.sndctrl.library.SoundLibrary;
+import org.orecruncher.sndctrl.audio.acoustic.NullAcoustic;
+import org.orecruncher.sndctrl.library.Primitives;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class ItemData {
@@ -46,6 +45,8 @@ public class ItemData {
     private static final int ACOUSTIC_TYPE_SWING = 0;
     private static final int ACOUSTIC_TYPE_USE = 1;
     private static final int ACOUSTIC_TYPE_EQUIP = 2;
+    private static final int ACOUSTIC_TYPE_ARMOR = 3;
+    private static final int ACOUSTIC_TYPE_ARMOR_FOOT = 4;
 
     private static final float OTHER_PLAYER_VOLUME_SCALE = 0.75F;
 
@@ -54,7 +55,7 @@ public class ItemData {
     private final ResourceLocation use;
     private final ResourceLocation equip;
 
-    private final IAcoustic[] acoustics = new IAcoustic[3];
+    protected final IAcoustic[] acoustics = new IAcoustic[5];
 
     ItemData(@Nonnull final String name, @Nonnull final ResourceLocation sound) {
         this(name, sound, sound, sound);
@@ -68,22 +69,13 @@ public class ItemData {
         this.equip = equip;
     }
 
-    ItemData(@Nonnull final String name, @Nonnull final ResourceLocation loc, @Nonnull final IAcoustic acoustic) {
-        this.name = name;
-        this.swing = loc;
-        this.use = loc;
-        this.equip = loc;
-        Arrays.fill(this.acoustics, acoustic);
-    }
-
-    private IAcoustic resolveAcoustic(final int type, @Nonnull final ResourceLocation loc) {
+    private IAcoustic resolveToolbarAcoustic(final int type, @Nonnull final ResourceLocation loc) {
         IAcoustic acoustic = this.acoustics[type];
         if (acoustic == null) {
-            final Optional<SoundEvent> sound = SoundLibrary.getSound(loc);
-            if (sound.isPresent() && sound.get() != SoundLibrary.MISSING)
-                acoustic = new SimpleAcoustic(sound.get(), Constants.TOOLBAR);
-            else
-                acoustic = Library.resolve(loc);
+            acoustic = Library.resolve(loc);
+            if (acoustic == NullAcoustic.INSTANCE) {
+                acoustic = Primitives.getSound(loc, Constants.TOOLBAR);
+            }
             this.acoustics[type] = acoustic;
         }
         return acoustic;
@@ -144,7 +136,7 @@ public class ItemData {
     }
 
     protected void play(final int type, @Nonnull final ResourceLocation loc, @Nullable final BlockPos pos) {
-        IAcoustic acoustic = resolveAcoustic(type, loc);
+        IAcoustic acoustic = resolveToolbarAcoustic(type, loc);
         final IAcousticFactory factory = acoustic.getFactory(Constants.WALK);
         if (factory != null) {
             final ISoundInstance sound;
@@ -173,18 +165,33 @@ public class ItemData {
 
         @Nonnull
         public IAcoustic getArmorSound(@Nonnull final ItemStack stack) {
-            return Library.resolve(this.armor);
+            return resolveArmorAcoustic(ACOUSTIC_TYPE_ARMOR, this.armor, stack);
         }
 
         @Nonnull
         public IAcoustic getFootArmorSound(@Nonnull final ItemStack stack) {
-            return Library.resolve(this.foot);
+            return resolveArmorAcoustic(ACOUSTIC_TYPE_ARMOR_FOOT, this.foot, stack);
         }
 
         public int getPriority() {
             return this.priority;
         }
 
+        private IAcoustic resolveArmorAcoustic(final int type, @Nonnull final ResourceLocation loc, @Nonnull final ItemStack stack) {
+            IAcoustic acoustic = NullAcoustic.INSTANCE;
+            final Item item = stack.getItem();
+            if (item instanceof ArmorItem) {
+                acoustic = this.acoustics[type];
+                if (acoustic == null) {
+                    acoustic = Library.resolve(loc);
+                    if (acoustic == NullAcoustic.INSTANCE) {
+                        acoustic = Primitives.getArmorAccentAcoustic(((ArmorItem) item).getArmorMaterial());
+                    }
+                    this.acoustics[type] = acoustic;
+                }
+            }
+            return acoustic;
+        }
     }
 
 }

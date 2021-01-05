@@ -27,17 +27,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.dsurround.DynamicSurroundings;
-import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ClientServiceManager;
 import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.mobeffects.MobEffects;
-import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
-import org.orecruncher.sndctrl.api.acoustics.Library;
-import org.orecruncher.sndctrl.audio.acoustic.NullAcoustic;
-import org.orecruncher.sndctrl.audio.acoustic.SimpleAcoustic;
+import org.orecruncher.sndctrl.library.Primitives;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,8 +45,6 @@ import java.util.regex.Pattern;
 
 @OnlyIn(Dist.CLIENT)
 public final class ItemLibrary {
-
-    private static final String PRIMITIVE_PREFIX = "primitive/armor/";
 
     // For things that don't make an equip sound - like AIR
     public static final ItemData EMPTY = new ItemData("EMPTY", Constants.NONE);
@@ -124,13 +118,12 @@ public final class ItemLibrary {
         if (item.getItem() instanceof ArmorItem) {
             final ArmorItem ai = (ArmorItem) item.getItem();
             final IArmorMaterial material = ai.getArmorMaterial();
-            final ResourceLocation loc = createPrimitiveResource(material);
-            IAcoustic acoustic = Library.resolve(loc);
-            if (acoustic == NullAcoustic.INSTANCE) {
-                acoustic = createPrimitiveAcoustic(material);
-                Library.registerAcoustic(loc, acoustic);
-            }
-            return new ItemData("adhoc", loc, acoustic);
+            // Make sure the primitives get created before assigning to an item
+            Primitives.getArmorToolbarAcoustic(material);
+            Primitives.getArmorAccentAcoustic(material);
+            final ResourceLocation loc = Primitives.createArmorToolbarResource(material);
+            final ResourceLocation armorLoc = Primitives.createArmorAccentResource(material);
+            return new ItemData.ArmorItemData("adhoc", loc, armorLoc, armorLoc, 0);
         }
 
         return NONE;
@@ -209,14 +202,6 @@ public final class ItemLibrary {
         return data;
     }
 
-    private static ResourceLocation createPrimitiveResource(@Nonnull final IArmorMaterial material) {
-        return new ResourceLocation(MobEffects.MOD_ID, Utilities.safeResourcePath(PRIMITIVE_PREFIX + material.getName()));
-    }
-
-    private static IAcoustic createPrimitiveAcoustic(@Nonnull final IArmorMaterial material) {
-        return SimpleAcoustic.createArmorAcoustic(material, Constants.TOOLBAR, 1F);
-    }
-
     private static class ItemLibraryService implements IClientService {
 
         @Override
@@ -226,13 +211,6 @@ public final class ItemLibrary {
 
         @Override
         public void start() {
-
-            // Initialize primitives for armor equip sounds
-            for(final ArmorMaterial material : ArmorMaterial.values()) {
-                final ResourceLocation loc = createPrimitiveResource(material);
-                final IAcoustic acoustic = createPrimitiveAcoustic(material);
-                Library.registerAcoustic(loc, acoustic);
-            }
 
             for (final ItemData ic : CACHE.values())
                 classMap.put(ic, new ReferenceOpenHashSet<>(SET_CAPACITY));

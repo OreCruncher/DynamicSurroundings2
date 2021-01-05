@@ -26,7 +26,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorMaterial;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -34,10 +33,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jline.terminal.impl.jna.linux.LinuxNativePty;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.SoundTypeUtils;
-import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.tags.TagUtils;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
 import org.orecruncher.lib.blockstate.BlockStateMatcherMap;
@@ -59,8 +56,9 @@ import org.orecruncher.mobeffects.library.config.VariatorConfig;
 import org.orecruncher.mobeffects.misc.IMixinFootstepData;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
-import org.orecruncher.sndctrl.audio.acoustic.SimpleAcoustic;
+import org.orecruncher.sndctrl.audio.acoustic.NullAcoustic;
 import org.orecruncher.sndctrl.events.BlockInspectionEvent;
+import org.orecruncher.sndctrl.library.Primitives;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,8 +69,6 @@ import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FootstepLibrary {
-
-    private static final String PRIMITIVE_PREFIX = "primitive/step/";
 
     private static final String TEXT_FOOTSTEPS = TextFormatting.DARK_PURPLE + "<Footsteps>";
     private static final Map<Substrate, BlockAcousticMap> substrateMap = new EnumMap<>(Substrate.class);
@@ -225,8 +221,7 @@ public final class FootstepLibrary {
             if (SoundTypeUtils.getSoundType(kvp.getKey()) == null) {
                 LOGGER.warn("'%s' is not a known SoundType; adding and praying...", kvp.getKey());
             }
-            final String resourcePath = PRIMITIVE_PREFIX + kvp.getKey().toLowerCase(Locale.ROOT);
-            final ResourceLocation loc = new ResourceLocation(MobEffects.MOD_ID, resourcePath);
+            final ResourceLocation loc = Primitives.createFootstepResource(kvp.getKey());
             Library.resolve(loc, kvp.getValue(), true);
         }
 
@@ -246,14 +241,6 @@ public final class FootstepLibrary {
             if (matcher != BlockStateMatcher.AIR)
                 FOOTPRINT_STATES.put(matcher, true);
         }
-    }
-
-    private static ResourceLocation createPrimitiveResource(@Nonnull final SoundType st) {
-        return new ResourceLocation(MobEffects.MOD_ID, Utilities.safeResourcePath(PRIMITIVE_PREFIX + SoundTypeUtils.getSoundTypeName(st)));
-    }
-
-    private static IAcoustic createPrimitiveAcoustic(@Nonnull final SoundType type) {
-        return SimpleAcoustic.createStepAcoustic(type, Constants.FOOTSTEPS, Config.FOOTSTEP_VOLUME_DEFAULT / 100F);
     }
 
     /**
@@ -469,18 +456,8 @@ public final class FootstepLibrary {
         final Material mat = state.getMaterial();
         if (!mat.blocksMovement() || mat.isLiquid())
             return Constants.NOT_EMITTER;
-        final String soundTypeName = SoundTypeUtils.getSoundTypeName(state.getSoundType());
-        if (soundTypeName != null) {
-            final ResourceLocation loc = createPrimitiveResource(state.getSoundType());
-            // Note that the acousticGenerator would rarely be called.  This can happen if a mod
-            // adds a custom sound type that the we don't know about.
-            return Library.resolve(
-                    loc,
-                    state.getSoundType().getStepSound().getRegistryName(),
-                    (ignored) -> createPrimitiveAcoustic(state.getSoundType()));
-        }
-
-        return Constants.NOT_EMITTER;
+        final IAcoustic acoustic = Primitives.getFootstepAcoustic(state);
+        return acoustic == NullAcoustic.INSTANCE ? Constants.NOT_EMITTER : acoustic;
     }
 
     public static boolean hasFootprint(@Nonnull final BlockState state) {
@@ -541,13 +518,6 @@ public final class FootstepLibrary {
 
         @Override
         public void start() {
-
-            // Register all the known SoundType footstep events as primitive acoustics
-            SoundTypeUtils.forEach(st -> {
-                final IAcoustic acoustic = createPrimitiveAcoustic(st);
-                final ResourceLocation loc = createPrimitiveResource(st);
-                Library.registerAcoustic(loc, acoustic);
-            });
 
             Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "variators.json");
 

@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ import org.orecruncher.mobeffects.library.Constants;
 import org.orecruncher.mobeffects.library.FootstepLibrary;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.audio.acoustic.AcousticCompiler;
-import org.orecruncher.sndctrl.audio.acoustic.SimpleAcoustic;
+import org.orecruncher.sndctrl.library.Primitives;
 
 @OnlyIn(Dist.CLIENT)
 public class AcousticResolver {
@@ -171,8 +171,7 @@ public class AcousticResolver {
 		if (!(state.getMaterial().isLiquid() || state.isAir(this.world, blockpos))) {
 			BlockState blockstate = this.world.getBlockState(blockpos.up());
 			SoundType soundtype = blockstate.isIn(Blocks.SNOW) ? blockstate.getSoundType(this.world, blockpos, this.loc.getEntity()) : state.getSoundType(this.world, blockpos, this.loc.getEntity());
-			// Sound scaling is converted to float and is based on the FOOTSTEP sound category default
-			final IAcoustic acoustics = SimpleAcoustic.createStepAcoustic(soundtype, Constants.FOOTSTEPS, Config.FOOTSTEP_VOLUME_DEFAULT / 100F);
+			final IAcoustic acoustics = Primitives.getVanillaFootstepAcoustic(soundtype);
 			return new Association(this.loc, acoustics);
 		}
 

@@ -66,6 +66,7 @@ public final class AcousticLibrary {
     }
 
     public static void initialize() {
+
         final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "acoustics.json");
 
         IResourceAccessor.process(configs, accessor -> {

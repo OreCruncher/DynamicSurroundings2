@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,15 +37,6 @@ import java.util.function.Function;
 public final class Library {
     private Library() {
 
-    }
-
-    /**
-     * Registers an acoustic with the provided resource identifier.
-     * @param resource Resource name associated wtih the acoustic
-     * @param acoustic Acoustic to register
-     */
-    public static void registerAcoustic(@Nonnull final ResourceLocation resource, @Nonnull final IAcoustic acoustic) {
-        AcousticLibrary.addAcoustic(resource, acoustic);
     }
 
     /**

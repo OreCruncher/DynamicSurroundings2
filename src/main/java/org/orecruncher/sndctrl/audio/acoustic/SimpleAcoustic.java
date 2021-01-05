@@ -66,6 +66,11 @@ public class SimpleAcoustic implements IAcoustic {
     }
 
     @Nonnull
+    public AcousticFactory getFactory() {
+        return this.factory;
+    }
+
+    @Nonnull
     public ResourceLocation getName() {
         return this.name;
     }
@@ -127,19 +132,6 @@ public class SimpleAcoustic implements IAcoustic {
         final SimpleAcoustic acoustic = new SimpleAcoustic(soundType.getStepSound(), category);
         acoustic.factory.setVolume(soundType.getVolume() * (0.15F / defaultSoundScale));
         acoustic.factory.setPitch(soundType.getPitch());
-        return acoustic;
-    }
-
-    /**
-     * Creates a simple acoustic based on the equip sound of the armor material in question.
-     * @param material The material to create an acoustic for
-     * @param category The soundc ategory the acoustic play will belong to
-     * @param defaultSoundScale Scaling factor to apply to the volume when creating the acoustic instance.
-     * @return A SimpleAcoustic ready for use
-     */
-    public static SimpleAcoustic createArmorAcoustic(@Nonnull final IArmorMaterial material, @Nonnull final ISoundCategory category, final float defaultSoundScale) {
-        final SimpleAcoustic acoustic = new SimpleAcoustic(material.getSoundEvent(), category);
-        acoustic.factory.setVolume(defaultSoundScale);
         return acoustic;
     }
 }

@@ -21,19 +21,23 @@ package org.orecruncher.mobeffects.library;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.dsurround.DynamicSurroundings;
+import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ClientServiceManager;
 import org.orecruncher.lib.service.IClientService;
 import org.orecruncher.mobeffects.MobEffects;
+import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
+import org.orecruncher.sndctrl.api.acoustics.Library;
+import org.orecruncher.sndctrl.audio.acoustic.NullAcoustic;
+import org.orecruncher.sndctrl.audio.acoustic.SimpleAcoustic;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,6 +49,8 @@ import java.util.regex.Pattern;
 
 @OnlyIn(Dist.CLIENT)
 public final class ItemLibrary {
+
+    private static final String PRIMITIVE_PREFIX = "primitive/armor/";
 
     // For things that don't make an equip sound - like AIR
     public static final ItemData EMPTY = new ItemData("EMPTY", Constants.NONE);
@@ -61,6 +67,7 @@ public final class ItemLibrary {
     public static final ItemData TOOL = new ItemData("TOOL", Constants.TOOL_SWING, Constants.NONE, Constants.TOOL_EQUIP);
     public static final ItemData BOOK = new ItemData("BOOK", Constants.BOOK_EQUIP, Constants.BOOK_EQUIP, Constants.BOOK_EQUIP);
     public static final ItemData POTION = new ItemData("POTION", Constants.POTION_EQUIP, Constants.POTION_EQUIP, Constants.POTION_EQUIP);
+    public static final ItemData NETHERITE = new ItemData("NETHERITE", Constants.NETHERITE_ARMOR_EQUIP, Constants.NETHERITE_ARMOR_EQUIP, Constants.NETHERITE_ARMOR_EQUIP);
 
     private static final IModLog LOGGER = MobEffects.LOGGER.createChild(ItemLibrary.class);
     private static final Object2ReferenceAVLTreeMap<String, ItemData> CACHE = new Object2ReferenceAVLTreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -112,6 +119,20 @@ public final class ItemLibrary {
             if (doesBelong(itemSet, item))
                 return ic;
         }
+
+        // See if it is an armor item.  We can use the equip sound from the material entry.
+        if (item.getItem() instanceof ArmorItem) {
+            final ArmorItem ai = (ArmorItem) item.getItem();
+            final IArmorMaterial material = ai.getArmorMaterial();
+            final ResourceLocation loc = createPrimitiveResource(material);
+            IAcoustic acoustic = Library.resolve(loc);
+            if (acoustic == NullAcoustic.INSTANCE) {
+                acoustic = createPrimitiveAcoustic(material);
+                Library.registerAcoustic(loc, acoustic);
+            }
+            return new ItemData("adhoc", loc, acoustic);
+        }
+
         return NONE;
     }
 
@@ -188,6 +209,14 @@ public final class ItemLibrary {
         return data;
     }
 
+    private static ResourceLocation createPrimitiveResource(@Nonnull final IArmorMaterial material) {
+        return new ResourceLocation(MobEffects.MOD_ID, Utilities.safeResourcePath(PRIMITIVE_PREFIX + material.getName()));
+    }
+
+    private static IAcoustic createPrimitiveAcoustic(@Nonnull final IArmorMaterial material) {
+        return SimpleAcoustic.createArmorAcoustic(material, Constants.TOOLBAR, 1F);
+    }
+
     private static class ItemLibraryService implements IClientService {
 
         @Override
@@ -197,14 +226,20 @@ public final class ItemLibrary {
 
         @Override
         public void start() {
+
+            // Initialize primitives for armor equip sounds
+            for(final ArmorMaterial material : ArmorMaterial.values()) {
+                final ResourceLocation loc = createPrimitiveResource(material);
+                final IAcoustic acoustic = createPrimitiveAcoustic(material);
+                Library.registerAcoustic(loc, acoustic);
+            }
+
             for (final ItemData ic : CACHE.values())
                 classMap.put(ic, new ReferenceOpenHashSet<>(SET_CAPACITY));
 
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "armor_accents.json");
 
-            IResourceAccessor.process(configs, accessor -> {
-                initFromConfig(accessor.as(ItemLibrary.entityConfigType));
-            });
+            IResourceAccessor.process(configs, accessor -> initFromConfig(accessor.as(ItemLibrary.entityConfigType)));
 
             // Iterate through the list of registered Items to see if we know about them, or can infer based on class
             // matching.

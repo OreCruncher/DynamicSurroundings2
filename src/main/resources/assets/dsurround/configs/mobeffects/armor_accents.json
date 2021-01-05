@@ -30,6 +30,12 @@
     "minecraft:golden_chestplate",
     "minecraft:golden_helmet"
   ],
+  "NETHERITE": [
+    "minecraft:netherite_boots",
+    "minecraft:netherite_leggings",
+    "minecraft:netherite_chestplate",
+    "minecraft:netherite_helmet"
+  ],
   "AXE": [
     "net.minecraft.item.AxeItem",
     "net.minecraft.item.PickaxeItem"

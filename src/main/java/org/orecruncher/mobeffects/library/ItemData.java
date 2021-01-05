@@ -37,6 +37,7 @@ import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
@@ -65,6 +66,14 @@ public class ItemData {
         this.swing = swing;
         this.use = use;
         this.equip = equip;
+    }
+
+    ItemData(@Nonnull final String name, @Nonnull final ResourceLocation loc, @Nonnull final IAcoustic acoustic) {
+        this.name = name;
+        this.swing = loc;
+        this.use = loc;
+        this.equip = loc;
+        Arrays.fill(this.acoustics, acoustic);
     }
 
     private IAcoustic resolveAcoustic(final int type, @Nonnull final ResourceLocation loc) {

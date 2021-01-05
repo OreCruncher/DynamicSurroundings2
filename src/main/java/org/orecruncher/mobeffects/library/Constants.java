@@ -19,6 +19,7 @@
 package org.orecruncher.mobeffects.library;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.mobeffects.config.Config;
@@ -65,11 +66,13 @@ public final class Constants {
     public static final ResourceLocation MEDIUM_FOOT_ARMOR = new ResourceLocation(MobEffects.MOD_ID, "medium_foot");
     public static final ResourceLocation HEAVY_FOOT_ARMOR = new ResourceLocation(MobEffects.MOD_ID, "heavy_foot");
     public static final ResourceLocation CRYSTAL_FOOT_ARMOR = new ResourceLocation(MobEffects.MOD_ID, "crystal_foot");
+    public static final ResourceLocation NETHERITE_ARMOR = SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE.getName();
 
     public static final ResourceLocation LEATHER_ARMOR_EQUIP = LIGHT_ARMOR;
     public static final ResourceLocation CHAIN_ARMOR_EQUIP = MEDIUM_ARMOR;
     public static final ResourceLocation CRYSTAL_ARMOR_EQUIP = CRYSTAL_ARMOR;
     public static final ResourceLocation PLATE_ARMOR_EQUIP = HEAVY_ARMOR;
+    public static final ResourceLocation NETHERITE_ARMOR_EQUIP = NETHERITE_ARMOR;
     public static final ResourceLocation UTILITY_EQUIP = new ResourceLocation(MobEffects.MOD_ID, "utility.equip");
     public static final ResourceLocation TOOL_EQUIP = new ResourceLocation(MobEffects.MOD_ID, "tool.equip");
     public static final ResourceLocation TOOL_SWING = new ResourceLocation(MobEffects.MOD_ID, "tool.swing");

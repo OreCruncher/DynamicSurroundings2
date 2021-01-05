@@ -23,7 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class Utilities {
     private Utilities() {
@@ -79,5 +82,9 @@ public final class Utilities {
         c[aLen] = b;
 
         return c;
+    }
+
+    public static String safeResourcePath(@Nonnull final String path) {
+        return path.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9/._\\-]", ".");
     }
 }

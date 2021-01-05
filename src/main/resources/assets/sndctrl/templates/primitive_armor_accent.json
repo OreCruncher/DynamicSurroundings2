@@ -1,0 +1,56 @@
+{
+  "<NAME>": {
+    "type": "event",
+    "walk": {
+      "name": "<ACOUSTIC>",
+      "category": "footsteps",
+      "vol_min": 30,
+      "vol_max": 40
+    },
+    "run": {
+      "name": "<ACOUSTIC>",
+      "category": "footsteps",
+      "vol_min": 30,
+      "vol_max": 40,
+      "pitch_min": 100,
+      "pitch_max": 120
+    },
+    "wander": {
+      "name": "<ACOUSTIC>",
+      "category": "footsteps",
+      "vol_min": 30,
+      "vol_max": 40
+    },
+    "jump": {
+      "name": "<ACOUSTIC>",
+      "category": "footsteps",
+      "vol_min": 30,
+      "vol_max": 40
+    },
+    "land": {
+      "type": "simultaneous",
+      "array": [
+        {
+          "name": "<ACOUSTIC>",
+          "category": "footsteps",
+          "vol_min": 30,
+          "vol_max": 40
+        },
+        {
+          "name": "<ACOUSTIC>",
+          "category": "footsteps",
+          "vol_min": 50,
+          "vol_max": 50
+        },
+        {
+          "name": "<ACOUSTIC>",
+          "category": "footsteps",
+          "type": "delayed",
+          "delay": 1,
+          "vol_min": 30,
+          "vol_max": 40
+        }
+      ]
+    }
+  }
+}

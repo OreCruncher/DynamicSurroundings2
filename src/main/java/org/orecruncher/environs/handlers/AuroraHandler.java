@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,10 +20,10 @@ package org.orecruncher.environs.handlers;
 
 import javax.annotation.Nonnull;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
@@ -34,13 +34,13 @@ import org.orecruncher.environs.shaders.aurora.IAurora;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
 
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.orecruncher.lib.math.LoggingTimerEMA;
 
 @OnlyIn(Dist.CLIENT)
 public final class AuroraHandler extends HandlerBase {
 
 	private static final IModLog LOGGER = Environs.LOGGER.createChild(AuroraHandler.class);
+	private static AuroraHandler handler;
 
 	private final LoggingTimerEMA render = new LoggingTimerEMA("Render Aurora");
 	private IAurora current;
@@ -52,12 +52,14 @@ public final class AuroraHandler extends HandlerBase {
 
 	@Override
 	public void onConnect() {
+		handler = this;
 		this.current = null;
 	}
 
 	@Override
 	public void onDisconnect() {
 		this.current = null;
+		handler = null;
 	}
 
 	private boolean isAuroraTimeOfDay() {
@@ -69,8 +71,6 @@ public final class AuroraHandler extends HandlerBase {
 	}
 
 	private boolean canAuroraStay() {
-		return false;
-		/*
 		if (!Config.CLIENT.aurora.auroraEnabled.get())
 			return false;
 
@@ -78,8 +78,6 @@ public final class AuroraHandler extends HandlerBase {
 				&& AuroraUtils.getChunkRenderDistance() >= 6
 				&& AuroraUtils.dimensionHasAuroras()
 				&& CommonState.getTruePlayerBiome().getHasAurora();
-
-		 */
 	}
 
 	@Override
@@ -116,13 +114,22 @@ public final class AuroraHandler extends HandlerBase {
 		this.dimensionId = CommonState.getDimensionId();
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void doRender(@Nonnull final RenderWorldLastEvent event) {
+	private void doRender(@Nonnull final MatrixStack matrixStack, final float partialTick) {
 		this.render.begin();
 		if (this.current != null) {
-			this.current.render(event);
+			this.current.render(matrixStack, partialTick);
 		}
 		this.render.end();
+	}
+
+	/**
+	 * Hook called by a Mixin to render the aurora.  Hook is at the tail end of particle rendering.
+	 * @param matrixStack Matrix stack of the current environment
+	 * @param partialTick Partial tick, duh
+	 */
+	public static void renderHook(@Nonnull final MatrixStack matrixStack, final float partialTick) {
+		if (handler != null)
+			handler.doRender(matrixStack, partialTick);
 	}
 
 	@SubscribeEvent

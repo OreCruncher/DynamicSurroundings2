@@ -20,6 +20,7 @@ package org.orecruncher.environs.shaders.aurora;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -28,9 +29,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.lwjgl.opengl.GL11;
+import org.orecruncher.environs.Environs;
 
 @OnlyIn(Dist.CLIENT)
-@SuppressWarnings("deprecation")
 public class AuroraRenderType extends RenderType {
     public AuroraRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
         super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
@@ -42,49 +43,26 @@ public class AuroraRenderType extends RenderType {
                 RenderSystem.enableBlend();
                 RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             },
-            () -> {
-                RenderSystem.disableBlend();
-            });
+            RenderSystem::disableBlend);
 
-    private static final AlphaState AURORA_ALPHA = new AlphaState(0.1F);
+    private static final TargetState TARGET = field_239238_U_;
 
-    public static final RenderType QUADS = new AuroraRenderType(
-            "aurora_render_type",
-            DefaultVertexFormats.POSITION_TEX,
-            GL11.GL_QUADS,
-            256,
-            true,
-            false,
-            () -> {     // Setup
-                RenderSystem.enableBlend();
-                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-                RenderSystem.enableAlphaTest();
-                RenderSystem.defaultAlphaFunc();
-                RenderSystem.disableCull();
-                RenderSystem.enableDepthTest();
-                RenderSystem.depthFunc(GL11.GL_LEQUAL);
-                RenderSystem.depthMask(true);
-            },
-            () -> {     // Teardown
-                RenderSystem.disableDepthTest();
-                RenderSystem.enableCull();
-                RenderSystem.disableAlphaTest();
-                RenderSystem.disableBlend();
-                RenderSystem.depthMask(true);
-            });
+    public static ResourceLocation TEXTURE = new ResourceLocation(Environs.MOD_ID,"textures/misc/aurora_band.png");
 
-    public static final RenderType QUAD_TEST = makeType(
+    public static final RenderType QUAD = makeType(
             "aurora_render_type",
             DefaultVertexFormats.POSITION_TEX,
             GL11.GL_QUADS,
             64,
             RenderType.State.getBuilder()
-                    .texture(new TextureState(new ResourceLocation("minecraft:textures/block/cobblestone.png"), false, false))
+                    .texture(new TextureState(TEXTURE, false, false))
                     .transparency(AURORA_TRANSPARENCY)
-                    //.shadeModel(RenderState.SHADE_ENABLED) // maybe
-                    .alpha(AURORA_ALPHA)
+                    .target(TARGET)
+                    .fog(FOG)
+                    .shadeModel(RenderState.SHADE_ENABLED)
+                    .alpha(DEFAULT_ALPHA)
                     .depthTest(DEPTH_LEQUAL)
                     .cull(CULL_DISABLED)
-                    .writeMask(DEPTH_WRITE) // maybe
+                    .writeMask(RenderState.COLOR_DEPTH_WRITE)
                     .build(false));
 }

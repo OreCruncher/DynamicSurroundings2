@@ -11,6 +11,7 @@
     "MixinBlockState",
     "MixinBiome",
     "MixinDripParticleDripping",
-    "MixinRainParticle"
+    "MixinRainParticle",
+    "MixinParticleManager"
   ]
 }

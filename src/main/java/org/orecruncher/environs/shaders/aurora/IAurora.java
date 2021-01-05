@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 
 package org.orecruncher.environs.shaders.aurora;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import javax.annotation.Nonnull;
 
@@ -59,6 +59,6 @@ public interface IAurora {
 	 * Render the aurora to the client screen. It is possible that other updates can
 	 * occur to the state, such as doing the transformations to animate.
 	 */
-	void render(@Nonnull final RenderWorldLastEvent event);
+	void render(@Nonnull final MatrixStack matrixStack, final float partialTick);
 
 }

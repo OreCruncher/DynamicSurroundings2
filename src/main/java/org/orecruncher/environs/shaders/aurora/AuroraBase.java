@@ -22,11 +22,11 @@ import java.util.Random;
 
 import javax.annotation.Nonnull;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.environs.library.DimensionInfo;
@@ -99,7 +99,7 @@ public abstract class AuroraBase implements IAurora {
 	}
 
 	protected double getTranslationZ(final float partialTick) {
-		return MathHelper.lerp(partialTick, this.player.lastTickPosZ, this.player.getPosZ()) - 3 * AuroraUtils.PLAYER_FIXED_Z_OFFSET;
+		return MathHelper.lerp(partialTick, this.player.lastTickPosZ, this.player.getPosZ()) - AuroraUtils.PLAYER_FIXED_Z_OFFSET;
 	}
 
 	protected double getTranslationY(final float partialTick) {
@@ -129,7 +129,7 @@ public abstract class AuroraBase implements IAurora {
 	}
 
 	@Override
-	public abstract void render(@Nonnull final RenderWorldLastEvent event);
+	public abstract void render(@Nonnull final MatrixStack matrixStack, final float partialTick);
 
 	@Override
 	public String toString() {

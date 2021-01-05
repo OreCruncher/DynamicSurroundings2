@@ -19,17 +19,13 @@
 package org.orecruncher.environs.shaders.aurora;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.orecruncher.environs.shaders.ShaderPrograms;
 import org.orecruncher.lib.shaders.ShaderManager;
 import org.orecruncher.lib.GameUtils;
@@ -38,8 +34,6 @@ import org.orecruncher.lib.math.MathStuff;
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
-import org.lwjgl.opengl.GL11;
-
 /*
  * Renders a shader generated aurora along a curved path.  Makes it ribbon like.
  */
@@ -47,7 +41,7 @@ import org.lwjgl.opengl.GL11;
 public class AuroraShaderBand extends AuroraBase {
 
 	private static final float V1 = 0;
-	private static final float V2 = 1F;
+	private static final float V2 = 0.5F;
 	
 	protected ShaderPrograms program;
 	protected Consumer<ShaderManager.ShaderCallContext> callback;
@@ -111,40 +105,22 @@ public class AuroraShaderBand extends AuroraBase {
 	}
 
 	@Override
-	public void render(@Nonnull final RenderWorldLastEvent event) {
+	public void render(@Nonnull final MatrixStack matrixStack, final float partialTick) {
 
 		if (this.program == null)
 			return;
 
-		final MatrixStack matrixStack = event.getMatrixStack();
-		final float partialTick = event.getPartialTicks();
 		this.band.translate(partialTick);
 
 		final double tranY = getTranslationY(partialTick);
 		final double tranX = getTranslationX(partialTick);
 		final double tranZ = getTranslationZ(partialTick);
 
-		//final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
-		//final IVertexBuilder builder = buffer.getBuffer(AuroraRenderType.QUAD_TEST);
+		final RenderType type = AuroraRenderType.QUAD;
+		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
+		final IVertexBuilder builder = buffer.getBuffer(type);
 
-		final Tessellator tessellator = Tessellator.getInstance();
-		final BufferBuilder builder = tessellator.getBuffer();
-		RenderSystem.enableBlend();
-		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		RenderSystem.enableAlphaTest();
-		RenderSystem.defaultAlphaFunc();
-		RenderSystem.disableCull();
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(GL11.GL_LEQUAL);
-		RenderSystem.depthMask(true);
-
-		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-		//ShaderPrograms.MANAGER.useShader(this.program, this.callback);
-
-		final Vector3d view = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView();
-		matrixStack.push();
-		matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
+		ShaderPrograms.MANAGER.useShader(this.program, this.callback);
 
 		try {
 
@@ -161,22 +137,9 @@ public class AuroraShaderBand extends AuroraBase {
 		}
 
 		RenderSystem.disableDepthTest();
-		RenderSystem.enableCull();
-		RenderSystem.disableAlphaTest();
-		RenderSystem.disableBlend();
-		RenderSystem.depthMask(true);
-
-		tessellator.draw();
-
-		//buffer.finish(AuroraRenderType.QUAD_TEST);
-//		RenderSystem.disableDepthTest();
-//		RenderSystem.enableCull();
-//		RenderSystem.disableAlphaTest();
-		//RenderSystem.disableBlend();
+		buffer.finish(type);
 
 		ShaderPrograms.MANAGER.releaseShader();
-
-		matrixStack.pop();
 	}
 
 	@Override

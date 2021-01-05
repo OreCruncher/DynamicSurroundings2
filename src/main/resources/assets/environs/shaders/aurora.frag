@@ -26,6 +26,12 @@ uniform float alpha;
 
 vec2 hashConst = vec2(12.9898, 78.233);
 
+// Weights to give the color components when calculating luminosity.  If tweaking the sum of
+// the factors has to equal 1.
+//vec3 LUMA_FACTORS = vec3(0.2126, 0.7152, 0.0722);
+vec3 LUMA_FACTORS = vec3(0.2841, 0.5722, 0.1437);
+float LUMA_THRESHOLD = 0.25F;
+
 // Noise functions
 float hash(vec2 co) {
 	return fract(sin(dot(co, hashConst)) * 43758.5453);
@@ -180,25 +186,29 @@ void main() {
 	// Aurora (with some transformation)
 	float f = 0.15 * pnoise1(vec2(5.0 * uv.x, 0.3 * time));
 	vec2 aco = co;
-	aco.y -= f;  // This affects height of rendering
+	aco.y -= f;// This affects the distance from the bottom of the panel
 	// aco *= 10.0 * uv.x + 5.0;
 	aco *= 10.0 * uv.x + 20.0;
 	col += 0.5 * lights(aco)
-			* (smoothstep(0.3, 0.6, pnoise1(vec2(10.0 * uv.x, 0.3 * time)))
-					+ 0.5
-							* smoothstep(0.5, 0.7,
-									pnoise1(vec2(10.0 * uv.x, time))));
+	* (smoothstep(0.3, 0.6, pnoise1(vec2(10.0 * uv.x, 0.3 * time)))
+	+ 0.5
+	* smoothstep(0.5, 0.7, pnoise1(vec2(10.0 * uv.x, time))));
 
-	// Need to tweak the alpha at the edges so they fade rather than end
-	// abruptly at the edge of the quad.  Because of how the alpha channel
-	// works we multiply the fade ratio against each of the color
-	// components to "darken" it.
-	float ratio = 1.0;
-	if (uv.x < 0.25) {
-		ratio = uv.x / 0.25;
-	} else if (uv.x > 0.75) {
-		ratio = (1.0 - uv.x) / 0.25;
+	// May need to tweak the alpha
+	float adjustAlpha = alpha;
+
+	// Calculate the luminosity of the generated color.  If it is low scale the alpha downward and increase color
+	// luminosity.  This should minimize generation of dark/black colors in favor of fading.  Looks better when
+	// mixing the texture into the scene.
+	float lumaCalc = dot(col, LUMA_FACTORS);
+	if (lumaCalc < LUMA_THRESHOLD) {
+		adjustAlpha *= lumaCalc / LUMA_THRESHOLD;
+
+		// Brighten the color by scaling up using luma
+		float t = LUMA_THRESHOLD - lumaCalc;
+		col *= (1 + LUMA_FACTORS * t);
 	}
 
-	gl_FragColor = vec4(col * (alpha * ratio), 1.0);
+	// Done!
+	gl_FragColor = vec4(col, adjustAlpha);
 }

@@ -35,7 +35,7 @@ public class AuroraUtils {
 	}
 
 	public static final int PLAYER_FIXED_Y_OFFSET = 64;
-	public static final int PLAYER_FIXED_Z_OFFSET = 300;
+	public static final int PLAYER_FIXED_Z_OFFSET = 150;
 
 	public static final int AURORA_PEAK_AGE = 512;
 	public static final int AURORA_AGE_RATE = 1;

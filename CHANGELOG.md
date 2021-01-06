@@ -1,7 +1,35 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.0
+**Requirements**
+* Forge 1.16.4-35.1.10+
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**What's New**
+* Rain splash generation on non-lava liquid will spawn ripples instead of splash.
+* Acoustic versions of nether blocks.  Reused new block step sounds and accented with additional sounds.
+* Auroras are now enabled.  Look for them in colder biomes, usually in the northern sky.  (May need some additional tuning.)
+* Improved primitive sound handling for items and footsteps:
+  * For unknown armor items the armor material equip sound is used for toolbar effects.
+  * Armor accents are generated based on armor material equip sound if there isn't a more specific acoustic already defined.
+  * Footstep sounds will be generated if there isn't a more specific acoustic already defined.
+  * Acoustic generation is template based and attempts to give a better experience than a simple sound play.
+
+**Fixes**
+* Footprint particles on snow, soul sand, and farm blocks position properly.
+* Waterlogged blocks particle effects:
+  * Water ripple effects will now generate.
+  * Lava/Water dripping into a waterlogged block will play splash and sound.
+* Water ripples are now colored based on the fluid dictionary color.  Water will be colored based on biome water color.
+
+**Changes**
+* Changed default block occlusion to be less dense.
+* Increased attenuation distance of small water fall sound to 16.
+
 > ### DynamicSurroundings-1.16.4-4.0.2.0
 **Requirements**
-* Forge 1.16.4-35.1.10
+* Forge 1.16.4-35.1.10+
 * 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
 
 **What's New**
 * Added configuration menus.
@@ -22,7 +50,7 @@
 
 > ### DynamicSurroundings-1.16.4-4.0.1.5
 **Requirements**
-* Forge 1.16.4-35.1.10
+* Forge 1.16.4-35.1.10+
 * 100% client side; no server side deployment needed
 
 **Fixes**
@@ -38,7 +66,7 @@
 
 > ### DynamicSurroundings-1.16.4-4.0.1.4
 **Requirements**
-* Forge 1.16.4-35.1.10
+* Forge 1.16.4-35.1.10+
 * 100% client side; no server side deployment needed
 
 **Fixes**
@@ -51,7 +79,7 @@
 
 > ### DynamicSurroundings-1.16.4-4.0.1.3
 **Requirements**
-* Forge 1.16.4-35.1.10
+* Forge 1.16.4-35.1.10+
 * 100% client side; no server side deployment needed
 
 **Changes**
@@ -64,7 +92,7 @@
 
 > ### DynamicSurroundings-1.16.4-4.0.1.2
 **Requirements**
-* Forge 1.16.4-35.1.10
+* Forge 1.16.4-35.1.10+
 * 100% client side; no server side deployment needed
 
 **What's New**
@@ -77,7 +105,7 @@
 
 > ### DynamicSurroundings-1.16.4-4.0.1.1
 **Requirements**
-* Forge 1.16.4-35.1.10
+* Forge 1.16.4-35.1.10+
 * 100% client side; no server side deployment needed
 
 **Fixes**
@@ -86,7 +114,7 @@
 
 > ### DynamicSurroundings-1.16.4-4.0.1.0
 **Requirements**
-* Forge 1.16.4-35.1.10
+* Forge 1.16.4-35.1.10+
 * 100% client side; no server side deployment needed
 
 Welcome to 1.16.4!  Unlike the 1.14.x and 1.15.x versions (Sound Control, Environs, and MobEffects) this JAR release combines all of them into a single JAR.  This is reflected in the Forge mod lists.

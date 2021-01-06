@@ -88,6 +88,17 @@ public final class ResourceUtils {
      * @return The content of the specified resource, or null if not found
      */
     @Nullable
+    public static String readResource(@Nonnull final ResourceLocation location) {
+        return readResource("", location);
+    }
+
+    /**
+     * Obtains the string content of the resource at the specified asset location with the JAR
+     * @param root Location is relative to this root in the JAR
+     * @param location The resource to load
+     * @return The content of the specified resource, or null if not found
+     */
+    @Nullable
     public static String readResource(@Nonnull final String root, @Nonnull final ResourceLocation location) {
         final IResourceAccessor accessor = IResourceAccessor.createJarResource(root, location);
         return accessor.asString();

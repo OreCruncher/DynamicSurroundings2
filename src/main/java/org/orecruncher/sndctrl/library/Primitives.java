@@ -108,8 +108,11 @@ public class Primitives {
         final ResourceLocation loc = createArmorToolbarResource(material);
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
         if (acoustic == NullAcoustic.INSTANCE) {
-            acoustic = new SimpleAcoustic(material.getSoundEvent(), Constants.TOOLBAR);
-            AcousticLibrary.addAcoustic(loc, acoustic);
+            final SoundEvent event = material.getSoundEvent();;
+            if (SoundTypeUtils.isValid(event)) {
+                acoustic = new SimpleAcoustic(event, Constants.TOOLBAR);
+                AcousticLibrary.addAcoustic(loc, acoustic);
+            }
         }
         return acoustic;
     }
@@ -119,9 +122,12 @@ public class Primitives {
         final ResourceLocation loc = createArmorAccentResource(material);
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
         if (acoustic == NullAcoustic.INSTANCE) {
-            final ResourceLocation soundName = material.getSoundEvent().getName();
-            acoustic = generateAcousticFromTemplate(ARMOR_TEMPLATE, loc, soundName);
-            AcousticLibrary.addAcoustic(loc, acoustic);
+            final SoundEvent event = material.getSoundEvent();
+            if (SoundTypeUtils.isValid(event)) {
+                acoustic = generateAcousticFromTemplate(ARMOR_TEMPLATE, loc, event.getName());
+                AcousticLibrary.addAcoustic(loc, acoustic);
+                return acoustic;
+            }
         }
         return footstepAcousticResolver(loc, material.getSoundEvent());
     }
@@ -146,7 +152,7 @@ public class Primitives {
     @Nonnull
     private static IAcoustic footstepAcousticResolver(@Nonnull final ResourceLocation loc, @Nonnull final SoundEvent soundType) {
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
-        if (acoustic == NullAcoustic.INSTANCE) {
+        if (acoustic == NullAcoustic.INSTANCE && SoundTypeUtils.isValid(soundType)) {
             final SimpleAcoustic simple = new SimpleAcoustic(soundType, Constants.FOOTSTEPS);
             simple.getFactory().setVolume(MINECRAFT_VOLUME_SCALE / (Config.FOOTSTEP_VOLUME_DEFAULT / 100F));
             AcousticLibrary.addAcoustic(loc, simple);
@@ -159,32 +165,33 @@ public class Primitives {
     private static IAcoustic footstepAcousticResolver(@Nonnull final ResourceLocation loc, @Nonnull final SoundType soundType, final boolean isVanilla) {
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
         if (acoustic == NullAcoustic.INSTANCE) {
-            if (isVanilla) {
-                final SimpleAcoustic simple = new SimpleAcoustic(soundType.getStepSound(), Constants.FOOTSTEPS);
-                // Minecraft scales footstep sound volume to 15%
-                simple.getFactory().setVolume(soundType.getVolume() * (MINECRAFT_VOLUME_SCALE / (Config.FOOTSTEP_VOLUME_DEFAULT / 100F)));
-                simple.getFactory().setPitch(soundType.getPitch());
-                AcousticLibrary.addAcoustic(loc, simple);
-                acoustic = simple;
-            } else {
-                final ResourceLocation soundResource = soundType.getStepSound().getRegistryName();
-                if (soundResource != null)
-                    acoustic = generateAcousticFromTemplate(FOOTSTEP_TEMPLATE, loc, soundResource);
-                else
-                    acoustic = NullAcoustic.INSTANCE;
+            if (SoundTypeUtils.isStepSoundValid(soundType)) {
+                if (isVanilla) {
+                    final SimpleAcoustic simple = new SimpleAcoustic(soundType.getStepSound(), Constants.FOOTSTEPS);
+                    // Minecraft scales footstep sound volume to 15%
+                    simple.getFactory().setVolume(soundType.getVolume() * (MINECRAFT_VOLUME_SCALE / (Config.FOOTSTEP_VOLUME_DEFAULT / 100F)));
+                    simple.getFactory().setPitch(soundType.getPitch());
+                    AcousticLibrary.addAcoustic(loc, simple);
+                    acoustic = simple;
+                } else {
+                    acoustic = generateAcousticFromTemplate(FOOTSTEP_TEMPLATE, loc, soundType.getStepSound().getName());
+                }
             }
         }
         return acoustic;
     }
 
     private static IAcoustic generateAcousticFromTemplate(@Nonnull final ResourceLocation template, @Nonnull final ResourceLocation name, @Nonnull final ResourceLocation acousticName) {
-        String jsonResource = ResourceUtils.readResource("", template);
-        if (jsonResource != null) {
-            jsonResource = jsonResource
-                    .replaceAll("<NAME>", name.toString())
-                    .replaceAll("<ACOUSTIC>", acousticName.toString());
-            final List<IAcoustic> acoustic = new AcousticCompiler(MobEffects.MOD_ID).compile(jsonResource);
-            return acoustic.get(0);
+        try {
+            String jsonResource = ResourceUtils.readResource(template);
+            if (jsonResource != null) {
+                jsonResource = jsonResource
+                        .replaceAll("<NAME>", name.toString())
+                        .replaceAll("<ACOUSTIC>", acousticName.toString());
+                final List<IAcoustic> acoustic = new AcousticCompiler(MobEffects.MOD_ID).compile(jsonResource);
+                return acoustic.get(0);
+            }
+        } catch(@Nonnull final Throwable ignore) {
         }
         return NullAcoustic.INSTANCE;
     }

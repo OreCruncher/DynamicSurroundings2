@@ -20,6 +20,7 @@ package org.orecruncher.lib;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.block.SoundType;
+import net.minecraft.util.SoundEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -109,4 +110,11 @@ public final class SoundTypeUtils {
         return soundTypeMap.get(st);
     }
 
+    public static boolean isStepSoundValid(@Nullable final SoundType st) {
+        return st != null && isValid(st.getStepSound());
+    }
+
+    public static boolean isValid(@Nonnull final SoundEvent se) {
+        return se != null && se.getName() != null;
+    }
 }

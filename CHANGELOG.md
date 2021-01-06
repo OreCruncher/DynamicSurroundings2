@@ -1,3 +1,13 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.1
+**Requirements**
+* Forge 1.16.4-35.1.10+
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**Fixes**
+* Malformed IArmorMaterial instances from mods triggering crash during startup
+* Don't crash when a spurious IMC message gets sent to Dynamic Surroundings
+
 > ### DynamicSurroundings-1.16.4-4.0.3.0
 **Requirements**
 * Forge 1.16.4-35.1.10+

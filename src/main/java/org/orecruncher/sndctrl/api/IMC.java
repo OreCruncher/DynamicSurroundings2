@@ -61,7 +61,14 @@ public final class IMC {
     }
 
     private static void processIMC(@Nonnull final InterModProcessEvent event) {
-        event.getIMCStream().forEach(msg -> Methods.valueOf(msg.getMethod()).handle(msg));
+        event.getIMCStream().forEach(msg -> {
+            try {
+                Methods method = Methods.valueOf(msg.getMethod());
+                method.handle(msg);
+            } catch(@Nonnull final Throwable t) {
+                SoundControl.LOGGER.warn("Unable to process IMC message '%s' - unrecognized?", msg.getMethod());
+            }
+        });
     }
 
     private static void registerAcousticEventHandler(@Nonnull final InterModComms.IMCMessage msg) {

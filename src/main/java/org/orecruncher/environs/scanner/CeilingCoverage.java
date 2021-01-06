@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,22 +18,24 @@
 
 package org.orecruncher.environs.scanner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ITag;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.environs.library.DimensionInfo;
 import org.orecruncher.environs.library.DimensionLibrary;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.WorldUtils;
+import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.math.MathStuff;
 
 import net.minecraft.util.math.BlockPos;
@@ -52,6 +54,7 @@ public final class CeilingCoverage {
 	private static final float INSIDE_THRESHOLD = 1.0F - 65.0F / 176.0F;
 	private static final Cell[] cells;
 	private static final float TOTAL_POINTS;
+	private static final ObjectArray<ITag<Block>> NON_CEILING = new ObjectArray<>();
 
 	static {
 
@@ -69,6 +72,18 @@ public final class CeilingCoverage {
 		for (final Cell c : cellList)
 			totalPoints += c.potentialPoints();
 		TOTAL_POINTS = totalPoints;
+
+		// Vanilla tags
+		NON_CEILING.add(BlockTags.LEAVES);
+		NON_CEILING.add(BlockTags.FENCE_GATES);
+		NON_CEILING.add(BlockTags.FENCES);
+		NON_CEILING.add(BlockTags.WALLS);
+
+		// Forge tags
+		NON_CEILING.add(Tags.Blocks.GLASS_PANES);
+		NON_CEILING.add(Tags.Blocks.CHESTS);
+		NON_CEILING.add(Tags.Blocks.FENCES);
+		NON_CEILING.add(Tags.Blocks.FENCE_GATES);
 	}
 
 	private boolean reallyInside = false;
@@ -116,7 +131,7 @@ public final class CeilingCoverage {
 					playerPos.getX() + this.offset.getX(),
 					playerPos.getY() + this.offset.getY(),
 					playerPos.getZ() + this.offset.getZ()
-				);
+			);
 
 			final World world = GameUtils.getWorld();
 			final int playerHeight = Math.max(playerPos.getY() + 1, 0);
@@ -129,7 +144,7 @@ public final class CeilingCoverage {
 
 				final BlockState state = world.getBlockState(this.working);
 
-				if (state.getMaterial().blocksMovement() && !state.isIn(BlockTags.LEAVES)) {
+				if (actsAsCeiling(state)) {
 					// Cover block - no points for you!
 					return 0;
 				}
@@ -154,6 +169,19 @@ public final class CeilingCoverage {
 					" points: " + this.points;
 		}
 
+		private boolean actsAsCeiling(@Nonnull final BlockState state) {
+			// If it doesn't block movement it doesn't count as a ceiling.
+			if (!state.getMaterial().blocksMovement())
+				return false;
+
+			// Test the block tags in our NON_CEILING set to see if any match
+			final Block block = state.getBlock();
+			for (final ITag<Block> tag : NON_CEILING) {
+				if (tag.contains(block))
+					return false;
+			}
+			return true;
+		}
 	}
 
 }

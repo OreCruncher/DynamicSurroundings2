@@ -145,11 +145,12 @@ public final class AudioEffectLibrary {
             final String name = kvp.getKey();
             if (name.startsWith(MATERIAL_PREFIX)) {
                 // Material entry
-                final Material mat = MaterialUtils.getMaterial(name.substring(1));
+                final String materialName = name.substring(1);
+                final Material mat = MaterialUtils.getMaterial(materialName);
                 if (mat != null) {
                     materialOcclusion.put(mat, kvp.getValue().floatValue());
                 } else {
-                    LOGGER.warn("Unrecognized material name: %s", name);
+                    LOGGER.warn("Unrecognized material name: %s", materialName);
                 }
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
@@ -185,22 +186,24 @@ public final class AudioEffectLibrary {
             final float val = MathStuff.clamp(kvp.getValue(), 0, 2F);
             if (name.startsWith(MATERIAL_PREFIX)) {
                 // Material entry
-                final Material mat = MaterialUtils.getMaterial(name.substring(1));
+                final String materialName = name.substring(1);
+                final Material mat = MaterialUtils.getMaterial(materialName);
                 if (mat != null) {
                     materialReflect.put(mat, val);
                 } else {
-                    LOGGER.warn("Unrecognized material name: %s", name);
+                    LOGGER.warn("Unrecognized material name: %s", materialName);
                 }
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
-                final ITag<Block> tag = TagUtils.getBlockTag(name.substring(1));
+                final String tagName = name.substring(1);
+                final ITag<Block> tag = TagUtils.getBlockTag(tagName);
                 if (tag != null) {
                     for (final Block block : tag.getAllElements()) {
                         for (final BlockState state : block.getStateContainer().getValidStates())
                             blockStateReflectMap.put(state, val);
                     }
                 } else {
-                    LOGGER.warn("Unrecognized block tag: %s", name);
+                    LOGGER.warn("Unrecognized block tag: %s", tagName);
                 }
             } else {
                 try {

@@ -20,11 +20,9 @@ package org.orecruncher.lib;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.block.material.Material;
-import org.orecruncher.lib.reflection.ReflectionHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,13 +36,50 @@ public final class MaterialUtils {
     static {
         materialMap.defaultReturnValue("CUSTOM");
 
-        for(final Field f : ReflectionHelper.getStaticFields(Material.class)) {
-            try {
-                final Material type = (Material) f.get(null);
-                materialMap.put(type, f.getName());
-            } catch(@Nonnull final Throwable ignore) {
-            }
-        }
+        materialMap.put(Material.AIR, "AIR");
+        materialMap.put(Material.STRUCTURE_VOID, "STRUCTURE_VOID");
+        materialMap.put(Material.PORTAL, "PORTAL");
+        materialMap.put(Material.CARPET, "CARPET");
+        materialMap.put(Material.PLANTS, "PLANTS");
+        materialMap.put(Material.OCEAN_PLANT, "OCEAN_PLANT");
+        materialMap.put(Material.TALL_PLANTS, "TALL_PLANTS");
+        materialMap.put(Material.NETHER_PLANTS, "NETHER_PLANTS");
+        materialMap.put(Material.SEA_GRASS, "SEA_GRASS");
+        materialMap.put(Material.WATER, "WATER");
+        materialMap.put(Material.BUBBLE_COLUMN, "BUBBLE_COLUMN");
+        materialMap.put(Material.LAVA, "LAVA");
+        materialMap.put(Material.SNOW, "SNOW");
+        materialMap.put(Material.FIRE, "FIRE");
+        materialMap.put(Material.MISCELLANEOUS, "MISCELLANEOUS");
+        materialMap.put(Material.WEB, "WEB");
+        materialMap.put(Material.REDSTONE_LIGHT, "REDSTONE_LIGHT");
+        materialMap.put(Material.CLAY, "CLAY");
+        materialMap.put(Material.EARTH, "EARTH");
+        materialMap.put(Material.ORGANIC, "ORGANIC");
+        materialMap.put(Material.PACKED_ICE, "PACKED_ICE");
+        materialMap.put(Material.SAND, "SAND");
+        materialMap.put(Material.SPONGE, "SPONGE");
+        materialMap.put(Material.SHULKER, "SHULKER");
+        materialMap.put(Material.WOOD, "WOOD");
+        materialMap.put(Material.NETHER_WOOD, "NETHER_WOOD");
+        materialMap.put(Material.BAMBOO_SAPLING, "BAMBOO_SAPLING");
+        materialMap.put(Material.BAMBOO, "BAMBOO");
+        materialMap.put(Material.WOOL, "WOOL");
+        materialMap.put(Material.TNT, "TNT");
+        materialMap.put(Material.LEAVES, "LEAVES");
+        materialMap.put(Material.GLASS, "GLASS");
+        materialMap.put(Material.ICE, "ICE");
+        materialMap.put(Material.CACTUS, "CACTUS");
+        materialMap.put(Material.ROCK, "ROCK");
+        materialMap.put(Material.IRON, "IRON");
+        materialMap.put(Material.SNOW_BLOCK, "SNOW_BLOCK");
+        materialMap.put(Material.ANVIL, "ANVIL");
+        materialMap.put(Material.BARRIER, "BARRIER");
+        materialMap.put(Material.PISTON, "PISTON");
+        materialMap.put(Material.CORAL, "CORAL");
+        materialMap.put(Material.GOURD, "GOURD");
+        materialMap.put(Material.DRAGON_EGG, "DRAGON_EGG");
+        materialMap.put(Material.CAKE, "CAKE");
 
         // Create the inverse map
         for (final Map.Entry<Material, String> kvp : materialMap.entrySet()) {

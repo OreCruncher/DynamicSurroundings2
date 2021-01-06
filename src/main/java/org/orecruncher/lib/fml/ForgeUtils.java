@@ -107,12 +107,17 @@ public final class ForgeUtils {
     @OnlyIn(Dist.CLIENT)
     @Nonnull
     public static List<String> getConfigLocations() {
+        return ForgeUtils.getModIdList();
+        // TODO: Need to sort out resource packs
+        /*
         return Stream.concat(
                     ForgeUtils.getModIdList().stream(),
                     ForgeUtils.getResourcePackIdList().stream()
                 )
                 .distinct()
                 .collect(Collectors.toList());
+
+         */
     }
 
     @OnlyIn(Dist.CLIENT)

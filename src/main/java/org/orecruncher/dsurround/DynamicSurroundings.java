@@ -37,6 +37,7 @@ import org.orecruncher.lib.config.ConfigGui;
 import org.orecruncher.lib.compat.ModEnvironment;
 import org.orecruncher.lib.fml.ClientLoginChecks;
 import org.orecruncher.lib.fml.ConfigUtils;
+import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.fml.UpdateChecker;
 import org.orecruncher.lib.logging.ModLog;
 
@@ -123,6 +124,16 @@ public final class DynamicSurroundings {
     }
 
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
+        if (LOGGER.isDebugging()) {
+            // Dump out the mod list
+            LOGGER.info("Loaded Mods");
+            LOGGER.info("===========");
+            ForgeUtils.getModIdList().forEach(l -> LOGGER.info("Mod '%s' detected", l));
+
+            LOGGER.info("Resource Packs");
+            LOGGER.info("==============");
+            ForgeUtils.getEnabledResourcePacks().forEach(l -> LOGGER.info("%s (%s)", l.getTitle().getString(), l.getDescription().getString()));
+        }
     }
 
 }

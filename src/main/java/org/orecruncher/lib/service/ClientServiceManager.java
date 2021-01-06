@@ -73,6 +73,9 @@ public class ClientServiceManager {
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStart(@Nonnull final TagsUpdatedEvent event) {
+
+        Lib.LOGGER.info("Received TagsUpdatedEvent");
+
         reload();
 
         for (final IClientService svc : services)
@@ -90,7 +93,7 @@ public class ClientServiceManager {
 
     private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IClientService> action) {
 
-        Lib.LOGGER.info("Starting parallel action '%s'", actionName);
+        Lib.LOGGER.info("Starting action '%s'", actionName);
 
         long start = System.nanoTime();
 

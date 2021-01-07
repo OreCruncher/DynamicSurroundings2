@@ -79,6 +79,8 @@
     "minecraft:mossy_stone_brick_slab": "brickstone",
     "minecraft:mossy_cobblestone_stairs": "stone",
     "minecraft:mossy_cobblestone_slab": "stone",
+    "minecraft:sandstone_wall": "#sandstonewall",
+    "minecraft:red_sandstone_wall": "#sandstonewall",
     "minecraft:sandstone_slab": "sandstone",
     "minecraft:cut_sandstone_slab": "sandstone",
     "minecraft:sandstone_stairs": "sandstone",

@@ -22,6 +22,7 @@ import com.google.common.base.MoreObjects;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
@@ -30,6 +31,11 @@ import javax.annotation.Nonnull;
 public class LoopingSoundInstance extends WrappedSoundInstance {
 
     private final Vector3d position;
+
+    public LoopingSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final ISoundCategory category) {
+        super(sound, category);
+        this.position = null;
+    }
 
     public LoopingSoundInstance(@Nonnull final ISoundInstance sound) {
         super(sound);

@@ -32,4 +32,5 @@ public final class Constants {
 
     public static final ISoundCategory BIOMES = new Category("biomes", () -> Config.CLIENT.sound.biomeSoundVolume.get() / 100F);
     public static final ISoundCategory SPOT_SOUNDS = new Category("spot", () -> Config.CLIENT.sound.spotSoundVolume.get() / 100F);
+    public static final ISoundCategory WATERFALL = new Category("waterfall", () -> Config.CLIENT.sound.waterfallSoundVolume.get() / 100F);
 }

@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Environs
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.effects.JetEffect;
-import org.orecruncher.environs.effects.WaterSplashJetEffect;
+import org.orecruncher.environs.effects.WaterfallSplashEffect;
 import org.orecruncher.environs.effects.particles.Collections;
 import org.orecruncher.environs.handlers.CommonState;
+import org.orecruncher.environs.library.Constants;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.math.MathStuff;
@@ -85,7 +86,7 @@ public class WaterSplashJet extends Jet {
 	public boolean shouldDie() {
 		// Check every half second
 		return (this.particleAge % 10) == 0
-				&& !WaterSplashJetEffect.isValidSpawnBlock(this.world, this.position);
+				&& !WaterfallSplashEffect.isValidSpawnBlock(this.world, this.position);
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public class WaterSplashJet extends Jet {
 		if (this.sound == null) {
 			final int idx = MathStuff.clamp(this.jetStrength, 0, waterfallAcoustics.length - 1);
 			final IAcoustic acoustic = Library.resolve(waterfallAcoustics[idx]);
-			this.sound = new LoopingSoundInstance(acoustic.getFactory().createSoundAt(this.position));
+			this.sound = new LoopingSoundInstance(acoustic.getFactory().createSoundAt(this.position), Constants.WATERFALL);
 		}
 
 		final boolean inRange = SoundUtils.inRange(CommonState.getPlayerEyePosition(), this.sound, 4);

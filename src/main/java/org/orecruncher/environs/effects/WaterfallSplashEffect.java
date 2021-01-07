@@ -37,7 +37,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3i;
 
 @OnlyIn(Dist.CLIENT)
-public class WaterSplashJetEffect extends JetEffect {
+public class WaterfallSplashEffect extends JetEffect {
 
 	private final static Vector3i[] cardinal_offsets = {
 		new Vector3i(-1, 0, 0),
@@ -46,14 +46,14 @@ public class WaterSplashJetEffect extends JetEffect {
 		new Vector3i(0, 0, 1)
 	};
 
-	public WaterSplashJetEffect(final int chance) {
+	public WaterfallSplashEffect(final int chance) {
 		super(chance);
 	}
 
 	@Override
 	@Nonnull
 	public BlockEffectType getEffectType() {
-		return BlockEffectType.SPLASH_JET;
+		return BlockEffectType.WATERFALL;
 	}
 
 	private static boolean isUnboundedLiquid(final IBlockReader provider, final BlockPos pos) {

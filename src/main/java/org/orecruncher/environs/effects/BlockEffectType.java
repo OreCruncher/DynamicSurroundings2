@@ -42,7 +42,7 @@ public enum BlockEffectType {
     BUBBLE_JET("bubble", BubbleJetEffect::new, Config.CLIENT.effects.enableBubbleJets::get),
     DUST_JET("dust", DustJetEffect::new, Config.CLIENT.effects.enableDustJets::get),
     FOUNTAIN_JET("fountain", FountainJetEffect::new, Config.CLIENT.effects.enableFountainJets::get),
-    SPLASH_JET("splash", WaterSplashJetEffect::new, Config.CLIENT.effects.enableWaterSplashJets::get);
+    WATERFALL("splash", WaterfallSplashEffect::new, Config.CLIENT.effects.enableWaterfalls::get);
 
     private static final Map<String, BlockEffectType> typeMap = new Object2ObjectOpenHashMap<>();
     static {

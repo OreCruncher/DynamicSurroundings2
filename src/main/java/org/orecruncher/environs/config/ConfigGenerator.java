@@ -101,7 +101,7 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.effects.enableWaterSplashJets));
+                        Config.CLIENT.effects.enableWaterfalls));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
@@ -177,6 +177,13 @@ public class ConfigGenerator {
                 ClothAPIFactory.createIntegerSlider(
                         builder,
                         Config.CLIENT.sound.spotSoundVolume,
+                        0,
+                        100));
+
+        subCategory.add(
+                ClothAPIFactory.createIntegerSlider(
+                        builder,
+                        Config.CLIENT.sound.waterfallSoundVolume,
                         0,
                         100));
 

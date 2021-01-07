@@ -144,7 +144,7 @@ public final class Config {
             public final BooleanValue enableBubbleJets;
             public final BooleanValue enableDustJets;
             public final BooleanValue enableFountainJets;
-            public final BooleanValue enableWaterSplashJets;
+            public final BooleanValue enableWaterfalls;
             public final BooleanValue disableUnderwaterParticles;
 
             Effects(@Nonnull final ForgeConfigSpec.Builder builder) {
@@ -187,15 +187,15 @@ public final class Config {
                         .translation("environs.cfg.effects.Fountain")
                         .define("Fountain Jets", true);
 
-                this.enableWaterSplashJets = builder
+                this.enableWaterfalls = builder
                         .worldRestart()
                         .comment("Enable/disable Water Splash effects when water spills down")
                         .translation("environs.cfg.effects.Splash")
-                        .define("Water Splash", true);
+                        .define("Waterfall Splash", true);
 
                 this.disableUnderwaterParticles = builder
                         .worldRestart()
-                        .comment("Enable/disable Minecrafts Underwater particle effect")
+                        .comment("Enable/disable Minecraft's Underwater particle effect")
                         .translation("environs.cfg.effects.Underwater")
                         .define("Disable Underwater Particles", false);
 
@@ -298,6 +298,7 @@ public final class Config {
 
             public final IntValue biomeSoundVolume;
             public final IntValue spotSoundVolume;
+            public final IntValue waterfallSoundVolume;
 
             Sound(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options for defining sound behavior")
@@ -312,6 +313,11 @@ public final class Config {
                         .comment("Scaling factor to apply to spot sounds")
                         .translation("environs.cfg.sound.SpotVolume")
                         .defineInRange("Spot Sound Volume", 100, 0, 100);
+
+                this.waterfallSoundVolume = builder
+                        .comment("Scaling factor to apply to waterfall sounds")
+                        .translation("environs.cfg.sound.WaterfallVolume")
+                        .defineInRange("Waterfall Volume", 100, 0, 100);
 
                 builder.pop();
             }

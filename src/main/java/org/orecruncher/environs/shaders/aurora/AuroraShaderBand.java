@@ -23,6 +23,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.*;
 import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -116,6 +117,10 @@ public class AuroraShaderBand extends AuroraBase {
 		final double tranX = getTranslationX(partialTick);
 		final double tranZ = getTranslationZ(partialTick);
 
+		final Vector3d view = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView();
+		matrixStack.push();
+		matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
+
 		final RenderType type = AuroraRenderType.QUAD;
 		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
 		final IVertexBuilder builder = buffer.getBuffer(type);
@@ -140,6 +145,8 @@ public class AuroraShaderBand extends AuroraBase {
 		buffer.finish(type);
 
 		ShaderPrograms.MANAGER.releaseShader();
+
+		matrixStack.pop();
 	}
 
 	@Override

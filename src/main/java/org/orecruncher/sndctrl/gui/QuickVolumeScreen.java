@@ -20,6 +20,7 @@ package org.orecruncher.sndctrl.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -41,15 +42,18 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
     private static final int SLIDER_WIDTH = 160;
     private static final int SLIDER_HEIGHT = 20;
     private static final int SLIDER_SPACING = 5;
+    private static final Button.IPressable NULL_PRESSABLE = (b) -> { };
+    private static final ITextComponent SUFFIX = new StringTextComponent("%");
+    private static final ITextComponent FOOTER = new TranslationTextComponent("sndctrl.text.quickvolumemenu.footer");
+    private static final ITextComponent TITLE = new TranslationTextComponent("sndctrl.text.quickvolumemenu.title");
 
     private final List<ISoundCategory> categories = new ArrayList<>();
     private final List<Slider> sliders = new ArrayList<>();
 
     private int footerY;
-    private final ITextComponent footer = new TranslationTextComponent("sndctrl.text.quickvolumemenu.footer");
 
     protected QuickVolumeScreen() {
-        super(new TranslationTextComponent("sndctrl.text.quickvolumemenu.title"));
+        super(TITLE);
     }
 
     @Override
@@ -77,14 +81,13 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
                     SLIDER_WIDTH,
                     SLIDER_HEIGHT,
                     getSliderLabel(category.getTextComponent()),
-                    StringTextComponent.EMPTY,
+                    SUFFIX,
                     0,
                     100,
                     (int)(category.getVolumeScale() * 100),
                     false,
                     true,
-                    s -> {
-                    },
+                    NULL_PRESSABLE,
                     this
             );
 
@@ -149,7 +152,7 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
         super.render(stack, mouseX, mouseY, partialTicks);
 
         // Render our text footer
-        drawCenteredString(stack, this.font, this.footer, this.width / 2, this.footerY, ColorPalette.WHITE.rgb());
+        drawCenteredString(stack, this.font, FOOTER, this.width / 2, this.footerY, ColorPalette.WHITE.rgb());
     }
 
 }

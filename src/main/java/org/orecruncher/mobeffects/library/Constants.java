@@ -36,8 +36,8 @@ public final class Constants {
 
     }
 
-    public static final ISoundCategory FOOTSTEPS = new Category("footsteps", () -> Config.CLIENT.footsteps.footstepVolume.get() / 100F);
-    public static final ISoundCategory TOOLBAR = new Category("toolbar", () -> Config.CLIENT.effects.toolbarVolume.get() / 100F);
+    public static final ISoundCategory FOOTSTEPS = new Category("footsteps", "mobeffects.soundcategory.footsteps", () -> Config.CLIENT.footsteps.footstepVolume.get() / 100F, (v) -> Config.CLIENT.footsteps.footstepVolume.set((int)(v * 100)));
+    public static final ISoundCategory TOOLBAR = new Category("toolbar", "mobeffects.soundcategory.toolbar", () -> Config.CLIENT.effects.toolbarVolume.get() / 100F, (v) -> Config.CLIENT.effects.toolbarVolume.set((int)(v * 100)));
 
     public static final ResourceLocation NONE = new ResourceLocation(MobEffects.MOD_ID, "empty");
 

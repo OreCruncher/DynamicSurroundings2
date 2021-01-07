@@ -20,6 +20,8 @@ package org.orecruncher.sndctrl.api.sound;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -30,6 +32,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
@@ -63,10 +66,10 @@ public final class Category implements ISoundCategory {
         categoryToNew.put(SoundCategory.VOICE, VOICE);
     }
 
-    @Nonnull
     private final String name;
-    @Nonnull
-    private final Supplier<Float> scaling;
+    private final Supplier<Float> getter;
+    private final Consumer<Float> setter;
+    private final String translationKey;
 
     /**
      * Creates a sound category instance with the specified name, and Supplier that gives the scaling
@@ -75,9 +78,11 @@ public final class Category implements ISoundCategory {
      * @param name  Name of the sound category.  Needs to be unique.
      * @param scale The supplier that gives the scaling factor to apply for the sound category.
      */
-    public Category(@Nonnull final String name, @Nonnull final Supplier<Float> scale) {
+    public Category(@Nonnull final String name, @Nonnull final String translationKey, @Nonnull final Supplier<Float> scale, @Nonnull final Consumer<Float> setter) {
         this.name = name;
-        this.scaling = scale;
+        this.getter = scale;
+        this.setter = setter;
+        this.translationKey = translationKey;
     }
 
     /**
@@ -119,8 +124,24 @@ public final class Category implements ISoundCategory {
     }
 
     @Override
+    @Nonnull
+    public ITextComponent getTextComponent() {
+        return new TranslationTextComponent(this.translationKey);
+    }
+
+    @Override
+    public boolean doQuickMenu() {
+        return true;
+    }
+
+    @Override
     public float getVolumeScale() {
-        return this.scaling.get();
+        return this.getter.get();
+    }
+
+    @Override
+    public void setVolumeScale(final float scale) {
+        this.setter.accept(scale);
     }
 
     @Override
@@ -130,7 +151,6 @@ public final class Category implements ISoundCategory {
     }
 
     private static class SoundCategoryWrapper implements ISoundCategory {
-        @Nonnull
         private final SoundCategory category;
 
         public SoundCategoryWrapper(@Nonnull final SoundCategory cat) {
@@ -144,8 +164,19 @@ public final class Category implements ISoundCategory {
         }
 
         @Override
+        public ITextComponent getTextComponent() {
+            // From the SoundConfig slider logic for Vanilla categories
+            return new TranslationTextComponent("soundCategory." + this.getName());
+        }
+
+        @Override
         public float getVolumeScale() {
             return GameUtils.getGameSettings().getSoundLevel(this.category);
+        }
+
+        @Override
+        public void setVolumeScale(final float scale) {
+            GameUtils.getGameSettings().setSoundLevel(this.category, scale);
         }
 
         @Nonnull

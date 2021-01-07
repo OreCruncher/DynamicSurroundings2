@@ -30,7 +30,7 @@ public final class Constants {
 
     }
 
-    public static final ISoundCategory BIOMES = new Category("biomes", () -> Config.CLIENT.sound.biomeSoundVolume.get() / 100F);
-    public static final ISoundCategory SPOT_SOUNDS = new Category("spot", () -> Config.CLIENT.sound.spotSoundVolume.get() / 100F);
-    public static final ISoundCategory WATERFALL = new Category("waterfall", () -> Config.CLIENT.sound.waterfallSoundVolume.get() / 100F);
+    public static final ISoundCategory BIOMES = new Category("biomes", "environs.soundcategory.biomes", () -> Config.CLIENT.sound.biomeSoundVolume.get() / 100F, (v) -> Config.CLIENT.sound.biomeSoundVolume.set((int)(v * 100)));
+    public static final ISoundCategory SPOT_SOUNDS = new Category("spot", "environs.soundcategory.spotsounds", () -> Config.CLIENT.sound.spotSoundVolume.get() / 100F, (v) -> Config.CLIENT.sound.spotSoundVolume.set((int)(v * 100)));
+    public static final ISoundCategory WATERFALL = new Category("waterfall", "environs.soundcategory.waterfall",() -> Config.CLIENT.sound.waterfallSoundVolume.get() / 100F, (v) -> Config.CLIENT.sound.waterfallSoundVolume.set((int)(v * 100)));
 }

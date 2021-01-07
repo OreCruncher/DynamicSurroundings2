@@ -123,26 +123,25 @@ public class AuroraShaderBand extends AuroraBase {
 
 		final RenderType type = AuroraRenderType.QUAD;
 		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
-		final IVertexBuilder builder = buffer.getBuffer(type);
 
 		ShaderPrograms.MANAGER.useShader(this.program, this.callback);
 
 		try {
 
 			for (int b = 0; b < this.bandCount; b++) {
+				final IVertexBuilder builder = buffer.getBuffer(type);
 				matrixStack.push();
 				matrixStack.translate(tranX, tranY, tranZ + this.offset * b);
 				generateBand(builder, matrixStack.getLast().getMatrix());
 				matrixStack.pop();
+				RenderSystem.disableDepthTest();
+				buffer.finish(type);
 			}
 
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 			this.program = null;
 		}
-
-		RenderSystem.disableDepthTest();
-		buffer.finish(type);
 
 		ShaderPrograms.MANAGER.releaseShader();
 

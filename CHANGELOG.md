@@ -1,3 +1,22 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.2
+**Requirements**
+* Forge 1.16.4-35.1.10+
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**What's New**
+* Separate volume slider for waterfall sounds.
+* Added in game menu to access volume scale settings for various categories
+  * By default, access using CTRL+v; can be changed in options.
+  * Will not pause the game.  Useful if you want to adjust settings and see impact in real time.
+
+**Fixes**
+* Scaling sounds > 100 using Individual Sound Configuration (max is 400, or 4x volume)
+* A speculative fix for OptiFine crashing when rain particles are generated.
+
+**Changes**
+* Fences, fence gates, walls, glass panes, and chests no longer count as ceiling blocks when determining if the player is "indoors".
+
 > ### DynamicSurroundings-1.16.4-4.0.3.1
 **Requirements**
 * Forge 1.16.4-35.1.10+

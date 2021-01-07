@@ -54,7 +54,7 @@ public final class SoundVolumeEvaluator {
     }
 
     private static float getVolumeScaleFromMods(@Nonnull final ISound sound) {
-        float result = Float.MAX_VALUE; //SoundProcessor.getVolumeScale(sound);
+        float result = SoundProcessor.getVolumeScale(sound);
         for (final Function<ISound, Float> callback : volumeScaleCallbacks) {
             try {
                 result = MathStuff.min(result, callback.apply(sound));
@@ -64,9 +64,8 @@ public final class SoundVolumeEvaluator {
             }
         }
 
-        return result == Float.MAX_VALUE ? 1F : MathStuff.clamp(result, 0, 4F);
+        return MathStuff.clamp(result, 0, 4F);
     }
-
 
     private static float getCategoryVolumeScale(@Nonnull final ISound sound) {
         final Optional<ISoundInstance> si = Utilities.safeCast(sound, ISoundInstance.class);

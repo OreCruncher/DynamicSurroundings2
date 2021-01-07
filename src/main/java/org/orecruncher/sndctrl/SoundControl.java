@@ -41,7 +41,6 @@ import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.IMC;
 import org.orecruncher.sndctrl.audio.AudioEngine;
 import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
-import org.orecruncher.sndctrl.audio.handlers.SoundProcessor;
 import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
@@ -114,8 +113,6 @@ public final class SoundControl {
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-        // Not strictly needed but serves as a quick sanity test
-        IMC.registerVolumeScaleCallback(SoundProcessor::getVolumeScale);
     }
 
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {

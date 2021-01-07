@@ -18,7 +18,6 @@
 
 package org.orecruncher.sndctrl.api;
 
-import net.minecraft.client.audio.ISound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.InterModComms;
@@ -33,13 +32,11 @@ import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
 import org.orecruncher.sndctrl.api.sound.Category;
-import org.orecruncher.sndctrl.audio.handlers.SoundVolumeEvaluator;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -89,10 +86,6 @@ public final class IMC {
 
     private static void registerCompletionCallbackHandler(@Nonnull final InterModComms.IMCMessage msg) {
         Utilities.safeCast(msg.getMessageSupplier().get(), Runnable.class).ifPresent(callbacks::add);
-    }
-
-    private static void registerVolumeScaleCallbackHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        Utilities.safeCast(msg.getMessageSupplier().get(), Function.class).ifPresent(SoundVolumeEvaluator::register);
     }
 
     private static <T> void handle(@Nonnull final InterModComms.IMCMessage msg, @Nonnull final Class<T> clazz, @Nonnull final Consumer<T> handler) {
@@ -153,20 +146,6 @@ public final class IMC {
     }
 
     /**
-     * Registers a callback method that will be invoked during sound processing to determine the scaling factor to
-     * apply to a sound play.  Useful for mods that have blocks or devices that modify the player's sound experience
-     * without replacing the underlying sound in the sound engine out from under Sound Control.
-     *
-     * If multiple methods are registered, all will be invoked.  The factor that is applied is the lowest scale factor
-     * from all the methods.  They are not multiplied together.
-     *
-     * @param callback  Callback method for supplying a scale factor to apply when clamping the sound volume
-     */
-    public static void registerVolumeScaleCallback(@Nonnull final Function<ISound, Float> callback) {
-        Methods.REGISTER_VOLUME_SCALE_CALLBACK.send(() -> callback);
-    }
-
-    /**
      * Called by the startup routine to process any callbacks that were posted.  Not to be called by other mods!
      */
     public static void processCompletions() {
@@ -185,8 +164,7 @@ public final class IMC {
         REGISTER_SOUND_CATEGORY(IMC::registerSoundCategoryHandler),
         REGISTER_SOUND_FILE(IMC::registerSoundFileHandler),
         REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler),
-        REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler),
-        REGISTER_VOLUME_SCALE_CALLBACK(IMC::registerVolumeScaleCallbackHandler);
+        REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler);
 
         private final Consumer<InterModComms.IMCMessage> handler;
 

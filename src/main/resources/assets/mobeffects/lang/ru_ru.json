@@ -36,6 +36,7 @@
 	"mobeffects.cfg.effects.Swing": "Enable Item Swing Sound Effects",
 	"mobeffects.cfg.effects.Swing.tooltip": "Enable item swing sound effects",
 	"mobeffects.cfg.effects.ToolbarVolume": "Toolbar Volume Scale",
-	"mobeffects.cfg.effects.ToolbarVolume.tooltip": "Toolbar master volume scale"
-
+	"mobeffects.cfg.effects.ToolbarVolume.tooltip": "Toolbar master volume scale",
+	"mobeffects.soundcategory.footsteps": "Footsteps",
+	"mobeffects.soundcategory.toolbar": "Toolbar"
 }

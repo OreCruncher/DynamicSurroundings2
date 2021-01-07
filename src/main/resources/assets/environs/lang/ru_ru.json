@@ -60,5 +60,9 @@
 	"environs.cfg.fog.Haze": "Высотная дымка",
 	"environs.cfg.fog.Haze.tooltip": "Чем выше игрок – тем больше дымка",
 	"environs.cfg.fog.Biome": "Туман биома",
-	"environs.cfg.fog.Biome.tooltip": "Включает туман определённой плотности и цвета для каждого биома"
+	"environs.cfg.fog.Biome.tooltip": "Включает туман определённой плотности и цвета для каждого биома",
+	"environs.soundcategory.biomes": "Biomes",
+	"environs.soundcategory.spotsounds": "Spot Sounds",
+	"environs.soundcategory.waterfall": "Waterfalls"
+
 }

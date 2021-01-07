@@ -98,6 +98,7 @@ public final class Environs {
     private void enqueueIMC(final InterModEnqueueEvent event) {
         IMC.registerSoundCategory(Constants.BIOMES);
         IMC.registerSoundCategory(Constants.SPOT_SOUNDS);
+        IMC.registerSoundCategory(Constants.WATERFALL);
 
         IMC.registerSoundFile(new ResourceLocation(MOD_ID, "sounds.json"));
 

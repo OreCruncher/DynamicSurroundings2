@@ -52,6 +52,9 @@
 	"sndctrl.season.early": "Principios",
 	"sndctrl.season.mid": "Mediados",
 	"sndctrl.season.late": "Finales",
+	"sndctrl.text.quickvolumemenu.title": "Quick Volume Settings",
+	"sndctrl.text.quickvolumemenu.open": "Open Quick Volume Settings",
+	"sndctrl.text.quickvolumemenu.footer": "Press <ESC> to close",
 	"sndctrl.message.cfg.soundconfig.invalid": "The sound configuration is invalid."
 
 }

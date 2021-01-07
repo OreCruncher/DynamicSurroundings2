@@ -28,10 +28,7 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.sndctrl.audio.handlers.MusicFader;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -115,6 +112,21 @@ public final class Category implements ISoundCategory {
      */
     public static void register(@Nonnull final ISoundCategory category) {
         nameToCategory.put(category.getName(), category);
+    }
+
+    /**
+     * Provides a list of ISoundCategory instances that are tagged for being displayable in a config menu.
+     * @return Collection of ISoundCategory instances to present in a configuration GUI.
+     */
+    public static Collection<ISoundCategory> getCategoriesForMenu() {
+        final List<ISoundCategory> categories = new ArrayList<>();
+
+        for(final Map.Entry<String, ISoundCategory> kvp : nameToCategory.entrySet()) {
+            if (kvp.getValue().doQuickMenu())
+                categories.add(kvp.getValue());
+        }
+
+        return categories;
     }
 
     @Override

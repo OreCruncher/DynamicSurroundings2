@@ -61,7 +61,7 @@
 	"environs.cfg.fog.Haze.tooltip": "Higher the player elevation the more haze that is experienced",
 	"environs.cfg.fog.Biome": "Biome Fog",
 	"environs.cfg.fog.Biome.tooltip": "Enable biome specific fog density and color",
-	"environs.soundcategory.biome": "Biomes",
+	"environs.soundcategory.biomes": "Biomes",
 	"environs.soundcategory.spotsounds": "Spot Sounds",
 	"environs.soundcategory.waterfall": "Waterfalls"
 }

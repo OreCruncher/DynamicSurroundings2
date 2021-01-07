@@ -38,8 +38,8 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class QuickVolumeScreen extends Screen implements Slider.ISlider {
 
-    private static final int SLIDER_WIDTH = 150;    // This matches the default of Slider
-    private static final int SLIDER_HEIGHT = 20;    // This matches the default of Slider
+    private static final int SLIDER_WIDTH = 160;
+    private static final int SLIDER_HEIGHT = 20;
     private static final int SLIDER_SPACING = 5;
 
     private final List<ISoundCategory> categories = new ArrayList<>();
@@ -74,15 +74,20 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
             final Slider slider = new Slider(
                     leftSide,
                     top,
+                    SLIDER_WIDTH,
+                    SLIDER_HEIGHT,
                     getSliderLabel(category.getTextComponent()),
-                    0, // Min
-                    100, // Max
-                    category.getVolumeScale() * 100,
+                    StringTextComponent.EMPTY,
+                    0,
+                    100,
+                    (int)(category.getVolumeScale() * 100),
+                    false,
+                    true,
                     s -> {
                     },
                     this
             );
-            slider.showDecimal = false;
+
             slider.y = top;
             top += SLIDER_HEIGHT + SLIDER_SPACING;
             addButton(slider);

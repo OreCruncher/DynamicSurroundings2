@@ -71,7 +71,7 @@ public final class SoundProcessor {
         applyConfig();
     }
 
-    private static void applyConfig() {
+    public static void applyConfig() {
         soundCull.clear();
         blockedSounds.clear();
         volumeControl.clear();

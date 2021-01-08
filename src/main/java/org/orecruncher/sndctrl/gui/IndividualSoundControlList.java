@@ -92,13 +92,17 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
 
     // Gathers all the sound configs that are different from default for handling.
     @Nonnull
-    public Collection<IndividualSoundConfig> getConfigs() {
+    protected Collection<IndividualSoundConfig> getConfigs() {
         final List<IndividualSoundConfig> configs = new ArrayList<>();
         for (final IndividualSoundConfig cfg : this.source) {
             if (!cfg.isDefault())
                 configs.add(cfg);
         }
         return configs;
+    }
+
+    public void saveChanges() {
+        SoundLibrary.updateSoundConfigurations(getConfigs());
     }
 
 }

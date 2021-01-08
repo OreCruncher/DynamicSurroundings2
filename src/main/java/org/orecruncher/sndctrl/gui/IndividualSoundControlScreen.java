@@ -22,6 +22,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,7 +43,6 @@ public class IndividualSoundControlScreen extends Screen {
     private static final int SEARCH_BAR_WIDTH = 200;
     private static final int SEARCH_BAR_HEIGHT = 20;
 
-    private static final int SELECTION_REGION_MARGIN = 15;
     private static final int SELECTION_HEIGHT_OFFSET = 5;
     private static final int SELECTION_WIDTH = 600;
     private static final int SELECTION_HEIGHT = 20;
@@ -52,6 +52,9 @@ public class IndividualSoundControlScreen extends Screen {
     private static final int BUTTON_SPACING = 10;
     private static final int CONTROL_WIDTH = BUTTON_WIDTH * 2 + BUTTON_SPACING;
 
+    private static final ITextComponent SAVE = new TranslationTextComponent("gui.done");
+    private static final ITextComponent CANCEL = new TranslationTextComponent("gui.cancel");
+
     protected final Screen parent;
     protected TextFieldWidget searchField;
     protected IndividualSoundControlList soundConfigList;
@@ -59,7 +62,7 @@ public class IndividualSoundControlScreen extends Screen {
     protected Button cancel;
 
     protected IndividualSoundControlScreen(@Nullable final Screen parent) {
-        super(new StringTextComponent("Some Title"));
+        super(new TranslationTextComponent("sndctrl.text.soundconfig.title"));
         this.parent = parent;
     }
 
@@ -78,24 +81,20 @@ public class IndividualSoundControlScreen extends Screen {
                 SEARCH_BAR_WIDTH,
                 SEARCH_BAR_HEIGHT,
                 this.searchField,   // Copy existing data over
-                new TranslationTextComponent("selectWorld.search"));
+                StringTextComponent.EMPTY);
 
-        this.searchField.setResponder((filter) -> {
-            this.soundConfigList.setSearchFilter(() -> filter, false);
-        });
+        this.searchField.setResponder((filter) -> this.soundConfigList.setSearchFilter(() -> filter, false));
 
         this.children.add(this.searchField);
 
         // Setup the list control
         final int topY = TOP_OFFSET + HEADER_HEIGHT + SELECTION_HEIGHT_OFFSET;
         final int bottomY = this.height - BOTTOM_OFFSET - FOOTER_HEIGHT - SELECTION_HEIGHT_OFFSET;
-        final int regionWidth = this.width;
-        final int regionHeight = bottomY - topY;
         this.soundConfigList = new IndividualSoundControlList(
                 this,
                 GameUtils.getMC(),
-                regionWidth,
-                regionHeight,
+                this.width,
+                this.height,
                 topY,
                 bottomY,
                 SELECTION_WIDTH,
@@ -113,7 +112,7 @@ public class IndividualSoundControlScreen extends Screen {
                 controlHeight,
                 BUTTON_WIDTH,
                 BUTTON_HEIGHT,
-                new StringTextComponent("Save"),
+                SAVE,
                 this::save);
         this.addButton(this.save);
 
@@ -122,7 +121,7 @@ public class IndividualSoundControlScreen extends Screen {
                 controlHeight,
                 BUTTON_WIDTH,
                 BUTTON_HEIGHT,
-                new StringTextComponent("Cancel"),
+                CANCEL,
                 this::cancel);
         this.addButton(this.cancel);
 
@@ -162,6 +161,7 @@ public class IndividualSoundControlScreen extends Screen {
 
     protected void save(@Nonnull final Button button) {
         // Gather the changes and push to underlying routine for parsing and packaging
+        this.soundConfigList.saveChanges();
         this.onClose();
         this.closeScreen();
     }

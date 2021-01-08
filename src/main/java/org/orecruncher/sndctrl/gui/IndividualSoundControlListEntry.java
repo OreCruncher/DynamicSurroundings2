@@ -19,6 +19,7 @@
 package org.orecruncher.sndctrl.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -102,8 +103,10 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
     @Override
     public void render(@Nonnull final MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean focused_, float partialTick_) {
-        final float labelY = rowTop + (rowHeight / 2.0F);
-        GameUtils.getMC().fontRenderer.drawString(matrixStack, this.config.getLocation().toString(), (float) rowLeft, labelY, ColorPalette.WHITE.rgb());
+        final FontRenderer font = GameUtils.getMC().fontRenderer;
+        final float labelY = rowTop + (rowHeight - font.FONT_HEIGHT) / 2F;
+        final String text = this.config.getLocation().toString();
+        font.drawString(matrixStack, text, (float) rowLeft, labelY, ColorPalette.WHITE.rgb());
 
         // Need to position the other controls appropriately
         int rightMargin = rowLeft + rowWidth;

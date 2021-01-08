@@ -31,6 +31,7 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundMetadata;
+import org.orecruncher.sndctrl.audio.handlers.SoundProcessor;
 import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.library.config.SoundMetadataConfig;
 
@@ -97,7 +98,6 @@ public final class SoundLibrary {
         return myRegistry;
     }
 
-    @SuppressWarnings("unused")
     @Nonnull
     public static Collection<IndividualSoundConfig> getSortedSoundConfigurations() {
 
@@ -114,6 +114,15 @@ public final class SoundLibrary {
 
         final Comparator<IndividualSoundConfig> iscComparitor = Comparator.comparing(isc -> isc.getLocation().toString());
         return map.values().stream().sorted(iscComparitor).collect(Collectors.toList());
+    }
+
+    public static void updateSoundConfigurations(@Nonnull final Collection<IndividualSoundConfig> configs) {
+        final List<String> items = configs.stream().map(Object::toString).collect(Collectors.toList());
+        Config.CLIENT.sound.individualSounds.set(items);
+
+        // Update our sound processor
+        // TODO: The flow here is a bit weird
+        SoundProcessor.applyConfig();
     }
 
     public static void registerSoundFile(@Nonnull final ResourceLocation soundFile) {

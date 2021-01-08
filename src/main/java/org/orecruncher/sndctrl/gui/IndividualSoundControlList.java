@@ -42,6 +42,7 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
     private final boolean enablePlay;
     private final int width;
     private List<IndividualSoundConfig> source;
+    private String lastSearchText = null;
 
     public IndividualSoundControlList(@Nonnull final Screen parent, @Nonnull final Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int slotWidth, int slotHeightIn, boolean enablePlay, @Nonnull final Supplier<String> filter, @Nullable final IndividualSoundControlList oldList) {
         super(mcIn, widthIn, heightIn, topIn, bottomIn, slotHeightIn);
@@ -64,15 +65,24 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
                 .forEach(IndividualSoundControlListEntry::tick);
     }
 
+    @Override
     public int getRowWidth() {
         return this.width;
     }
 
+    @Override
     protected int getScrollbarPosition() {
         return (this.parent.width + this.getRowWidth()) / 2 + 20;
     }
 
     public void setSearchFilter(@Nonnull final Supplier<String> filterBy, final boolean forceReload) {
+        final String filter = filterBy.get();
+
+        if (!forceReload && this.lastSearchText != null && this.lastSearchText.equals(filter))
+            return;
+
+        this.lastSearchText = filter;
+
         // Clear any existing children - they are going to be repopulated
         this.clearEntries();
 
@@ -81,7 +91,6 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
             this.source = new ArrayList<>(SoundLibrary.getSortedSoundConfigurations());
 
         // Get the filter string.  It's a simple contains check.
-        final String filter = filterBy.get();
         final Function<IndividualSoundConfig, Boolean> process;
 
         if (StringUtils.isNullOrEmpty(filter)) {
@@ -90,12 +99,18 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
             process = (isc) -> isc.getLocation().toString().contains(filter);
         }
 
+        IndividualSoundControlListEntry first = null;
         for (IndividualSoundConfig cfg : this.source) {
             if (process.apply(cfg)) {
                 final IndividualSoundControlListEntry entry = new IndividualSoundControlListEntry(cfg, this.enablePlay);
+                if (first == null)
+                    first = entry;
                 this.addEntry(entry);
             }
         }
+
+        if (first != null)
+            this.ensureVisible(first);
     }
 
     @Nullable

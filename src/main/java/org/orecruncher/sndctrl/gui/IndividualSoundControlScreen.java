@@ -163,10 +163,12 @@ public class IndividualSoundControlScreen extends Screen {
         drawCenteredString(matrixStack, this.font, this.title, this.width / 2, TOP_OFFSET, 16777215);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
-        final IndividualSoundControlListEntry entry = this.soundConfigList.getEntryAt(mouseX, mouseY);
-        if (entry != null) {
-            final List<ITextComponent> toolTip = entry.getToolTip();
-            this.renderWrappedToolTip(matrixStack, toolTip, mouseX, mouseY + TOOLTIP_Y_OFFSET, GameUtils.getMC().fontRenderer);
+        if (this.soundConfigList.isMouseOver(mouseX, mouseY)) {
+            final IndividualSoundControlListEntry entry = this.soundConfigList.getEntryAt(mouseX, mouseY);
+            if (entry != null) {
+                final List<ITextComponent> toolTip = entry.getToolTip();
+                this.renderWrappedToolTip(matrixStack, toolTip, mouseX, mouseY + TOOLTIP_Y_OFFSET, GameUtils.getMC().fontRenderer);
+            }
         }
     }
 

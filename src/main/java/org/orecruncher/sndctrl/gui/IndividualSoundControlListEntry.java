@@ -19,11 +19,13 @@
 package org.orecruncher.sndctrl.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -32,14 +34,19 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.widget.Slider;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.gui.ColorPalette;
+import org.orecruncher.sndctrl.api.sound.ISoundInstance;
+import org.orecruncher.sndctrl.api.sound.SoundBuilder;
+import org.orecruncher.sndctrl.audio.AudioEngine;
 import org.orecruncher.sndctrl.library.IndividualSoundConfig;
+import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
-public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<IndividualSoundControlListEntry> implements Slider.ISlider {
+public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<IndividualSoundControlListEntry> implements Slider.ISlider, AutoCloseable {
 
     private static final int SLIDER_WIDTH = 100;
     private static final int BUTTON_WIDTH = 60;
@@ -48,16 +55,21 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
     private static final ITextComponent CULL_OFF = new StringTextComponent("No Cull");
     private static final ITextComponent BLOCK_ON = new StringTextComponent(TextFormatting.GREEN + "BLOCK");
     private static final ITextComponent BLOCK_OFF = new StringTextComponent("No Block");
+    private static final ITextComponent PLAY = new StringTextComponent("Play");
+    private static final ITextComponent STOP = new StringTextComponent(TextFormatting.RED + "STOP");
     private static final int CONTROL_SPACING = 3;
 
     private final IndividualSoundConfig config;
     private final Slider volume;
     private final Button blockButton;
     private final Button cullButton;
+    private final Button playButton;
 
     private final List<Widget> children = new ArrayList<>();
 
-    public IndividualSoundControlListEntry(@Nonnull final IndividualSoundConfig data) {
+    private ISoundInstance soundPlay;
+
+    public IndividualSoundControlListEntry(@Nonnull final IndividualSoundConfig data, final boolean enablePlay) {
         this.config = data;
 
         this.volume = new Slider(
@@ -93,6 +105,16 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
                 this.config.isCulled() ? CULL_ON : CULL_OFF,
                 this::toggleCull);
         this.children.add(this.cullButton);
+
+        this.playButton = new Button(
+                0,
+                0,
+                BUTTON_WIDTH,
+                0,
+                PLAY,
+                this::play);
+        this.playButton.active = enablePlay;
+        this.children.add(this.playButton);
     }
 
     @Override
@@ -114,6 +136,11 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
         this.volume.y = rowTop;
         this.volume.setHeight(rowHeight);
         rightMargin -= this.volume.getWidth() + CONTROL_SPACING;
+
+        this.playButton.x = rightMargin - this.playButton.getWidth();
+        this.playButton.y = rowTop;
+        this.playButton.setHeight(rowHeight);
+        rightMargin -= this.playButton.getWidth() + CONTROL_SPACING;
 
         this.blockButton.x = rightMargin - this.blockButton.getWidth();
         this.blockButton.y = rowTop;
@@ -143,6 +170,38 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
         this.config.setVolumeScaleInt(slider.getValueInt());
     }
 
+    protected void play(@Nonnull final Button button) {
+        if (this.soundPlay == null) {
+            final Optional<SoundEvent> event = SoundLibrary.getSound(this.config.getLocation());
+            event.ifPresent(se -> {
+                this.soundPlay = SoundBuilder.builder(se).setAttenuation(ISound.AttenuationType.NONE).build();
+                AudioEngine.play(this.soundPlay);
+                this.playButton.setMessage(STOP);
+            });
+        } else {
+            AudioEngine.stop(this.soundPlay);
+            this.soundPlay = null;
+            this.playButton.setMessage(PLAY);
+        }
+    }
+
+    @Override
+    public void close() {
+        if (this.soundPlay != null) {
+            AudioEngine.stop(this.soundPlay);
+            this.soundPlay = null;
+        }
+    }
+
+    public void tick() {
+        if (this.soundPlay != null) {
+            if (this.soundPlay.getState().isTerminal()) {
+                this.soundPlay = null;
+                this.playButton.setMessage(PLAY);
+            }
+        }
+    }
+
     /**
      * Retrieves the updated data from the entry
      * @return Updated IndividualSoundControl data
@@ -151,4 +210,5 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
     public IndividualSoundConfig getData() {
         return this.config;
     }
+
 }

@@ -57,7 +57,10 @@ public class Keys {
             if (quickVolumeGui.isPressed()) {
                 GameUtils.getMC().displayGuiScreen(new QuickVolumeScreen());
             } else if (soundConfigGui.isPressed()) {
-                GameUtils.getMC().displayGuiScreen(new IndividualSoundControlScreen(null));
+                final boolean singlePlayer = GameUtils.getMC().getCurrentAction().equals("singleplayer");
+                GameUtils.getMC().displayGuiScreen(new IndividualSoundControlScreen(null, singlePlayer));
+                if (singlePlayer)
+                    GameUtils.getMC().getSoundHandler().pause();
             }
         }
     }

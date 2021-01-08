@@ -56,14 +56,16 @@ public class IndividualSoundControlScreen extends Screen {
     private static final ITextComponent CANCEL = new TranslationTextComponent("gui.cancel");
 
     protected final Screen parent;
+    protected final boolean enablePlay;
     protected TextFieldWidget searchField;
     protected IndividualSoundControlList soundConfigList;
     protected Button save;
     protected Button cancel;
 
-    protected IndividualSoundControlScreen(@Nullable final Screen parent) {
+    protected IndividualSoundControlScreen(@Nullable final Screen parent, final boolean enablePlay) {
         super(new TranslationTextComponent("sndctrl.text.soundconfig.title"));
         this.parent = parent;
+        this.enablePlay = enablePlay;
     }
 
     @Override
@@ -99,6 +101,7 @@ public class IndividualSoundControlScreen extends Screen {
                 bottomY,
                 SELECTION_WIDTH,
                 SELECTION_HEIGHT,
+                this.enablePlay,
                 () -> this.searchField.getText(),
                 this.soundConfigList);
 
@@ -130,6 +133,7 @@ public class IndividualSoundControlScreen extends Screen {
 
     public void tick() {
         this.searchField.tick();
+        this.soundConfigList.tick();
     }
 
     public boolean isPauseScreen() {

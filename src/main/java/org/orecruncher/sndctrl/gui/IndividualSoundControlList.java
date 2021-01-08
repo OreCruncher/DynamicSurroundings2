@@ -39,13 +39,15 @@ import java.util.function.Supplier;
 public class IndividualSoundControlList extends AbstractOptionList<IndividualSoundControlListEntry> {
 
     private final Screen parent;
+    private final boolean enablePlay;
     private final int width;
     private List<IndividualSoundConfig> source;
 
-    public IndividualSoundControlList(@Nonnull final Screen parent, @Nonnull final Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int slotWidth, int slotHeightIn, @Nonnull final Supplier<String> filter, @Nullable final IndividualSoundControlList oldList) {
+    public IndividualSoundControlList(@Nonnull final Screen parent, @Nonnull final Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int slotWidth, int slotHeightIn, boolean enablePlay, @Nonnull final Supplier<String> filter, @Nullable final IndividualSoundControlList oldList) {
         super(mcIn, widthIn, heightIn, topIn, bottomIn, slotHeightIn);
 
         this.parent = parent;
+        this.enablePlay = enablePlay;
         this.width = slotWidth;
 
         // Things like resizing will cause reconstruction and this preserves the existing state
@@ -54,6 +56,12 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
 
         // Initialize the first pass
         this.setSearchFilter(filter, false);
+    }
+
+    public void tick() {
+        this.getEventListeners().stream()
+                .map(IndividualSoundControlListEntry.class::cast)
+                .forEach(IndividualSoundControlListEntry::tick);
     }
 
     public int getRowWidth() {
@@ -84,7 +92,7 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
 
         for (IndividualSoundConfig cfg : this.source) {
             if (process.apply(cfg)) {
-                final IndividualSoundControlListEntry entry = new IndividualSoundControlListEntry(cfg);
+                final IndividualSoundControlListEntry entry = new IndividualSoundControlListEntry(cfg, this.enablePlay);
                 this.addEntry(entry);
             }
         }

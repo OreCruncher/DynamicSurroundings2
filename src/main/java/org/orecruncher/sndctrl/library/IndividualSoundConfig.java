@@ -119,7 +119,7 @@ public final class IndividualSoundConfig {
         return !(this.isBocked || this.isCulled || volumeScale != DEFAULT_VOLUME_SCALE);
     }
 
-    public boolean isBocked() {
+    public boolean isBlocked() {
         return this.isBocked;
     }
 
@@ -139,7 +139,11 @@ public final class IndividualSoundConfig {
         return this.volumeScale;
     }
 
-    public void setVolumeScale(final int scale) {
+    public int getVolumeScaleInt() {
+        return this.volumeScale;
+    }
+
+    public void setVolumeScaleInt(final int scale) {
         this.volumeScale = MathStuff.clamp(scale, VOLUME_SCALE_MIN, VOLUME_SCALE_MAX);
     }
 

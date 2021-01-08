@@ -112,7 +112,8 @@ public final class SoundLibrary {
         // Override with the defaults from configuration.  Make a copy of the original so it doesn't change.
         getIndividualSoundConfig().forEach(cfg -> map.put(cfg.getLocation(), new IndividualSoundConfig(cfg)));
 
-        return map.values();
+        final Comparator<IndividualSoundConfig> iscComparitor = Comparator.comparing(isc -> isc.getLocation().toString());
+        return map.values().stream().sorted(iscComparitor).collect(Collectors.toList());
     }
 
     public static void registerSoundFile(@Nonnull final ResourceLocation soundFile) {

@@ -32,26 +32,33 @@ import org.orecruncher.sndctrl.SoundControl;
 public class Keys {
 
     private static final KeyBinding quickVolumeGui;
+    private static final KeyBinding soundConfigGui;
 
     static {
         quickVolumeGui = new KeyBinding(
                 "sndctrl.text.quickvolumemenu.open",
                 InputMappings.INPUT_INVALID.getKeyCode(),
                 "dsurround.text.controls.group");
-
         quickVolumeGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getInputByName("key.keyboard.v"));
 
+        soundConfigGui = new KeyBinding(
+                "sndctrl.text.soundconfig.open",
+                InputMappings.INPUT_INVALID.getKeyCode(),
+                "dsurround.text.controls.group");
+        soundConfigGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getInputByName("key.keyboard.s"));
+
         ClientRegistry.registerKeyBinding(quickVolumeGui);
+        ClientRegistry.registerKeyBinding(soundConfigGui);
     }
 
     @SubscribeEvent
     public static void keyPressed(InputEvent.KeyInputEvent event) {
-        if (quickVolumeGui.isPressed() && GameUtils.getMC().currentScreen == null) {
-            if (GameUtils.getPlayer() == null) {
-                return;
+        if (GameUtils.getMC().currentScreen == null && GameUtils.getPlayer() != null) {
+            if (quickVolumeGui.isPressed()) {
+                GameUtils.getMC().displayGuiScreen(new QuickVolumeScreen());
+            } else if (soundConfigGui.isPressed()) {
+                GameUtils.getMC().displayGuiScreen(new IndividualSoundControlScreen(null));
             }
-
-            GameUtils.getMC().displayGuiScreen(new QuickVolumeScreen());
         }
     }
 }

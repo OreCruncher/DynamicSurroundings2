@@ -86,7 +86,7 @@ public final class SoundProcessor {
                 .collect(Collectors.toList());
 
         for (final IndividualSoundConfig cfg : configs) {
-            if (cfg.isBocked())
+            if (cfg.isBlocked())
                 blockedSounds.add(cfg.getLocation());
             if (cfg.isCulled())
                 soundCull.put(cfg.getLocation(), -cullInterval);

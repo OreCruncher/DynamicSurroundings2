@@ -25,18 +25,24 @@ import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.widget.Slider;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.gui.ColorPalette;
+import org.orecruncher.sndctrl.api.sound.Category;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 import org.orecruncher.sndctrl.api.sound.SoundBuilder;
 import org.orecruncher.sndctrl.audio.AudioEngine;
+import org.orecruncher.sndctrl.audio.SoundMetadata;
 import org.orecruncher.sndctrl.library.IndividualSoundConfig;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
@@ -51,14 +57,16 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
     private static final int SLIDER_WIDTH = 100;
     private static final int BUTTON_WIDTH = 60;
     private static final Button.IPressable NULL_PRESSABLE = (b) -> {};
-    private static final ITextComponent CULL_ON = new StringTextComponent(TextFormatting.GREEN + "CULL");
-    private static final ITextComponent CULL_OFF = new StringTextComponent("No Cull");
-    private static final ITextComponent BLOCK_ON = new StringTextComponent(TextFormatting.GREEN + "BLOCK");
-    private static final ITextComponent BLOCK_OFF = new StringTextComponent("No Block");
-    private static final ITextComponent PLAY = new StringTextComponent("Play");
-    private static final ITextComponent STOP = new StringTextComponent(TextFormatting.RED + "STOP");
+    private static final ITextComponent CULL_ON = new TranslationTextComponent("sndctrl.text.soundconfig.cull");
+    private static final ITextComponent CULL_OFF = new TranslationTextComponent("sndctrl.text.soundconfig.nocull");
+    private static final ITextComponent BLOCK_ON = new TranslationTextComponent("sndctrl.text.soundconfig.block");
+    private static final ITextComponent BLOCK_OFF = new TranslationTextComponent("sndctrl.text.soundconfig.noblock");
+    private static final ITextComponent PLAY = new TranslationTextComponent("sndctrl.text.soundconfig.play");
+    private static final ITextComponent STOP = new TranslationTextComponent("sndctrl.text.soundconfig.stop");
+    private static final ITextComponent VANILLA_CREDIT = new TranslationTextComponent("sndctrl.text.tooltip.vanilla");
     private static final int CONTROL_SPACING = 3;
 
+    private final IndividualSoundControlList parent;
     private final IndividualSoundConfig config;
     private final Slider volume;
     private final Button blockButton;
@@ -67,9 +75,12 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
     private final List<Widget> children = new ArrayList<>();
 
+    private List<ITextComponent> toolTip;
+
     private ISoundInstance soundPlay;
 
-    public IndividualSoundControlListEntry(@Nonnull final IndividualSoundConfig data, final boolean enablePlay) {
+    public IndividualSoundControlListEntry(@Nonnull final IndividualSoundControlList parent, @Nonnull final IndividualSoundConfig data, final boolean enablePlay) {
+        this.parent = parent;
         this.config = data;
 
         this.volume = new Slider(
@@ -124,7 +135,7 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
     }
 
     @Override
-    public void render(@Nonnull final MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean focused_, float partialTick_) {
+    public void render(@Nonnull final MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick_) {
         final FontRenderer font = GameUtils.getMC().fontRenderer;
         final float labelY = rowTop + (rowHeight - font.FONT_HEIGHT) / 2F;
         final String text = this.config.getLocation().toString();
@@ -153,6 +164,11 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
         for (final Widget w : this.children)
             w.render(matrixStack, mouseX, mouseY, partialTick_);
+
+        if (mouseOver) {
+            final List<ITextComponent> tips = this.getToolTip();
+            this.parent.renderToolTip(matrixStack, tips, mouseX, mouseY);
+        }
     }
 
     protected void toggleBlock(@Nonnull final Button button) {
@@ -200,6 +216,33 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
                 this.playButton.setMessage(PLAY);
             }
         }
+    }
+
+    @Nonnull
+    protected List<ITextComponent> getToolTip() {
+        if (this.toolTip == null) {
+            this.toolTip = new ArrayList<>();
+            final ResourceLocation loc = this.config.getLocation();
+
+            final String modName = ForgeUtils.getModDisplayName(loc.getNamespace());
+            this.toolTip.add(new StringTextComponent(TextFormatting.GOLD + modName));
+
+            final SoundMetadata meta = SoundLibrary.getSoundMetadata(loc);
+            final ITextComponent title = meta.getTitle();
+            if (title != StringTextComponent.EMPTY)
+                this.toolTip.add(title);
+            final ISoundCategory category = meta.getCategory();
+            if (category != Category.NEUTRAL) {
+                this.toolTip.add(new TranslationTextComponent("sndctrl.text.tooltip.category").append(category.getTextComponent()));
+            }
+
+            if (modName.equals("Minecraft"))
+                this.toolTip.add(VANILLA_CREDIT);
+            else
+                this.toolTip.addAll(meta.getCredits());
+        }
+
+        return this.toolTip;
     }
 
     /**

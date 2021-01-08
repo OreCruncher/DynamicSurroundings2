@@ -2,7 +2,7 @@
 	"armor.light_walk": {
 		"category": "footsteps",
 		"credits": [
-			"�aFoley",
+			"§aFoley",
 			"Samulis"
 		],
 		"sounds": [
@@ -14,7 +14,7 @@
 	"armor.light_run": {
 		"category": "footsteps",
 		"credits": [
-			"�aFoley",
+			"§aFoley",
 			"Samulis"
 		],
 		"sounds": [
@@ -26,10 +26,10 @@
 	"armor.medium_walk": {
 		"category": "footsteps",
 		"credits": [
-			"�aFoley",
+			"§aFoley",
 			"Samulis",
 			"",
-			"�achain drop",
+			"§achain drop",
 			"satanicupsman",
 			"Creative Commons 0"
 		],
@@ -89,7 +89,7 @@
 	"armor.heavy_walk": {
 		"category": "footsteps",
 		"credits": [
-			"�aClanking Armor",
+			"§aClanking Armor",
 			"LordSane",
 			"Attribution"
 		],
@@ -105,7 +105,7 @@
 	"armor.heavy_run": {
 		"category": "footsteps",
 		"credits": [
-			"�aClanking Armor",
+			"§aClanking Armor",
 			"LordSane",
 			"Attribution"
 		],

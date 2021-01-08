@@ -37,21 +37,17 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public final class SoundMetadata {
 
-    private static final ITextComponent NO_STRING = new StringTextComponent(StringUtils.EMPTY);
+    private static final ITextComponent NO_STRING = StringTextComponent.EMPTY;
 
-    @Nonnull
     private final ITextComponent title;
-    @Nonnull
     private final ITextComponent caption;
-    @Nonnull
     private final ISoundCategory category;
-    @Nonnull
     private final List<ITextComponent> credits;
 
     public SoundMetadata() {
         this.title = NO_STRING;
         this.caption = NO_STRING;
-        this.category = Category.MASTER;
+        this.category = Category.NEUTRAL;
         this.credits = ImmutableList.of();
     }
 
@@ -96,7 +92,7 @@ public final class SoundMetadata {
     }
 
     /**
-     * Gets the credits configured for the sound evnt in sounds.json, or an empty list if not present.
+     * Gets the credits configured for the sound event in sounds.json, or an empty list if not present.
      *
      * @return List containing 0 or more strings describing the sound credits.
      */

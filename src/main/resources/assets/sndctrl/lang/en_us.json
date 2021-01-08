@@ -65,6 +65,6 @@
 	"sndctrl.text.soundconfig.stop": "§cSTOP",
 	"sndctrl.text.tooltip.category": "Category: ",
 	"sndctrl.text.tooltip.vanilla": "Built in Vanilla Sound",
-	"sndctrl.message.cfg.soundconfig.invalid": "The sound configuration is invalid."
-
+	"sndctrl.message.cfg.soundconfig.invalid": "The sound configuration is invalid.",
+	"sndctrl.soundcategory.config": "Config Sound"
 }

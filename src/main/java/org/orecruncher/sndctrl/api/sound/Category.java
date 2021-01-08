@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
-public final class Category implements ISoundCategory {
+public class Category implements ISoundCategory {
     // Mappings for easy searching
     private static final Map<String, ISoundCategory> nameToCategory = new HashMap<>();
     private static final Map<SoundCategory, ISoundCategory> categoryToNew = new IdentityHashMap<>();
@@ -50,6 +50,13 @@ public final class Category implements ISoundCategory {
     public static final ISoundCategory AMBIENT = new SoundCategoryWrapper(SoundCategory.AMBIENT);
     public static final ISoundCategory VOICE = new SoundCategoryWrapper(SoundCategory.VOICE);
 
+    public static final ISoundCategory CONFIG = new Category("CONFIG", "sndctrl.soundcategory.config", () -> 1F, (v) -> {}) {
+        @Override
+        public boolean doQuickMenu() {
+            return false;
+        }
+    };
+
     static {
         categoryToNew.put(SoundCategory.MASTER, MASTER);
         categoryToNew.put(SoundCategory.MUSIC, MUSIC);
@@ -61,6 +68,8 @@ public final class Category implements ISoundCategory {
         categoryToNew.put(SoundCategory.PLAYERS, PLAYERS);
         categoryToNew.put(SoundCategory.AMBIENT, AMBIENT);
         categoryToNew.put(SoundCategory.VOICE, VOICE);
+
+        register(CONFIG);
     }
 
     private final String name;

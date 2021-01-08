@@ -136,7 +136,7 @@ public final class IndividualSoundConfig {
     }
 
     public float getVolumeScale() {
-        return this.volumeScale;
+        return this.volumeScale / 100F;
     }
 
     public int getVolumeScaleInt() {

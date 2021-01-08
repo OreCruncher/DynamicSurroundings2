@@ -19,7 +19,6 @@
 package org.orecruncher.sndctrl.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.Widget;
@@ -190,7 +189,10 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
         if (this.soundPlay == null) {
             final Optional<SoundEvent> event = SoundLibrary.getSound(this.config.getLocation());
             event.ifPresent(se -> {
-                this.soundPlay = SoundBuilder.builder(se).setAttenuation(ISound.AttenuationType.NONE).build();
+                this.soundPlay = SoundBuilder.builder(se, Category.CONFIG)
+                        .setGlobal(true)
+                        .setVolume(this.config.getVolumeScale())
+                        .build();
                 AudioEngine.play(this.soundPlay);
                 this.playButton.setMessage(STOP);
             });

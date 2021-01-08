@@ -31,6 +31,7 @@ import org.orecruncher.lib.GameUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class IndividualSoundControlScreen extends Screen {
@@ -51,6 +52,8 @@ public class IndividualSoundControlScreen extends Screen {
     private static final int BUTTON_HEIGHT = 20;
     private static final int BUTTON_SPACING = 10;
     private static final int CONTROL_WIDTH = BUTTON_WIDTH * 2 + BUTTON_SPACING;
+
+    private static final int TOOLTIP_Y_OFFSET = 30;
 
     private static final ITextComponent SAVE = new TranslationTextComponent("gui.done");
     private static final ITextComponent CANCEL = new TranslationTextComponent("gui.cancel");
@@ -159,6 +162,12 @@ public class IndividualSoundControlScreen extends Screen {
         this.searchField.render(matrixStack, mouseX, mouseY, partialTicks);
         drawCenteredString(matrixStack, this.font, this.title, this.width / 2, TOP_OFFSET, 16777215);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
+
+        final IndividualSoundControlListEntry entry = this.soundConfigList.getEntryAt(mouseX, mouseY);
+        if (entry != null) {
+            final List<ITextComponent> toolTip = entry.getToolTip();
+            this.renderWrappedToolTip(matrixStack, toolTip, mouseX, mouseY + TOOLTIP_Y_OFFSET, GameUtils.getMC().fontRenderer);
+        }
     }
 
     // Handlers

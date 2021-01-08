@@ -18,12 +18,10 @@
 
 package org.orecruncher.sndctrl.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
 import net.minecraft.util.StringUtils;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.library.IndividualSoundConfig;
@@ -94,14 +92,15 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
 
         for (IndividualSoundConfig cfg : this.source) {
             if (process.apply(cfg)) {
-                final IndividualSoundControlListEntry entry = new IndividualSoundControlListEntry(this, cfg, this.enablePlay);
+                final IndividualSoundControlListEntry entry = new IndividualSoundControlListEntry(cfg, this.enablePlay);
                 this.addEntry(entry);
             }
         }
     }
 
-    public void renderToolTip(@Nonnull final MatrixStack stack, @Nonnull final List<ITextComponent> tips, int mouseX, int mouseY) {
-        this.parent.func_243308_b(stack, tips, mouseX, mouseY);
+    @Nullable
+    public IndividualSoundControlListEntry getEntryAt(final int mouseX, final int mouseY) {
+        return this.getEntryAtPosition(mouseX, mouseY);
     }
 
     // Gathers all the sound configs that are different from default for handling.

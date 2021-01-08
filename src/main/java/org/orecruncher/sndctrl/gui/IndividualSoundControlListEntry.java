@@ -63,9 +63,9 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
     private static final ITextComponent PLAY = new TranslationTextComponent("sndctrl.text.soundconfig.play");
     private static final ITextComponent STOP = new TranslationTextComponent("sndctrl.text.soundconfig.stop");
     private static final ITextComponent VANILLA_CREDIT = new TranslationTextComponent("sndctrl.text.tooltip.vanilla");
+    private static final ITextComponent SLIDER_SUFFIX = new StringTextComponent("%");
     private static final int CONTROL_SPACING = 3;
 
-    private final IndividualSoundControlList parent;
     private final IndividualSoundConfig config;
     private final Slider volume;
     private final Button blockButton;
@@ -78,8 +78,7 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
     private ISoundInstance soundPlay;
 
-    public IndividualSoundControlListEntry(@Nonnull final IndividualSoundControlList parent, @Nonnull final IndividualSoundConfig data, final boolean enablePlay) {
-        this.parent = parent;
+    public IndividualSoundControlListEntry(@Nonnull final IndividualSoundConfig data, final boolean enablePlay) {
         this.config = data;
 
         this.volume = new Slider(
@@ -88,7 +87,7 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
                 SLIDER_WIDTH,
                 0,
                 StringTextComponent.EMPTY,
-                StringTextComponent.EMPTY,
+                SLIDER_SUFFIX,
                 0,
                 400,
                 this.config.getVolumeScaleInt(),
@@ -163,11 +162,6 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
         for (final Widget w : this.children)
             w.render(matrixStack, mouseX, mouseY, partialTick_);
-
-        if (mouseOver) {
-            final List<ITextComponent> tips = this.getToolTip();
-            this.parent.renderToolTip(matrixStack, tips, mouseX, mouseY);
-        }
     }
 
     protected void toggleBlock(@Nonnull final Button button) {
@@ -228,6 +222,8 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
             final String modName = ForgeUtils.getModDisplayName(loc.getNamespace());
             this.toolTip.add(new StringTextComponent(TextFormatting.GOLD + modName));
+
+            this.toolTip.add(new StringTextComponent(TextFormatting.GRAY + loc.toString()));
 
             final SoundMetadata meta = SoundLibrary.getSoundMetadata(loc);
             final ITextComponent title = meta.getTitle();

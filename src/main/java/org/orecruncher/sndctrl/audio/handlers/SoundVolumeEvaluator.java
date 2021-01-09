@@ -83,6 +83,13 @@ public final class SoundVolumeEvaluator {
      * This guy is hooked by a Mixin to replace getClampedVolume() in Minecraft code.
      */
     public static float getClampedVolume(@Nonnull final ISound sound) {
+        // No special handling on CONFIG sounds
+        if (sound instanceof ISoundInstance) {
+            final ISoundCategory sc = ((ISoundInstance) sound).getSoundCategory();
+            if (sc == Category.CONFIG)
+                return sound.getVolume();
+        }
+
         Preconditions.checkNotNull(sound);
         float volume = getVolumeScaleFromMods(sound)
                 * getCategoryVolumeScale(sound)

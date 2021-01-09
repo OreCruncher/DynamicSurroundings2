@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 package org.orecruncher.lib.particles;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.world.ClientWorld;
@@ -36,7 +34,6 @@ import java.util.Random;
 public abstract class BaseParticle extends Particle {
 
     protected static final EntityRendererManager manager = GameUtils.getMC().getRenderManager();
-    protected static final FontRenderer font = GameUtils.getMC().fontRenderer;
     protected static final Random RANDOM = XorShiftRandom.current();
 
     protected BaseParticle(@Nonnull final World worldIn, final double posXIn, final double posYIn,
@@ -47,18 +44,6 @@ public abstract class BaseParticle extends Particle {
     public BaseParticle(@Nonnull final World worldIn, final double xCoordIn, final double yCoordIn,
                         final double zCoordIn, final double xSpeedIn, final double ySpeedIn, final double zSpeedIn) {
         super((ClientWorld) worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
-    }
-
-    protected double interpX() {
-        return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView().x;
-    }
-
-    protected double interpY() {
-        return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView().y;
-    }
-
-    protected double interpZ() {
-        return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView().z;
     }
 
 }

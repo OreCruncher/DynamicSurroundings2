@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Mob Effects
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package org.orecruncher.mobeffects.effects.particles;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
@@ -26,7 +27,6 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.orecruncher.lib.opengl.OpenGlUtil;
 import org.orecruncher.lib.particles.CollectionManager;
 import org.orecruncher.lib.particles.IParticleCollection;
 import org.orecruncher.lib.particles.IParticleMote;
@@ -44,8 +44,9 @@ public final class Collections {
                 @Override
                 public void beginRender(@Nonnull final BufferBuilder buffer, @Nonnull final TextureManager textureManager) {
                     super.beginRender(buffer, textureManager);
-                    GlStateManager.depthMask(false);
-                    OpenGlUtil.setStandardBlend();
+                    RenderSystem.depthMask(false);
+                    RenderSystem.enableBlend();
+                    RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
                 }
             };
 

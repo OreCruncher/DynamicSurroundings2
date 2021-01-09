@@ -18,7 +18,6 @@
 
 package org.orecruncher.lib.particles;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -110,17 +109,8 @@ final class ParticleCollection extends BaseParticle {
     }
 
     @Override
-    public void renderParticle(@Nonnull IVertexBuilder buffer, @Nonnull ActiveRenderInfo renderInfo, float partialTicks)
+    public void renderParticle(@Nonnull final IVertexBuilder buffer, @Nonnull final ActiveRenderInfo renderInfo, final float partialTicks)
     {
-        // Ensure base starting state for rendering - see ParticleManager::renderParticles
-        RenderSystem.enableAlphaTest();
-        RenderSystem.defaultAlphaFunc();
-        RenderSystem.enableDepthTest();
-        RenderSystem.enableFog();
-        RenderSystem.activeTexture(org.lwjgl.opengl.GL13.GL_TEXTURE2);
-        RenderSystem.enableTexture();
-        RenderSystem.activeTexture(org.lwjgl.opengl.GL13.GL_TEXTURE0);
-
         this.render.begin();
         for (final IParticleMote mote : this.myParticles)
             mote.renderParticle(buffer, renderInfo, partialTicks);

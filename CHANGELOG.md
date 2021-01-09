@@ -1,3 +1,20 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.3
+**Requirements**
+* Forge 1.16.4-35.1.10+
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**What's new**
+* Individual Sound Configuration settings GUI.  Access in game using CTRL+s.  Keybind can be changed in control settings.
+  * Game will pause if single player.  It will not pause when playing on a server, so be cautious.
+
+**Fixes**
+* Auroras will now render in the right place.  We won't talk about it. :)
+
+**Changes**
+* Use vanilla step sound for nether wart blocks rather than organic acoustic.  They won't sound squishy.
+* Cull particles from rendering using frustum.  Essentially don't render particles that are not in view.
+
 > ### DynamicSurroundings-1.16.4-4.0.3.2
 **Requirements**
 * Forge 1.16.4-35.1.10+

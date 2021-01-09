@@ -22,6 +22,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -61,6 +62,11 @@ public abstract class Mote implements IParticleMote {
         this.posY = posY;
         this.posZ = posZ;
         this.position.setPos(posX, posY, posZ);
+    }
+
+    @Nonnull
+    public Vector3d getPosition() {
+        return new Vector3d(this.posX, this.posY, this.posZ);
     }
 
     public void configureColor() {

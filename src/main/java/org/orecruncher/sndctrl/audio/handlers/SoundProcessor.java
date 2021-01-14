@@ -90,8 +90,8 @@ public final class SoundProcessor {
                 blockedSounds.add(cfg.getLocation());
             if (cfg.isCulled())
                 soundCull.put(cfg.getLocation(), -cullInterval);
-            if (cfg.getVolumeScale() != 100)
-                volumeControl.put(cfg.getLocation(), MathStuff.clamp(cfg.getVolumeScale() / 100F, MIN_SOUNDFACTOR, MAX_SOUNDFACTOR));
+            if (cfg.getVolumeScaleInt() != 100)
+                volumeControl.put(cfg.getLocation(), MathStuff.clamp(cfg.getVolumeScale(), MIN_SOUNDFACTOR, MAX_SOUNDFACTOR));
         }
     }
 

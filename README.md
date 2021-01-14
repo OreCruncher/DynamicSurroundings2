@@ -6,6 +6,11 @@ Forge mod that gives the player control over the sounds that play.
 <a href="https://www.curseforge.com/minecraft/mc-mods/dynamic-surroundings"><img src="http://cf.way2muchnoise.eu/full_dynamic-surroundings_downloads.svg" alt="CurseForge Project"/></a>
 </br></br>
 
+The Dynamic Surroundings 1.16.4 combines 3 mods from 1.14.x+ into a single mod:
+* Dynamic Surroundings: Sound Control
+* Dynamic Surroundings: Environs
+* Dynamic Surroundings: Mob Effects
+
 ### License
  Dynamic Surroundings
  

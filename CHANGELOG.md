@@ -1,3 +1,12 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.4
+**Requirements**
+* Forge 1.16.4-35.1.10+
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**Fixes**
+* Calculate sound volume from individual sound configs correctly.  Prior sound volumes were way too low.
+
 > ### DynamicSurroundings-1.16.4-4.0.3.3
 **Requirements**
 * Forge 1.16.4-35.1.10+

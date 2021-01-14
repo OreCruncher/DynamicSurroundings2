@@ -39,6 +39,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.handlers.Manager;
 import org.orecruncher.environs.library.Constants;
@@ -78,6 +79,8 @@ public final class Environs {
             Config.setup();
 
             ShaderPrograms.MANAGER.initShaders();
+
+            DynamicSurroundings.doConfigMenuSetup();
         }
     }
 

@@ -33,6 +33,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.effects.EntityEffectHandler;
 import org.orecruncher.lib.fml.ClientLoginChecks;
@@ -94,6 +95,8 @@ public final class SoundControl {
                     return null;
                 }
             });
+
+            DynamicSurroundings.doConfigMenuSetup();
         }
     }
 

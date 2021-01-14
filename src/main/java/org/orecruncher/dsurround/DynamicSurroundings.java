@@ -94,12 +94,16 @@ public final class DynamicSurroundings {
             createPath(DATA_PATH);
             createPath(DUMP_PATH);
 
-            // If ClothAPI is available, use that.  Otherwise post a message to install it.
-            if (ModEnvironment.ClothAPI.isLoaded())
-                ConfigGui.registerConfigGui(new ConfigMenuBuilder());
-            else
-                ConfigGui.registerConfigGui(new ConfigGui.InstallClothGuiFactory());
+            doConfigMenuSetup();
         }
+    }
+
+    public static void doConfigMenuSetup() {
+        // If ClothAPI is available, use that.  Otherwise post a message to install it.
+        if (ModEnvironment.ClothAPI.isLoaded())
+            ConfigGui.registerConfigGui(new ConfigMenuBuilder());
+        else
+            ConfigGui.registerConfigGui(new ConfigGui.InstallClothGuiFactory());
     }
 
     private static void createPath(@Nonnull final File path) {

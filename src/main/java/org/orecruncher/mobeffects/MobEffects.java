@@ -32,6 +32,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.logging.ModLog;
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.effects.*;
@@ -68,6 +69,8 @@ public final class MobEffects {
 
             // Initialize our configuration
             Config.setup();
+
+            DynamicSurroundings.doConfigMenuSetup();
         }
     }
 

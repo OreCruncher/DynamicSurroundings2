@@ -61,7 +61,7 @@ public enum RippleStyle {
 
 	private final ResourceLocation resource;
 
-	private RippleStyle(@Nonnull final String texture) {
+	RippleStyle(@Nonnull final String texture) {
 		this.resource = new ResourceLocation(Environs.MOD_ID, texture);
 	}
 

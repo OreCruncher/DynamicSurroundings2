@@ -29,6 +29,8 @@
 	"environs.cfg.effects.Fireflies.tooltip": "Вкл/выкл светлячков, летающих вокруг растений",
 	"environs.cfg.effects.Splash": "Waterfall Splash",
 	"environs.cfg.effects.Splash.tooltip": "Enable/disable Waterfall Splash effects when water spills down",
+	"environs.cfg.effects.WaterRipple": "Water Ripples",
+	"environs.cfg.effects.WaterRipple.tooltip": "Enable/disable Water Ripple effects for rain and water splash",
 	"environs.cfg.effects.Underwater": "Disable Underwater Particles",
 	"environs.cfg.effects.Underwater.tooltip": "Enable/disable Minecraft's Underwater particle effect",
 	"environs.cfg.aurora": "Северное сияние",

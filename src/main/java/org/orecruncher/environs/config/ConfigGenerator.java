@@ -106,6 +106,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
+                        Config.CLIENT.effects.enableWaterRipples));
+
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
                         Config.CLIENT.effects.disableUnderwaterParticles));
 
         modCategory.add(subCategory.build());

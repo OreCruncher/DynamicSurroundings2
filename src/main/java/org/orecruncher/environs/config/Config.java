@@ -145,6 +145,7 @@ public final class Config {
             public final BooleanValue enableDustJets;
             public final BooleanValue enableFountainJets;
             public final BooleanValue enableWaterfalls;
+            public final BooleanValue enableWaterRipples;
             public final BooleanValue disableUnderwaterParticles;
 
             Effects(@Nonnull final ForgeConfigSpec.Builder builder) {
@@ -192,6 +193,11 @@ public final class Config {
                         .comment("Enable/disable Water Splash effects when water spills down")
                         .translation("environs.cfg.effects.Splash")
                         .define("Waterfall Splash", true);
+
+                this.enableWaterRipples = builder
+                        .comment("Enable/disable Water Ripple effects for rain and water splash")
+                        .translation("environs.cfg.effects.WaterRipple")
+                        .define("Water Ripples", true);
 
                 this.disableUnderwaterParticles = builder
                         .worldRestart()

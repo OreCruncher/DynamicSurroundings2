@@ -33,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.effects.JetEffect;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.particles.ParticleCollisionResult;
@@ -49,6 +50,10 @@ public final class ParticleHooks {
 
     private ParticleHooks() {
 
+    }
+
+    private static boolean doRipples() {
+        return Config.CLIENT.effects.enableWaterRipples.get();
     }
 
     /**
@@ -89,7 +94,8 @@ public final class ParticleHooks {
                     }
                 } else {
                     // There will be a water ripple
-                    Collections.addWaterRipple(world, particle.posX, particle.posY + 0.01D, particle.posZ);
+                    if (doRipples())
+                        Collections.addWaterRipple(world, particle.posX, particle.posY + 0.01D, particle.posZ);
                     if (isDripLava) {
                         createSteamCloud(world, vecPos);
                         acoustic = STEAM_HISS_ACOUSTIC;
@@ -119,7 +125,6 @@ public final class ParticleHooks {
                 acoustic = WATER_DROP_ACOUSTIC;
             }
             Library.resolve(acoustic).playAt(vecPos);
-            return;
         }
     }
 
@@ -172,7 +177,8 @@ public final class ParticleHooks {
                     }
                 } else {
                     // There will be a water ripple
-                    Collections.addWaterRipple(world, particlePos.x, actualHeight + LIQUID_HEIGHT_ADJUST, particlePos.z);
+                    if (doRipples())
+                        Collections.addWaterRipple(world, particlePos.x, actualHeight + LIQUID_HEIGHT_ADJUST, particlePos.z);
                     if (isDripLava) {
                         createSteamCloud(world, particlePos);
                         acoustic = STEAM_HISS_ACOUSTIC;
@@ -189,13 +195,16 @@ public final class ParticleHooks {
 
     // Hook for Rain particle effect to generate a ripple instead of a splash
     public static boolean spawnRippleOnBlock(@Nonnull final World world, @Nonnull final Vector3d position) {
-        final BlockPos pos = new BlockPos(position.x, position.y - 0.01D, position.z);
-        final FluidState fluidState = world.getFluidState(pos);
-        if (fluidState.isEmpty())
-            return false;
-        final float actualHeight = fluidState.getActualHeight(world, pos) + pos.getY();
-        Collections.addWaterRipple(world, position.x, actualHeight + LIQUID_HEIGHT_ADJUST, position.z);
-        return true;
+        if (doRipples()) {
+            final BlockPos pos = new BlockPos(position.x, position.y - 0.01D, position.z);
+            final FluidState fluidState = world.getFluidState(pos);
+            if (fluidState.isEmpty())
+                return false;
+            final float actualHeight = fluidState.getActualHeight(world, pos) + pos.getY();
+            Collections.addWaterRipple(world, position.x, actualHeight + LIQUID_HEIGHT_ADJUST, position.z);
+            return true;
+        }
+        return false;
     }
 
     private static void createSteamCloud(@Nonnull final IBlockReader world, @Nonnull final Vector3d pos) {

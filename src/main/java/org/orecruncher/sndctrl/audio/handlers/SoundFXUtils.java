@@ -30,6 +30,7 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
@@ -38,7 +39,9 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.WorldUtils;
+import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.math.BlockRayTrace;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.math.RayTraceIterator;
@@ -57,7 +60,11 @@ public final class SoundFXUtils {
     /**
      * Maximum number of segments to check when ray tracing for occlusion.
      */
-    private static final int OCCLUSION_SEGMENTS = 10;
+    private static final int OCCLUSION_SEGMENTS = 5;
+    /**
+     * Amount to increment along a vector when calculating occlusion
+     */
+    private static final double OCCLUSION_INCREMENT_FACTOR = 0.1D;
     /**
      * Number of rays to project when doing reverb calculations.
      */
@@ -142,8 +149,9 @@ public final class SoundFXUtils {
         final float absorptionCoeff = Effects.GLOBAL_BLOCK_ABSORPTION * 3.0F;
         final float airAbsorptionFactor = calculateWeatherAbsorption(ctx, soundPos, ctx.playerEyePosition);
         final float occlusionAccumulation = calculateOcclusion(ctx, soundPos, ctx.playerEyePosition);
+        final float sendCoeff = -occlusionAccumulation * absorptionCoeff;
 
-        float directCutoff = (float) MathStuff.exp(-occlusionAccumulation * absorptionCoeff);
+        float directCutoff = (float) MathStuff.exp(sendCoeff);
 
         // Handle any dampening effects from the player - like head in water
         directCutoff *= 1F - ctx.auralDampening;
@@ -247,40 +255,40 @@ public final class SoundFXUtils {
         final float sharedAirspaceWeight0 = MathStuff.clamp1(sharedAirspace / 20.0F);
         final float sharedAirspaceWeight1 = MathStuff.clamp1(sharedAirspace / 15.0F);
         final float sharedAirspaceWeight2 = MathStuff.clamp1(sharedAirspace / 10.0F);
+        final float sharedAirspaceWeight3 = MathStuff.clamp1(sharedAirspace / 10.0F);
 
-        final float sendCoeff = -occlusionAccumulation * absorptionCoeff;
-        final float exp1 = (float) MathStuff.exp(sendCoeff * 1.0F);
+        final float exp1 = (float) MathStuff.exp(sendCoeff);
         final float exp2 = (float) MathStuff.exp(sendCoeff * 1.5F);
         sendCutoff0 = exp1 * (1.0F - sharedAirspaceWeight0) + sharedAirspaceWeight0;
         sendCutoff1 = exp1 * (1.0F - sharedAirspaceWeight1) + sharedAirspaceWeight1;
         sendCutoff2 = exp2 * (1.0F - sharedAirspaceWeight2) + sharedAirspaceWeight2;
-        sendCutoff3 = sendCutoff2; //exp2 * (1.0F - sharedAirspaceWeight3) + sharedAirspaceWeight3;
+        sendCutoff3 = exp2 * (1.0F - sharedAirspaceWeight3) + sharedAirspaceWeight3;
 
         final float averageSharedAirspace = (sharedAirspaceWeight0 + sharedAirspaceWeight1 + sharedAirspaceWeight2
-                + sharedAirspaceWeight2) * 0.25F;
+                + sharedAirspaceWeight3) * 0.25F;
         directCutoff = Math.max((float) Math.sqrt(averageSharedAirspace) * 0.2F, directCutoff);
 
         float directGain = (float) MathStuff.pow(directCutoff, 0.1);
 
         sendGain1 *= bounceRatio[1];
         sendGain2 *= (float) MathStuff.pow(bounceRatio[2], 3.0);
-        //sendGain3 *= (float) MathStuff.pow(bounceRatio[3], 4.0);
+        sendGain3 *= (float) MathStuff.pow(bounceRatio[3], 4.0);
 
         sendGain0 = MathStuff.clamp1(sendGain0);
         sendGain1 = MathStuff.clamp1(sendGain1);
         sendGain2 = MathStuff.clamp1(sendGain2 * 1.05F - 0.05F);
-        //sendGain3 = sendGain2; //MathStuff.clamp1(sendGain3 * 1.05F - 0.05F);
+        sendGain3 = MathStuff.clamp1(sendGain3 * 1.05F - 0.05F);
 
         sendGain0 *= (float) MathStuff.pow(sendCutoff0, 0.1);
         sendGain1 *= (float) MathStuff.pow(sendCutoff1, 0.1);
         sendGain2 *= (float) MathStuff.pow(sendCutoff2, 0.1);
-        sendGain3  = sendGain2; //*= (float) MathStuff.pow(sendCutoff3, 0.1);
+        sendGain3 *= (float) MathStuff.pow(sendCutoff3, 0.1);
 
         if (ctx.player.isInWater()) {
             sendCutoff0 *= 0.4F;
             sendCutoff1 *= 0.4F;
             sendCutoff2 *= 0.4F;
-            sendCutoff3 = sendCutoff2; //*= 0.4F;
+            sendCutoff3 *= 0.4F;
         }
 
         final LowPassData lp0 = source.getLowPass0();
@@ -335,15 +343,77 @@ public final class SoundFXUtils {
         float accum = 0F;
 
         if (Config.CLIENT.sound.enableOcclusionCalcs.get()) {
-            final BlockRayTrace traceContext = new BlockRayTrace(ctx.world, origin, target, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY);
+            Vector3d lastHit = origin;
+            BlockState lastState = ctx.world.getBlockState(new BlockPos(lastHit.getX(), lastHit.getY(), lastHit.getZ()));
+            final BlockRayTrace traceContext = new BlockRayTrace(ctx.world, origin, target, RayTraceContext.BlockMode.VISUAL, RayTraceContext.FluidMode.SOURCE_ONLY);
             final Iterator<BlockRayTraceResult> itr = new RayTraceIterator(traceContext);
             for (int i = 0; i < OCCLUSION_SEGMENTS; i++) {
                 if (itr.hasNext()) {
-                    final BlockState state = ctx.world.getBlockState(itr.next().getPos());
-                    accum += AudioEffectLibrary.getOcclusion(state);
+                    final BlockRayTraceResult result = itr.next();
+                    final float occlusion = AudioEffectLibrary.getOcclusion(lastState);
+                    final double distance = lastHit.distanceTo(result.getHitVec());
+                    // Occlusion is scaled by the distance travelled through the block.
+                    accum += occlusion * distance;
+                    lastHit = result.getHitVec();
+                    lastState = ctx.world.getBlockState(result.getPos());
                 } else {
                     break;
                 }
+            }
+        }
+
+        return accum;
+    }
+
+    private static float calculateOcclusion2(@Nonnull final WorldContext ctx, @Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
+
+        assert ctx.world != null;
+        assert ctx.player != null;
+
+        float accum = 0F;
+
+        if (Config.CLIENT.sound.enableOcclusionCalcs.get()) {
+
+            // Get normal toward the target and scale by the increment
+            final Vector3d increment = MathStuff.normalize(origin, target).scale(OCCLUSION_INCREMENT_FACTOR);
+
+            // Distance in blocks.  Note that max distance should be the attenuation range of the sound so we don't
+            // have to worry about absurd lengths.
+            final double pathLength = origin.distanceTo(target);
+
+            // Calculate the number of iterations to do checks
+            final int count = (int) (pathLength / OCCLUSION_INCREMENT_FACTOR);
+
+            BlockPos lastPos = null;
+            double factor = 0;
+
+            // This is the starting point for iterating along the line
+            Vector3d current = new Vector3d(origin.getX(), origin.getY(), origin.getZ());
+            final BlockPos.Mutable pos = new BlockPos.Mutable();
+
+            for (int i = 0; i < count; i++) {
+                current = current.add(increment);
+                pos.setPos(current.getX(), current.getY(), current.getZ());
+
+                // If we have seen this block location before just reuse the factor that was
+                // calculated prior.
+                if (lastPos != null && lastPos.equals(pos)) {
+                    accum += factor;
+                    continue;
+                }
+
+                lastPos = pos.toImmutable();
+                final BlockState state = ctx.world.getBlockState(pos);
+
+                // If it's air the factor is 0.  Just clear and continue.
+                if (state.getMaterial() == Material.AIR) {
+                    factor = 0;
+                    continue;
+                }
+
+                // Get the factor for this state and accumulate
+                factor = AudioEffectLibrary.getOcclusion(state) * OCCLUSION_INCREMENT_FACTOR;
+                accum += factor;
             }
         }
 

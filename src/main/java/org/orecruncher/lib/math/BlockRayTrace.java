@@ -77,9 +77,11 @@ public class BlockRayTrace {
         if (this.start.equals(this.end)) {
             return miss();
         } else {
-            double lerpX = MathHelper.lerp(NUDGE, this.start.x, this.end.x);
-            double lerpY = MathHelper.lerp(NUDGE, this.start.y, this.end.y);
-            double lerpZ = MathHelper.lerp(NUDGE, this.start.z, this.end.z);
+
+            final double lerpX = MathHelper.lerp(NUDGE, this.start.x, this.end.x);
+            final double lerpY = MathHelper.lerp(NUDGE, this.start.y, this.end.y);
+            final double lerpZ = MathHelper.lerp(NUDGE, this.start.z, this.end.z);
+
             int posX = MathHelper.floor(lerpX);
             int posY = MathHelper.floor(lerpY);
             int posZ = MathHelper.floor(lerpZ);
@@ -91,23 +93,24 @@ public class BlockRayTrace {
             BlockRayTraceResult traceResult = hitCheck(mutablePos);
             if (traceResult == null) {
                 // No hit.  Do the calcs to traverse the line
-                double xLerp = MathHelper.lerp(NUDGE, this.end.x, this.start.x);
-                double yLerp = MathHelper.lerp(NUDGE, this.end.y, this.start.y);
-                double zLerp = MathHelper.lerp(NUDGE, this.end.z, this.start.z);
-                double lenX = xLerp - lerpX;
-                double lenY = yLerp - lerpY;
-                double lenZ = zLerp - lerpZ;
-                int dirX = MathHelper.signum(lenX);
-                int dirY = MathHelper.signum(lenY);
-                int dirZ = MathHelper.signum(lenZ);
-                double deltaX = dirX == 0 ? Double.MAX_VALUE : (dirX / lenX);
-                double deltaY = dirY == 0 ? Double.MAX_VALUE : (dirY / lenY);
-                double deltaZ = dirZ == 0 ? Double.MAX_VALUE : (dirZ / lenZ);
+                final double xLerp = MathHelper.lerp(NUDGE, this.end.x, this.start.x);
+                final double yLerp = MathHelper.lerp(NUDGE, this.end.y, this.start.y);
+                final double zLerp = MathHelper.lerp(NUDGE, this.end.z, this.start.z);
+                final double lenX = xLerp - lerpX;
+                final double lenY = yLerp - lerpY;
+                final double lenZ = zLerp - lerpZ;
+                final int dirX = MathHelper.signum(lenX);
+                final int dirY = MathHelper.signum(lenY);
+                final int dirZ = MathHelper.signum(lenZ);
+                final double deltaX = dirX == 0 ? Double.MAX_VALUE : (dirX / lenX);
+                final double deltaY = dirY == 0 ? Double.MAX_VALUE : (dirY / lenY);
+                final double deltaZ = dirZ == 0 ? Double.MAX_VALUE : (dirZ / lenZ);
+
                 double X = deltaX * (dirX > 0 ? 1.0D - MathHelper.frac(lerpX) : MathHelper.frac(lerpX));
                 double Y = deltaY * (dirY > 0 ? 1.0D - MathHelper.frac(lerpY) : MathHelper.frac(lerpY));
                 double Z = deltaZ * (dirZ > 0 ? 1.0D - MathHelper.frac(lerpZ) : MathHelper.frac(lerpZ));
 
-                // Main processing loop that traverses the line segement between start and end point.  This process
+                // Main processing loop that traverses the line segment between start and end point.  This process
                 // will continue until there is a miss or a block is hit.
                 do {
                     // Reached the end of the line?

@@ -26,11 +26,11 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.math.LoggingTimerEMA;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.math.TimerEMA;
-import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
  * Diagnostic helper that fires an event every tick to collect data that will be rendered on the diagnostics
  * screen (F3).
  */
-@Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = DynamicSurroundings.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class Diagnostics {
 
     private static final TimerEMA clientTick = new TimerEMA("Client Tick");

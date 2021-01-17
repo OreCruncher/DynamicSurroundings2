@@ -253,7 +253,7 @@ public final class SoundFXUtils {
         bounceRatio[2] = bounceRatio[2] / REVERB_RAYS;
         bounceRatio[3] = bounceRatio[3] / REVERB_RAYS;
 
-        sharedAirspace *= RECIP_PRIMARY_RAYS * 64F;
+        sharedAirspace *= RECIP_TOTAL_RAYS * 64F;
 
         final float sharedAirspaceWeight0 = MathStuff.clamp1(sharedAirspace / 20.0F);
         final float sharedAirspaceWeight1 = MathStuff.clamp1(sharedAirspace / 15.0F);

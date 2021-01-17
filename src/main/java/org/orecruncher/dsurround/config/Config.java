@@ -18,7 +18,6 @@
 
 package org.orecruncher.dsurround.config;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -29,6 +28,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
+import org.orecruncher.dsurround.huds.lightlevel.LightLevelHUD;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -70,17 +70,14 @@ public final class Config {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.SPEC, CLIENT_CONFIG);
     }
 
-    public static class Trace {
-        public static final int SOUND_PLAY = 0x1;
-        public static final int BASIC_SOUND_PLAY = 0x2;
-    }
-
     public static class Client {
 
         public final Logging logging;
+        public final LightLevel lightLevel;
 
         Client(@Nonnull final ForgeConfigSpec.Builder builder) {
             this.logging = new Logging(builder);
+            this.lightLevel = new LightLevel(builder);
         }
 
         public static class Logging {
@@ -109,6 +106,45 @@ public final class Config {
                         .defineInRange("Debug Flag Mask", 0, 0, Integer.MAX_VALUE);
 
                 builder.pop();
+            }
+        }
+
+        public static class LightLevel {
+
+            public final ForgeConfigSpec.EnumValue<LightLevelHUD.ColorSet> colorSet;
+            public final ForgeConfigSpec.EnumValue<LightLevelHUD.Mode> mode;
+            public final IntValue range;
+            public final BooleanValue hideSafe;
+            public final IntValue lightSpawnThreshold;
+
+            LightLevel(@Nonnull final ForgeConfigSpec.Builder builder) {
+                builder.comment("Configuration for the Light Level HUD")
+                        .push("Light Level HUD Options");
+
+                this.colorSet = builder
+                        .comment("Coloring style to use for numbering")
+                        .translation("dsurround.cfg.lightlevel.ColorSet")
+                        .defineEnum("Color Set", LightLevelHUD.ColorSet.BRIGHT);
+
+                this.mode = builder
+                        .comment("Style of footprint to display for a player")
+                        .translation("dsurround.cfg.lightlevel.Mode")
+                        .defineEnum("Mode", LightLevelHUD.Mode.BLOCK);
+
+                this.range = builder
+                        .comment("The number of blocks away from player to render light levels")
+                        .translation("dsurround.cfg.lightlevel.Range")
+                        .defineInRange("Range", 16, 8, 64);
+
+                this.hideSafe = builder
+                        .comment("Hide light levels that are considered safe from mob spawning")
+                        .translation("dsurround.cfg.lightlevel.HideSafe")
+                        .define("Hide Safe", false);
+
+                this.lightSpawnThreshold = builder
+                        .comment("Light level under which mobs will spawn")
+                        .translation("dsurround.cfg.lightlevel.SpawnThreshold")
+                        .defineInRange("Spawn Threshold", 7, 0, 15);
             }
         }
     }

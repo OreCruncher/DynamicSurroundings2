@@ -1,5 +1,5 @@
 {
-  "package": "org.orecruncher.environs.mixins",
+  "package": "org.orecruncher.dsurround.mixins",
   "required": true,
   "refmap": "mixins.dsurround.refmap.json",
   "target": "@env(DEFAULT)",
@@ -8,9 +8,6 @@
   "mixins": [
   ],
   "client": [
-    "MixinBlockState",
-    "MixinBiome",
-    "MixinDripParticleDripping",
-    "MixinRainParticle"
+    "MixinParticleManager"
   ]
 }

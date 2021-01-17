@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
 
-package org.orecruncher.environs.mixins;
+package org.orecruncher.dsurround.mixins;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.particle.ParticleManager;
@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.culling.ClippingHelper;
+import org.orecruncher.dsurround.huds.lightlevel.LightLevelHUD;
 import org.orecruncher.environs.handlers.AuroraHandler;
 import org.orecruncher.lib.particles.FrustrumHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,9 +41,10 @@ public class MixinParticleManager {
         FrustrumHelper.setFrustrum(clippingHelper);
     }
 
-    // Hook the tail of particle rendering so that we can render our aurora.  RenderWorldLastEvent doesn't like me.
+    // Hook the tail of particle rendering so we can do our various render world last type things.
     @Inject(method = "renderParticles(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer$Impl;Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/renderer/ActiveRenderInfo;FLnet/minecraft/client/renderer/culling/ClippingHelper;)V", at = @At("RETURN"), remap = false)
     public void renderHook(MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, LightTexture lightTextureIn, ActiveRenderInfo activeRenderInfoIn, float partialTicks, ClippingHelper clippingHelper, CallbackInfo ci) {
+        LightLevelHUD.render(matrixStackIn, partialTicks);
         AuroraHandler.renderHook(matrixStackIn, partialTicks);
     }
 

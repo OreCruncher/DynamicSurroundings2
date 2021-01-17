@@ -27,6 +27,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.dsurround.huds.lightlevel.LightLevelHUD;
 import org.orecruncher.lib.config.ClothAPIFactory;
 
 import javax.annotation.Nonnull;
@@ -50,7 +51,8 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
 
         ConfigCategory category = createRootCategory(builder);
         SubCategoryBuilder modRoot = createSubCategory(entryBuilder, "dsurround.modname", TextFormatting.GOLD, false);
-        SubCategoryBuilder subCategory = createSubCategory(entryBuilder, "dsurround.cfg.logging", TextFormatting.YELLOW, true);
+
+        SubCategoryBuilder subCategory = createSubCategory(entryBuilder, "dsurround.cfg.logging", TextFormatting.YELLOW, false);
 
         subCategory.add(
                 createBoolean(
@@ -68,6 +70,39 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
                         Config.CLIENT.logging.flagMask,
                         0,
                         Integer.MAX_VALUE));
+
+        modRoot.add(subCategory.build());
+
+        subCategory = createSubCategory(entryBuilder, "dsurround.cfg.lightlevel", TextFormatting.YELLOW, false);
+
+        subCategory.add(
+                createEnumList(
+                        builder,
+                        LightLevelHUD.ColorSet.class,
+                        Config.CLIENT.lightLevel.colorSet));
+
+        subCategory.add(
+                createEnumList(
+                        builder,
+                        LightLevelHUD.Mode.class,
+                        Config.CLIENT.lightLevel.mode));
+
+        subCategory.add(
+                createInteger(
+                        builder,
+                        Config.CLIENT.lightLevel.range,
+                        16, 64));
+
+        subCategory.add(
+                createInteger(
+                        builder,
+                        Config.CLIENT.lightLevel.lightSpawnThreshold,
+                        0, 15));
+
+        subCategory.add(
+                createBoolean(
+                        builder,
+                        Config.CLIENT.lightLevel.hideSafe));
 
         modRoot.add(subCategory.build());
 

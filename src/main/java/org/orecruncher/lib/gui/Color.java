@@ -213,6 +213,18 @@ public class Color {
         return iAlpha << 24 | iRed << 16 | iGreen << 8 | iBlue;
     }
 
+    public int rgbWithAlpha(final float alpha) {
+        return rgbWithAlpha(alpha * 255);
+    }
+
+    public int rgbWithAlpha(final int alpha) {
+        final int iRed = (int) (this.red * 255);
+        final int iGreen = (int) (this.green * 255);
+        final int iBlue = (int) (this.blue * 255);
+        final int iAlpha = (int) (this.alpha * 255);
+        return alpha * 255 << 24 | iRed << 16 | iGreen << 8 | iBlue;
+    }
+
     @Override
     public int hashCode() {
         int result = Float.hashCode(this.red);

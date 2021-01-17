@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,11 @@ public enum DayCycle {
     DAYTIME(false, "Daytime"),
     NIGHTTIME(true, "Nighttime");
 
+    private static final float DAYTIME_THRESHOLD = 0.8F;
+    private static final float SUNRISE_THRESHOLD = DAYTIME_THRESHOLD - 0.04F;
+    private static final float NIGHTTIME_THRESHOLD = 0.26F;
+    private static final float SUNSET_THRESHOLD = NIGHTTIME_THRESHOLD - 0.04F;
+
     private final boolean auroraVisible;
     private final String localizeString;
 
@@ -64,13 +69,13 @@ public enum DayCycle {
 
         final float angle = world.func_242415_f(0);
 
-        if (angle > 0.82F)
+        if (angle > DAYTIME_THRESHOLD)
             return DayCycle.DAYTIME;
-        if (angle > (0.82F - 0.04F))
+        if (angle > SUNRISE_THRESHOLD)
             return DayCycle.SUNRISE;
-        if (angle > 0.26F)
+        if (angle > NIGHTTIME_THRESHOLD)
             return DayCycle.NIGHTTIME;
-        if (angle > (0.26F - 0.04F))
+        if (angle > SUNSET_THRESHOLD)
             return DayCycle.SUNSET;
         return DayCycle.DAYTIME;
     }

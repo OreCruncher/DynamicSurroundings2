@@ -22,7 +22,6 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -34,21 +33,30 @@ import org.orecruncher.lib.GameUtils;
 public class Keys {
 
     private static final KeyBinding lightLevelHUD;
+    private static final KeyBinding chunkBorders;
 
     static {
         lightLevelHUD = new KeyBinding(
-                "dsurround.text.lightlevel.open",
+                "dsurround.text.lightlevel.toggle",
                 InputMappings.INPUT_INVALID.getKeyCode(),
                 "dsurround.text.controls.group");
-        lightLevelHUD.setKeyModifierAndCode(KeyModifier.NONE, InputMappings.getInputByName("key.keyboard.f7"));
+        chunkBorders = new KeyBinding(
+                "dsurround.text.chunkborders.toggle",
+                InputMappings.INPUT_INVALID.getKeyCode(),
+                "dsurround.text.controls.group");
         ClientRegistry.registerKeyBinding(lightLevelHUD);
+        ClientRegistry.registerKeyBinding(chunkBorders);
     }
 
     @SubscribeEvent
     public static void keyPressed(InputEvent.KeyInputEvent event) {
         if (GameUtils.getMC().currentScreen == null && GameUtils.getPlayer() != null) {
             if (lightLevelHUD.isPressed()) {
-                LightLevelHUD.showHUD = !LightLevelHUD.showHUD;
+                LightLevelHUD.toggleDisplay();
+            }
+
+            if (chunkBorders.isPressed()) {
+                GameUtils.getMC().debugRenderer.toggleChunkBorders();
             }
         }
     }

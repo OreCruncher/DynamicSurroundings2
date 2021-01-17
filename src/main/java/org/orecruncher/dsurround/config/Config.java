@@ -118,7 +118,7 @@ public final class Config {
             public final IntValue lightSpawnThreshold;
 
             LightLevel(@Nonnull final ForgeConfigSpec.Builder builder) {
-                builder.comment("Configuration for the Light Level HUD")
+                builder.comment("Options for configuring the Light Level HUD")
                         .push("Light Level HUD Options");
 
                 this.colorSet = builder
@@ -127,24 +127,24 @@ public final class Config {
                         .defineEnum("Color Set", LightLevelHUD.ColorSet.BRIGHT);
 
                 this.mode = builder
-                        .comment("Style of footprint to display for a player")
+                        .comment("The type of light level to display")
                         .translation("dsurround.cfg.lightlevel.Mode")
-                        .defineEnum("Mode", LightLevelHUD.Mode.BLOCK);
+                        .defineEnum("Display Mode", LightLevelHUD.Mode.BLOCK);
 
                 this.range = builder
-                        .comment("The number of blocks away from player to render light levels")
+                        .comment("Block range for light level analysis")
                         .translation("dsurround.cfg.lightlevel.Range")
-                        .defineInRange("Range", 16, 8, 64);
+                        .defineInRange("Block Range", 16, 8, 64);
 
                 this.hideSafe = builder
-                        .comment("Hide light levels that are considered safe from mob spawning")
+                        .comment("Do not show light level for blocks where mobs will not spawn")
                         .translation("dsurround.cfg.lightlevel.HideSafe")
-                        .define("Hide Safe", false);
+                        .define("Hide Safe Blocks", false);
 
                 this.lightSpawnThreshold = builder
-                        .comment("Light level under which mobs will spawn")
+                        .comment("Light level at which mobs can spawn")
                         .translation("dsurround.cfg.lightlevel.SpawnThreshold")
-                        .defineInRange("Spawn Threshold", 7, 0, 15);
+                        .defineInRange("Mob Spawn Light Threshold", 7, 0, 15);
             }
         }
     }

@@ -20,10 +20,14 @@ package org.orecruncher.dsurround.huds.lightlevel;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
@@ -33,7 +37,6 @@ import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.LightType;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -59,7 +62,9 @@ public final class LightLevelHUD {
     private static FontRenderer font;
 
     public enum Mode {
-        BLOCK, SKY, BLOCK_SKY;
+        BLOCK,
+        SKY,
+        BLOCK_SKY
     }
 
     public enum ColorSet {
@@ -86,19 +91,25 @@ public final class LightLevelHUD {
         public double y;
         public int z;
         public int lightLevel;
-        public Color color;
+        public int color;
     }
 
-    public static boolean showHUD = false;
+    private static boolean showHUD = false;
 
     private static final int ALLOCATION_SIZE = 2048;
     private static final ObjectArray<LightCoord> lightLevels = new ObjectArray<>(ALLOCATION_SIZE);
     private static final BlockPos.Mutable mutable = new BlockPos.Mutable();
     private static int nextCoord = 0;
 
+    private static final String[] lightLevelText = new String[16];
+    private static final int[] margins = new int[16];
+
     static {
         for (int i = 0; i < ALLOCATION_SIZE; i++)
             lightLevels.add(new LightCoord());
+
+        for (int i = 0; i < 16; i++)
+            lightLevelText[i] = String.valueOf(i);
     }
 
     private static LightCoord nextCoord() {
@@ -133,7 +144,14 @@ public final class LightLevelHUD {
 
     protected static void updateLightInfo(@Nonnull final Vector3d position) {
 
-        font = GameUtils.getMC().fontRenderer;
+        final FontRenderer fr = GameUtils.getMC().fontRenderer;
+
+        if (fr != font) {
+            font = fr;
+            for (int i = 0; i < 16; i++)
+                margins[i] = -(font.getStringWidth(lightLevelText[i]) + 1) / 2;
+        }
+
         nextCoord = 0;
 
         final ColorSet colors = Config.CLIENT.lightLevel.colorSet.get();
@@ -145,7 +163,7 @@ public final class LightLevelHUD {
         final int originZ = MathStuff.floor(position.z) - (rangeXZ / 2);
         final int originY = MathStuff.floor(position.y) - (rangeY - 3);
 
-        final World world = GameUtils.getWorld();
+        final ClientWorld world = GameUtils.getWorld();
 
         for (int dX = 0; dX < rangeXZ; dX++)
             for (int dZ = 0; dZ < rangeXZ; dZ++) {
@@ -207,7 +225,7 @@ public final class LightLevelHUD {
                                 coord.y = trueY + heightAdjustment(state, lastState, mutable) + 0.002D;
                                 coord.z = trueZ;
                                 coord.lightLevel = result;
-                                coord.color = new Color(color.red(), color.green(), color.blue(), 0.99F);
+                                coord.color = color.rgbWithAlpha(254);
                             }
                         }
                     }
@@ -215,6 +233,10 @@ public final class LightLevelHUD {
                     lastState = state;
                 }
             }
+    }
+
+    public static void toggleDisplay() {
+        showHUD = !showHUD;
     }
 
     @SubscribeEvent
@@ -259,33 +281,45 @@ public final class LightLevelHUD {
         matrixStack.push();
         matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
 
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
-        GlStateManager.enableDepthTest();
-        GlStateManager.depthFunc(GL11.GL_LEQUAL);
-        GlStateManager.depthMask(true);
+        RenderSystem.disableLighting();
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        RenderSystem.depthMask(true);
+
+        IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+
+        final int yAdjust = -(font.FONT_HEIGHT / 2);
 
         for (int i = 0; i < nextCoord; i++) {
             final LightCoord coord = lightLevels.get(i);
-            final double x = coord.x;
-            final double y = coord.y;
-            final double z = coord.z;
-
-            final String text = String.valueOf(coord.lightLevel);
-            final int margin = -(font.getStringWidth(text) + 1) / 2;
-            final int yAdjust = -(font.FONT_HEIGHT / 2);
-            final float scale = 0.08F;
+            final String text = lightLevelText[coord.lightLevel];
+            final int margin = margins[coord.lightLevel];
+            final float scale = 0.07F;
 
             matrixStack.push();
-            matrixStack.translate(x + 0.5D, y, z + 0.5D);
+            matrixStack.translate(coord.x + 0.5D, coord.y, coord.z + 0.5D);
             matrixStack.rotate(rotY);
             matrixStack.rotate(rotX);
             matrixStack.scale(-scale, -scale, scale);
-            font.drawString(matrixStack, text, margin, yAdjust, coord.color.rgb());
+
+            font.renderString(
+                    text,
+                    margin,
+                    yAdjust,
+                    coord.color,
+                    false,
+                    matrixStack.getLast().getMatrix(),
+                    buffer,
+                    false,
+                    0,
+                    15728880);
+
             matrixStack.pop();
         }
 
+        buffer.finish();
         matrixStack.pop();
     }
 }

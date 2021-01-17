@@ -50,7 +50,7 @@ import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.gui.ColorPalette;
 import org.orecruncher.lib.math.MathStuff;
-import org.orecruncher.lib.particles.FrustrumHelper;
+import org.orecruncher.lib.particles.FrustumHelper;
 
 import org.lwjgl.opengl.GL11;
 
@@ -119,7 +119,7 @@ public final class LightLevelHUD {
     }
 
     protected static boolean inFrustum(final double x, final double y, final double z) {
-        return FrustrumHelper.isLocationInFrustum(new Vector3d(x, y, z));
+        return FrustumHelper.isLocationInFrustum(new Vector3d(x, y, z));
     }
 
     protected static boolean renderLightLevel(@Nonnull final BlockState state, @Nonnull final BlockState below) {
@@ -237,6 +237,7 @@ public final class LightLevelHUD {
 
     public static void toggleDisplay() {
         showHUD = !showHUD;
+        DynamicSurroundings.LOGGER.info("Light Level HUD: %s", Boolean.toString(showHUD));
     }
 
     @SubscribeEvent

@@ -26,7 +26,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.culling.ClippingHelper;
 import org.orecruncher.dsurround.huds.lightlevel.LightLevelHUD;
 import org.orecruncher.environs.handlers.AuroraHandler;
-import org.orecruncher.lib.particles.FrustrumHelper;
+import org.orecruncher.lib.particles.FrustumHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,8 +37,8 @@ public class MixinParticleManager {
 
     // Capture the frustrum and store away for use by the particle system
     @Inject(method = "renderParticles(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer$Impl;Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/renderer/ActiveRenderInfo;FLnet/minecraft/client/renderer/culling/ClippingHelper;)V", at = @At("HEAD"), remap = false, require = 1)
-    public void captureFrustrum(MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, LightTexture lightTextureIn, ActiveRenderInfo activeRenderInfoIn, float partialTicks, ClippingHelper clippingHelper, CallbackInfo ci) {
-        FrustrumHelper.setFrustrum(clippingHelper);
+    public void captureFrustum(MatrixStack matrixStackIn, IRenderTypeBuffer.Impl bufferIn, LightTexture lightTextureIn, ActiveRenderInfo activeRenderInfoIn, float partialTicks, ClippingHelper clippingHelper, CallbackInfo ci) {
+        FrustumHelper.setFrustum(clippingHelper);
     }
 
     // Hook the tail of particle rendering so we can do our various render world last type things.

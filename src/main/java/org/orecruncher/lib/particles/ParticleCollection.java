@@ -112,7 +112,7 @@ final class ParticleCollection extends BaseParticle {
     public void renderParticle(@Nonnull final IVertexBuilder buffer, @Nonnull final ActiveRenderInfo renderInfo, final float partialTicks) {
         this.render.begin();
         for (final IParticleMote mote : this.myParticles)
-            if (FrustrumHelper.isLocationInFrustum(mote.getPosition()))
+            if (FrustumHelper.isLocationInFrustum(mote.getPosition()))
                 mote.renderParticle(buffer, renderInfo, partialTicks);
         this.render.end();
     }

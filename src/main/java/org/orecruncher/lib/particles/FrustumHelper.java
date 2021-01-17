@@ -28,8 +28,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-public class FrustrumHelper {
-    private FrustrumHelper() {
+public class FrustumHelper {
+    private FrustumHelper() {
 
     }
 
@@ -39,7 +39,7 @@ public class FrustrumHelper {
      * Called by a Mixin to set the current clipping helper
      * @param clippingHelper Current clipping helper
      */
-    public static void setFrustrum(@Nullable final ClippingHelper clippingHelper) {
+    public static void setFrustum(@Nullable final ClippingHelper clippingHelper) {
         helper = clippingHelper;
     }
 

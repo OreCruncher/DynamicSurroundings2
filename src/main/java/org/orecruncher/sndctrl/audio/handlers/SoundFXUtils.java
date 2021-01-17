@@ -30,7 +30,6 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
@@ -39,9 +38,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.WorldUtils;
-import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.math.BlockRayTrace;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.math.RayTraceIterator;
@@ -131,20 +128,26 @@ public final class SoundFXUtils {
 
     }
 
-    public static void calculate(@Nonnull final WorldContext ctx, @Nonnull final SourceContext source) {
+    private final SourceContext source;
+
+    public SoundFXUtils(@Nonnull final SourceContext source) {
+        this.source = source;
+    }
+
+    public void calculate(@Nonnull final WorldContext ctx) {
 
         assert ctx.player != null;
 
         if (ctx.isNotValid()
-                || !source.isEnabled()
-                || !inRange(source.getPosition(), ctx.playerEyePosition, source.getAttenuationDistance())
-                || source.getPosition().equals(Vector3d.ZERO)) {
-            clearSettings(source);
+                || !this.source.isEnabled()
+                || !inRange(this.source.getPosition(), ctx.playerEyePosition, this.source.getAttenuationDistance())
+                || this.source.getPosition().equals(Vector3d.ZERO)) {
+            this.clearSettings();
             return;
         }
 
         // Need to offset sound toward player if it is in a solid block
-        final Vector3d soundPos = offsetPositionIfSolid(ctx.world, source.getPosition(), ctx.playerEyePosition);
+        final Vector3d soundPos = offsetPositionIfSolid(ctx.world, this.source.getPosition(), ctx.playerEyePosition);
 
         final float absorptionCoeff = Effects.GLOBAL_BLOCK_ABSORPTION * 3.0F;
         final float airAbsorptionFactor = calculateWeatherAbsorption(ctx, soundPos, ctx.playerEyePosition);
@@ -291,14 +294,14 @@ public final class SoundFXUtils {
             sendCutoff3 *= 0.4F;
         }
 
-        final LowPassData lp0 = source.getLowPass0();
-        final LowPassData lp1 = source.getLowPass1();
-        final LowPassData lp2 = source.getLowPass2();
-        final LowPassData lp3 = source.getLowPass3();
-        final LowPassData direct = source.getDirect();
-        final SourcePropertyFloat prop = source.getAirAbsorb();
+        final LowPassData lp0 = this.source.getLowPass0();
+        final LowPassData lp1 = this.source.getLowPass1();
+        final LowPassData lp2 = this.source.getLowPass2();
+        final LowPassData lp3 = this.source.getLowPass3();
+        final LowPassData direct = this.source.getDirect();
+        final SourcePropertyFloat prop = this.source.getAirAbsorb();
 
-        synchronized (source.sync()) {
+        synchronized (this.source.sync()) {
             lp0.gain = sendGain0;
             lp0.gainHF = sendCutoff0;
             lp0.setProcess(true);
@@ -324,8 +327,8 @@ public final class SoundFXUtils {
         }
     }
 
-    private static void clearSettings(@Nonnull final SourceContext source) {
-        synchronized (source.sync()) {
+    private void clearSettings() {
+        synchronized (this.source.sync()) {
             source.getLowPass0().setProcess(false);
             source.getLowPass1().setProcess(false);
             source.getLowPass2().setProcess(false);
@@ -359,61 +362,6 @@ public final class SoundFXUtils {
                 } else {
                     break;
                 }
-            }
-        }
-
-        return accum;
-    }
-
-    private static float calculateOcclusion2(@Nonnull final WorldContext ctx, @Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
-
-        assert ctx.world != null;
-        assert ctx.player != null;
-
-        float accum = 0F;
-
-        if (Config.CLIENT.sound.enableOcclusionCalcs.get()) {
-
-            // Get normal toward the target and scale by the increment
-            final Vector3d increment = MathStuff.normalize(origin, target).scale(OCCLUSION_INCREMENT_FACTOR);
-
-            // Distance in blocks.  Note that max distance should be the attenuation range of the sound so we don't
-            // have to worry about absurd lengths.
-            final double pathLength = origin.distanceTo(target);
-
-            // Calculate the number of iterations to do checks
-            final int count = (int) (pathLength / OCCLUSION_INCREMENT_FACTOR);
-
-            BlockPos lastPos = null;
-            double factor = 0;
-
-            // This is the starting point for iterating along the line
-            Vector3d current = new Vector3d(origin.getX(), origin.getY(), origin.getZ());
-            final BlockPos.Mutable pos = new BlockPos.Mutable();
-
-            for (int i = 0; i < count; i++) {
-                current = current.add(increment);
-                pos.setPos(current.getX(), current.getY(), current.getZ());
-
-                // If we have seen this block location before just reuse the factor that was
-                // calculated prior.
-                if (lastPos != null && lastPos.equals(pos)) {
-                    accum += factor;
-                    continue;
-                }
-
-                lastPos = pos.toImmutable();
-                final BlockState state = ctx.world.getBlockState(pos);
-
-                // If it's air the factor is 0.  Just clear and continue.
-                if (state.getMaterial() == Material.AIR) {
-                    factor = 0;
-                    continue;
-                }
-
-                // Get the factor for this state and accumulate
-                factor = AudioEffectLibrary.getOcclusion(state) * OCCLUSION_INCREMENT_FACTOR;
-                accum += factor;
             }
         }
 

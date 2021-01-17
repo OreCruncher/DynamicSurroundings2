@@ -48,24 +48,16 @@ public final class SourceContext extends ForkJoinTask<Void> {
     // Frequency of sound effect updates in thread schedule ticks.  Works out to be 3 times a second.
     private static final int UPDATE_FEQUENCY_TICKS = 7;
 
-    @Nonnull
     private final Object sync = new Object();
-    @Nonnull
     private final LowPassData lowPass0;
-    @Nonnull
     private final LowPassData lowPass1;
-    @Nonnull
     private final LowPassData lowPass2;
-    @Nonnull
     private final LowPassData lowPass3;
-    @Nonnull
     private final LowPassData direct;
-    @Nonnull
     private final SourcePropertyFloat airAbsorb;
+    private final SoundFXUtils fxProcessor;
 
-    @Nullable
     private ISound sound;
-    @Nonnull
     private Vector3d pos;
 
     private boolean isEnabled;
@@ -79,6 +71,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
         this.direct = new LowPassData();
         this.airAbsorb = new SourcePropertyFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, EXTEfx.AL_DEFAULT_AIR_ABSORPTION_FACTOR, EXTEfx.AL_MIN_AIR_ABSORPTION_FACTOR, EXTEfx.AL_MAX_AIR_ABSORPTION_FACTOR);
         this.pos = Vector3d.ZERO;
+        this.fxProcessor = new SoundFXUtils(this);
     }
 
     public Object sync() {
@@ -196,7 +189,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
 
     private void updateImpl() {
         try {
-            SoundFXUtils.calculate(SoundFXProcessor.getWorldContext(), this);
+            this.fxProcessor.calculate(SoundFXProcessor.getWorldContext());
         } catch(@Nonnull final Throwable t) {
             LOGGER.error(t, "Error processing SoundContext %s", toString());
         }

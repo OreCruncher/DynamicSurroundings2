@@ -45,7 +45,7 @@ public class Keys {
                 "sndctrl.text.soundconfig.open",
                 InputMappings.INPUT_INVALID.getKeyCode(),
                 "dsurround.text.controls.group");
-        soundConfigGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getInputByName("key.keyboard.s"));
+        soundConfigGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getInputByName("key.keyboard.i"));
 
         ClientRegistry.registerKeyBinding(quickVolumeGui);
         ClientRegistry.registerKeyBinding(soundConfigGui);

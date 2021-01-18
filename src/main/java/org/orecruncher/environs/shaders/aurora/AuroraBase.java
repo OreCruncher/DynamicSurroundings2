@@ -32,6 +32,7 @@ import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.environs.library.DimensionInfo;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.gui.Color;
+import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
 
 @OnlyIn(Dist.CLIENT)
@@ -103,14 +104,9 @@ public abstract class AuroraBase implements IAurora {
 	}
 
 	protected double getTranslationY(final float partialTick) {
-		final double posY = MathHelper.lerp(partialTick, this.player.lastTickPosY, this.player.getPosY());
-		if (posY > dimInfo.getSeaLevel()) {
-			final double limit = (this.dimInfo.getSkyHeight() + this.dimInfo.getCloudHeight()) / 2D;
-			final double result = posY + AuroraUtils.PLAYER_FIXED_Y_OFFSET;
-			return Math.min(result, limit);
-		}
-
-		return AuroraUtils.PLAYER_FIXED_Y_OFFSET;
+		final double posY = MathHelper.lerp(partialTick, this.player.lastTickPosY, this.player.getPosY()) + AuroraUtils.PLAYER_FIXED_Y_OFFSET;
+		final double limit = (this.dimInfo.getSkyHeight() + this.dimInfo.getCloudHeight()) / 2D;
+		return MathStuff.clamp(posY, AuroraUtils.PLAYER_FIXED_Y_OFFSET, limit);
 	}
 
 	@Nonnull

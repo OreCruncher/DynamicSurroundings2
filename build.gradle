@@ -83,6 +83,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            args '--mixin', 'mixins.dsurround.json'
             args '--mixin', 'mixins.sndctrl.json'
             args '--mixin', 'mixins.mobeffects.json'
             args '--mixin', 'mixins.environs.json'
@@ -204,7 +205,7 @@ jar {
     
     manifest {
         attributes([
-            "MixinConfigs": "mixins.sndctrl.json,mixins.mobeffects.json,mixins.environs.json",
+            "MixinConfigs": "mixins.dsurround.json,mixins.sndctrl.json,mixins.mobeffects.json,mixins.environs.json",
             "Specification-Title": "${project.ext.modId}",
             "Specification-Vendor": "OreCruncher",
             "Specification-Version": "1", // We are version 1 of ourselves

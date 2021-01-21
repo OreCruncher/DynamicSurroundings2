@@ -1,3 +1,21 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.5
+**Requirements**
+* JAVA 8
+* Forge 1.16.4-35.1.10+
+  * Compatible with 1.16.5-36.0.0+ as well
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**Fixes**
+* Aurora should no longer jump position when player positions around Y=63
+
+**Changes**
+* Changed default activation control for Individual Sound Configuration to CTRL+i
+* Enabled config menus for child mods that will open the main Dynamic Surroundings option menus.  Intent is to reduce confusion and keep things simple.
+* Add option to disable water ripple effect normally generated from rain and water splash effects.  It's under Environs -> Effect Options.
+* Adjusted sunrise threshold to be a bit earlier.
+* Tweaked sound occlusion algorithm a bit.
+
 > ### DynamicSurroundings-1.16.4-4.0.3.4
 **Requirements**
 * Forge 1.16.4-35.1.10+

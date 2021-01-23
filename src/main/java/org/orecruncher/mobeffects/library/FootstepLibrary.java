@@ -459,7 +459,7 @@ public final class FootstepLibrary {
         // emitter.  Otherwise we get strange effects when edge walking on blocks with a plant
         // to the side.
         final Material mat = state.getMaterial();
-        if (!mat.blocksMovement() || mat.isLiquid())
+        if (mat == null || !mat.blocksMovement() || mat.isLiquid())
             return Constants.NOT_EMITTER;
         final IAcoustic acoustic = Primitives.getFootstepAcoustic(state);
         return acoustic == NullAcoustic.INSTANCE ? Constants.NOT_EMITTER : acoustic;

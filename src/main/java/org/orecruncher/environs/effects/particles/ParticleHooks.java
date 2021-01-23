@@ -77,8 +77,9 @@ public final class ParticleHooks {
         // Could be falling into a fluid
         final FluidState fluidState = world.getFluidState(pos);
         if (!fluidState.isEmpty()) {
-            final float actualHeight = fluidState.getActualHeight(world, pos) + pos.getY();
-            if (particle.posY <= actualHeight) {
+            final float fluidHeight = fluidState.getActualHeight(world, pos);
+            final float actualHeight = fluidHeight + pos.getY();
+            if (fluidHeight < 1.0F && particle.posY <= actualHeight) {
                 // The position of the particle intersected with the fluid surface thus a hit.  The effect of a drop
                 // hitting lava is different than water.
                 boolean isDripLava = particle.fluid.isIn(FluidTags.LAVA);

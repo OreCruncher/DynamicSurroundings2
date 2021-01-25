@@ -19,6 +19,7 @@
 package org.orecruncher.lib.resource;
 
 import com.google.gson.Gson;
+import net.minecraft.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
 import org.orecruncher.lib.Lib;
 
@@ -98,7 +99,7 @@ public interface IResourceAccessor {
             }
         }
         return null;
-    };
+    }
 
     /**
      * Creates a reference to a resource accessor that can be used to retrieve data embedded in the JAR.
@@ -111,11 +112,6 @@ public interface IResourceAccessor {
         return new ResourceAccessorJar(rootContainer, location);
     }
 
-    static IResourceAccessor createJarResource(@Nonnull IFormatterCallback formatter, @Nonnull final ResourceLocation location) {
-        String asset = formatter.format(location);
-        return new ResourceAccessorJar(location, asset);
-    }
-
     /**
      * Creates a reference to a resource accessor that can be used to retrieve data on the local disk.
      *
@@ -125,6 +121,16 @@ public interface IResourceAccessor {
      */
     static IResourceAccessor createExternalResource(@Nonnull File root, @Nonnull ResourceLocation location) {
         return new ResourceAccessorExternal(root, location);
+    }
+
+    /**
+     * Creates a reference to a resource accessor that can be used to retrieve data from a resource pack.
+     * @param pack Resource pack containing the needed resource data
+     * @param location Location of the resource within the pack
+     * @return Reference to a resource accessor to obtain the necessary data.
+     */
+    static IResourceAccessor createPackResource(@Nonnull final IResourcePack pack, @Nonnull final ResourceLocation location, @Nonnull final ResourceLocation actual) {
+        return new ResourceAccessorPack(location, pack, actual);
     }
 
     /**
@@ -142,10 +148,5 @@ public interface IResourceAccessor {
                 Lib.LOGGER.error(t, "Unable to complete processing of %s", accessor);
             }
         }
-    }
-
-    @FunctionalInterface
-    interface IFormatterCallback {
-        String format(@Nonnull final ResourceLocation location);
     }
 }

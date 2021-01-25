@@ -18,7 +18,6 @@
 
 package org.orecruncher.sndctrl.api;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -33,7 +32,6 @@ import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
 import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
-import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
@@ -76,10 +74,6 @@ public final class IMC {
         handle(msg, ISoundCategory.class, Category::register);
     }
 
-    private static void registerSoundFileHandler(@Nonnull final InterModComms.IMCMessage msg) {
-        handle(msg, ResourceLocation.class, SoundLibrary::registerSoundFile);
-    }
-
     private static void registerEffectFactoryHandlerHandler(@Nonnull final InterModComms.IMCMessage msg) {
         handle(msg, IEntityEffectFactoryHandler.class, EntityEffectLibrary::register);
     }
@@ -110,17 +104,6 @@ public final class IMC {
     public static void registerSoundCategory(@Nonnull final ISoundCategory... category) {
         for (final ISoundCategory c : category)
             Methods.REGISTER_SOUND_CATEGORY.send(() -> c);
-    }
-
-    /**
-     * Have Sound Control scan the specified sound file looking for meta data as well as additional sounds
-     * that can be played.
-     *
-     * @param soundFile Sound file to process for meta data and additional sounds
-     */
-    public static void registerSoundFile(@Nonnull final ResourceLocation... soundFile) {
-        for (final ResourceLocation r : soundFile)
-            Methods.REGISTER_SOUND_FILE.send(() -> r);
     }
 
     /**
@@ -162,7 +145,6 @@ public final class IMC {
     private enum Methods {
         REGISTER_ACOUSTIC_EVENT(IMC::registerAcousticEventHandler),
         REGISTER_SOUND_CATEGORY(IMC::registerSoundCategoryHandler),
-        REGISTER_SOUND_FILE(IMC::registerSoundFileHandler),
         REGISTER_EFFECT_FACTORY_HANDLER(IMC::registerEffectFactoryHandlerHandler),
         REGISTER_COMPLETION_CALLBACK(IMC::registerCompletionCallbackHandler);
 

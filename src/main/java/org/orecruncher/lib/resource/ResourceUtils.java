@@ -18,7 +18,11 @@
 
 package org.orecruncher.lib.resource;
 
+import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.ResourcePackInfo;
+import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.fml.ForgeUtils;
 
 import javax.annotation.Nonnull;
@@ -31,10 +35,22 @@ public final class ResourceUtils {
 
     }
 
+    private static final String MANIFEST_FILE = "manifest.json";
+
+    private static Collection<String> cachedNamespaces = null;
+
+    /**
+     * Clears any cached namespace information
+     */
+    public static void  clearCache() {
+        cachedNamespaces = null;
+    }
+
     /**
      * Scans the local disk as well as resource packs and JARs locating and creating accessors for the config file
      * in question.  Configs on disk have priority over resource packs and JARs, and 3rd party jars have priority
-     * over the provided mod ID.
+     * over the provided mod ID.  These resources are read from CLIENT resources (assets) rather than SERVER
+     * resources (data).
      * @param modId Mod ID that is considered the least in priority
      * @param root Location on disk where external configs can be cached
      * @param config The config file that is of interest
@@ -42,44 +58,126 @@ public final class ResourceUtils {
      */
     public static Collection<IResourceAccessor> findConfigs(@Nonnull final String modId, @Nonnull final File root, @Nonnull final String config) {
 
+        final String specialConfigFolder = modId + "_configs";
+        final String resourceContainer = specialConfigFolder + "/%s";
+        final String parentModConfigs = modId + "/configs";
+
         final Map<ResourceLocation, IResourceAccessor> locations = new HashMap<>();
+        final Collection<ResourcePackInfo> packs = ForgeUtils.getEnabledResourcePacks();
 
-        final List<String> modList = ForgeUtils.getConfigLocations();
+        // Cache the namespaces so we don't do discovery unnecessarily.
+        final Collection<String> namespaceList = discoverNamespaces(resourceContainer);
 
-        // Scan the local disk looking for config files.  These configs override everything else.
-        for (final String mod : modList) {
-            final ResourceLocation location = new ResourceLocation(mod, config);
-            final IResourceAccessor accessor = IResourceAccessor.createExternalResource(root, location);
+        // Look for resources in resource packs.  Mod resources will be exposed by an internal Forge resource pack
+        // so we do not need to scan JARs directly.  The collection returned is already sorted so that the first
+        // entries in the collection are lower priority that those further in the collection.  The result is that
+        // higher priority resource packs will replace data from lower priority packs if there is an overlap.
+        for (final ResourcePackInfo pack : packs) {
+            final IResourcePack rp = pack.getResourcePack();
+            final Set<String> namespaces = rp.getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES);
+            for (final String mod : namespaceList) {
+                if (namespaces.contains(mod)) {
+                    final String container = String.format(resourceContainer, config);
+                    final ResourceLocation location = new ResourceLocation(mod, config);
+                    IResourceAccessor accessor = IResourceAccessor.createPackResource(
+                            rp,
+                            location,
+                            new ResourceLocation(mod, container));
+                    if (accessor.exists()) {
+                        // Need to make sure we use namespace:config as the location since it can be overridden
+                        // by subsequent configs.
+                        final ResourceLocation loc = new ResourceLocation(mod, config);
+                        locations.put(loc, accessor);
+                    }
+                }
+            }
+        }
+
+        // Scan resources from external configuration sources as well as default configs found in the parent JAR.
+        // Data from external configs will replace any existing entries in the location dictionary since they are
+        // considered highest priority.  Those from the parent JAR will only be applied if no other configs have
+        // been loaded for the mod in question.
+        for (final String mod : namespaceList) {
+            ResourceLocation location = new ResourceLocation(mod, config);
+            IResourceAccessor accessor = IResourceAccessor.createExternalResource(root, location);
+            if (accessor.exists()) {
+                locations.put(location, accessor);
+                continue;
+            }
+
+            accessor = IResourceAccessor.createJarResource(parentModConfigs, location);
             if (accessor.exists())
                 locations.put(location, accessor);
         }
 
-        // Scan JARs looking for additional configs.  Do not include the parent - it goes last.  These JARs will
-        // only contain configs that apply to themselves.
-        for (final String mod : modList) {
-            if (mod.equals(modId))
-                continue;
-            final String container = String.format("%s/configs", mod);
-            final ResourceLocation location = new ResourceLocation(mod, config);
-            if (!locations.containsKey(location)) {
-                final IResourceAccessor accessor = IResourceAccessor.createJarResource(container, location);
-                if (accessor.exists())
-                    locations.put(location, accessor);
-            }
-        }
-
-        // Lastly scan the parent.  The parent can contain references to multiple mods (dsurround)
-        final String container = String.format("%s/configs", modId);
-        for (final String mod1 : modList) {
-            final ResourceLocation location = new ResourceLocation(mod1, config);
-            if (!locations.containsKey(location)) {
-                final IResourceAccessor accessor = IResourceAccessor.createJarResource(container, location);
-                if (accessor.exists())
-                    locations.put(location, accessor);
-            }
-        }
-
         return locations.values();
+    }
+
+    /**
+     * Scans resource packs locating sound.json configurations.
+     * @return Collection of accessors to retrieve sound.json configurations.
+     */
+    public static Collection<IResourceAccessor> findSounds() {
+        final List<IResourceAccessor> results = new ArrayList<>();
+        final Collection<ResourcePackInfo> packs = ForgeUtils.getEnabledResourcePacks();
+
+        for (final ResourcePackInfo pack : packs) {
+            final IResourcePack rp = pack.getResourcePack();
+            final Set<String> embeddedNamespaces = rp.getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES);
+            for (final String ns : embeddedNamespaces) {
+                final ResourceLocation location = new ResourceLocation(ns, "sounds.json");
+                final IResourceAccessor accessor = IResourceAccessor.createPackResource(pack.getResourcePack(), location, location);
+                if (accessor.exists()) {
+                    results.add(accessor);
+                }
+            }
+        }
+
+        return results;
+    }
+
+    private static Collection<String> discoverNamespaces(@Nonnull final String resourceContainer) {
+
+        if (cachedNamespaces != null)
+            return cachedNamespaces;
+
+        final String container = String.format(resourceContainer, MANIFEST_FILE);
+
+        // Initial namespace list is based on the currently loaded mod list
+        final List<String> namespaces = new ArrayList<>(ForgeUtils.getModIdList());
+
+        // Resource packs are a bit of a challenge.  There are two different ways that a pack can provide resource
+        // information to us:
+        //
+        // 1. The pack contains resource info specific to another mod in the mod pack.  These resources should not be
+        //    processed unless the mod is present in the pack.  The constructed Forge resource pack is an example of
+        //    this style.
+        //
+        // 2. The pack itself has it's own namespace, and it is providing resources that are not associated with any
+        //    other mod present.  We identify these namespaces by the presence of a manifest file.
+        //
+        final Collection<ResourcePackInfo> packs = ForgeUtils.getEnabledResourcePacks();
+
+        for (final ResourcePackInfo pack : packs) {
+            final IResourcePack rp = pack.getResourcePack();
+            final Set<String> embeddedNamespaces = rp.getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES);
+            for (final String ns : embeddedNamespaces) {
+                if (!namespaces.contains(ns)) {
+                    final ResourceLocation location = new ResourceLocation(ns, container);
+                    final IResourceAccessor accessor = IResourceAccessor.createPackResource(pack.getResourcePack(), location, location);
+                    if (accessor.exists()) {
+                        final Manifest manifest = accessor.as(Manifest.class);
+                        if (manifest != null) {
+                            Lib.LOGGER.info("Resource Pack namespace detected: %s", manifest.getName());
+                            namespaces.add(ns);
+                        }
+                    }
+                }
+            }
+        }
+
+        cachedNamespaces = namespaces;
+        return cachedNamespaces;
     }
 
     /**

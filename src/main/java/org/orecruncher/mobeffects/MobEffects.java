@@ -18,7 +18,6 @@
 
 package org.orecruncher.mobeffects;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -108,9 +107,6 @@ public final class MobEffects {
                 Constants.UP,
                 Constants.UP_RUN
         );
-
-        // Register our sounds through SoundControl because Forge likes stomping client side sounds from the registry
-        IMC.registerSoundFile(new ResourceLocation(MOD_ID, "sounds.json"));
 
         // Register our effect handlers
         IMC.registerEffectFactoryHandler(EntityFootprintEffect.FACTORY);

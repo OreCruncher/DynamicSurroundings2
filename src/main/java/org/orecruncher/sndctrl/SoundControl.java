@@ -110,7 +110,6 @@ public final class SoundControl {
         }
 
         AudioEngine.initialize();
-        SoundLibrary.initialize();
         EntityEffectLibrary.initialize();
         EntityEffectHandler.initialize();
     }
@@ -129,6 +128,7 @@ public final class SoundControl {
 
         // Initialize after.  Reason is that a mod could override a regular sound with a complex
         // acoustic, so we only want to create a SimpleAcoustic if it does not exist in the map.
+        SoundLibrary.initialize();
         AcousticLibrary.initialize();
     }
 

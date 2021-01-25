@@ -1,7 +1,6 @@
 {
     "pack": {
-        "description": "Sound Control resoruces",
-        "pack_format": 4,
-        "_comment": "Resources for the Sound Control mod"
+        "description": "Dynamic Surroundings Resources",
+        "pack_format": 6
     }
 }

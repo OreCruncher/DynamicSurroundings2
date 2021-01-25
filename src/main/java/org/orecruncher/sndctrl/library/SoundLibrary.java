@@ -18,16 +18,17 @@
 
 package org.orecruncher.sndctrl.library;
 
+import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.orecruncher.lib.JsonUtils;
 import org.orecruncher.lib.Utilities;
-import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
+import org.orecruncher.lib.resource.IResourceAccessor;
+import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundMetadata;
@@ -36,6 +37,7 @@ import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.library.config.SoundMetadataConfig;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,7 @@ public final class SoundLibrary {
     private static final ResourceLocation MISSING_RESOURCE = new ResourceLocation(SoundControl.MOD_ID, "missing_sound");
     private static final Object2ObjectOpenHashMap<ResourceLocation, SoundEvent> myRegistry = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<ResourceLocation, SoundMetadata> soundMetadata = new Object2ObjectOpenHashMap<>();
+    private static final Type SOUND_FILE_TYPE = TypeToken.getParameterized(Map.class, String.class, SoundMetadataConfig.class).getType();
 
     public static final SoundEvent MISSING = new SoundEvent(MISSING_RESOURCE);
 
@@ -71,10 +74,10 @@ public final class SoundLibrary {
         // Gather up resource pack sound files and process them to ensure meta data is collected
         // and we become aware of configured sounds.  Resource pack sounds generally replace existing
         // registration, but this allows for new sounds to be added client side.
-        final List<ResourceLocation> packs = ForgeUtils.getResourcePackIdList().stream().map(p -> new ResourceLocation(p, "sounds.json")).collect(Collectors.toList());
+        final Collection<IResourceAccessor> soundFiles = ResourceUtils.findSounds();
 
-        for (final ResourceLocation packId : packs) {
-            registerSoundFile(packId);
+        for (final IResourceAccessor file : soundFiles) {
+            registerSoundFile(file);
         }
 
         LOGGER.info("Number of SoundEvents cached: %d", myRegistry.size());
@@ -94,10 +97,6 @@ public final class SoundLibrary {
                 .collect(Collectors.toList());
     }
 
-    static Map<ResourceLocation, SoundEvent> getRegisteredSounds() {
-        return myRegistry;
-    }
-
     @Nonnull
     public static Collection<IndividualSoundConfig> getSortedSoundConfigurations() {
 
@@ -112,8 +111,8 @@ public final class SoundLibrary {
         // Override with the defaults from configuration.  Make a copy of the original so it doesn't change.
         getIndividualSoundConfig().forEach(cfg -> map.put(cfg.getLocation(), new IndividualSoundConfig(cfg)));
 
-        final Comparator<IndividualSoundConfig> iscComparitor = Comparator.comparing(isc -> isc.getLocation().toString());
-        return map.values().stream().sorted(iscComparitor).collect(Collectors.toList());
+        final Comparator<IndividualSoundConfig> iscComparator = Comparator.comparing(isc -> isc.getLocation().toString());
+        return map.values().stream().sorted(iscComparator).collect(Collectors.toList());
     }
 
     public static void updateSoundConfigurations(@Nonnull final Collection<IndividualSoundConfig> configs) {
@@ -125,18 +124,20 @@ public final class SoundLibrary {
         SoundProcessor.applyConfig();
     }
 
-    public static void registerSoundFile(@Nonnull final ResourceLocation soundFile) {
-        final Map<String, SoundMetadataConfig> result = JsonUtils.loadConfig(soundFile, SoundMetadataConfig.class);
+    private static void registerSoundFile(@Nonnull final IResourceAccessor soundFile) {
+        final Map<String, SoundMetadataConfig> result = soundFile.as(SOUND_FILE_TYPE);
         if (result.size() > 0) {
-            LOGGER.debug("Processing %s", soundFile);
+            ResourceLocation resource = soundFile.location();
+            LOGGER.debug("Processing %s", resource);
             result.forEach((key, value) -> {
+                // We want to register the sound regardless of having metadata.
+                final ResourceLocation loc = new ResourceLocation(resource.getNamespace(), key);
+                if (!myRegistry.containsKey(loc)) {
+                    myRegistry.put(loc, new SoundEvent(loc));
+                }
                 if (!value.isDefault()) {
                     final SoundMetadata data = new SoundMetadata(value);
-                    final ResourceLocation resource = new ResourceLocation(soundFile.getNamespace(), key);
-                    soundMetadata.put(resource, data);
-                    if (!myRegistry.containsKey(resource)) {
-                        myRegistry.put(resource, new SoundEvent(resource));
-                    }
+                    soundMetadata.put(loc, data);
                 }
             });
         }

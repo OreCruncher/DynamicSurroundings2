@@ -103,8 +103,6 @@ public final class Environs {
         IMC.registerSoundCategory(Constants.SPOT_SOUNDS);
         IMC.registerSoundCategory(Constants.WATERFALL);
 
-        IMC.registerSoundFile(new ResourceLocation(MOD_ID, "sounds.json"));
-
         IMC.registerCompletionCallback(Libraries::initialize);
         IMC.registerCompletionCallback(Libraries::complete);
     }

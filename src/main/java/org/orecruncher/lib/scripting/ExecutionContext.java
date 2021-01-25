@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 package org.orecruncher.lib.scripting;
 
-import jdk.nashorn.api.scripting.ClassFilter;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
@@ -35,33 +33,17 @@ public final class ExecutionContext {
 
     private static final IModLog LOGGER = Lib.LOGGER;
 
-    /**
-     * Special ClassFilter that locks everything down to prevent execution of code outside of what should be
-     * available to configurations.  Goal is to prevent bad scripts from damaging the Minecraft runtime environment
-     * either by intent or accident.
-     */
-    private static final ClassFilter FILTER = s -> false;
-
     private static final String FUNCTION_SHELL = "%s;";
 
-    @Nonnull
     private final String contextName;
-    @Nonnull
     private final ScriptEngine engine;
-    @Nonnull
     private final ObjectArray<VariableSet<?>> variables = new ObjectArray<>(8);
-    @Nonnull
     private final Map<String, CompiledScript> compiled = new HashMap<>();
-    @Nonnull
     private final CompiledScript error;
 
     public ExecutionContext(@Nonnull final String contextName) {
-        this(contextName, FILTER);
-    }
-
-    public ExecutionContext(@Nonnull final String contextName, @Nonnull final ClassFilter filter) {
         this.contextName = contextName;
-        this.engine = new NashornScriptEngineFactory().getScriptEngine(filter);
+        this.engine = new ScriptEngineManager().getEngineByName("nashorn");
         this.error = makeFunction("'<ERROR>'");
         this.engine.put("lib", new LibraryFunctions());
     }

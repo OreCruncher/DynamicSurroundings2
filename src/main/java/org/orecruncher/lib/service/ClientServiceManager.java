@@ -23,8 +23,8 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.resource.IResourceType;
@@ -52,6 +52,8 @@ public class ClientServiceManager implements ISelectiveResourceReloadListener {
     public static ClientServiceManager instance() {
         return instance.instance();
     }
+
+    private int eventCount = 0;
 
     private ClientServiceManager() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -93,16 +95,12 @@ public class ClientServiceManager implements ISelectiveResourceReloadListener {
         }
     }
 
-    /**
-     * Causes the service start phase to be invoked when tags are updated.  This will occur during player login
-     * when server data is synchronized with the client.
-     *
-     * @param event Event that is raised
-     */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void recipesUpdate(@Nonnull final RecipesUpdatedEvent event) {
-        Lib.LOGGER.info("Received RecipesUpdatedEvent - triggering reload");
-        reload();
+    public void onStart(@Nonnull final TagsUpdatedEvent event) {
+        if (++this.eventCount > 1) {
+            Lib.LOGGER.info("Received TagsUpdatedEvent - triggering reload");
+            reload();
+        }
     }
 
     /**
@@ -113,6 +111,7 @@ public class ClientServiceManager implements ISelectiveResourceReloadListener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
         performAction("stop", IClientService::stop);
+        this.eventCount = 0;
     }
 
     private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IClientService> action) {

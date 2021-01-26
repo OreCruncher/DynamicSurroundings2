@@ -42,8 +42,8 @@ import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
-import org.orecruncher.lib.service.ClientServiceManager;
-import org.orecruncher.lib.service.IClientService;
+import org.orecruncher.lib.service.ModuleServiceManager;
+import org.orecruncher.lib.service.IModuleService;
 
 @OnlyIn(Dist.CLIENT)
 public final class DimensionLibrary {
@@ -59,7 +59,7 @@ public final class DimensionLibrary {
 	private static final HashMap<RegistryKey<World>, DimensionInfo> configs = new HashMap<>();
 
 	static void initialize() {
-		ClientServiceManager.instance().add(new DimensionLibraryService());
+		ModuleServiceManager.instance().add(new DimensionLibraryService());
 	}
 
 	static void initFromConfig(@Nonnull final List<DimensionConfig> cfg) {
@@ -121,7 +121,7 @@ public final class DimensionLibrary {
 		return cache.stream().map(Object::toString).sorted();
 	}
 
-	private static class DimensionLibraryService implements IClientService {
+	private static class DimensionLibraryService implements IModuleService {
 
 		@Override
 		public String name() {

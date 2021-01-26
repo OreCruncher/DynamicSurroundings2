@@ -43,8 +43,8 @@ import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
-import org.orecruncher.lib.service.ClientServiceManager;
-import org.orecruncher.lib.service.IClientService;
+import org.orecruncher.lib.service.ModuleServiceManager;
+import org.orecruncher.lib.service.IModuleService;
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.footsteps.Generator;
@@ -216,7 +216,7 @@ public final class FootstepLibrary {
     }
 
     static void initialize() {
-        ClientServiceManager.instance().add(new FootstepLibraryService());
+        ModuleServiceManager.instance().add(new FootstepLibraryService());
     }
 
     static void initFromConfig(@Nonnull final FootstepConfig mod) {
@@ -514,7 +514,7 @@ public final class FootstepLibrary {
         }
     }
 
-    private static class FootstepLibraryService implements IClientService {
+    private static class FootstepLibraryService implements IModuleService {
 
         @Override
         public String name() {

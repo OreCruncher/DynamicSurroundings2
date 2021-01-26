@@ -30,8 +30,8 @@ import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
-import org.orecruncher.lib.service.ClientServiceManager;
-import org.orecruncher.lib.service.IClientService;
+import org.orecruncher.lib.service.ModuleServiceManager;
+import org.orecruncher.lib.service.IModuleService;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.sndctrl.library.Primitives;
 
@@ -98,7 +98,7 @@ public final class ItemLibrary {
     }
 
     static void initialize() {
-        ClientServiceManager.instance().add(new ItemLibraryService());
+        ModuleServiceManager.instance().add(new ItemLibraryService());
     }
 
     static void initFromConfig(@Nonnull final Map<String, List<String>> cfg) {
@@ -202,7 +202,7 @@ public final class ItemLibrary {
         return data;
     }
 
-    private static class ItemLibraryService implements IClientService {
+    private static class ItemLibraryService implements IModuleService {
 
         @Override
         public String name() {

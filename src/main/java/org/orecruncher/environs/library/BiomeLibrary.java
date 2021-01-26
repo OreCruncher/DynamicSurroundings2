@@ -47,8 +47,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
-import org.orecruncher.lib.service.ClientServiceManager;
-import org.orecruncher.lib.service.IClientService;
+import org.orecruncher.lib.service.ModuleServiceManager;
+import org.orecruncher.lib.service.IModuleService;
 
 @OnlyIn(Dist.CLIENT)
 public final class BiomeLibrary {
@@ -102,7 +102,7 @@ public final class BiomeLibrary {
 	}
 
 	static void initialize() {
-		ClientServiceManager.instance().add(new BiomeLibraryService());
+		ModuleServiceManager.instance().add(new BiomeLibraryService());
 	}
 
 	static void initFromConfig(@Nonnull final List<BiomeConfig> cfg) {
@@ -161,7 +161,7 @@ public final class BiomeLibrary {
 		).collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	static class BiomeLibraryService implements IClientService
+	static class BiomeLibraryService implements IModuleService
 	{
 		@Override
 		public String name() {

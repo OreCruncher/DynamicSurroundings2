@@ -38,8 +38,8 @@ import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
-import org.orecruncher.lib.service.ClientServiceManager;
-import org.orecruncher.lib.service.IClientService;
+import org.orecruncher.lib.service.ModuleServiceManager;
+import org.orecruncher.lib.service.IModuleService;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 
@@ -64,7 +64,7 @@ public final class BlockStateLibrary {
     }
 
     static void initialize() {
-        ClientServiceManager.instance().add(new BlockStateLibraryService());
+        ModuleServiceManager.instance().add(new BlockStateLibraryService());
     }
 
     static void initFromConfig(@Nonnull final List<BlockConfig> config) {
@@ -155,7 +155,7 @@ public final class BlockStateLibrary {
         return ImmutableList.of();
     }
 
-    private static class BlockStateLibraryService implements IClientService
+    private static class BlockStateLibraryService implements IModuleService
     {
         @Override
         public String name() {

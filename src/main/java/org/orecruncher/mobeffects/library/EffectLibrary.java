@@ -39,8 +39,8 @@ import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
-import org.orecruncher.lib.service.ClientServiceManager;
-import org.orecruncher.lib.service.IClientService;
+import org.orecruncher.lib.service.ModuleServiceManager;
+import org.orecruncher.lib.service.IModuleService;
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.library.config.EntityConfig;
@@ -79,7 +79,7 @@ public final class EffectLibrary {
     }
 
     static void initialize() {
-        ClientServiceManager.instance().add(new EffectLibraryService());
+        ModuleServiceManager.instance().add(new EffectLibraryService());
     }
 
     public static boolean hasEffect(@Nonnull final Entity entity, @Nonnull final ResourceLocation loc) {
@@ -117,7 +117,7 @@ public final class EffectLibrary {
         }
     }
 
-    private static class EffectLibraryService implements IClientService {
+    private static class EffectLibraryService implements IModuleService {
 
         @Override
         public String name() {

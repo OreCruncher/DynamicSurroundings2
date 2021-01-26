@@ -38,8 +38,8 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
-import org.orecruncher.lib.service.ClientServiceManager;
-import org.orecruncher.lib.service.IClientService;
+import org.orecruncher.lib.service.ModuleServiceManager;
+import org.orecruncher.lib.service.IModuleService;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.misc.IMixinAudioEffectData;
 
@@ -71,7 +71,7 @@ public final class AudioEffectLibrary {
 
     public static void initialize() {
         // Currently does nothing.  Called during startup which triggers the class init.
-        ClientServiceManager.instance().add(new AudioEffectLibraryService());
+        ModuleServiceManager.instance().add(new AudioEffectLibraryService());
     }
 
     /**
@@ -246,7 +246,7 @@ public final class AudioEffectLibrary {
         }
     }
 
-    private static class AudioEffectLibraryService implements IClientService {
+    private static class AudioEffectLibraryService implements IModuleService {
 
         @Override
         public String name() {

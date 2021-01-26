@@ -43,19 +43,19 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
-public class ClientServiceManager implements ISelectiveResourceReloadListener {
+public class ModuleServiceManager implements ISelectiveResourceReloadListener {
 
-    private static final Singleton<ClientServiceManager> instance = new Singleton<>(ClientServiceManager::new);
+    private static final Singleton<ModuleServiceManager> instance = new Singleton<>(ModuleServiceManager::new);
 
-    private final ObjectArray<IClientService> services = new ObjectArray<>();
+    private final ObjectArray<IModuleService> services = new ObjectArray<>();
 
-    public static ClientServiceManager instance() {
+    public static ModuleServiceManager instance() {
         return instance.instance();
     }
 
     private int eventCount = 0;
 
-    private ClientServiceManager() {
+    private ModuleServiceManager() {
         MinecraftForge.EVENT_BUS.register(this);
         final IResourceManager resourceManager = GameUtils.getMC().getResourceManager();
         ((IReloadableResourceManager) resourceManager).addReloadListener(this);
@@ -66,7 +66,7 @@ public class ClientServiceManager implements ISelectiveResourceReloadListener {
      *
      * @param svc Service to add
      */
-    public void add(@Nonnull final IClientService svc) {
+    public void add(@Nonnull final IModuleService svc) {
         services.add(svc);
     }
 
@@ -74,8 +74,8 @@ public class ClientServiceManager implements ISelectiveResourceReloadListener {
      * Instructs configured services to reload configuration
      */
     protected void reload() {
-        performAction("reload", IClientService::reload);
-        this.services.forEach(IClientService::log);
+        performAction("reload", IModuleService::reload);
+        this.services.forEach(IModuleService::log);
     }
 
     /**
@@ -95,6 +95,13 @@ public class ClientServiceManager implements ISelectiveResourceReloadListener {
         }
     }
 
+    /**
+     * This event is raised during login.  It triggers the process of configuring the various components after
+     * tags and data have been synchronized between server and client.  It happens twice, so this logic will trigger
+     * the reload process on the second or greater time the event is received.  (There has to be a better way...)
+     *
+     * @param event Ignored
+     */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStart(@Nonnull final TagsUpdatedEvent event) {
         if (++this.eventCount > 1) {
@@ -110,11 +117,11 @@ public class ClientServiceManager implements ISelectiveResourceReloadListener {
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
-        performAction("stop", IClientService::stop);
+        performAction("stop", IModuleService::stop);
         this.eventCount = 0;
     }
 
-    private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IClientService> action) {
+    private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IModuleService> action) {
 
         Lib.LOGGER.info("Starting action '%s'", actionName);
 

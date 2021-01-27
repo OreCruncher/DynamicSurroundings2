@@ -27,6 +27,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.*;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.compat.ModEnvironment;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.SoundControl;
@@ -180,7 +181,7 @@ public final class SoundUtils {
             final long device = soundSystem.device;
 
             boolean hasFX = false;
-            if (Config.CLIENT.sound.enableEnhancedSounds.get()) {
+            if (doEnhancedSounds()) {
                 LOGGER.info("Enhanced sounds are enabled.  Will perform sound engine reconfiguration.");
                 final ALCCapabilities deviceCaps = ALC.createCapabilities(device);
                 hasFX = deviceCaps.ALC_EXT_EFX;
@@ -196,8 +197,6 @@ public final class SoundUtils {
                     // Have to renable since we reset the context
                     AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
                 }
-            } else {
-                LOGGER.warn("Enhanced sounds are not enabled.  No fancy sounds for you!");
             }
 
             // Calculate the number of source slots available
@@ -213,6 +212,21 @@ public final class SoundUtils {
             LOGGER.warn("OpenAL special effects for sounds will not be available");
         }
 
+    }
+
+    private static boolean doEnhancedSounds() {
+        if (ModEnvironment.SoundFilters.isLoaded()) {
+            LOGGER.warn("===============================================================================================");
+            LOGGER.warn("Sound Filters is installed and can cause conflicts with Dynamic Surroundings.");
+            LOGGER.warn("Dynamic Surroundings enhanced sound processing will be disabled.");
+            LOGGER.warn("===============================================================================================");
+            return false;
+        } else if (!Config.CLIENT.sound.enableEnhancedSounds.get()) {
+            LOGGER.warn("Enhanced sounds are not enabled.  No fancy sounds for you!");
+            return false;
+        }
+
+        return true;
     }
 
     public static void deinitialize(@Nonnull final SoundSystem soundSystem) {

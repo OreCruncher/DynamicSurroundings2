@@ -1,3 +1,20 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.6
+**Requirements**
+* JAVA 8 w/Forge 1.16.4-35.1.10+
+  * Compatible with 1.16.5-36.0.0+ w/JAVA 15
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**What's New**
+* (WIP) Java 15 support.  This requires Forge 1.16.5+.  I use AdoptOpenJDK and OpenJ9 JVM.
+
+**Fixes**
+* Don't do ripple effect for drip particles underwater (Crying Obsidian and Wet Sponges)
+
+**Changes**
+* (WIP) Reworked config loading to support resource packs.  Not currently documented.
+* Disable enhanced sound processing if Sound Filters is installed.
+
 > ### DynamicSurroundings-1.16.4-4.0.3.5
 **Requirements**
 * JAVA 8

@@ -43,9 +43,11 @@ public final class ExecutionContext {
 
     public ExecutionContext(@Nonnull final String contextName) {
         this.contextName = contextName;
-        this.engine = new ScriptEngineManager().getEngineByName("nashorn");
+        this.engine = new ScriptEngineManager().getEngineByExtension("js");
         this.error = makeFunction("'<ERROR>'");
         this.engine.put("lib", new LibraryFunctions());
+
+        Lib.LOGGER.info("JavaScript engine provided: %s", this.engine.getFactory().getEngineName());
     }
 
     public void put(@Nonnull final String name, @Nullable final Object obj) {

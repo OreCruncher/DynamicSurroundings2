@@ -43,7 +43,7 @@ public final class ExecutionContext {
 
     public ExecutionContext(@Nonnull final String contextName) {
         this.contextName = contextName;
-        this.engine = new ScriptEngineManager().getEngineByExtension("js");
+        this.engine = ScriptEngineLoader.getEngine();
         this.error = makeFunction("'<ERROR>'");
         this.engine.put("lib", new LibraryFunctions());
 

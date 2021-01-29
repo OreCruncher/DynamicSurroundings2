@@ -231,7 +231,6 @@ public final class ItemLibrary {
 
         @Override
         public void stop() {
-            classMap.clear();
             items.clear();
         }
     }

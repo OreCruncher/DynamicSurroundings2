@@ -53,8 +53,6 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
         return instance.instance();
     }
 
-    private int eventCount = 0;
-
     private ModuleServiceManager() {
         MinecraftForge.EVENT_BUS.register(this);
         final IResourceManager resourceManager = GameUtils.getMC().getResourceManager();
@@ -104,10 +102,9 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStart(@Nonnull final TagsUpdatedEvent event) {
-        if (++this.eventCount > 1) {
-            Lib.LOGGER.info("Received TagsUpdatedEvent - triggering reload");
-            reload();
-        }
+        // Cannot optimize.  Forge servers will send two of these events, Paper one.
+        Lib.LOGGER.info("Received TagsUpdatedEvent - triggering reload");
+        reload();
     }
 
     /**
@@ -118,7 +115,6 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
         performAction("stop", IModuleService::stop);
-        this.eventCount = 0;
     }
 
     private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IModuleService> action) {

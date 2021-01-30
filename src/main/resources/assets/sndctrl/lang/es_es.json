@@ -54,6 +54,7 @@
 	"sndctrl.season.late": "Finales",
 	"sndctrl.text.quickvolumemenu.title": "Quick Volume Settings",
 	"sndctrl.text.quickvolumemenu.open": "Quick Volume Settings",
+	"sndctrl.text.quickvolumemenu.occlusion": "Sound Occlusion",
 	"sndctrl.text.quickvolumemenu.footer": "Press <ESC> to close",
 	"sndctrl.text.soundconfig.title": "Individual Sound Configuration",
 	"sndctrl.text.soundconfig.open": "Individual Sound Configuration Settings",

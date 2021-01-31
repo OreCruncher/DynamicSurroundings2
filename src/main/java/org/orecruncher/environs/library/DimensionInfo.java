@@ -18,20 +18,25 @@
 
 package org.orecruncher.environs.library;
 
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.IWorldInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.DimensionConfig;
+import org.orecruncher.lib.reflection.BooleanField;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class DimensionInfo {
+
+    private static final BooleanField<ClientWorld.ClientWorldInfo> flatWorld = new BooleanField<>(ClientWorld.ClientWorldInfo.class, false, "flatWorld", "");
 
     private static final int SPACE_HEIGHT_OFFSET = 32;
 
@@ -49,8 +54,11 @@ public class DimensionInfo {
     protected boolean alwaysOutside = false;
     protected boolean playBiomeSounds = true;
 
+    protected final boolean isFlatWorld;
+
     DimensionInfo() {
         this.name = new ResourceLocation(Environs.MOD_ID, "no_dimension");
+        this.isFlatWorld = false;
     }
 
     public DimensionInfo(@Nonnull final World world, @Nullable final DimensionConfig dimConfig) {
@@ -61,6 +69,7 @@ public class DimensionInfo {
         this.skyHeight = world.getHeight();
         this.cloudHeight = this.skyHeight;
         this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
+        this.isFlatWorld = isFlatWorld(world);
 
         if (dt.isNatural() && dt.hasSkyLight()) {
             this.hasAuroras = true;
@@ -68,7 +77,9 @@ public class DimensionInfo {
         }
 
         // Force sea level based on known world types that give heartburn
-        if (dt.isNatural() && Config.CLIENT.biome.worldSealevelOverride.get() > 0)
+        if (this.isFlatWorld)
+            this.seaLevel = 0;
+        else if (dt.isNatural() && Config.CLIENT.biome.worldSealevelOverride.get() > 0)
             this.seaLevel = Config.CLIENT.biome.worldSealevelOverride.get();
 
         if (Config.CLIENT.biome.biomeSoundBlacklist.get().contains(this.name.toString()))
@@ -95,6 +106,11 @@ public class DimensionInfo {
 
             this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
         }
+    }
+
+    private boolean isFlatWorld(@Nonnull final World world) {
+        final IWorldInfo info = world.getWorldInfo();
+        return info instanceof ClientWorld.ClientWorldInfo && flatWorld.get((ClientWorld.ClientWorldInfo) info);
     }
 
     @Nonnull
@@ -136,6 +152,10 @@ public class DimensionInfo {
 
     public boolean alwaysOutside() {
         return this.alwaysOutside;
+    }
+
+    public boolean isFlatWorld() {
+        return this.isFlatWorld;
     }
 
 }

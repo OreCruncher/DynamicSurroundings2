@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -56,5 +56,5 @@ interface IFacadeAccessor {
 	 */
 	@Nullable
 	BlockState getBlockState(@Nonnull final LivingEntity entity, @Nonnull final BlockState state,
-							 @Nonnull final IWorldReader world, @Nonnull final Vector3d pos, @Nullable final Direction side);
+							 @Nonnull final IBlockReader world, @Nonnull final Vector3d pos, @Nullable final Direction side);
 }

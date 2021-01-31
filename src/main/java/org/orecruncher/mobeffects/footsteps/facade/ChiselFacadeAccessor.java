@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 final class ChiselFacadeAccessor extends FacadeAccessor {
 
-	private static final String CLASS = "team.chisel.api.IFacade";
+	private static final String CLASS = "team.chisel.ctm.api.IFacade";
 	private static final String METHOD = "getFacade";
 
 	public ChiselFacadeAccessor() {

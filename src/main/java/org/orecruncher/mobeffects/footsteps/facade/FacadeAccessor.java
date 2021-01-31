@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -44,10 +44,7 @@ class FacadeAccessor implements IFacadeAccessor {
 	public FacadeAccessor(@Nonnull final String clazz, @Nonnull final String method) {
 		try {
 			this.IFacadeClass = Class.forName(clazz);
-			if (this.IFacadeClass != null)
-				this.accessor = getMethod(method);
-			else
-				this.accessor = null;
+			this.accessor = getMethod(method);
 		} catch (@Nonnull final Throwable t) {
 			this.IFacadeClass = null;
 			this.accessor = null;
@@ -73,7 +70,7 @@ class FacadeAccessor implements IFacadeAccessor {
 	@Override
 	@Nullable
 	public BlockState getBlockState(@Nonnull final LivingEntity entity, @Nonnull final BlockState state,
-									@Nonnull final IWorldReader world, @Nonnull final Vector3d pos, @Nullable final Direction side) {
+									@Nonnull final IBlockReader world, @Nonnull final Vector3d pos, @Nullable final Direction side) {
 		if (isValid())
 			try {
 				if (instanceOf(state.getBlock()))
@@ -88,10 +85,10 @@ class FacadeAccessor implements IFacadeAccessor {
 	}
 
 	protected Method getMethod(@Nonnull final String method) throws Throwable {
-		return this.IFacadeClass.getMethod(method, BlockState.class, BlockPos.class, Direction.class);
+		return this.IFacadeClass.getMethod(method, IBlockReader.class, BlockPos.class, Direction.class);
 	}
 
-	protected BlockState call(@Nonnull final BlockState state, @Nonnull final IWorldReader world,
+	protected BlockState call(@Nonnull final BlockState state,@Nonnull final IBlockReader world,
 			@Nonnull final BlockPos pos, @Nullable final Direction side) throws Throwable {
 		return (BlockState) this.accessor.invoke(state.getBlock(), world, pos, side);
 	}

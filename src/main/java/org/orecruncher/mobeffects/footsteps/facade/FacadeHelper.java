@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Mob Effects
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.orecruncher.lib.Lib;
 import org.orecruncher.mobeffects.MobEffects;
 
 @OnlyIn(Dist.CLIENT)
@@ -56,10 +57,6 @@ public final class FacadeHelper {
 
 		final List<IFacadeAccessor> accessors = new ArrayList<>();
 
-		addAccessor(accessors, new EnderIOFacadeAccessor());
-		addAccessor(accessors, new CoFHCoreCoverAccessor());
-
-		// Last hail mary - is this even supported anymore?
 		addAccessor(accessors, new ChiselFacadeAccessor());
 
 		// Iterate through the block list filling out our cracker list.

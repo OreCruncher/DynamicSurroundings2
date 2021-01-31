@@ -34,6 +34,7 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.Singleton;
 import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.resource.ResourceUtils;
 
 import javax.annotation.Nonnull;
@@ -72,6 +73,11 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
      * Instructs configured services to reload configuration
      */
     protected void reload() {
+        ForgeUtils.getEnabledResourcePacks().forEach( p -> {
+            Lib.LOGGER.info("Resource pack '%s'", p.getName());
+            Lib.LOGGER.info("+  %s", p.getTitle().getString());
+            Lib.LOGGER.info("+  %s", p.getDescription().getString());
+        });
         performAction("reload", IModuleService::reload);
         this.services.forEach(IModuleService::log);
     }

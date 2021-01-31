@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public final class ForgeUtils {
@@ -101,34 +100,6 @@ public final class ForgeUtils {
         return getEnabledResourcePacks()
                 .stream()
                 .flatMap(e -> e.getResourcePack().getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES).stream())
-                .collect(Collectors.toList());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Nonnull
-    public static List<String> getConfigLocations() {
-        return ForgeUtils.getModIdList();
-        // TODO: Need to sort out resource packs
-        /*
-        return Stream.concat(
-                    ForgeUtils.getModIdList().stream(),
-                    ForgeUtils.getResourcePackIdList().stream()
-                )
-                .distinct()
-                .collect(Collectors.toList());
-
-         */
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Nonnull
-    public static List<ResourceLocation> getResourceLocations(@Nonnull final String path) {
-        return Stream.concat(
-                    ForgeUtils.getModIdList().stream(),
-                    ForgeUtils.getResourcePackIdList().stream()
-                )
-                .distinct()
-                .map(e -> new ResourceLocation(e, path))
                 .collect(Collectors.toList());
     }
 

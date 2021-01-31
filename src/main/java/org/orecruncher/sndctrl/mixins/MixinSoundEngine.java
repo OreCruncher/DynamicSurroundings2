@@ -118,7 +118,7 @@ public class MixinSoundEngine {
      * @param sound              Ignored
      * @param f                  Ignored
      * @param f1                 Ignored
-     * @param soundcategory      Category of the sound that is being played
+     * @param soundcategory      Ignored
      * @param f2                 Ignored
      * @param f3                 Ignored
      * @param attenuationtype    Ignored

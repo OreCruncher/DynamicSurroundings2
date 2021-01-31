@@ -59,10 +59,6 @@ public final class SoundFXUtils {
      */
     private static final int OCCLUSION_SEGMENTS = 5;
     /**
-     * Amount to increment along a vector when calculating occlusion
-     */
-    private static final double OCCLUSION_INCREMENT_FACTOR = 0.1D;
-    /**
      * Number of rays to project when doing reverb calculations.
      */
     private static final int REVERB_RAYS = 32;
@@ -140,7 +136,7 @@ public final class SoundFXUtils {
 
         if (ctx.isNotValid()
                 || !this.source.isEnabled()
-                || !inRange(this.source.getPosition(), ctx.playerEyePosition, this.source.getAttenuationDistance())
+                //|| !inRange(this.source.getPosition(), ctx.playerEyePosition, this.source.getAttenuationDistance())
                 || this.source.getPosition().equals(Vector3d.ZERO)) {
             this.clearSettings();
             return;
@@ -338,12 +334,20 @@ public final class SoundFXUtils {
         }
     }
 
-    private static float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
+    private float calculateOcclusion(@Nonnull final WorldContext ctx, @Nonnull final Vector3d origin, @Nonnull final Vector3d target) {
 
         assert ctx.world != null;
         assert ctx.player != null;
 
-        float accum = 0F;
+        // If occlusion is not enabled, short cut
+        if (!Config.CLIENT.sound.enableOcclusionCalcs.get())
+            return 0F;
+
+        // See if the category is eligible for occlusion
+        if (!this.source.getCategory().doOcclusion())
+            return 0F;
+
+        float factor = 0F;
 
         if (Config.CLIENT.sound.enableOcclusionCalcs.get()) {
             Vector3d lastHit = origin;
@@ -356,7 +360,7 @@ public final class SoundFXUtils {
                     final float occlusion = AudioEffectLibrary.getOcclusion(lastState);
                     final double distance = lastHit.distanceTo(result.getHitVec());
                     // Occlusion is scaled by the distance travelled through the block.
-                    accum += occlusion * distance;
+                    factor += occlusion * distance;
                     lastHit = result.getHitVec();
                     lastState = ctx.world.getBlockState(result.getPos());
                 } else {
@@ -365,7 +369,7 @@ public final class SoundFXUtils {
             }
         }
 
-        return accum;
+        return factor;
     }
 
     private static float calculateWeatherAbsorption(@Nonnull final WorldContext ctx, @Nonnull final Vector3d pt1, @Nonnull final Vector3d pt2) {
@@ -412,7 +416,4 @@ public final class SoundFXUtils {
         return result == null || result.getType() == RayTraceResult.Type.MISS;
     }
 
-    private static boolean inRange(@Nonnull final Vector3d origin, @Nonnull final Vector3d target, final double distance) {
-        return distance > 0 && origin.squareDistanceTo(target) <= (distance * distance);
-    }
 }

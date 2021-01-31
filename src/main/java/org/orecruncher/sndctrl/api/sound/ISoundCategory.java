@@ -35,6 +35,8 @@ public interface ISoundCategory {
         return false;
     }
 
+    boolean doOcclusion();
+
     float getVolumeScale();
 
     void setVolumeScale(final float scale);

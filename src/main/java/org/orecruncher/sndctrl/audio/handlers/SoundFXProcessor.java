@@ -39,6 +39,8 @@ import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.threading.Worker;
+import org.orecruncher.sndctrl.api.sound.Category;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.Conversion;
@@ -48,6 +50,7 @@ import org.orecruncher.sndctrl.misc.IMixinSoundContext;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +60,7 @@ import java.util.function.Supplier;
 public final class SoundFXProcessor {
 
     /**
-     * Sound categories that are ignored when determing special effects.  Things like MASTER, and MUSIC.
+     * Sound categories that are ignored when determining special effects.  Things like MASTER, and MUSIC.
      */
     private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
 
@@ -78,7 +81,6 @@ public final class SoundFXProcessor {
         }
     };
 
-    @Nonnull
     private static WorldContext worldContext = new WorldContext();
 
     static {
@@ -91,22 +93,10 @@ public final class SoundFXProcessor {
         IGNORE_CATEGORIES.add(SoundCategory.MUSIC);     // Background music
         IGNORE_CATEGORIES.add(SoundCategory.MASTER);    // Anything slotted to master, like menu buttons
 
-        // Occlude WEATHER sounds?
-        if (!Config.CLIENT.sound.occludeWeather.get())
-            IGNORE_CATEGORIES.add(SoundCategory.WEATHER);
-
-        // Occlude RECORDS sounds?
-        if (!Config.CLIENT.sound.occludeRecords.get())
-            IGNORE_CATEGORIES.add(SoundCategory.RECORDS);
-
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);
     }
 
     private SoundFXProcessor() {
-    }
-
-    public static boolean isCategoryIgnored(@Nonnull final SoundCategory cat) {
-        return IGNORE_CATEGORIES.contains(cat);
     }
 
     @Nonnull
@@ -163,12 +153,12 @@ public final class SoundFXProcessor {
      * @param sound The sound that is going to play
      * @param entry The ChannelManager.Entry instance for the sound play
      */
-    public static void onSoundPlay(@Nonnull final ISound sound, @Nonnull SoundCategory category, @Nonnull final ChannelManager.Entry entry) {
+    public static void onSoundPlay(@Nonnull final ISound sound, @Nonnull final SoundCategory category, @Nonnull final ChannelManager.Entry entry) {
 
         if (!isAvailable())
             return;
 
-        if (isCategoryIgnored(category))
+        if (IGNORE_CATEGORIES.contains(category))
             return;
 
         // Double suplex!  Queue the operation on the sound executor to do the config work.  This should queue in
@@ -206,17 +196,6 @@ public final class SoundFXProcessor {
         final SourceContext ctx = ((IMixinSoundContext)source).getData();
         if (ctx != null)
             sources[source.id - 1] = null;
-    }
-
-    /**
-     * Injected into SoundSource replacing existing routine
-     *
-     * @param source The sound source that is being checked
-     * @return true if the sound is considered playing; false otherwise
-     */
-    public static boolean isPlaying(@Nonnull final SoundSource source) {
-        final int state = source.getState();
-        return /*state == AL10.AL_INITIAL ||*/ state == AL10.AL_PLAYING;
     }
 
     /**

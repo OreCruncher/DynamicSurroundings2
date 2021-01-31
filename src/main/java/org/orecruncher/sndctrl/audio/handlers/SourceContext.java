@@ -27,12 +27,15 @@ import org.lwjgl.openal.EXTEfx;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.random.LCGRandom;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.api.sound.Category;
+import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
 import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.concurrent.ForkJoinTask;
 
 /**
@@ -59,6 +62,7 @@ public final class SourceContext extends ForkJoinTask<Void> {
 
     private ISound sound;
     private Vector3d pos;
+    private ISoundCategory category = Category.MASTER;
 
     private boolean isEnabled;
     private int updateCount;
@@ -121,12 +125,18 @@ public final class SourceContext extends ForkJoinTask<Void> {
         return this.pos;
     }
 
+    @Nonnull
+    public ISoundCategory getCategory() {
+        return this.category;
+    }
+
     public int getAttenuationDistance() {
         return this.sound != null ? this.sound.getSound().getAttenuationDistance() : -1;
     }
 
     public void attachSound(@Nonnull final ISound sound) {
         this.sound = sound;
+        Category.getCategory(sound).map(iSoundCategory -> this.category = iSoundCategory).orElse(Category.MASTER);
         captureState();
     }
 

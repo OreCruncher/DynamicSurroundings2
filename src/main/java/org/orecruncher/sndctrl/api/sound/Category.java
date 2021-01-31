@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package org.orecruncher.sndctrl.api.sound;
 
 import com.google.common.base.MoreObjects;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -26,6 +27,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.sndctrl.audio.handlers.MusicFader;
+import org.orecruncher.sndctrl.config.Config;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -39,10 +41,10 @@ public class Category implements ISoundCategory {
     private static final Map<SoundCategory, ISoundCategory> categoryToNew = new IdentityHashMap<>();
 
     // Sound categories of the base Minecraft game
-    public static final ISoundCategory MASTER = new SoundCategoryWrapper(SoundCategory.MASTER);
-    public static final ISoundCategory MUSIC = new FaderSoundCategoryWrapper(SoundCategory.MUSIC);
-    public static final ISoundCategory RECORDS = new FaderSoundCategoryWrapper(SoundCategory.RECORDS);
-    public static final ISoundCategory WEATHER = new SoundCategoryWrapper(SoundCategory.WEATHER);
+    public static final ISoundCategory MASTER = new SoundCategoryWrapper(SoundCategory.MASTER, () -> false);
+    public static final ISoundCategory MUSIC = new FaderSoundCategoryWrapper(SoundCategory.MUSIC, () -> false);
+    public static final ISoundCategory RECORDS = new FaderSoundCategoryWrapper(SoundCategory.RECORDS, Config.CLIENT.sound.occludeRecords::get);
+    public static final ISoundCategory WEATHER = new SoundCategoryWrapper(SoundCategory.WEATHER, Config.CLIENT.sound.occludeWeather::get);
     public static final ISoundCategory BLOCKS = new SoundCategoryWrapper(SoundCategory.BLOCKS);
     public static final ISoundCategory HOSTILE = new SoundCategoryWrapper(SoundCategory.HOSTILE);
     public static final ISoundCategory NEUTRAL = new SoundCategoryWrapper(SoundCategory.NEUTRAL);
@@ -50,7 +52,13 @@ public class Category implements ISoundCategory {
     public static final ISoundCategory AMBIENT = new SoundCategoryWrapper(SoundCategory.AMBIENT);
     public static final ISoundCategory VOICE = new SoundCategoryWrapper(SoundCategory.VOICE);
 
-    public static final ISoundCategory CONFIG = new Category("CONFIG", "sndctrl.soundcategory.config", () -> 1F, (v) -> {}) {
+    public static final ISoundCategory CONFIG = new Category(
+            "CONFIG",
+            "sndctrl.soundcategory.config",
+            () -> 1F,
+            (v) -> {
+            },
+            () -> false) {
         @Override
         public boolean doQuickMenu() {
             return false;
@@ -75,19 +83,37 @@ public class Category implements ISoundCategory {
     private final String name;
     private final Supplier<Float> getter;
     private final Consumer<Float> setter;
+    private final Supplier<Boolean> occlusion;
     private final String translationKey;
+
+    /**
+     * Creates a sound category instance with the specified name, and Supplier that gives the scaling
+     * factor to apply.  These categories can be occluded.
+     *
+     * @param name           Name of the sound category.  Needs to be unique.
+     * @param translationKey Language translation key for GUI display
+     * @param scale          The supplier that gives the scaling factor to apply for the sound category.
+     * @param setter         The consumer that allows configuration of the scale factor
+     */
+    public Category(@Nonnull final String name, @Nonnull final String translationKey, @Nonnull final Supplier<Float> scale, @Nonnull final Consumer<Float> setter) {
+        this(name, translationKey, scale, setter, () -> true);
+    }
 
     /**
      * Creates a sound category instance with the specified name, and Supplier that gives the scaling
      * factor to apply.
      *
-     * @param name  Name of the sound category.  Needs to be unique.
-     * @param scale The supplier that gives the scaling factor to apply for the sound category.
+     * @param name           Name of the sound category.  Needs to be unique.
+     * @param translationKey Language translation key for GUI display
+     * @param scale          The supplier that gives the scaling factor to apply for the sound category.
+     * @param setter         The consumer that allows configuration of the scale factor
+     * @param occlusion      Supplier that indicates if the category can be occluded
      */
-    public Category(@Nonnull final String name, @Nonnull final String translationKey, @Nonnull final Supplier<Float> scale, @Nonnull final Consumer<Float> setter) {
+    public Category(@Nonnull final String name, @Nonnull final String translationKey, @Nonnull final Supplier<Float> scale, @Nonnull final Consumer<Float> setter, @Nonnull final Supplier<Boolean> occlusion) {
         this.name = name;
         this.getter = scale;
         this.setter = setter;
+        this.occlusion = occlusion;
         this.translationKey = translationKey;
     }
 
@@ -114,6 +140,23 @@ public class Category implements ISoundCategory {
     }
 
     /**
+     * Resolves an ISoundCategory for the provided ISound instance.
+     *
+     * @param sound The sound for which the category is needed
+     * @return ISoundCategory for the given sound
+     */
+    @Nonnull
+    public static Optional<ISoundCategory> getCategory(@Nonnull final ISound sound) {
+        if (sound.getCategory() == SoundCategory.RECORDS) {
+            int x = 0;
+        }
+        if (sound instanceof ISoundInstance) {
+            return Optional.of(((ISoundInstance) sound).getSoundCategory());
+        }
+        return getCategory(sound.getCategory());
+    }
+
+    /**
      * Registers an ISoundCategory instance with the system.  DO NOT CALL THIS METHOD.  Use the IMC registration
      * method if you need to register a sound category.  It handles it in a thread safe way.
      *
@@ -125,12 +168,13 @@ public class Category implements ISoundCategory {
 
     /**
      * Provides a list of ISoundCategory instances that are tagged for being displayable in a config menu.
+     *
      * @return Collection of ISoundCategory instances to present in a configuration GUI.
      */
     public static Collection<ISoundCategory> getCategoriesForMenu() {
         final List<ISoundCategory> categories = new ArrayList<>();
 
-        for(final Map.Entry<String, ISoundCategory> kvp : nameToCategory.entrySet()) {
+        for (final Map.Entry<String, ISoundCategory> kvp : nameToCategory.entrySet()) {
             if (kvp.getValue().doQuickMenu())
                 categories.add(kvp.getValue());
         }
@@ -166,6 +210,11 @@ public class Category implements ISoundCategory {
     }
 
     @Override
+    public boolean doOcclusion() {
+        return this.occlusion.get();
+    }
+
+    @Override
     @Nonnull
     public String toString() {
         return MoreObjects.toStringHelper(this).addValue(getName()).add("scale", getVolumeScale()).toString();
@@ -173,9 +222,15 @@ public class Category implements ISoundCategory {
 
     private static class SoundCategoryWrapper implements ISoundCategory {
         private final SoundCategory category;
+        private final Supplier<Boolean> occlusion;
 
         public SoundCategoryWrapper(@Nonnull final SoundCategory cat) {
+            this(cat, () -> true);
+        }
+
+        public SoundCategoryWrapper(@Nonnull final SoundCategory cat, @Nonnull final Supplier<Boolean> occlusion) {
             this.category = cat;
+            this.occlusion = occlusion;
             register(this);
         }
 
@@ -206,6 +261,11 @@ public class Category implements ISoundCategory {
         }
 
         @Override
+        public boolean doOcclusion() {
+            return this.occlusion.get();
+        }
+
+        @Override
         @Nonnull
         public String toString() {
             return MoreObjects.toStringHelper(this).addValue(getName()).add("scale", getVolumeScale()).toString();
@@ -214,7 +274,11 @@ public class Category implements ISoundCategory {
 
     private static class FaderSoundCategoryWrapper extends SoundCategoryWrapper {
 
-        public FaderSoundCategoryWrapper(@Nonnull SoundCategory cat) {
+        public FaderSoundCategoryWrapper(@Nonnull final SoundCategory cat, @Nonnull final Supplier<Boolean> occlusion) {
+            super(cat, occlusion);
+        }
+
+        public FaderSoundCategoryWrapper(@Nonnull final SoundCategory cat) {
             super(cat);
         }
 

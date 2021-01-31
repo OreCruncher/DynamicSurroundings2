@@ -115,7 +115,8 @@ public final class Config {
             public final BooleanValue enableMonoConversion;
             public final IntValue cullInterval;
             public final IntValue backgroundThreadWorkers;
-            public final BooleanValue enhancedWeather;
+            public final BooleanValue occludeWeather;
+            public final BooleanValue occludeRecords;
             public final ConfigValue<List<? extends String>> individualSounds;
             public final ConfigValue<List<? extends String>> startupSoundList;
 
@@ -129,21 +130,27 @@ public final class Config {
                         .translation("sndctrl.cfg.sound.EnhancedSounds")
                         .define("Enable Enhanced Sounds", true);
 
-                this.enableOcclusionCalcs = builder
-                        .comment("Enable sound occlusion calculations (sound muffling when positioned behind blocks)")
-                        .translation("sndctrl.cfg.sound.Occlusion")
-                        .define("Enable Sound Occlusion Calculations", true);
-
                 this.enableMonoConversion = builder
                         .comment("Enable conversion of stereo sounds to mono format for spacial play")
                         .translation("sndctrl.cfg.sound.MonoConversion")
                         .define("Enable Stereo to Mono Conversion", true);
 
-                this.enhancedWeather = builder
+                this.enableOcclusionCalcs = builder
+                        .comment("Enable sound occlusion calculations (sound muffling when positioned behind blocks)")
+                        .translation("sndctrl.cfg.sound.Occlusion")
+                        .define("Enable Sound Occlusion Calculations", true);
+
+                this.occludeWeather = builder
                         .worldRestart()
-                        .comment("Enable enhanced sounds for weather effects")
-                        .translation("sndctrl.cfg.sound.EnhancedWeather")
-                        .define("Enable Enhanced Weather Sounds", true);
+                        .comment("Occlude weather sounds")
+                        .translation("sndctrl.cfg.sound.OccludeWeather")
+                        .define("Occlude WEATHER Sounds", true);
+
+                this.occludeRecords = builder
+                        .worldRestart()
+                        .comment("Occlude RECORDS sounds")
+                        .translation("sndctrl.cfg.sound.OccludeRecords")
+                        .define("Occlude RECORDS Sounds", false);
 
                 this.individualSounds = builder
                         .comment("Options to configure sounds on an individual basis")

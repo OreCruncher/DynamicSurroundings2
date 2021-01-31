@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ import java.util.function.Supplier;
 public final class SoundFXProcessor {
 
     /**
-     * Sound categories that are ignored when determing special effects.  Things like MASTER, RECORDS, and MUSIC.
+     * Sound categories that are ignored when determing special effects.  Things like MASTER, and MUSIC.
      */
     private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
 
@@ -67,11 +67,9 @@ public final class SoundFXProcessor {
     private static final int SOUND_PROCESS_THREADS;
     // Sparse array to hold references to the SoundContexts of playing sounds
     private static SourceContext[] sources;
-    @Nullable
     private static Worker soundProcessor;
     // Use our own ForkJoinPool avoiding the common pool.  Thread allocation is better controlled, and we won't run
     // into/cause any problems with other tasks in the common pool.
-    @Nonnull
     private static final LazyInitializer<ForkJoinPool> threadPool = new LazyInitializer<ForkJoinPool>() {
         @Override
         protected ForkJoinPool initialize() {
@@ -90,13 +88,16 @@ public final class SoundFXProcessor {
             threads = 1;
         SOUND_PROCESS_THREADS = threads;
 
-        IGNORE_CATEGORIES.add(SoundCategory.RECORDS);   // Jukebox
         IGNORE_CATEGORIES.add(SoundCategory.MUSIC);     // Background music
         IGNORE_CATEGORIES.add(SoundCategory.MASTER);    // Anything slotted to master, like menu buttons
 
-        // Don't process weather sounds if configured
-        if (!Config.CLIENT.sound.enhancedWeather.get())
+        // Occlude WEATHER sounds?
+        if (!Config.CLIENT.sound.occludeWeather.get())
             IGNORE_CATEGORIES.add(SoundCategory.WEATHER);
+
+        // Occlude RECORDS sounds?
+        if (!Config.CLIENT.sound.occludeRecords.get())
+            IGNORE_CATEGORIES.add(SoundCategory.RECORDS);
 
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);
     }

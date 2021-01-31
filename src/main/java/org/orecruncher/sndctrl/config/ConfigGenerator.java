@@ -63,17 +63,22 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.sound.enableOcclusionCalcs));
-
-        subCategory.add(
-                ClothAPIFactory.createBoolean(
-                        builder,
                         Config.CLIENT.sound.enableMonoConversion));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.sound.enhancedWeather));
+                        Config.CLIENT.sound.enableOcclusionCalcs));
+
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.CLIENT.sound.occludeWeather));
+
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.CLIENT.sound.occludeRecords));
 
         subCategory.add(
                 ClothAPIFactory.createInteger(

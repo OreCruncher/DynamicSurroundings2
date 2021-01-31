@@ -91,8 +91,12 @@ public final class ConfigProperty {
                 text = DialogTexts.OPTIONS_OFF.getString();
             else
                 text = trimDown(text);
-            text = new TranslationTextComponent("dsurround.msg.format.default", text).getString();
+            text = new TranslationTextComponent("dsurround.text.format.default", text).getString();
             result.append(new StringTextComponent(text));
+        }
+
+        if (getNeedsWorldRestart()) {
+            result.append(new TranslationTextComponent("dsurround.text.tooltip.restartRequired"));
         }
 
         return result;

@@ -2,7 +2,6 @@
 	"dsurround.modname": "Dynamic Surroundings",
 	"dsurround.modname.tooltip": "Family of mods that enhances the player's visual and aural experience",
 	"dsurround.msg.NewVersion": "[\"§6Update Available: §9[\",{\"text\":\"§2%1$s §ev%2$s§f\",\"color\":\"gold\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"Click for CurseForge Project Page\",\"color\":\"aqua\"}},\"clickEvent\":{\"action\":\"open_url\",\"value\":\"%3$s\"}},\"§9]\"]",
-	"dsurround.msg.format.default": " §b(default: %s)§r",
 	"dsurround.dialog.missingcloth.title": "Cloth Config API is not Installed",
 	"dsurround.dialog.missingcloth.description": "To enable config editing please install §6Cloth Config API (Forge)§r from CurseForge",
 	"dsurround.cfg.logging": "Logging Options",
@@ -30,6 +29,8 @@
 	"dsurround.text.controls.group": "§3Dynamic Surroundings",
 	"dsurround.text.lightlevel.toggle": "Toggle Light Level Display",
 	"dsurround.text.chunkborders.toggle": "Toggle Chunk Border Display",
+	"dsurround.text.format.default": " §b(default: %s)§r",
+	"dsurround.text.tooltip.restartRequired": " §c§oRestart Required",
 	"command.dsurround.dump.success": "Successfully dumped %1$s to %2$s",
 	"command.dsurround.dump.failure": "Dump was not completed successfully"
 }

@@ -22,11 +22,13 @@ import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.profiler.IProfiler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.shaders.ShaderManager;
 import org.orecruncher.environs.shaders.aurora.AuroraFactory;
 import org.orecruncher.environs.shaders.aurora.AuroraUtils;
@@ -128,8 +130,12 @@ public final class AuroraHandler extends HandlerBase {
 	 * @param partialTick Partial tick, duh
 	 */
 	public static void renderHook(@Nonnull final MatrixStack matrixStack, final float partialTick) {
-		if (handler != null)
+		if (handler != null) {
+			final IProfiler profiler = GameUtils.getMC().getProfiler();
+			profiler.startSection("Aurora Render");
 			handler.doRender(matrixStack, partialTick);
+			profiler.endSection();
+		}
 	}
 
 	@SubscribeEvent

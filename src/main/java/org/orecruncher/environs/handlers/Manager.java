@@ -20,6 +20,7 @@ package org.orecruncher.environs.handlers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.profiler.IProfiler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -111,14 +112,21 @@ public class Manager {
         if (!checkReady(event))
             return;
 
+        final IProfiler profiler = GameUtils.getMC().getProfiler();
+        profiler.startSection("Environs Client Tick");
+
         final long tick = TickCounter.getTickCount();
 
         for (final HandlerBase handler : this.effectHandlers) {
+            profiler.startSection(handler.getHandlerName());
             final long mark = System.nanoTime();
             if (handler.doTick(tick))
                 handler.process(getPlayer());
             handler.updateTimer(System.nanoTime() - mark);
+            profiler.endSection();
         }
+
+        profiler.endSection();
     }
 
     @SubscribeEvent

@@ -22,6 +22,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.profiler.IProfiler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -29,6 +30,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.fog.*;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.math.LoggingTimerEMA;
 
@@ -51,16 +53,16 @@ public class FogHandler extends HandlerBase {
 
     @Override
     public void process(@Nonnull final PlayerEntity player) {
-
         if (doFog()) {
             this.fogRange.tick();
         }
-
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
         if (event.getType() == FogRenderer.FogType.FOG_TERRAIN && doFog()) {
+            final IProfiler profiler = GameUtils.getMC().getProfiler();
+            profiler.startSection("Environs Fog Render");
             this.render.begin();
             final FluidState fluidState = event.getInfo().getFluidState();
             if (fluidState.isEmpty()) {
@@ -69,6 +71,7 @@ public class FogHandler extends HandlerBase {
                 GlStateManager.fogEnd(result.getEnd());
             }
             this.render.end();
+            profiler.endSection();
         }
     }
 

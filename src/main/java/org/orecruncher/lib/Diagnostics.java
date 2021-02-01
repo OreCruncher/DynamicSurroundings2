@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings]
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,6 @@ public final class Diagnostics {
     private static long timeMark = 0;
     private static float tps = 0;
 
-    private static MinecraftClock clock;
-    @Nonnull
     private static DiagnosticEvent lastEvent = new DiagnosticEvent();
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -78,14 +76,7 @@ public final class Diagnostics {
         if (GameUtils.displayDebug()) {
             diagnostics.begin();
 
-            if (clock == null)
-                clock = new MinecraftClock();
-
-            if (GameUtils.isInGame())
-                clock.update(GameUtils.getWorld());
-
             final DiagnosticEvent evt = new DiagnosticEvent();
-            evt.addLeft(TextFormatting.YELLOW + clock.getFormattedTime());
 
             evt.getRight().add("");
             evt.getRight().add(TextFormatting.LIGHT_PURPLE + clientTick.toString());

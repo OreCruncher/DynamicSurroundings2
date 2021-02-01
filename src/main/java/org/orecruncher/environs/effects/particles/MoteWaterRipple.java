@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Environs
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.lib.biomes.BiomeUtilities;
 import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.particles.AgeableMote;
@@ -45,7 +46,7 @@ public class MoteWaterRipple extends AgeableMote {
 	public MoteWaterRipple(final IBlockReader world, final double x, final double y, final double z) {
 		super(world, x, y, z);
 
-		final RippleStyle style = RippleStyle.get();
+		final RippleStyle style = Config.CLIENT.effects.waterRippleStyle.get();
 
 		this.maxAge = style.getMaxAge();
 
@@ -75,7 +76,7 @@ public class MoteWaterRipple extends AgeableMote {
 
 	@Override
 	public void update() {
-		final RippleStyle style = RippleStyle.get();
+		final RippleStyle style = Config.CLIENT.effects.waterRippleStyle.get();
 		if (style.doScaling()) {
 			this.scale += this.growthRate;
 			this.scaledWidth = this.scale * TEX_SIZE_HALF;

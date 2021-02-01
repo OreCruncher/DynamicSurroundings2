@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.service;
 
+import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,8 +26,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
@@ -58,6 +61,15 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
         MinecraftForge.EVENT_BUS.register(this);
         final IResourceManager resourceManager = GameUtils.getMC().getResourceManager();
         ((IReloadableResourceManager) resourceManager).addReloadListener(this);
+
+        for (final ServerType type : ServerType.values()) {
+            MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, true, type.listenerClass, event -> {
+                if (type.connected()) {
+                    Lib.LOGGER.info("Connection '%s' - configuring", type.name());
+                    this.reload();
+                }
+            });
+        }
     }
 
     /**
@@ -73,7 +85,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
      * Instructs configured services to reload configuration
      */
     protected void reload() {
-        ForgeUtils.getEnabledResourcePacks().forEach( p -> {
+        ForgeUtils.getEnabledResourcePacks().forEach(p -> {
             Lib.LOGGER.info("Resource pack '%s'", p.getName());
             Lib.LOGGER.info("+  %s", p.getTitle().getString());
             Lib.LOGGER.info("+  %s", p.getDescription().getString());
@@ -97,20 +109,6 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
             ResourceUtils.clearCache();
             reload();
         }
-    }
-
-    /**
-     * This event is raised during login.  It triggers the process of configuring the various components after
-     * tags and data have been synchronized between server and client.  It happens twice, so this logic will trigger
-     * the reload process on the second or greater time the event is received.  (There has to be a better way...)
-     *
-     * @param event Ignored
-     */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onStart(@Nonnull final TagsUpdatedEvent event) {
-        // Cannot optimize.  Forge servers will send two of these events, Paper one.
-        Lib.LOGGER.info("Received TagsUpdatedEvent - triggering reload");
-        reload();
     }
 
     /**
@@ -140,5 +138,29 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
         results.forEach(Lib.LOGGER::info);
 
         Lib.LOGGER.info("Overall Action '%s' took %dmsecs", actionName, (long) (duration / 1000000D));
+    }
+
+    // Leverage the idea from JEI to handle the various connection types and when configs
+    // should be processed.
+    private enum ServerType {
+        //INTEGRATED(false, true, RecipesUpdatedEvent.class),
+        VANILLA_REMOTE(true, false, TagsUpdatedEvent.VanillaTagTypes.class),
+        MODDED_REMOTE(false, false, TagsUpdatedEvent.CustomTagTypes.class);
+
+        public final boolean isVanilla, isIntegrated;
+        public final Class<? extends Event> listenerClass;
+
+        ServerType(boolean isVanilla, boolean isIntegrated, Class<? extends Event> listenerClass) {
+            this.isVanilla = isVanilla;
+            this.isIntegrated = isIntegrated;
+            this.listenerClass = listenerClass;
+        }
+
+        public boolean connected() {
+            final boolean isIntegrated = GameUtils.getMC().isIntegratedServerRunning();
+            final ClientPlayNetHandler connection = GameUtils.getMC().getConnection();
+            final boolean isVanilla = connection != null && NetworkHooks.isVanillaConnection(connection.getNetworkManager());
+            return isVanilla == this.isVanilla && isIntegrated == this.isIntegrated;
+        }
     }
 }

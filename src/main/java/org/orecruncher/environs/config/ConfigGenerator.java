@@ -24,6 +24,7 @@ import me.shedaniel.clothconfig2.forge.impl.builders.*;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.environs.effects.particles.RippleStyle;
 import org.orecruncher.lib.config.ClothAPIFactory;
 
 import javax.annotation.Nonnull;
@@ -106,12 +107,18 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.effects.enableWaterRipples));
+                        Config.CLIENT.effects.disableUnderwaterParticles));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.effects.disableUnderwaterParticles));
+                        Config.CLIENT.effects.enableWaterRipples));
+
+        subCategory.add(
+                ClothAPIFactory.createEnumList(
+                        builder,
+                        RippleStyle.class,
+                        Config.CLIENT.effects.waterRippleStyle));
 
         modCategory.add(subCategory.build());
 

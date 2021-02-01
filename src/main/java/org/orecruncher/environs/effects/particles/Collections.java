@@ -28,6 +28,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.lib.particles.*;
 
 import javax.annotation.Nonnull;
@@ -40,7 +41,7 @@ public final class Collections {
 
                 @Override
                 protected ResourceLocation getTexture() {
-                    return RippleStyle.get().getTexture();
+                    return Config.CLIENT.effects.waterRippleStyle.get().getTexture();
                 }
 
                 @Override

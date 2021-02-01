@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Environs
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,17 +96,5 @@ public enum RippleStyle {
 
 	public int getMaxAge() {
 		return 12 + XorShiftRandom.current().nextInt(8);
-	}
-
-	@Nonnull
-	public static RippleStyle getStyle(final int v) {
-		if (v >= values().length)
-			return CIRCLE;
-		return values()[v];
-	}
-
-	@Nonnull
-	public static RippleStyle get() {
-		return RippleStyle.PIXELATED;
 	}
 }

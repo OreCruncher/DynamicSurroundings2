@@ -29,6 +29,8 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.effects.particles.RippleStyle;
+import org.orecruncher.lib.config.Validators;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -145,8 +147,9 @@ public final class Config {
             public final BooleanValue enableDustJets;
             public final BooleanValue enableFountainJets;
             public final BooleanValue enableWaterfalls;
-            public final BooleanValue enableWaterRipples;
             public final BooleanValue disableUnderwaterParticles;
+            public final BooleanValue enableWaterRipples;
+            public final ForgeConfigSpec.EnumValue<RippleStyle> waterRippleStyle;
 
             Effects(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options for controlling various effects")
@@ -194,16 +197,22 @@ public final class Config {
                         .translation("environs.cfg.effects.Splash")
                         .define("Waterfall Splash", true);
 
-                this.enableWaterRipples = builder
-                        .comment("Enable/disable Water Ripple effects for rain and water splash")
-                        .translation("environs.cfg.effects.WaterRipple")
-                        .define("Water Ripples", true);
-
                 this.disableUnderwaterParticles = builder
                         .worldRestart()
                         .comment("Enable/disable Minecraft's Underwater particle effect")
                         .translation("environs.cfg.effects.Underwater")
                         .define("Disable Underwater Particles", false);
+
+                this.enableWaterRipples = builder
+                        .comment("Enable/disable Water Ripple effects for rain and water splash")
+                        .translation("environs.cfg.effects.WaterRipple")
+                        .define("Water Ripples", true);
+
+                // The default validator chokes on this enum for some reason
+                this.waterRippleStyle = builder
+                        .comment("The render style of water ripples")
+                        .translation("environs.cfg.effects.WaterRippleStyle")
+                        .defineEnum("Water Ripple Style", RippleStyle.PIXELATED, e -> true);
 
                 builder.pop();
             }

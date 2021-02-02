@@ -30,7 +30,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.effects.particles.RippleStyle;
-import org.orecruncher.lib.config.Validators;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -212,7 +211,7 @@ public final class Config {
                 this.waterRippleStyle = builder
                         .comment("The render style of water ripples")
                         .translation("environs.cfg.effects.WaterRippleStyle")
-                        .defineEnum("Water Ripple Style", RippleStyle.PIXELATED, e -> true);
+                        .defineEnum("Water Ripple Style", RippleStyle.PIXELATED_CIRCLE, e -> true);
 
                 builder.pop();
             }

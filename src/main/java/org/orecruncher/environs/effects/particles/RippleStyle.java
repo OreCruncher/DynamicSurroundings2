@@ -30,10 +30,10 @@ import net.minecraft.util.ResourceLocation;
 @OnlyIn(Dist.CLIENT)
 public enum RippleStyle {
 
-	ORIGINAL("textures/particles/ripple.png"),
-	CIRCLE("textures/particles/ripple1.png"),
-	SQUARE("textures/particles/ripple2.png"),
-	PIXELATED("textures/particles/pixel_ripples.png") {
+	CIRCLE("textures/particles/ripple.png"),
+	DARK_CIRCLE("textures/particles/ripple1.png"),
+	DARK_SQUARE("textures/particles/ripple2.png"),
+	PIXELATED_CIRCLE("textures/particles/pixel_ripples.png") {
 		private final int FRAMES = 7;
 		private final float DELTA = 1F / this.FRAMES;
 		private final int MAX_AGE = this.FRAMES * 2;

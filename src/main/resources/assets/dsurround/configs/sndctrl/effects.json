@@ -6,7 +6,8 @@
     "#minecraft:beehives": 0.3,
     "#forge:netherrack": 0.7,
     "#forge:fences": 0.2,
-    "#forge:chests": 0.4
+    "#forge:chests": 0.4,
+    "minecraft:barrier": 0
   },
   "reflectivity": {
     "+PORTAL": 0.95,
@@ -58,7 +59,8 @@
     "#forge:gravel": 0.5,
     "#forge:fences": 0.2,
     "#forge:cobblestone": 0.75,
-    "#minecraft:beehives": 0.3
+    "#minecraft:beehives": 0.3,
+    "minecraft:barrier": 0
   },
   "fluid": {
     "minecraft:water": 0.6,

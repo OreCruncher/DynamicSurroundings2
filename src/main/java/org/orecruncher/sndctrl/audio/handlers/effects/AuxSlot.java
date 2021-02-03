@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ public class AuxSlot extends Slot {
 
     @Override
     protected void init0() {
-        EXTEfx.alAuxiliaryEffectSloti(getSlot(), EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL10.AL_TRUE);
-        check("AuxSlot EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO");
+        execute(() -> EXTEfx.alAuxiliaryEffectSloti(getSlot(), EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO, AL10.AL_TRUE), () -> "AuxSlot EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO");
     }
 }

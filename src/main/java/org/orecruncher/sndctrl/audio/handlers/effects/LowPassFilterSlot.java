@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,12 @@ public class LowPassFilterSlot extends Slot {
         if (isInitialized()) {
             if (data.doProcess()) {
                 data.clamp();
-                EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAIN, data.gain);
-                EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF);
-                AL11.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, getSlot());
+                execute(() -> EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAIN, data.gain), () -> "LowPassFilterSlot EXTEfx.AL_DIRECT_FILTER gain");
+                execute(() -> EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF), () -> "LowPassFilterSlot EXTEfx.AL_DIRECT_FILTER gainHF");
+                execute(() -> AL11.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, getSlot()), () -> "LowPassFilterSlot EXTEfx.AL_DIRECT_FILTER upload");
             } else {
-                AL11.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_EFFECTSLOT_NULL);
+                execute(() -> AL11.alSourcei(sourceId, EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_EFFECTSLOT_NULL), () -> "LowPassFilterSlot EXTEfx.AL_DIRECT_FILTER null");
             }
-            check("LowPassFilterSlot EXTEfx.AL_DIRECT_FILTER");
         }
     }
 
@@ -55,13 +54,12 @@ public class LowPassFilterSlot extends Slot {
         if (isInitialized()) {
             if (data.doProcess()) {
                 data.clamp();
-                EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAIN, data.gain);
-                EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF);
-                AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, aux.getSlot(), auxSend, getSlot());
+                execute(() -> EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAIN, data.gain), () -> "LowPassFilterSlot EXTEfx.AL_AUXILIARY_SEND_FILTER gain");
+                execute(() -> EXTEfx.alFilterf(getSlot(), EXTEfx.AL_LOWPASS_GAINHF, data.gainHF), () -> "LowPassFilterSlot EXTEfx.AL_AUXILIARY_SEND_FILTER gainHF");
+                execute(() -> AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, aux.getSlot(), auxSend, getSlot()), () -> "LowPassFilterSlot EXTEfx.AL_AUXILIARY_SEND_FILTER upload");
             } else {
-                AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_EFFECTSLOT_NULL, auxSend, EXTEfx.AL_FILTER_NULL);
+                execute(() -> AL11.alSource3i(sourceId, EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_EFFECTSLOT_NULL, auxSend, EXTEfx.AL_FILTER_NULL), () -> "LowPassFilterSlot EXTEfx.AL_AUXILIARY_SEND_FILTER null");
             }
-            check("LowPassFilterSlot EXTEfx.AL_AUXILIARY_SEND_FILTER");
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,24 +40,23 @@ public class ReverbEffectSlot extends Slot {
         if (isInitialized()) {
             if (data.doProcess()) {
                 data.clamp();
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DENSITY, data.density);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DIFFUSION, data.diffusion);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_GAIN, data.gain);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_GAINHF, data.gainHF);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_TIME, data.decayTime);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, data.decayHFRatio);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, data.reflectionsGain);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_REFLECTIONS_DELAY, data.reflectionsDelay);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, data.lateReverbGain);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, data.lateReverbDelay);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, data.airAbsorptionGainHF);
-                EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, data.roomRolloffFactor);
-                EXTEfx.alEffecti(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_HFLIMIT, data.decayHFLimit);
-                EXTEfx.alAuxiliaryEffectSloti(aux.getSlot(), EXTEfx.AL_EFFECTSLOT_EFFECT, getSlot());
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DENSITY, data.density), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT density");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DIFFUSION, data.diffusion), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT diffusion");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_GAIN, data.gain), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT gain");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_GAINHF, data.gainHF), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT gainHF");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_TIME, data.decayTime), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT decayTime");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, data.decayHFRatio), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT decayHFRatio");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, data.reflectionsGain), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT reflectionsGain");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_REFLECTIONS_DELAY, data.reflectionsDelay), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT reflectionsDelay");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, data.lateReverbGain), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT lateReverbGain");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, data.lateReverbDelay), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT lateReverbDelay");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, data.airAbsorptionGainHF), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT airAbsorptionGainHF");
+                execute(() -> EXTEfx.alEffectf(getSlot(), EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, data.roomRolloffFactor), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT roomRolloffFactor");
+                execute(() -> EXTEfx.alEffecti(getSlot(), EXTEfx.AL_EAXREVERB_DECAY_HFLIMIT, data.decayHFLimit), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT decayHFLimit");
+                execute(() -> EXTEfx.alAuxiliaryEffectSloti(aux.getSlot(), EXTEfx.AL_EFFECTSLOT_EFFECT, getSlot()), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT upload");
             } else {
-                EXTEfx.alAuxiliaryEffectSloti(aux.getSlot(), EXTEfx.AL_EFFECTSLOT_EFFECT, EXTEfx.AL_EFFECTSLOT_NULL);
+                execute(() -> EXTEfx.alAuxiliaryEffectSloti(aux.getSlot(), EXTEfx.AL_EFFECTSLOT_EFFECT, EXTEfx.AL_EFFECTSLOT_NULL), () -> "ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT null");
             }
-            check("ReverbEffectSlot EXTEfx.AL_EFFECTSLOT_EFFECT");
         }
     }
 }

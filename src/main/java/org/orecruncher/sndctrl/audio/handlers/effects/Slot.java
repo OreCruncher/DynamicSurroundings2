@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,11 @@ package org.orecruncher.sndctrl.audio.handlers.effects;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.EXTEfx;
-import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
+import org.orecruncher.lib.Lib;
+import org.orecruncher.lib.Utilities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +33,6 @@ import java.util.function.Supplier;
 @OnlyIn(Dist.CLIENT)
 public abstract class Slot {
 
-    @Nonnull
     private final Supplier<Integer> factory;
     private int slot = EXTEfx.AL_EFFECTSLOT_NULL;
 
@@ -44,10 +46,8 @@ public abstract class Slot {
 
     public final void initialize() {
         if (this.slot == EXTEfx.AL_EFFECTSLOT_NULL) {
-            this.slot = this.factory.get();
-            check("Slot factor get");
-            this.init0();
-            check("Slot init0");
+            execute(() -> this.slot = this.factory.get(), () -> "Slot factory get");
+            execute(this::init0, () -> "Slot init0");
         }
     }
 
@@ -61,11 +61,19 @@ public abstract class Slot {
         return this.slot;
     }
 
-    protected void check(@Nonnull final String msg) {
-        SoundFXProcessor.validate(msg);
+    protected void execute(@Nonnull final Runnable func) {
+        execute(func, null);
     }
 
-    protected void check(@Nullable final Supplier<String> err) {
-        SoundFXProcessor.validate(err);
+    protected void execute(@Nonnull final Runnable func, @Nullable final Supplier<String> context) {
+        func.run();
+        final int error = AL10.alGetError();
+        if (error != AL10.AL_NO_ERROR) {
+            String errorName = AL10.alGetString(error);
+            if (StringUtils.isEmpty(errorName))
+                errorName = Integer.toString(error);
+            final String msg = Utilities.firstNonNull(context != null ? context.get() : null, "NONE");
+            Lib.LOGGER.warn(String.format("OpenAL Error: %s [%s]", errorName, msg));
+        }
     }
 }

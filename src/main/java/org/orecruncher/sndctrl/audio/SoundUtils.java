@@ -127,9 +127,11 @@ public final class SoundUtils {
      * @return true if the sound is within the attenuation distance; false otherwise
      */
     public static boolean inRange(@Nonnull final Vector3d listener, @Nonnull final ISound sound, final int pad) {
+        if (sound.isGlobal() || sound.getAttenuationType() == ISound.AttenuationType.NONE)
+            return true;
         int distSq = sound.getSound().getAttenuationDistance() + pad;
         distSq *= distSq;
-        return listener.squareDistanceTo(sound.getX(), sound.getY(), sound.getZ()) <= distSq;
+        return listener.squareDistanceTo(sound.getX(), sound.getY(), sound.getZ()) < distSq;
     }
 
     public static boolean inRange(@Nonnull final Vector3d listener, @Nonnull final ISound sound) {

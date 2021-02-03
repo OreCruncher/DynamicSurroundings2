@@ -42,6 +42,7 @@ import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.math.BlockRayTrace;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.math.RayTraceIterator;
+import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
 import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
@@ -133,10 +134,12 @@ public final class SoundFXUtils {
     public void calculate(@Nonnull final WorldContext ctx) {
 
         assert ctx.player != null;
+        assert ctx.world != null;
+        assert this.source.getSound() != null;
 
         if (ctx.isNotValid()
                 || !this.source.isEnabled()
-                //|| !inRange(this.source.getPosition(), ctx.playerEyePosition, this.source.getAttenuationDistance())
+                || !SoundUtils.inRange(ctx.playerEyePosition, this.source.getSound())
                 || this.source.getPosition().equals(Vector3d.ZERO)) {
             this.clearSettings();
             return;

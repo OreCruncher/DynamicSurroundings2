@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,9 +39,12 @@ public class SteamJetEffect extends JetEffect {
     }
 
     public static boolean isValidSpawnBlock(@Nonnull final IBlockReader provider,
-                                            @Nonnull final BlockPos pos) {
-        return WorldUtils.isAirBlock(provider, pos.up())
-                && countCubeBlocks(provider, pos, HOTBLOCK_PREDICATE, true) > 0;
+                                            @Nonnull final BlockPos pos, @Nonnull final BlockState source) {
+        if (!WorldUtils.isAirBlock(provider, pos.up()))
+            return false;
+        if (provider.getBlockState(pos) != source)
+            return false;
+        return countCubeBlocks(provider, pos, HOTBLOCK_PREDICATE, true) > 0;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class SteamJetEffect extends JetEffect {
     @Override
     public boolean canTrigger(@Nonnull final IBlockReader provider, @Nonnull final BlockState state,
                               @Nonnull final BlockPos pos, @Nonnull final Random random) {
-        return isValidSpawnBlock(provider, pos) && super.canTrigger(provider, state, pos, random);
+        return isValidSpawnBlock(provider, pos, state) && super.canTrigger(provider, state, pos, random);
     }
 
     @Override

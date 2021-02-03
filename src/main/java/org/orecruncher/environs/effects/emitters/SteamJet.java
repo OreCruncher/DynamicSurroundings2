@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 
 package org.orecruncher.environs.effects.emitters;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,13 +30,16 @@ import org.orecruncher.lib.GameUtils;
 @OnlyIn(Dist.CLIENT)
 public class SteamJet extends Jet {
 
+    private final BlockState source;
+
     public SteamJet(final int strength, final IBlockReader world, final double x, final double y, final double z) {
         super(strength, world, x, y, z);
+        this.source = world.getBlockState(getPos());
     }
 
     @Override
     public boolean shouldDie() {
-        return !SteamJetEffect.isValidSpawnBlock(GameUtils.getWorld(), getPos());
+        return !SteamJetEffect.isValidSpawnBlock(GameUtils.getWorld(), getPos(), this.source);
     }
 
     @Override

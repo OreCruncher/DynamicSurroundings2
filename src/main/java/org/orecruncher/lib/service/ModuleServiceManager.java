@@ -26,7 +26,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -39,6 +38,7 @@ import org.orecruncher.lib.Singleton;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.tags.TagUtils;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -66,6 +66,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
             MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, true, type.listenerClass, event -> {
                 if (type.connected()) {
                     Lib.LOGGER.info("Connection '%s' - configuring", type.name());
+                    TagUtils.setTagManager(event.getTagManager());
                     this.reload();
                 }
             });
@@ -119,6 +120,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
         performAction("stop", IModuleService::stop);
+        TagUtils.clearTagManager();
     }
 
     private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IModuleService> action) {
@@ -143,14 +145,13 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     // Leverage the idea from JEI to handle the various connection types and when configs
     // should be processed.
     private enum ServerType {
-        //INTEGRATED(false, true, RecipesUpdatedEvent.class),
         VANILLA_REMOTE(true, false, TagsUpdatedEvent.VanillaTagTypes.class),
         MODDED_REMOTE(false, false, TagsUpdatedEvent.CustomTagTypes.class);
 
         public final boolean isVanilla, isIntegrated;
-        public final Class<? extends Event> listenerClass;
+        public final Class<? extends TagsUpdatedEvent> listenerClass;
 
-        ServerType(boolean isVanilla, boolean isIntegrated, Class<? extends Event> listenerClass) {
+        ServerType(boolean isVanilla, boolean isIntegrated, Class<? extends TagsUpdatedEvent> listenerClass) {
             this.isVanilla = isVanilla;
             this.isIntegrated = isIntegrated;
             this.listenerClass = listenerClass;

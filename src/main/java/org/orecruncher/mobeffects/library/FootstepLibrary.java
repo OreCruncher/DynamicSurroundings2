@@ -392,7 +392,7 @@ public final class FootstepLibrary {
         if (blockTag != null) {
             final List<Block> elements = blockTag.getAllElements();
             if (elements.size() == 0) {
-                LOGGER.info("No blocks associated with tag '%s'", tagName);
+                LOGGER.debug("No blocks associated with tag '%s'", tagName);
             } else {
                 for (final Block b : blockTag.getAllElements()) {
                     String blockName = Objects.requireNonNull(b.getRegistryName()).toString();
@@ -402,7 +402,7 @@ public final class FootstepLibrary {
                 }
             }
         } else {
-            LOGGER.warn("Unable to identify block tag '%s'", tagName);
+            LOGGER.debug("Unable to identify block tag '%s'", tagName);
         }
     }
 

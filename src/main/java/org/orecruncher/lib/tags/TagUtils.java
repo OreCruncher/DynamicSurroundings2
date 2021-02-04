@@ -23,19 +23,14 @@ import net.minecraft.block.Block;
 import net.minecraft.tags.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import org.orecruncher.dsurround.DynamicSurroundings;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Mod.EventBusSubscriber(modid = DynamicSurroundings.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@OnlyIn(Dist.CLIENT)
 public final class TagUtils {
 
     private TagUtils() {
@@ -44,13 +39,11 @@ public final class TagUtils {
 
     private static ITagCollectionSupplier supplier;
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void tagsUpdated(@Nonnull final TagsUpdatedEvent event) {
-        supplier = event.getTagManager();
+    public static void setTagManager(@Nonnull final ITagCollectionSupplier manager) {
+        supplier = manager;
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void playerLoggedOut(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
+    public static void clearTagManager() {
         supplier = null;
     }
 
@@ -76,7 +69,12 @@ public final class TagUtils {
             final StringBuilder builder = new StringBuilder();
             builder.append(loc.toString()).append(" -> ");
             final ITag<Block> tag = collection.get(loc);
-            final String text = tag.getAllElements().stream().map(l -> l.getRegistryName().toString()).collect(Collectors.joining(","));
+            final String text;
+            if (tag == null) {
+                text = "<NULL>";
+            } else {
+                text = tag.getAllElements().stream().map(l -> l.getRegistryName().toString()).collect(Collectors.joining(","));
+            }
             builder.append(text);
             return builder.toString();
         }).sorted();

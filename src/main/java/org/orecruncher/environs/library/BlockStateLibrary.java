@@ -144,13 +144,13 @@ public final class BlockStateLibrary {
             if (tag != null) {
                 return tag.getAllElements().stream().map(BlockStateMatcher::create).filter(m -> !m.isEmpty()).collect(Collectors.toList());
             }
-            LOGGER.warn("Unknown block tag '%s' in Block specification", tagName);
+            LOGGER.debug("Unknown block tag '%s' in Block specification", tagName);
         } else {
             final BlockStateMatcher matcher = BlockStateMatcher.create(blockName);
             if (!matcher.isEmpty()) {
                 return ImmutableList.of(matcher);
             }
-            LOGGER.warn("Unknown block name '%s' in Block Specification", blockName);
+            LOGGER.debug("Unknown block name '%s' in Block Specification", blockName);
         }
         return ImmutableList.of();
     }

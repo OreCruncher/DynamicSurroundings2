@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ public final class AudioEffectLibrary {
                 if (mat != null) {
                     materialOcclusion.put(mat, kvp.getValue().floatValue());
                 } else {
-                    LOGGER.warn("Unrecognized material name: %s", materialName);
+                    LOGGER.debug("Unrecognized material name: %s", materialName);
                 }
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
@@ -162,7 +162,7 @@ public final class AudioEffectLibrary {
                             blockStateOcclusionMap.put(state, kvp.getValue());
                     }
                 } else {
-                    LOGGER.warn("Unrecognized block tag: %s", tagName);
+                    LOGGER.debug("Unrecognized block tag: %s", tagName);
                 }
             } else {
                 try {
@@ -191,7 +191,7 @@ public final class AudioEffectLibrary {
                 if (mat != null) {
                     materialReflect.put(mat, val);
                 } else {
-                    LOGGER.warn("Unrecognized material name: %s", materialName);
+                    LOGGER.debug("Unrecognized material name: %s", materialName);
                 }
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
@@ -203,7 +203,7 @@ public final class AudioEffectLibrary {
                             blockStateReflectMap.put(state, val);
                     }
                 } else {
-                    LOGGER.warn("Unrecognized block tag: %s", tagName);
+                    LOGGER.debug("Unrecognized block tag: %s", tagName);
                 }
             } else {
                 try {

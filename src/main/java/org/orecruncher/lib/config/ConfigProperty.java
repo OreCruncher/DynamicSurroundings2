@@ -35,6 +35,8 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public final class ConfigProperty {
 
+    private static final int TOOLTIP_WIDTH = 300;
+
     private static final ObjectField<ForgeConfigSpec.ConfigValue, ForgeConfigSpec> specAccessor = new ObjectField<>(ForgeConfigSpec.ConfigValue.class, () -> null, "spec");
     private static final ObjectField<Object, Object> minAccessor = new ObjectField<>(
             "net.minecraftforge.common.ForgeConfigSpec$Range",
@@ -47,6 +49,8 @@ public final class ConfigProperty {
 
     private final ForgeConfigSpec.ValueSpec valueSpec;
     private final String name;
+
+    private ITextComponent[] toolTip;
 
     private ConfigProperty(@Nonnull final ForgeConfigSpec.ConfigValue<?> configEntry) {
         this(specAccessor.get(configEntry), configEntry);
@@ -79,42 +83,50 @@ public final class ConfigProperty {
 
     @Nullable
     public ITextComponent[] getTooltip() {
-        final List<ITextComponent> result = new ArrayList<>();
-        String key = getTranslationKey();
-        if (StringUtils.isNullOrEmpty(key)) {
-            key = getComment();
-            if (StringUtils.isNullOrEmpty(key))
-                return null;
-            result.add(new StringTextComponent(key));
-        } else {
-            final ITextComponent title = new StringTextComponent(TextFormatting.GOLD + new TranslationTextComponent(key).getString());
-            result.add(title);
-            result.add(new TranslationTextComponent(key + ".tooltip"));
+        if (this.toolTip == null) {
+            final List<ITextComponent> result = new ArrayList<>();
+            String key = getTranslationKey();
+            if (StringUtils.isNullOrEmpty(key)) {
+                key = getComment();
+                if (StringUtils.isNullOrEmpty(key))
+                    return null;
+                result.add(new StringTextComponent(key));
+            } else {
+                final ITextComponent title = new StringTextComponent(TextFormatting.GOLD + new TranslationTextComponent(key).getString());
+                result.add(title);
+
+                final List<ITextProperties> lines = GameUtils.getMC().fontRenderer.getCharacterManager().func_238362_b_(new TranslationTextComponent(key + ".tooltip"), TOOLTIP_WIDTH, Style.EMPTY);
+                for (final ITextProperties l : lines) {
+                    result.add(new StringTextComponent(l.getString()));
+                }
+            }
+
+            final Object theDefault = getDefault();
+            if (theDefault != null) {
+                String text = theDefault.toString();
+                if (text.compareToIgnoreCase("true") == 0)
+                    text = DialogTexts.OPTIONS_ON.getString();
+                else if (text.compareToIgnoreCase("false") == 0)
+                    text = DialogTexts.OPTIONS_OFF.getString();
+                else
+                    text = trimDown(text);
+                text = new TranslationTextComponent("dsurround.text.format.default", text).getString();
+                result.add(new StringTextComponent(text));
+            }
+
+            final Object range = this.valueSpec.getRange();
+            if (range != null) {
+                result.add(new StringTextComponent(TextFormatting.GREEN + "[ " + range.toString() + " ]"));
+            }
+
+            if (getNeedsWorldRestart()) {
+                result.add(new TranslationTextComponent("dsurround.text.tooltip.restartRequired"));
+            }
+
+            this.toolTip = result.toArray(new ITextComponent[0]);
         }
 
-        final Object theDefault = getDefault();
-        if (theDefault != null) {
-            String text = theDefault.toString();
-            if (text.compareToIgnoreCase("true") == 0)
-                text = DialogTexts.OPTIONS_ON.getString();
-            else if (text.compareToIgnoreCase("false") == 0)
-                text = DialogTexts.OPTIONS_OFF.getString();
-            else
-                text = trimDown(text);
-            text = new TranslationTextComponent("dsurround.text.format.default", text).getString();
-            result.add(new StringTextComponent(text));
-        }
-
-        final Object range = this.valueSpec.getRange();
-        if (range != null) {
-            result.add(new StringTextComponent(TextFormatting.GREEN + "[ " + range.toString() + " ]"));
-        }
-
-        if (getNeedsWorldRestart()) {
-            result.add(new TranslationTextComponent("dsurround.text.tooltip.restartRequired"));
-        }
-
-        return result.toArray(new ITextComponent[0]);
+        return this.toolTip;
     }
 
     private static String trimDown(@Nonnull final String txt) {

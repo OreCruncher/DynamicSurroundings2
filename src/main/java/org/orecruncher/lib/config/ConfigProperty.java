@@ -20,22 +20,30 @@ package org.orecruncher.lib.config;
 
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.util.StringUtils;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.reflection.ObjectField;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public final class ConfigProperty {
 
     private static final ObjectField<ForgeConfigSpec.ConfigValue, ForgeConfigSpec> specAccessor = new ObjectField<>(ForgeConfigSpec.ConfigValue.class, () -> null, "spec");
+    private static final ObjectField<Object, Object> minAccessor = new ObjectField<>(
+            "net.minecraftforge.common.ForgeConfigSpec$Range",
+            () -> null,
+            "min");
+    private static final ObjectField<Object, Object> maxAccessor = new ObjectField<>(
+            "net.minecraftforge.common.ForgeConfigSpec$Range",
+            () -> null,
+            "max");
 
     private final ForgeConfigSpec.ValueSpec valueSpec;
     private final String name;
@@ -70,16 +78,18 @@ public final class ConfigProperty {
     }
 
     @Nullable
-    public IFormattableTextComponent getTooltip() {
-        IFormattableTextComponent result;
+    public ITextComponent[] getTooltip() {
+        final List<ITextComponent> result = new ArrayList<>();
         String key = getTranslationKey();
         if (StringUtils.isNullOrEmpty(key)) {
             key = getComment();
             if (StringUtils.isNullOrEmpty(key))
                 return null;
-            result = new StringTextComponent(key);
+            result.add(new StringTextComponent(key));
         } else {
-            result = new TranslationTextComponent(key + ".tooltip");
+            final ITextComponent title = new StringTextComponent(TextFormatting.GOLD + new TranslationTextComponent(key).getString());
+            result.add(title);
+            result.add(new TranslationTextComponent(key + ".tooltip"));
         }
 
         final Object theDefault = getDefault();
@@ -92,14 +102,19 @@ public final class ConfigProperty {
             else
                 text = trimDown(text);
             text = new TranslationTextComponent("dsurround.text.format.default", text).getString();
-            result.append(new StringTextComponent(text));
+            result.add(new StringTextComponent(text));
+        }
+
+        final Object range = this.valueSpec.getRange();
+        if (range != null) {
+            result.add(new StringTextComponent(TextFormatting.GREEN + "[ " + range.toString() + " ]"));
         }
 
         if (getNeedsWorldRestart()) {
-            result.append(new TranslationTextComponent("dsurround.text.tooltip.restartRequired"));
+            result.add(new TranslationTextComponent("dsurround.text.tooltip.restartRequired"));
         }
 
-        return result;
+        return result.toArray(new ITextComponent[0]);
     }
 
     private static String trimDown(@Nonnull final String txt) {
@@ -116,6 +131,14 @@ public final class ConfigProperty {
     @SuppressWarnings("unchecked")
     public <T> T getDefault() {
         return (T) this.valueSpec.getDefault();
+    }
+
+    public <T> T getMinValue() {
+        return (T) minAccessor.get(this.valueSpec.getRange());
+    }
+
+    public <T> T getMaxValue() {
+        return (T) maxAccessor.get(this.valueSpec.getRange());
     }
 
     @Nonnull

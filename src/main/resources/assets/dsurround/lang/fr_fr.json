@@ -29,8 +29,8 @@
 	"dsurround.text.controls.group": "§3Environs dynamiques",
 	"dsurround.text.lightlevel.toggle": "Basculer l'affichage du niveau lumineux",
 	"dsurround.text.chunkborders.toggle": "Basculer l'affichage des bordure de Chunk",
-	"dsurround.text.format.default": " §b(défaut: %s)§r",
-	"dsurround.text.tooltip.restartRequired": " §c§oRedémarrage demandée",
+	"dsurround.text.format.default": "§b(défaut: %s)§r",
+	"dsurround.text.tooltip.restartRequired": "§c§oRedémarrage demandée",
 	"command.dsurround.dump.success": "Déchargement avec succès de %1$s dans %2$s",
 	"command.dsurround.dump.failure": "Le déchargement n'a pas été complété avec succès"
 }

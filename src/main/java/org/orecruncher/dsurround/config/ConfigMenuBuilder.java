@@ -67,9 +67,7 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         subCategory.add(
                 createInteger(
                         builder,
-                        Config.CLIENT.logging.flagMask,
-                        0,
-                        Integer.MAX_VALUE));
+                        Config.CLIENT.logging.flagMask));
 
         modRoot.add(subCategory.build());
 
@@ -90,14 +88,12 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         subCategory.add(
                 createInteger(
                         builder,
-                        Config.CLIENT.lightLevel.range,
-                        16, 64));
+                        Config.CLIENT.lightLevel.range));
 
         subCategory.add(
                 createInteger(
                         builder,
-                        Config.CLIENT.lightLevel.lightSpawnThreshold,
-                        0, 15));
+                        Config.CLIENT.lightLevel.lightSpawnThreshold));
 
         subCategory.add(
                 createBoolean(

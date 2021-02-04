@@ -100,10 +100,9 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
     public static StringListEntry createString(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.ConfigValue<String> value) {
         final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
-        final ITextComponent tooltip = property.getTooltip();
         final StringFieldBuilder result = builder.entryBuilder()
                 .startStrField(name, value.get())
-                .setTooltip(tooltip)
+                .setTooltip(property.getTooltip())
                 .setDefaultValue(value.get())
                 .setSaveConsumer(value::set);
 
@@ -116,10 +115,9 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
     public static BooleanListEntry createBoolean(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.BooleanValue value) {
         final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
-        final ITextComponent tooltip = property.getTooltip();
         final BooleanToggleBuilder result = builder.entryBuilder()
                 .startBooleanToggle(name, value.get())
-                .setTooltip(tooltip)
+                .setTooltip(property.getTooltip())
                 .setDefaultValue(value.get())
                 .setYesNoTextSupplier(DialogTexts::optionsEnabled)
                 .setSaveConsumer(value::set);
@@ -130,13 +128,14 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         return result.build();
     }
 
-    public static IntegerListEntry createInteger(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
+    public static IntegerListEntry createInteger(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.IntValue value) {
         final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
-        final ITextComponent tooltip = property.getTooltip();
+        final int min = property.<Integer>getMinValue();
+        final int max = property.<Integer>getMaxValue();
         final IntFieldBuilder result = builder.entryBuilder()
                 .startIntField(name, value.get())
-                .setTooltip(tooltip)
+                .setTooltip(property.getTooltip())
                 .setDefaultValue(value.get())
                 .setMin(min)
                 .setMax(max)
@@ -151,12 +150,11 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
     public static StringListListEntry createStringList(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.ConfigValue<List<? extends String>> value, @Nullable final Function<String, Optional<ITextComponent>> validator) {
         final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
-        final ITextComponent tooltip = property.getTooltip();
         final List<String> list = value.get().stream().map(Object::toString).collect(Collectors.toList());
         final List<String> defaults = new ArrayList<>(list);
         final StringListBuilder result = builder.entryBuilder()
                 .startStrList(name, list)
-                .setTooltip(tooltip)
+                .setTooltip(property.getTooltip())
                 .setDefaultValue(defaults)
                 .setSaveConsumer(value::set);
 
@@ -172,10 +170,9 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
     public static <T extends Enum<T>> EnumListEntry<T> createEnumList(@Nonnull final ConfigBuilder builder, @Nonnull Class<T> clazz, @Nonnull final ForgeConfigSpec.EnumValue<T> value) {
         final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
-        final ITextComponent tooltip = property.getTooltip();
         final EnumSelectorBuilder<T> result = builder.entryBuilder()
                 .startEnumSelector(name, clazz, value.get())
-                .setTooltip(tooltip)
+                .setTooltip(property.getTooltip())
                 .setDefaultValue(value.get())
                 .setSaveConsumer(value::set);
 
@@ -185,13 +182,14 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         return result.build();
     }
 
-    public static IntegerSliderEntry createIntegerSlider(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.IntValue value, final int min, final int max) {
+    public static IntegerSliderEntry createIntegerSlider(@Nonnull final ConfigBuilder builder, @Nonnull final ForgeConfigSpec.IntValue value) {
         final ConfigProperty property = ConfigProperty.getPropertyInfo(value);
         final ITextComponent name = property.getConfigName();
-        final ITextComponent tooltip = property.getTooltip();
+        final int min = property.<Integer>getMinValue();
+        final int max = property.<Integer>getMaxValue();
         final IntSliderBuilder result = builder.entryBuilder()
                 .startIntSlider(name, value.get(), min, max)
-                .setTooltip(tooltip)
+                .setTooltip(property.getTooltip())
                 .setDefaultValue(value.get())
                 .setSaveConsumer(value::set);
 

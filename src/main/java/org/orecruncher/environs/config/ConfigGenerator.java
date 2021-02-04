@@ -46,9 +46,7 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.CLIENT.logging.flagMask,
-                        0,
-                        Integer.MAX_VALUE));
+                        Config.CLIENT.logging.flagMask));
 
         modCategory.add(subCategory.build());
 
@@ -56,9 +54,7 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.CLIENT.biome.worldSealevelOverride,
-                        0,
-                        Integer.MAX_VALUE));
+                        Config.CLIENT.biome.worldSealevelOverride));
 
         subCategory.add(
                 ClothAPIFactory.createStringList(
@@ -131,9 +127,7 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.CLIENT.aurora.maxBands,
-                        1,
-                        3));
+                        Config.CLIENT.aurora.maxBands));
 
         modCategory.add(subCategory.build());
 
@@ -161,9 +155,7 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createInteger(
                         builder,
-                        Config.CLIENT.fog.morningFogChance,
-                        0,
-                        Integer.MAX_VALUE));
+                        Config.CLIENT.fog.morningFogChance));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
@@ -181,23 +173,17 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.CLIENT.sound.biomeSoundVolume,
-                        0,
-                        100));
+                        Config.CLIENT.sound.biomeSoundVolume));
 
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.CLIENT.sound.spotSoundVolume,
-                        0,
-                        100));
+                        Config.CLIENT.sound.spotSoundVolume));
 
         subCategory.add(
                 ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.CLIENT.sound.waterfallSoundVolume,
-                        0,
-                        100));
+                        Config.CLIENT.sound.waterfallSoundVolume));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(

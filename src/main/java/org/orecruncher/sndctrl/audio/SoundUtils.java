@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,11 +80,6 @@ public final class SoundUtils {
 
     static int getTotalPlaying() {
         return playing.size() + delayed.size();
-    }
-
-    @Nonnull
-    public static Listener getListener() {
-        return listener;
     }
 
     @Nonnull
@@ -172,7 +167,7 @@ public final class SoundUtils {
 
     /**
      * This method is invoked via the MixinSoundSystem injection.  It will be called when the sound system
-     * is intialized, and it gives an opportunity to setup special effects processing.
+     * is initialized, and it gives an opportunity to setup special effects processing.
      *
      * @param soundSystem The sound system instance being initialized
      */
@@ -196,7 +191,7 @@ public final class SoundUtils {
                     final long ctx = ALC10.alcCreateContext(device, attribs);
                     ALC10.alcMakeContextCurrent(ctx);
 
-                    // Have to renable since we reset the context
+                    // Have to re-enable since we reset the context
                     AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
                 }
             }
@@ -208,6 +203,16 @@ public final class SoundUtils {
             // Do this last because it is dependent on the sound calculations
             if (hasFX)
                 SoundFXProcessor.initialize();
+
+            final String vendor = AL10.alGetString(AL10.AL_VENDOR);
+            final String version = AL10.alGetString(AL10.AL_VERSION);
+            final String renderer = AL10.alGetString(AL10.AL_RENDERER);
+            final String extensions = AL10.alGetString(AL10.AL_EXTENSIONS);
+
+            LOGGER.info("Vendor: %s", vendor);
+            LOGGER.info("Version: %s", version);
+            LOGGER.info("Renderer: %s", renderer);
+            LOGGER.info("Extensions: %s", extensions);
 
         } catch (@Nonnull final Throwable t) {
             LOGGER.warn(t.getMessage());

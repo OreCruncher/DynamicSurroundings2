@@ -49,6 +49,8 @@
 	"environs.cfg.sound.SpotVolume.tooltip": "Scaling factor to apply to spot sounds",
 	"environs.cfg.sound.WaterfallVolume": "Waterfall Volume",
 	"environs.cfg.sound.WaterfallVolume.tooltip": "Scaling factor to apply to waterfall sounds",
+	"environs.cfg.sound.OccludeWaterfall": "Occlude WATERFALL Sounds",
+	"environs.cfg.sound.OccludeWaterfall.tooltip": "Perform occlusion processing for sounds in the WATERFALL category",
 	"environs.cfg.fog": "Туман",
 	"environs.cfg.fog.tooltip": "Настройки различных эффектов тумана в клиенте",
 	"environs.cfg.fog.Enable": "Обработка тумана",

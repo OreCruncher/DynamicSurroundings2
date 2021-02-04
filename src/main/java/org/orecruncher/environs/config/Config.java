@@ -313,6 +313,7 @@ public final class Config {
             public final IntValue biomeSoundVolume;
             public final IntValue spotSoundVolume;
             public final IntValue waterfallSoundVolume;
+            public final BooleanValue occludeWaterfall;
 
             Sound(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Options for defining sound behavior")
@@ -332,6 +333,11 @@ public final class Config {
                         .comment("Scaling factor to apply to waterfall sounds")
                         .translation("environs.cfg.sound.WaterfallVolume")
                         .defineInRange("Waterfall Volume", 100, 0, 100);
+
+                this.occludeWaterfall = builder
+                        .comment("Occlude WATERFALL sounds")
+                        .translation("environs.cfg.sound.OccludeWaterfall")
+                        .define("Occlude WATERFALL sounds", false);
 
                 builder.pop();
             }

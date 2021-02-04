@@ -141,7 +141,7 @@ public final class Config {
                         .define("Enable Sound Occlusion Calculations", true);
 
                 this.occludeWeather = builder
-                        .comment("Occlude weather sounds")
+                        .comment("Occlude WEATHER sounds")
                         .translation("sndctrl.cfg.sound.OccludeWeather")
                         .define("Occlude WEATHER Sounds", true);
 

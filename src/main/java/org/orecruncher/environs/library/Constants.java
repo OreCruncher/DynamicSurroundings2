@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,5 +32,5 @@ public final class Constants {
 
     public static final ISoundCategory BIOMES = new Category("biomes", "environs.soundcategory.biomes", () -> Config.CLIENT.sound.biomeSoundVolume.get() / 100F, (v) -> Config.CLIENT.sound.biomeSoundVolume.set((int)(v * 100)));
     public static final ISoundCategory SPOT_SOUNDS = new Category("spot", "environs.soundcategory.spotsounds", () -> Config.CLIENT.sound.spotSoundVolume.get() / 100F, (v) -> Config.CLIENT.sound.spotSoundVolume.set((int)(v * 100)));
-    public static final ISoundCategory WATERFALL = new Category("waterfall", "environs.soundcategory.waterfall",() -> Config.CLIENT.sound.waterfallSoundVolume.get() / 100F, (v) -> Config.CLIENT.sound.waterfallSoundVolume.set((int)(v * 100)), () -> false);
+    public static final ISoundCategory WATERFALL = new Category("waterfall", "environs.soundcategory.waterfall",() -> Config.CLIENT.sound.waterfallSoundVolume.get() / 100F, (v) -> Config.CLIENT.sound.waterfallSoundVolume.set((int)(v * 100)), Config.CLIENT.sound.occludeWaterfall::get);
 }

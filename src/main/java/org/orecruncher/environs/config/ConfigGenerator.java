@@ -199,6 +199,11 @@ public class ConfigGenerator {
                         0,
                         100));
 
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.CLIENT.sound.occludeWaterfall));
+
         modCategory.add(subCategory.build());
 
         return modCategory;

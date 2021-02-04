@@ -18,6 +18,7 @@
 
 package org.orecruncher.environs.library;
 
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
@@ -55,7 +56,14 @@ public class BiomeEvaluator {
         final Set<BiomeDictionary.Type> biomeTypes = biome.getBiomeTypes();
 
         for (final BiomeDictionary.Type t : types) {
-            final String name = "is" + t.getName().substring(0, 1).toUpperCase() + t.getName().substring(1).toLowerCase();
+            String name = t.getName();
+            if (StringUtils.isNullOrEmpty(name))
+                continue;
+            if (name.length() > 1) {
+                name = "is" + name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+            } else {
+                name = "is" + name.toUpperCase();
+            }
             props.put(name, biomeTypes.contains(t));
         }
 

@@ -73,7 +73,7 @@ public class MixinSoundEngine {
     private List<ITickableSound> tickableSounds;
 
     /**
-     * Calcluates the volume of sound based on the myriad of factors in the game as
+     * Calculates the volume of sound based on the myriad of factors in the game as
      * well as configuration.
      *
      * @param sound The sound instance that is being evaluated
@@ -90,7 +90,7 @@ public class MixinSoundEngine {
     /**
      * Callback hook to initialize sndcntrl when the SoundEngine initializes.
      *
-     * @param ci
+     * @param ci ignored
      */
     @Inject(method = "load()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/SoundSystem;init()V", shift = At.Shift.AFTER))
     public void initialize(CallbackInfo ci) {
@@ -100,7 +100,7 @@ public class MixinSoundEngine {
     /**
      * Callback hook to deinitialize sndctrl when the SoundEngine is unloaded.
      *
-     * @param ci
+     * @param ci ignored
      */
     @Inject(method = "unload()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/SoundSystem;unload()V", shift = At.Shift.BEFORE))
     public void deinitialize(CallbackInfo ci) {
@@ -131,7 +131,7 @@ public class MixinSoundEngine {
      */
     @Inject(method = "play(Lnet/minecraft/client/audio/ISound;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/ChannelManager$Entry;runOnSoundExecutor(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     public void onSoundPlay(ISound p_sound, CallbackInfo ci, SoundEventAccessor soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f, float f1, SoundCategory soundcategory, float f2, float f3, ISound.AttenuationType attenuationtype, boolean flag, Vector3d vector3d, boolean flag2, boolean flag3, CompletableFuture completablefuture, ChannelManager.Entry entry) {
-        SoundFXProcessor.onSoundPlay(p_sound, soundcategory, entry);
+        SoundFXProcessor.onSoundPlay(p_sound, entry);
         AudioEngine.onPlaySound(p_sound);
     }
 

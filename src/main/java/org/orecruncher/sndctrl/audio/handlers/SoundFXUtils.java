@@ -42,6 +42,7 @@ import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.math.BlockRayTrace;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.math.RayTraceIterator;
+import org.orecruncher.mobeffects.library.Constants;
 import org.orecruncher.sndctrl.audio.SoundUtils;
 import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassData;
@@ -143,6 +144,10 @@ public final class SoundFXUtils {
                 || this.source.getPosition().equals(Vector3d.ZERO)) {
             this.clearSettings();
             return;
+        }
+
+        if (this.source.getCategory() == Constants.FOOTSTEPS) {
+            int x = 0;
         }
 
         // Need to offset sound toward player if it is in a solid block

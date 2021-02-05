@@ -23,7 +23,6 @@ import net.minecraft.client.audio.AudioStreamBuffer;
 import net.minecraft.client.audio.ChannelManager;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundSource;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -62,7 +61,7 @@ public final class SoundFXProcessor {
     /**
      * Sound categories that are ignored when determining special effects.  Things like MASTER, and MUSIC.
      */
-    private static final Set<SoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
+    private static final Set<ISoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundFXProcessor.class);
     static boolean isAvailable;
@@ -90,8 +89,8 @@ public final class SoundFXProcessor {
             threads = 1;
         SOUND_PROCESS_THREADS = threads;
 
-        IGNORE_CATEGORIES.add(SoundCategory.MUSIC);     // Background music
-        IGNORE_CATEGORIES.add(SoundCategory.MASTER);    // Anything slotted to master, like menu buttons
+        IGNORE_CATEGORIES.add(Category.MUSIC);     // Background music
+        IGNORE_CATEGORIES.add(Category.MASTER);    // Anything slotted to master, like menu buttons
 
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);
     }
@@ -153,12 +152,13 @@ public final class SoundFXProcessor {
      * @param sound The sound that is going to play
      * @param entry The ChannelManager.Entry instance for the sound play
      */
-    public static void onSoundPlay(@Nonnull final ISound sound, @Nonnull final SoundCategory category, @Nonnull final ChannelManager.Entry entry) {
+    public static void onSoundPlay(@Nonnull final ISound sound, @Nonnull final ChannelManager.Entry entry) {
 
         if (!isAvailable())
             return;
 
-        if (IGNORE_CATEGORIES.contains(category))
+        final Optional<ISoundCategory> cat = Category.getCategory(sound);
+        if (cat.isPresent() && IGNORE_CATEGORIES.contains(cat.get()))
             return;
 
         // Double suplex!  Queue the operation on the sound executor to do the config work.  This should queue in

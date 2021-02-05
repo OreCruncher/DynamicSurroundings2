@@ -30,6 +30,7 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.sndctrl.SoundControl;
+import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.SoundMetadata;
 import org.orecruncher.sndctrl.audio.handlers.SoundProcessor;
@@ -86,6 +87,12 @@ public final class SoundLibrary {
         LOGGER.info("===============================");
         getIndividualSoundConfig()
                 .forEach(cfg -> LOGGER.info(cfg.toString()));
+
+        LOGGER.info("Category Occlusion");
+        LOGGER.info("==================");
+        Category.getCategories().forEach(c -> {
+            LOGGER.info("%s -> %s", c.getName(), c.doOcclusion());
+        });
     }
 
     static List<IndividualSoundConfig> getIndividualSoundConfig() {

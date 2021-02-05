@@ -147,9 +147,6 @@ public class Category implements ISoundCategory {
      */
     @Nonnull
     public static Optional<ISoundCategory> getCategory(@Nonnull final ISound sound) {
-        if (sound.getCategory() == SoundCategory.RECORDS) {
-            int x = 0;
-        }
         if (sound instanceof ISoundInstance) {
             return Optional.of(((ISoundInstance) sound).getSoundCategory());
         }
@@ -180,6 +177,15 @@ public class Category implements ISoundCategory {
         }
 
         return categories;
+    }
+
+    /**
+     * Provides the list of registered ISoundCategory instances.
+     *
+     * @return Collection of registered ISoundCategory instances
+     */
+    public static Collection<ISoundCategory> getCategories() {
+        return nameToCategory.values();
     }
 
     @Override

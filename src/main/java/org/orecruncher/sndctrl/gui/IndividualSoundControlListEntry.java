@@ -19,6 +19,7 @@
 package org.orecruncher.sndctrl.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.Widget;
@@ -121,7 +122,14 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
                 BUTTON_WIDTH,
                 0,
                 PLAY,
-                this::play);
+                this::play) {
+
+            @Override
+            public void playDownSound(@Nonnull final SoundHandler ignore) {
+                // Suppress the button click to avoid conflicting with the sound play
+            }
+        };
+
         this.playButton.active = enablePlay;
         this.children.add(this.playButton);
     }

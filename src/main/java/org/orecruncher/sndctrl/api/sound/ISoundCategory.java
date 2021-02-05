@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,9 @@ public interface ISoundCategory {
 
     @Nonnull
     default SoundCategory getRealCategory() {
-        return SoundCategory.NEUTRAL;
+        // Do not change from MASTER.  This gets passed down into the Minecraft engine so it can make
+        // decisions about what to do.  If tied to a different category it could result in some strange
+        // behaviors.
+        return SoundCategory.MASTER;
     }
 }

@@ -27,20 +27,48 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public interface ISoundCategory {
+
+    /**
+     * Gets the internal name of the category
+     */
     String getName();
 
+    /**
+     * Get the category name suitable for display
+     */
     ITextComponent getTextComponent();
 
+    /**
+     * Should the category show up in the quick volume set menu
+     */
     default boolean doQuickMenu() {
         return false;
     }
 
+    /**
+     * Should occlusion processing be performed for sounds of the category
+     */
     boolean doOcclusion();
 
+    /**
+     * Should any effects be applied to sounds of the category
+     */
+    boolean doEffects();
+
+    /**
+     * Obtains the volume scale factor for the category
+     */
     float getVolumeScale();
 
+    /**
+     * Sets the volume scale factor for the category
+     */
     void setVolumeScale(final float scale);
 
+    /**
+     * Get the underlying Minecraft category
+     * @return
+     */
     @Nonnull
     default SoundCategory getRealCategory() {
         // Do not change from MASTER.  This gets passed down into the Minecraft engine so it can make

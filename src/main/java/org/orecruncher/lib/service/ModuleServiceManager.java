@@ -54,7 +54,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     private final ObjectArray<IModuleService> services = new ObjectArray<>();
 
     public static ModuleServiceManager instance() {
-        return instance.instance();
+        return instance.get();
     }
 
     private ModuleServiceManager() {

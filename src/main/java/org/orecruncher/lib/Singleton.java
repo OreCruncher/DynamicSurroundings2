@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,31 @@
 package org.orecruncher.lib;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public final class Singleton<T> {
 
-    private final Object mutex = new Object();
+    private static final Object NO_INIT = new Object();
+
     private final Supplier<T> factory;
-    private T instance;
+    @SuppressWarnings("unchecked")
+    private volatile T instance = (T) NO_INIT;
 
     public Singleton(@Nonnull final Supplier<T> factory) {
         this.factory = factory;
     }
 
-    public T instance() {
-        if (this.instance == null)
-            synchronized (this.mutex) {
-                if (this.instance == null)
-                    this.instance = this.factory.get();
+    @Nullable
+    public T get() {
+        T result = this.instance;
+
+        if (result == NO_INIT)
+            synchronized (this) {
+                result = this.instance;
+                if (result == NO_INIT)
+                    this.instance = result = this.factory.get();
             }
-        return this.instance;
+        return result;
     }
 }

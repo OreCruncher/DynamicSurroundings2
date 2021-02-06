@@ -32,8 +32,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.lwjgl.openal.AL10;
+import org.orecruncher.lib.Singleton;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
@@ -58,40 +58,32 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoundFXProcessor {
 
+    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundFXProcessor.class);
+    private static final int SOUND_PROCESS_ITERATION = 1000 / 20;   // Match MC client tick rate
+
     /**
      * Sound categories that are ignored when determining special effects.  Things like MASTER, and MUSIC.
      */
-    private static final Set<ISoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>();
+    private static final Set<ISoundCategory> IGNORE_CATEGORIES = new ReferenceOpenHashSet<>(4);
 
-    private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundFXProcessor.class);
     static boolean isAvailable;
-    private static final int SOUND_PROCESS_ITERATION = 1000 / 20;   // Match MC client tick rate
-    private static final int SOUND_PROCESS_THREADS;
     // Sparse array to hold references to the SoundContexts of playing sounds
     private static SourceContext[] sources;
     private static Worker soundProcessor;
+
     // Use our own ForkJoinPool avoiding the common pool.  Thread allocation is better controlled, and we won't run
     // into/cause any problems with other tasks in the common pool.
-    private static final LazyInitializer<ForkJoinPool> threadPool = new LazyInitializer<ForkJoinPool>() {
-        @Override
-        protected ForkJoinPool initialize() {
-            LOGGER.info("Threads allocated to SoundControl sound processor: %d", SOUND_PROCESS_THREADS);
-            return new ForkJoinPool(SOUND_PROCESS_THREADS);
-        }
-    };
+    private static final Singleton<ForkJoinPool> threadPool = new Singleton<>(() ->{
+        int threads = Config.CLIENT.sound.backgroundThreadWorkers.get();
+        if (threads == 0)
+            threads = 1;
+        LOGGER.info("Threads allocated to SoundControl sound processor: %d", threads);
+        return new ForkJoinPool(threads);
+    });
 
     private static WorldContext worldContext = new WorldContext();
 
     static {
-
-        int threads = Config.CLIENT.sound.backgroundThreadWorkers.get();
-        if (threads == 0)
-            threads = 1;
-        SOUND_PROCESS_THREADS = threads;
-
-        IGNORE_CATEGORIES.add(Category.MUSIC);     // Background music
-        IGNORE_CATEGORIES.add(Category.MASTER);    // Anything slotted to master, like menu buttons
-
         MinecraftForge.EVENT_BUS.register(SoundFXProcessor.class);
     }
 
@@ -126,6 +118,13 @@ public final class SoundFXProcessor {
             );
             soundProcessor.start();
         }
+
+        // Configure our categories to ignore
+        IGNORE_CATEGORIES.clear();
+        Category.getCategories().forEach(c -> {
+            if (!c.doEffects())
+                IGNORE_CATEGORIES.add(c);
+        });
 
         isAvailable = true;
     }

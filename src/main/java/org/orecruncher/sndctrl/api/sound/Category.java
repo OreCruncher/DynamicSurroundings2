@@ -41,9 +41,9 @@ public class Category implements ISoundCategory {
     private static final Map<SoundCategory, ISoundCategory> categoryToNew = new IdentityHashMap<>();
 
     // Sound categories of the base Minecraft game
-    public static final ISoundCategory MASTER = new SoundCategoryWrapper(SoundCategory.MASTER, () -> false);
-    public static final ISoundCategory MUSIC = new FaderSoundCategoryWrapper(SoundCategory.MUSIC, () -> false);
-    public static final ISoundCategory RECORDS = new FaderSoundCategoryWrapper(SoundCategory.RECORDS, Config.CLIENT.sound.occludeRecords::get);
+    public static final ISoundCategory MASTER = new SoundCategoryWrapper(SoundCategory.MASTER, () -> false, () -> false);
+    public static final ISoundCategory MUSIC = new FaderSoundCategoryWrapper(SoundCategory.MUSIC, () -> false, () -> false);
+    public static final ISoundCategory RECORDS = new FaderSoundCategoryWrapper(SoundCategory.RECORDS, Config.CLIENT.sound.occludeRecords::get, () -> true);
     public static final ISoundCategory WEATHER = new SoundCategoryWrapper(SoundCategory.WEATHER, Config.CLIENT.sound.occludeWeather::get);
     public static final ISoundCategory BLOCKS = new SoundCategoryWrapper(SoundCategory.BLOCKS);
     public static final ISoundCategory HOSTILE = new SoundCategoryWrapper(SoundCategory.HOSTILE);
@@ -56,11 +56,15 @@ public class Category implements ISoundCategory {
             "CONFIG",
             "sndctrl.soundcategory.config",
             () -> 1F,
-            (v) -> {
-            },
+            (v) -> { },
             () -> false) {
         @Override
         public boolean doQuickMenu() {
+            return false;
+        }
+
+        @Override
+        public boolean doEffects() {
             return false;
         }
     };
@@ -206,6 +210,11 @@ public class Category implements ISoundCategory {
     }
 
     @Override
+    public boolean doEffects() {
+        return true;
+    }
+
+    @Override
     public float getVolumeScale() {
         return this.getter.get();
     }
@@ -229,14 +238,20 @@ public class Category implements ISoundCategory {
     private static class SoundCategoryWrapper implements ISoundCategory {
         private final SoundCategory category;
         private final Supplier<Boolean> occlusion;
+        private final Supplier<Boolean> effects;
 
         public SoundCategoryWrapper(@Nonnull final SoundCategory cat) {
-            this(cat, () -> true);
+            this(cat, () -> true, () -> true);
         }
 
         public SoundCategoryWrapper(@Nonnull final SoundCategory cat, @Nonnull final Supplier<Boolean> occlusion) {
+            this(cat, occlusion, () -> true);
+        }
+
+        public SoundCategoryWrapper(@Nonnull final SoundCategory cat, @Nonnull final Supplier<Boolean> occlusion, @Nonnull final Supplier<Boolean> effects) {
             this.category = cat;
             this.occlusion = occlusion;
+            this.effects = effects;
             register(this);
         }
 
@@ -272,6 +287,11 @@ public class Category implements ISoundCategory {
         }
 
         @Override
+        public boolean doEffects() {
+            return this.effects.get();
+        }
+
+        @Override
         @Nonnull
         public String toString() {
             return MoreObjects.toStringHelper(this).addValue(getName()).add("scale", getVolumeScale()).toString();
@@ -280,12 +300,8 @@ public class Category implements ISoundCategory {
 
     private static class FaderSoundCategoryWrapper extends SoundCategoryWrapper {
 
-        public FaderSoundCategoryWrapper(@Nonnull final SoundCategory cat, @Nonnull final Supplier<Boolean> occlusion) {
-            super(cat, occlusion);
-        }
-
-        public FaderSoundCategoryWrapper(@Nonnull final SoundCategory cat) {
-            super(cat);
+        public FaderSoundCategoryWrapper(@Nonnull final SoundCategory cat, @Nonnull final Supplier<Boolean> occlusion, @Nonnull final Supplier<Boolean> effects) {
+            super(cat, occlusion, effects);
         }
 
         @Override

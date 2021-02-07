@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Mob Effects
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.library.FootstepLibrary;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 
@@ -34,6 +35,11 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 class RainSplashAccent implements IFootstepAccentProvider {
+
+    @Override
+    public boolean isEnabled() {
+        return Config.CLIENT.footsteps.enableRainSplashAccent.get();
+    }
 
     @Override
     public void provide(

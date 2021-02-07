@@ -36,6 +36,7 @@ import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ForkJoinTask;
 
 /**
@@ -43,7 +44,7 @@ import java.util.concurrent.ForkJoinTask;
  * facilitate queuing to background processing.
  */
 @OnlyIn(Dist.CLIENT)
-public final class SourceContext extends ForkJoinTask<Void> {
+public final class SourceContext implements Callable<Void> {
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SourceContext.class);
     // Lightweight randomizer used to distribute updates across an interval
@@ -185,12 +186,19 @@ public final class SourceContext extends ForkJoinTask<Void> {
     // Ignored
     public final void setRawResult(Void x) {}
 
+    @Override
+    public Void call() throws Exception {
+        captureState();
+        updateImpl();
+        return null;
+    }
+
     /**
      * Called by the thread pool when executing the task
      *
      * @return Will always return true
      */
-    @Override
+    //@Override
     public final boolean exec() {
         captureState();
         updateImpl();

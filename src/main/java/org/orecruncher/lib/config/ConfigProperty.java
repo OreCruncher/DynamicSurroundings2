@@ -35,7 +35,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public final class ConfigProperty {
 
-    private static final int TOOLTIP_WIDTH = 300;
+    public static final int TOOLTIP_WIDTH = 300;
 
     private static final ObjectField<ForgeConfigSpec.ConfigValue, ForgeConfigSpec> specAccessor = new ObjectField<>(ForgeConfigSpec.ConfigValue.class, () -> null, "spec");
     private static final ObjectField<Object, Object> minAccessor = new ObjectField<>(

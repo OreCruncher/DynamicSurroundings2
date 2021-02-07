@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Mob Effects
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.collections.ObjectArray;
+import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.library.ItemData;
 import org.orecruncher.mobeffects.library.ItemLibrary;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
@@ -50,6 +51,11 @@ class ArmorAccents implements IFootstepAccentProvider {
             return ((ItemData.ArmorItemData) id).getFootArmorSound(stack);
         }
         return null;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return Config.CLIENT.footsteps.enableArmorAccents.get();
     }
 
     @Override

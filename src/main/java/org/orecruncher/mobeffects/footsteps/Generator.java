@@ -492,7 +492,7 @@ public class Generator {
 	@Nullable
 	protected Association addFootstepAccent(@Nonnull final LivingEntity entity, @Nullable Association assoc) {
 		// Don't apply overlays if the entity is not on the ground
-		if (Config.CLIENT.footsteps.enableFootstepAccents.get() && entity.isOnGround()) {
+		if (entity.isOnGround()) {
 			accents.clear();
 			final BlockPos pos = assoc != null ? assoc.getStepPos() : entity.getPosition();
 			FootstepAccents.provide(entity, pos, accents);

@@ -57,14 +57,14 @@ public class ConfigGenerator {
                         Config.CLIENT.footsteps.enableFootstepSounds));
 
         subCategory.add(
-                ClothAPIFactory.createBoolean(
+                ClothAPIFactory.createIntegerSlider(
                         builder,
-                        Config.CLIENT.footsteps.enableFootprintParticles));
+                        Config.CLIENT.footsteps.footstepVolume));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.footsteps.enableFootstepAccents));
+                        Config.CLIENT.footsteps.enableFootprintParticles));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
@@ -83,9 +83,19 @@ public class ConfigGenerator {
                         Config.CLIENT.footsteps.playerFootprintStyle));
 
         subCategory.add(
-                ClothAPIFactory.createIntegerSlider(
+                ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.footsteps.footstepVolume));
+                        Config.CLIENT.footsteps.enableArmorAccents));
+
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.CLIENT.footsteps.enableRainSplashAccent));
+
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
+                        Config.CLIENT.footsteps.enableWaterLoggedAccent));
 
         modCategory.add(subCategory.build());
 

@@ -117,7 +117,9 @@ public final class Config {
             public final ForgeConfigSpec.EnumValue<FootprintStyle> playerFootprintStyle;
             public final BooleanValue footstepsAsQuadruped;
             public final IntValue footstepVolume;
-            public final BooleanValue enableFootstepAccents;
+            public final BooleanValue enableArmorAccents;
+            public final BooleanValue enableRainSplashAccent;
+            public final BooleanValue enableWaterLoggedAccent;
 
             public Footsteps(@Nonnull final ForgeConfigSpec.Builder builder) {
                 builder.comment("Defines footstep effect generation parameters")
@@ -153,10 +155,20 @@ public final class Config {
                         .translation("mobeffects.cfg.footsteps.Volume")
                         .defineInRange("Footstep Volume Scale", FOOTSTEP_VOLUME_DEFAULT, 0, 100);
 
-                this.enableFootstepAccents = builder
-                        .comment("Enable armor rustle and rain splash accents for footstep acoustics")
-                        .translation("mobeffects.cfg.footsteps.Accents")
-                        .define("Enable Footstep Accents", true);
+                this.enableArmorAccents = builder
+                        .comment("Enable armor rustle accents for footstep acoustics")
+                        .translation("mobeffects.cfg.footsteps.ArmorAccents")
+                        .define("Enable Armor Accents", true);
+
+                this.enableRainSplashAccent = builder
+                        .comment("Enable rain splash accents for footstep acoustics")
+                        .translation("mobeffects.cfg.footsteps.RainSplashAccents")
+                        .define("Enable Rain Splash Accents", true);
+
+                this.enableWaterLoggedAccent = builder
+                        .comment("Enable water logged accents for footstep acoustics")
+                        .translation("mobeffects.cfg.footsteps.WaterLoggedAccents")
+                        .define("Enable Waterlogged Accents", true);
 
                 builder.pop();
             }

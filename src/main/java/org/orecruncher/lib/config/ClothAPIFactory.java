@@ -27,13 +27,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.orecruncher.lib.GameUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,8 +90,15 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
 
     public static SubCategoryBuilder createSubCategory(@Nonnull final ConfigEntryBuilder entryBuilder, @Nonnull final String translationKey, @Nullable final TextFormatting color, final boolean expanded) {
         final ITextComponent label = transformText(translationKey, color);
+
+        final List<ITextComponent> toolTip = new ArrayList<>();
+        final List<ITextProperties> lines = GameUtils.getMC().fontRenderer.getCharacterManager().func_238362_b_(new TranslationTextComponent(translationKey + ".tooltip"), ConfigProperty.TOOLTIP_WIDTH, Style.EMPTY);
+        for (final ITextProperties l : lines) {
+            toolTip.add(new StringTextComponent(l.getString()));
+        }
+
         return entryBuilder.startSubCategory(label)
-                .setTooltip(new TranslationTextComponent(translationKey + ".tooltip"))
+                .setTooltip(toolTip.toArray(new ITextComponent[0]))
                 .setExpanded(expanded);
     }
 

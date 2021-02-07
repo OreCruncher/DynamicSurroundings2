@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.openal.AL10;
 import org.orecruncher.lib.Singleton;
 import org.orecruncher.lib.Utilities;
+import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.threading.Worker;
@@ -51,8 +52,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -71,14 +71,14 @@ public final class SoundFXProcessor {
     private static SourceContext[] sources;
     private static Worker soundProcessor;
 
-    // Use our own ForkJoinPool avoiding the common pool.  Thread allocation is better controlled, and we won't run
+    // Use our own thread pool avoiding the common pool.  Thread allocation is better controlled, and we won't run
     // into/cause any problems with other tasks in the common pool.
-    private static final Singleton<ForkJoinPool> threadPool = new Singleton<>(() ->{
+    private static final Singleton<ExecutorService> threadPool = new Singleton<>(() ->{
         int threads = Config.CLIENT.sound.backgroundThreadWorkers.get();
         if (threads == 0)
-            threads = 1;
+            threads = 2;
         LOGGER.info("Threads allocated to SoundControl sound processor: %d", threads);
-        return new ForkJoinPool(threads);
+        return Executors.newFixedThreadPool(threads);
     });
 
     private static WorldContext worldContext = new WorldContext();
@@ -241,15 +241,23 @@ public final class SoundFXProcessor {
      */
     private static void processSounds() {
         try {
-            final ForkJoinPool pool = threadPool.get();
+            final ExecutorService pool = threadPool.get();
+            assert pool != null;
+            final ObjectArray<Future<?>> tasks = new ObjectArray<>(256);
             for (int i = 0; i < SoundUtils.getMaxSounds(); i++) {
                 final SourceContext ctx = sources[i];
                 if (ctx != null && ctx.shouldExecute()) {
-                    ctx.reinitialize();
-                    pool.execute(ctx);
+                    tasks.add(pool.submit(ctx));
                 }
             }
-            pool.awaitQuiescence(5, TimeUnit.MINUTES);
+
+            if (tasks.size() > 0)
+                tasks.forEach(t -> {
+                    try {
+                        t.get();
+                    } catch (InterruptedException | ExecutionException ignored) {
+                    }
+                });
         } catch (@Nonnull final Throwable t) {
             LOGGER.error(t, "Error in SoundContext ForkJoinPool");
         }

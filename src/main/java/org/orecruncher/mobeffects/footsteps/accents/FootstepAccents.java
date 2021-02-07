@@ -1,6 +1,6 @@
 /*
- *  Dynamic Surroundings: Mob Effects
- *  Copyright (C) 2019  OreCruncher
+ *  Dynamic Surroundings
+ *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,9 @@ public class FootstepAccents {
 
     public static void provide(@Nonnull final LivingEntity entity, @Nonnull final BlockPos pos, @Nonnull final ObjectArray<IAcoustic> in) {
         final BlockState state = entity.getEntityWorld().getBlockState(pos);
-        providers.forEach(provider -> provider.provide(entity, pos, state, in));
+        providers.forEach(provider -> {
+            if (provider.isEnabled())
+                provider.provide(entity, pos, state, in);
+        });
     }
 }

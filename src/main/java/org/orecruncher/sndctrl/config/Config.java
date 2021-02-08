@@ -143,7 +143,7 @@ public final class Config {
                 this.occludeWeather = builder
                         .comment("Occlude WEATHER sounds")
                         .translation("sndctrl.cfg.sound.OccludeWeather")
-                        .define("Occlude WEATHER Sounds", true);
+                        .define("Occlude WEATHER Sounds", false);
 
                 this.occludeRecords = builder
                         .comment("Occlude RECORDS sounds")
@@ -163,7 +163,7 @@ public final class Config {
                 this.cullInterval = builder
                         .comment("Ticks between culled sound events (0 to disable culling)")
                         .translation("sndctrl.cfg.sound.CullInterval")
-                        .defineInRange("Sound Culling Interval", 20, 0, Integer.MAX_VALUE);
+                        .defineInRange("Sound Culling Interval", 10, 0, 6000);
 
                 this.backgroundThreadWorkers = builder
                         .worldRestart()

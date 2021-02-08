@@ -1,3 +1,29 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.9
+* JAVA 8 w/Forge 1.16.4-35.1.10+
+  * Compatible with 1.16.5-36.0.0+, and JAVA 15
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**Fixes**
+* Support super flat world properly
+* Play footstep acoustic based on the facade attached to a block
+  * Example, cable facade on an AE2 network cable
+  * Works on any block that implements team.chisel.ctm.api.IFacade
+* Added capability to select water ripple style via config
+* OpenAL related errors on Debian
+* Steam jets will go away once water source is removed
+* Setting Friendly mob sound slider to OFF will no longer cause DS to sputter.
+* Disable play button click sound in individual sound config menu
+
+**Changes**
+* Sounds in the RECORDS category will now have reverb and occlusion.  Separate option to enable/disable occlusion processing.
+* Sounds in the WEATHER category will not be occluded by default.   Separate option to enable/disable occlusion processing.
+* Sounds in the WATERFALL category will not be occluded by default.  Can be changed in the config.
+* Add restart and range info to configuration tooltips
+* More granular options to control footstep accenting.  Armor rustle sound option will be reset and have to be disabled if you prefer it disabled.
+* Default sound culling interval is now 10 ticks (down from 20).  Maximum cull interval is 6000 ticks (5 minutes).
+* Some translations for fr_fr from Mazdallier!  Thanks!
+
 > ### DynamicSurroundings-1.16.4-4.0.3.8
 * JAVA 8 w/Forge 1.16.4-35.1.10+
   * Compatible with 1.16.5-36.0.0+, and JAVA 15

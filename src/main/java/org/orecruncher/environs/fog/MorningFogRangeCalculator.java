@@ -67,6 +67,11 @@ public class MorningFogRangeCalculator extends VanillaFogRangeCalculator {
     }
 
     @Override
+    public boolean enabled() {
+        return Config.CLIENT.fog.enableMorningFog.get();
+    }
+
+    @Override
     @Nonnull
     public FogResult calculate(@Nonnull final EntityViewRenderEvent.RenderFogEvent event) {
         this.cache.set(event);

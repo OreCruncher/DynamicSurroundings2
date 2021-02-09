@@ -21,6 +21,7 @@ package org.orecruncher.environs.fog;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.WorldUtils;
 
@@ -40,6 +41,11 @@ public class WeatherFogRangeCalculator extends VanillaFogRangeCalculator {
 
     public WeatherFogRangeCalculator() {
         super("WeatherFogRangeCalculator");
+    }
+
+    @Override
+    public boolean enabled() {
+        return Config.CLIENT.fog.enableWeatherFog.get();
     }
 
     @Override

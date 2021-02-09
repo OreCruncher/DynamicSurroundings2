@@ -233,13 +233,11 @@ public final class Config {
                         .push("Effect Options");
 
                 this.auroraEnabled = builder
-                        .worldRestart()
                         .comment("Enable/disable Aurora processing")
                         .translation("environs.cfg.aurora.Enable")
                         .define("Auroras", true);
 
                 this.maxBands = builder
-                        .worldRestart()
                         .comment("Cap the maximum bands that will be rendered")
                         .translation("environs.cfg.aurora.MaxBands")
                         .defineInRange("Maximum Bands", 3, 0, 3);
@@ -263,43 +261,36 @@ public final class Config {
                         .push("Fog Options");
 
                 this.enableFog = builder
-                        .worldRestart()
                         .comment("Enable/disable fog processing")
                         .translation("environs.cfg.fog.Enable")
                         .define("Enable Fog Processing", true);
 
                 this.enableBiomeFog = builder
-                        .worldRestart()
                         .comment("Enable biome specific fog density and color")
                         .translation("environs.cfg.fog.Biome")
                         .define("Biome Fog", true);
 
                 this.enableElevationHaze = builder
-                        .worldRestart()
                         .comment("Higher the player elevation the more haze that is experienced")
                         .translation("environs.cfg.fog.Haze")
                         .define("Elevation Haze", true);
 
                 this.enableMorningFog = builder
-                        .worldRestart()
                         .comment("Show morning fog that eventually burns off")
                         .translation("environs.cfg.fog.Morning")
                         .define("Morning Fog", true);
 
                 this.enableBedrockFog = builder
-                        .worldRestart()
                         .comment("Increase fog at bedrock layers")
                         .translation("environs.cfg.fog.Bedrock")
                         .define("Bedrock Fog", true);
 
                 this.enableWeatherFog = builder
-                        .worldRestart()
                         .comment("Increase fog based on the strength of rain")
                         .translation("environs.cfg.fog.Weather")
                         .define("Weather Fog", true);
 
                 this.morningFogChance = builder
-                        .worldRestart()
                         .comment("Chance morning fog will occurs expressed as 1 in N")
                         .translation("environs.cfg.fog.MorningChance")
                         .defineInRange("Morning Fog Chance", 1, 0, Integer.MAX_VALUE);

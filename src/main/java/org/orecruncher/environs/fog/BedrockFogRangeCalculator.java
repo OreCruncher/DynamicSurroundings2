@@ -23,7 +23,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.WorldUtils;
@@ -41,6 +41,11 @@ public class BedrockFogRangeCalculator extends VanillaFogRangeCalculator {
 
     public BedrockFogRangeCalculator() {
         super("BedrockFogRangeCalculator");
+    }
+
+    @Override
+    public boolean enabled() {
+        return Config.CLIENT.fog.enableBedrockFog.get();
     }
 
     @Override

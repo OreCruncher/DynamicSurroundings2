@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.logging.IModLog;
 
@@ -50,6 +51,11 @@ public class HolisticFogRangeCalculator implements IFogRangeCalculator {
     }
 
     @Override
+    public boolean enabled() {
+        return Config.CLIENT.fog.enableFog.get();
+    }
+
+    @Override
     @Nonnull
     public FogResult calculate(@Nonnull final EntityViewRenderEvent.RenderFogEvent event) {
 
@@ -58,12 +64,14 @@ public class HolisticFogRangeCalculator implements IFogRangeCalculator {
         float end = this.cached.getEnd();
 
         for (final IFogRangeCalculator calc : this.calculators) {
-            final FogResult result = calc.calculate(event);
-            if (result.getStart() > result.getEnd() || result.getStart() < 0 || result.getEnd() < 0) {
-                LOGGER.warn("Fog calculator '%s' reporting invalid fog range (start %f, end %f); ignored", calc.getName(), result.getStart(), result.getEnd());
-            } else {
-                start = Math.min(start, result.getStart());
-                end = Math.min(end, result.getEnd());
+            if (calc.enabled()) {
+                final FogResult result = calc.calculate(event);
+                if (result.getStart() > result.getEnd() || result.getStart() < 0 || result.getEnd() < 0) {
+                    LOGGER.warn("Fog calculator '%s' reporting invalid fog range (start %f, end %f); ignored", calc.getName(), result.getStart(), result.getEnd());
+                } else {
+                    start = Math.min(start, result.getStart());
+                    end = Math.min(end, result.getEnd());
+                }
             }
         }
 

@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,10 +33,6 @@ public class VanillaFogRangeCalculator implements IFogRangeCalculator {
 
     private final String name;
 
-    public VanillaFogRangeCalculator() {
-        this.name = "VanillaFogRangeCalculator";
-    }
-
     protected VanillaFogRangeCalculator(@Nonnull final String name) {
         this.name = name;
     }
@@ -44,6 +40,10 @@ public class VanillaFogRangeCalculator implements IFogRangeCalculator {
     @Nonnull
     public String getName() {
         return this.name;
+    }
+
+    public boolean enabled() {
+        return true;
     }
 
     @Override

@@ -47,7 +47,7 @@ public class FogHandler extends HandlerBase {
         super("Fog Handler");
     }
 
-    private boolean doFog() {
+    public static boolean doFog() {
         return Config.CLIENT.fog.enableFog.get() && CommonState.getDimensionInfo().hasFog();
     }
 
@@ -89,25 +89,12 @@ public class FogHandler extends HandlerBase {
     @Override
     public void onConnect() {
         this.fogRange = new HolisticFogRangeCalculator();
+        this.fogRange.add(new BiomeFogRangeCalculator());
+        this.fogRange.add(new HazeFogRangeCalculator());
+        this.fogRange.add(new MorningFogRangeCalculator());
+        this.fogRange.add(new BedrockFogRangeCalculator());
+        this.fogRange.add(new WeatherFogRangeCalculator());
 
-        if (Config.CLIENT.fog.enableBiomeFog.get()) {
-            this.fogRange.add(new BiomeFogRangeCalculator());
-        }
-
-        if (Config.CLIENT.fog.enableElevationHaze.get())
-            this.fogRange.add(new HazeFogRangeCalculator());
-
-        if (Config.CLIENT.fog.enableMorningFog.get()) {
-            this.fogRange.add(new MorningFogRangeCalculator());
-        }
-
-        if (Config.CLIENT.fog.enableBedrockFog.get())
-            this.fogRange.add(new BedrockFogRangeCalculator());
-
-        if (Config.CLIENT.fog.enableWeatherFog.get())
-            this.fogRange.add(new WeatherFogRangeCalculator());
-
-//		if (this.theme.doFixedFog())
 //			this.fogRange
 //					.add(new FixedFogRangeCalculator(this.theme.getMinFogDistance(), this.theme.getMaxFogDistance()));
 

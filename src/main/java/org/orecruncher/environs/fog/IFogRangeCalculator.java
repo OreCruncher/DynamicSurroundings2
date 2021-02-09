@@ -36,6 +36,12 @@ public interface IFogRangeCalculator {
     String getName();
 
     /**
+     * If the calculator is enabled or not
+     * @return true if enabled, false otherwise
+     */
+    boolean enabled();
+
+    /**
      * Called during the render pass to obtain parameters for fog rendering.
      *
      * @param event The event that is being fired

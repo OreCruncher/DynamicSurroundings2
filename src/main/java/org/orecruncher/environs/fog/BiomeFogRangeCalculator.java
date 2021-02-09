@@ -26,6 +26,7 @@ import net.minecraft.world.biome.BiomeManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.library.BiomeInfo;
 import org.orecruncher.environs.library.BiomeUtil;
 import org.orecruncher.lib.GameUtils;
@@ -42,6 +43,11 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
 
     public BiomeFogRangeCalculator() {
         super("BiomeFogRangeCalculator");
+    }
+
+    @Override
+    public boolean enabled() {
+        return Config.CLIENT.fog.enableBiomeFog.get();
     }
 
     @Override

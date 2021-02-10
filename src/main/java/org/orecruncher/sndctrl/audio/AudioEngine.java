@@ -151,8 +151,8 @@ public final class AudioEngine {
                 } else {
                     /*
                      If the played sound is null it means that something decided not to have the sound play.  A mod
-                     could have decided this, or for some reason the SoundEngine decided not to play because of
-                     some other factors like volume, or error.
+                     could have decided this, the volume for the category is 0, or for some reason the SoundEngine
+                     decided not to play because of some other factors like error.
                     */
                     sound.setState(SoundState.BLOCKED);
                 }

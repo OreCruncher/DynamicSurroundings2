@@ -19,17 +19,20 @@
 package org.orecruncher.lib.resource;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
 
+@OnlyIn(Dist.CLIENT)
 final class ResourceAccessorJar extends ResourceAccessorBase {
 
     // Used to find assets within the current jar
     final String asset;
 
-    public ResourceAccessorJar(@Nonnull final String rootContainer, @Nonnull ResourceLocation location) {
+    public ResourceAccessorJar(@Nonnull final String rootContainer, @Nonnull final ResourceLocation location) {
         this(location, String.format("/assets/%s/%s/%s", rootContainer, location.getNamespace(), location.getPath()));
     }
 
@@ -41,8 +44,11 @@ final class ResourceAccessorJar extends ResourceAccessorBase {
     @Override
     protected byte[] getAsset() {
         try (InputStream stream = ResourceAccessorJar.class.getResourceAsStream(this.asset)) {
-            return IOUtils.toByteArray(stream);
-        } catch (@Nonnull final Throwable ignore) {
+            // Will be null if resource not found
+            if (stream != null)
+                return IOUtils.toByteArray(stream);
+        } catch (@Nonnull final Throwable t) {
+            logError(t);
         }
         return null;
     }

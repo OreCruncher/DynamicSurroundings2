@@ -22,6 +22,8 @@ import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.fml.ForgeUtils;
 
@@ -30,6 +32,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
 
+@OnlyIn(Dist.CLIENT)
 public final class ResourceUtils {
     private ResourceUtils() {
 

@@ -21,10 +21,13 @@ package org.orecruncher.lib.resource;
 import com.google.gson.Gson;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Lib;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -33,6 +36,7 @@ import java.util.function.Consumer;
 /**
  * A resource accessor is used to obtain the content of a resource from within the JAR or from an external disk source.
  */
+@OnlyIn(Dist.CLIENT)
 public interface IResourceAccessor {
 
     /**
@@ -65,12 +69,13 @@ public interface IResourceAccessor {
      * @param <T>   The type of object that is being deserialized
      * @return Reference to the deserialized object, null if not possible
      */
-    default <T> T as(Class<T> clazz) {
+    default <T> T as(@Nonnull final Class<T> clazz) {
         String content = this.asString();
         if (content != null) {
             try {
                 return new Gson().fromJson(content, clazz);
-            } catch (@Nonnull Throwable ignored) {
+            } catch (@Nonnull final Throwable t) {
+                Lib.LOGGER.error(t, "Unable to complete processing of %s", this.toString());
             }
         }
         return null;
@@ -90,15 +95,23 @@ public interface IResourceAccessor {
      * @param <T> The object type for casting
      * @return Reference to the deserialized object, null if not possible
      */
-    default <T> T as(Type type) {
+    default <T> T as(@Nonnull final Type type) {
         String content = this.asString();
         if (content != null) {
             try {
                 return new Gson().fromJson(content, type);
-            } catch (@Nonnull Throwable ignored) {
+            } catch (@Nonnull final Throwable t) {
+                Lib.LOGGER.error(t, "Unable to complete processing of %s", this.toString());
             }
         }
         return null;
+    }
+
+    default void logError(@Nonnull final Throwable t) {
+        if (t instanceof FileNotFoundException)
+            Lib.LOGGER.debug("Asset not found for %s", this.toString());
+        else
+            Lib.LOGGER.error(t, "Unable to process asset %s", this.toString());
     }
 
     /**
@@ -119,7 +132,7 @@ public interface IResourceAccessor {
      * @param location The resource location of the data that needs to be retrieved.
      * @return Reference to a resource accessor to obtain the necessary data.
      */
-    static IResourceAccessor createExternalResource(@Nonnull File root, @Nonnull ResourceLocation location) {
+    static IResourceAccessor createExternalResource(@Nonnull final File root, @Nonnull final ResourceLocation location) {
         return new ResourceAccessorExternal(root, location);
     }
 
@@ -139,7 +152,7 @@ public interface IResourceAccessor {
      * @param accessors Collection of accessors to invoke
      * @param consumer The routine to invoke on each accessor.
      */
-    static void process(Collection<IResourceAccessor> accessors, @Nonnull final Consumer<IResourceAccessor> consumer) {
+    static void process(@Nonnull final Collection<IResourceAccessor> accessors, @Nonnull final Consumer<IResourceAccessor> consumer) {
         for (final IResourceAccessor accessor : accessors) {
             Lib.LOGGER.info("Processing %s", accessor);
             try {

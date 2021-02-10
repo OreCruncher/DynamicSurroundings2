@@ -21,11 +21,14 @@ package org.orecruncher.lib.resource;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
 
+@OnlyIn(Dist.CLIENT)
 final class ResourceAccessorPack extends ResourceAccessorBase {
 
     private final IResourcePack pack;
@@ -43,7 +46,8 @@ final class ResourceAccessorPack extends ResourceAccessorBase {
             try (InputStream stream = this.pack.getResourceStream(ResourcePackType.CLIENT_RESOURCES, this.actual)) {
                 return IOUtils.toByteArray(stream);
             }
-        } catch (@Nonnull final Throwable ignore) {
+        } catch (@Nonnull final Throwable t) {
+            logError(t);
         }
         return null;
     }

@@ -19,16 +19,22 @@
 package org.orecruncher.lib.resource;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.Singleton;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+@OnlyIn(Dist.CLIENT)
 abstract class ResourceAccessorBase implements IResourceAccessor {
 
     private final ResourceLocation location;
-    private byte[] bytes;
+    private final Singleton<byte[]> bytes;
 
     public ResourceAccessorBase(@Nonnull final ResourceLocation location) {
         this.location = location;
+        this.bytes = new Singleton<>(this::getAsset);
     }
 
     @Override
@@ -38,15 +44,15 @@ abstract class ResourceAccessorBase implements IResourceAccessor {
 
     @Override
     public byte[] asBytes() {
-        if (this.bytes == null)
-            this.bytes = getAsset();
-        return this.bytes;
+        return this.bytes.get();
     }
 
+    @Nullable
     abstract protected byte[] getAsset();
 
     @Override
     public String toString() {
         return this.location.toString();
     }
+
 }

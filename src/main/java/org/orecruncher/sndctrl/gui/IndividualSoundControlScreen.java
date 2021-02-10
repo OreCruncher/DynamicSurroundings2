@@ -166,7 +166,7 @@ public class IndividualSoundControlScreen extends Screen {
         if (this.soundConfigList.isMouseOver(mouseX, mouseY)) {
             final IndividualSoundControlListEntry entry = this.soundConfigList.getEntryAt(mouseX, mouseY);
             if (entry != null) {
-                final List<ITextComponent> toolTip = entry.getToolTip();
+                final List<ITextComponent> toolTip = entry.getToolTip(mouseX, mouseY);
                 this.renderWrappedToolTip(matrixStack, toolTip, mouseX, mouseY + TOOLTIP_Y_OFFSET, GameUtils.getMC().fontRenderer);
             }
         }

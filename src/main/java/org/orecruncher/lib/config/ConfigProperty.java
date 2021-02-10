@@ -24,7 +24,7 @@ import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
-import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.gui.GuiHelpers;
 import org.orecruncher.lib.reflection.ObjectField;
 
 import javax.annotation.Nonnull;
@@ -94,11 +94,7 @@ public final class ConfigProperty {
             } else {
                 final ITextComponent title = new StringTextComponent(TextFormatting.GOLD + new TranslationTextComponent(key).getString());
                 result.add(title);
-
-                final List<ITextProperties> lines = GameUtils.getMC().fontRenderer.getCharacterManager().func_238362_b_(new TranslationTextComponent(key + ".tooltip"), TOOLTIP_WIDTH, Style.EMPTY);
-                for (final ITextProperties l : lines) {
-                    result.add(new StringTextComponent(l.getString()));
-                }
+                result.addAll(GuiHelpers.getTrimmedText(key + ".tooltip", TOOLTIP_WIDTH));
             }
 
             final Object theDefault = getDefault();

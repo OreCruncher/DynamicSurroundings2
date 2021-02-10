@@ -37,6 +37,7 @@ import net.minecraftforge.fml.client.gui.widget.Slider;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.fml.ForgeUtils;
 import org.orecruncher.lib.gui.ColorPalette;
+import org.orecruncher.lib.gui.GuiHelpers;
 import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
@@ -48,6 +49,7 @@ import org.orecruncher.sndctrl.library.SoundLibrary;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +58,7 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
     private static final int SLIDER_WIDTH = 100;
     private static final int BUTTON_WIDTH = 60;
+    private static final int TOOLTIP_WIDTH = 300;
     private static final Button.IPressable NULL_PRESSABLE = (b) -> {};
     private static final ITextComponent CULL_ON = new TranslationTextComponent("sndctrl.text.soundconfig.cull");
     private static final ITextComponent CULL_OFF = new TranslationTextComponent("sndctrl.text.soundconfig.nocull");
@@ -65,6 +68,13 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
     private static final ITextComponent STOP = new TranslationTextComponent("sndctrl.text.soundconfig.stop");
     private static final ITextComponent VANILLA_CREDIT = new TranslationTextComponent("sndctrl.text.tooltip.vanilla");
     private static final ITextComponent SLIDER_SUFFIX = new StringTextComponent("%");
+
+    private static final TextFormatting[] CODING = new TextFormatting[] {TextFormatting.ITALIC, TextFormatting.AQUA};
+    private static final Collection<ITextComponent> VOLUME_HELP = GuiHelpers.getTrimmedText("sndctrl.text.soundconfig.volume.help", TOOLTIP_WIDTH, CODING);
+    private static final Collection<ITextComponent> PLAY_HELP = GuiHelpers.getTrimmedText("sndctrl.text.soundconfig.play.help", TOOLTIP_WIDTH, CODING);
+    private static final Collection<ITextComponent> CULL_HELP = GuiHelpers.getTrimmedText("sndctrl.text.soundconfig.cull.help", TOOLTIP_WIDTH, CODING);
+    private static final Collection<ITextComponent> BLOCK_HELP = GuiHelpers.getTrimmedText("sndctrl.text.soundconfig.block.help", TOOLTIP_WIDTH, CODING);
+
     private static final int CONTROL_SPACING = 3;
 
     private final IndividualSoundConfig config;
@@ -75,7 +85,7 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
     private final List<Widget> children = new ArrayList<>();
 
-    private List<ITextComponent> toolTip;
+    private List<ITextComponent> defaultTooltip;
 
     private ISoundInstance soundPlay;
 
@@ -223,32 +233,44 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
     }
 
     @Nonnull
-    protected List<ITextComponent> getToolTip() {
-        if (this.toolTip == null) {
-            this.toolTip = new ArrayList<>();
+    protected List<ITextComponent> getToolTip(final int mouseX, final int mouseY) {
+        if (this.defaultTooltip == null) {
+            this.defaultTooltip = new ArrayList<>();
             final ResourceLocation loc = this.config.getLocation();
 
             final String modName = ForgeUtils.getModDisplayName(loc.getNamespace());
-            this.toolTip.add(new StringTextComponent(TextFormatting.GOLD + modName));
+            this.defaultTooltip.add(new StringTextComponent(TextFormatting.GOLD + modName));
 
-            this.toolTip.add(new StringTextComponent(TextFormatting.GRAY + loc.toString()));
+            this.defaultTooltip.add(new StringTextComponent(TextFormatting.GRAY + loc.toString()));
 
             final SoundMetadata meta = SoundLibrary.getSoundMetadata(loc);
             final ITextComponent title = meta.getTitle();
             if (title != StringTextComponent.EMPTY)
-                this.toolTip.add(title);
+                this.defaultTooltip.add(title);
             final ISoundCategory category = meta.getCategory();
             if (category != Category.NEUTRAL) {
-                this.toolTip.add(new TranslationTextComponent("sndctrl.text.tooltip.category").append(category.getTextComponent()));
+                this.defaultTooltip.add(new TranslationTextComponent("sndctrl.text.tooltip.category").append(category.getTextComponent()));
             }
 
             if (modName.equals("Minecraft"))
-                this.toolTip.add(VANILLA_CREDIT);
+                this.defaultTooltip.add(VANILLA_CREDIT);
             else
-                this.toolTip.addAll(meta.getCredits());
+                this.defaultTooltip.addAll(meta.getCredits());
         }
 
-        return this.toolTip;
+        final List<ITextComponent> result = new ArrayList<>(this.defaultTooltip);
+
+        if (this.volume.isMouseOver(mouseX, mouseY)) {
+            result.addAll(VOLUME_HELP);
+        } else if (this.blockButton.isMouseOver(mouseX, mouseY)) {
+            result.addAll(BLOCK_HELP);
+        } else if (this.cullButton.isMouseOver(mouseX, mouseY)) {
+            result.addAll(CULL_HELP);
+        } else if (this.playButton.isMouseOver(mouseX, mouseY)) {
+            result.addAll(PLAY_HELP);
+        }
+
+        return result;
     }
 
     /**

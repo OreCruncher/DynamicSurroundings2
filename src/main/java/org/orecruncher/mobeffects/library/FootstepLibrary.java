@@ -170,6 +170,12 @@ public final class FootstepLibrary {
         entries.add(new MacroEntry("foliage", "straw"));
         macros.put("#vine", entries);
 
+        entries = new ArrayList<>(3);
+        entries.add(new MacroEntry(null, "nether_vines"));
+        entries.add(MESSY);
+        entries.add(new MacroEntry("foliage", "nether_vines"));
+        macros.put("#nethervines", entries);
+
         entries = new ArrayList<>(2);
         entries.add(NOT_EMITTER);
         entries.add(new MacroEntry("carpet", "rug"));

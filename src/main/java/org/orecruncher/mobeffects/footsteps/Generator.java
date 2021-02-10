@@ -28,8 +28,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.tags.BlockTags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeHooks;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.collections.ObjectArray;
@@ -79,6 +81,7 @@ public class Generator {
 	protected long timeImmobile;
 
 	protected boolean isRightFoot;
+	protected boolean isOnGround;
 	protected boolean isOnLadder;
 	protected boolean isInWater;
 	protected boolean isSneaking;
@@ -120,7 +123,8 @@ public class Generator {
 		this.didJump = false;
 		this.stepThisFrame = false;
 
-		this.isOnLadder = entity.isOnLadder();
+		this.isOnGround = entity.isOnGround();
+		this.isOnLadder = isClimbing(entity);
 		this.isInWater = entity.isInWater();
 		this.isSneaking = entity.isSneaking();
 		this.isJumping = entity.isJumping;
@@ -139,6 +143,14 @@ public class Generator {
 			if (dist == Float.MAX_VALUE)
 				entity.nextStepDistance = 0;
 		}
+	}
+
+	protected boolean isClimbing(@Nonnull final LivingEntity entity) {
+		final World world = entity.getEntityWorld();
+		final BlockPos blockPos = entity.getPosition();
+		final BlockState blockState = world.getBlockState(blockPos);
+		return blockState.isIn(BlockTags.CLIMBABLE) || ForgeHooks.isLivingOnLadder(blockState, world, blockPos, entity);
+
 	}
 
 	protected boolean stoppedImmobile(float reference) {
@@ -213,7 +225,7 @@ public class Generator {
 		this.xMovec = movX;
 		this.zMovec = movZ;
 
-		if (entity.isOnGround() || this.isInWater || this.isOnLadder) {
+		if (this.isOnGround || this.isInWater || this.isOnLadder) {
 			AcousticEvent event = null;
 
 			float dwm = distanceReference - this.dmwBase;
@@ -225,7 +237,7 @@ public class Generator {
 
 			float distance = 0f;
 
-			if (entity.isOnLadder() && !entity.isOnGround()) {
+			if (this.isOnLadder && !this.isOnGround) {
 				distance = this.VAR.STRIDE_LADDER;
 			} else if (!this.isInWater && MathStuff.abs(this.yPosition - entity.getPosY()) > 0.4d) {
 				// This ensures this does not get recorded as landing, but as a
@@ -260,7 +272,7 @@ public class Generator {
 		// This fixes an issue where the value is evaluated
 		// while the player is between two steps in the air
 		// while descending stairs
-		if (entity.isOnGround()) {
+		if (this.isOnGround) {
 			this.yPosition = entity.getPosY();
 		}
 	}
@@ -289,7 +301,7 @@ public class Generator {
 	}
 
 	protected void simulateAirborne(@Nonnull final LivingEntity entity) {
-		if ((entity.isOnGround() || this.isOnLadder) == this.isFlying) {
+		if ((this.isOnGround || this.isOnLadder) == this.isFlying) {
 			this.isFlying = !this.isFlying;
 			simulateJumpingLanding(entity);
 		}
@@ -389,7 +401,7 @@ public class Generator {
 	protected boolean shouldProducePrint(@Nonnull final LivingEntity entity) {
 		return this.VAR.HAS_FOOTPRINT
 				&& Config.CLIENT.footsteps.enableFootprintParticles.get()
-				&& (entity.isOnGround() || !(this.isJumping || entity.isAirBorne))
+				&& (this.isOnGround || !(this.isJumping || entity.isAirBorne))
 				&& !entity.isInvisibleToPlayer(GameUtils.getPlayer());
 	}
 

@@ -40,6 +40,7 @@ import org.orecruncher.sndctrl.api.IMC;
 import org.orecruncher.sndctrl.audio.AudioEngine;
 import org.orecruncher.lib.effects.entity.CapabilityEntityFXData;
 import org.orecruncher.sndctrl.config.Config;
+import org.orecruncher.sndctrl.gui.Keys;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 import org.orecruncher.sndctrl.library.EntityEffectLibrary;
@@ -84,6 +85,8 @@ public final class SoundControl {
     }
 
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
+        Keys.register();
+
         if (Config.CLIENT.effects.fixupRandoms.get()) {
             GameUtils.getMC().gameRenderer.random = new XorShiftRandom();
         }

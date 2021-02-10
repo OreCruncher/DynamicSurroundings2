@@ -31,10 +31,10 @@ import org.orecruncher.sndctrl.SoundControl;
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Keys {
 
-    private static final KeyBinding quickVolumeGui;
-    private static final KeyBinding soundConfigGui;
+    private static KeyBinding quickVolumeGui;
+    private static KeyBinding soundConfigGui;
 
-    static {
+    public static void register() {
         quickVolumeGui = new KeyBinding(
                 "sndctrl.text.quickvolumemenu.open",
                 InputMappings.INPUT_INVALID.getKeyCode(),

@@ -164,7 +164,7 @@ public final class AudioEngine {
             }
         }
 
-        LOGGER.debug(Config.Trace.SOUND_PLAY, () -> {
+        LOGGER.debug(Config.Flags.SOUND_PLAY, () -> {
             final double distance;
             if (GameUtils.getPlayer() != null) {
                 final Vector3d location = new Vector3d(sound.getX(), sound.getY(), sound.getZ());
@@ -222,7 +222,7 @@ public final class AudioEngine {
                     break;
                 default:
                     // This should not happen, but to be safe set to a terminal state
-                    LOGGER.debug(Config.Trace.SOUND_PLAY, () -> String.format("Incorrect sound state [%s]", sound));
+                    LOGGER.debug(Config.Flags.SOUND_PLAY, () -> String.format("Incorrect sound state [%s]", sound));
                     sound.setState(SoundState.ERROR);
                     break;
             }
@@ -277,7 +277,7 @@ public final class AudioEngine {
     public static void onPlaySound(@Nonnull final ISound sound) {
         playedSound = sound;
         if (!(playedSound instanceof ISoundInstance)) {
-            LOGGER.debug(Config.Trace.BASIC_SOUND_PLAY, () -> String.format("PLAYING: [%s]", SoundUtils.debugString(playedSound)));
+            LOGGER.debug(Config.Flags.BASIC_SOUND_PLAY, () -> String.format("PLAYING: [%s]", SoundUtils.debugString(playedSound)));
         }
     }
 }

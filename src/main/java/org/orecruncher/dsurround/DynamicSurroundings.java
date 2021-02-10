@@ -33,6 +33,7 @@ import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.config.Config;
 import org.orecruncher.dsurround.config.ConfigMenuBuilder;
+import org.orecruncher.dsurround.gui.Keys;
 import org.orecruncher.lib.config.ConfigGui;
 import org.orecruncher.lib.compat.ModEnvironment;
 import org.orecruncher.lib.fml.ClientLoginChecks;
@@ -120,6 +121,7 @@ public final class DynamicSurroundings {
     }
 
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
+        Keys.register();
         if (Config.CLIENT.logging.onlineVersionCheck.get())
             ClientLoginChecks.register(new UpdateChecker(DynamicSurroundings.MOD_ID));
     }

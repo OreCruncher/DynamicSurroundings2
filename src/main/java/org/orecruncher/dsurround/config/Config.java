@@ -70,6 +70,11 @@ public final class Config {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.SPEC, CLIENT_CONFIG);
     }
 
+    public static class Flags {
+        public static int ALLOW_LIGHTLEVEL_HUD = 0x01;
+        public static int ALLOW_CHUNK_BORDER_HUD = 0x02;
+    }
+
     public static class Client {
 
         public final Logging logging;

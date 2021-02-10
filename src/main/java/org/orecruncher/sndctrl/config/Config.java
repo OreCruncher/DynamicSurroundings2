@@ -73,7 +73,7 @@ public final class Config {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.SPEC, CLIENT_CONFIG);
     }
 
-    public static class Trace {
+    public static class Flags {
         public static final int SOUND_PLAY = 0x1;
         public static final int BASIC_SOUND_PLAY = 0x2;
     }

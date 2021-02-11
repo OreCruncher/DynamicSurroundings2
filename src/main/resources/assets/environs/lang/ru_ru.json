@@ -1,6 +1,6 @@
 {
 	"environs.modname": "Environs",
-	"environs.modname.tooltip": "Adds biome sounds and block effects",
+	"environs.modname.tooltip": "Adds biome sounds and block effects to the Minecraft environment.",
 	"environs.cfg.logging": "Настройки логирования",
 	"environs.cfg.logging.tooltip": "Определяет как будет вести лог",
 	"environs.cfg.logging.EnableDebug": "Отладка",

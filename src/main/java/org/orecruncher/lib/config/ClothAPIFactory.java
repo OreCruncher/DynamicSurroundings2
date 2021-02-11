@@ -92,6 +92,7 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
         final ITextComponent label = transformText(translationKey, color);
 
         final List<ITextComponent> toolTip = new ArrayList<>();
+        toolTip.add(label);
         final List<ITextProperties> lines = GameUtils.getMC().fontRenderer.getCharacterManager().func_238362_b_(new TranslationTextComponent(translationKey + ".tooltip"), ConfigProperty.TOOLTIP_WIDTH, Style.EMPTY);
         for (final ITextProperties l : lines) {
             toolTip.add(new StringTextComponent(l.getString()));

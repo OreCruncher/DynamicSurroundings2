@@ -1,6 +1,6 @@
 {
 	"sndctrl.modname": "Управление звуками",
-	"sndctrl.modname.tooltip": "Enhances sound with reverb and occlusion when played",
+	"sndctrl.modname.tooltip": "Enhances sound with reverb and occlusion.  Allows for control of how sounds are played.",
 	"sndctrl.format.Play": "Воспроизвести",
 	"sndctrl.format.Stop": "Остановить",
 	"sndctrl.format.Block": "Блок",

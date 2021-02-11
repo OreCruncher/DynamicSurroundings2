@@ -24,9 +24,7 @@ import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
@@ -82,10 +80,8 @@ public final class DynamicSurroundings {
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             // Various event bus registrations
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupComplete);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
             MinecraftForge.EVENT_BUS.register(this);
 
             // Initialize our configuration
@@ -117,16 +113,10 @@ public final class DynamicSurroundings {
         }
     }
 
-    private void commonSetup(@Nonnull final FMLCommonSetupEvent event) {
-    }
-
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
         Keys.register();
         if (Config.CLIENT.logging.onlineVersionCheck.get())
             ClientLoginChecks.register(new UpdateChecker(DynamicSurroundings.MOD_ID));
-    }
-
-    private void enqueueIMC(final InterModEnqueueEvent event) {
     }
 
     private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {

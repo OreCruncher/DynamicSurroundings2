@@ -22,7 +22,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,8 +31,6 @@ import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -69,9 +66,7 @@ public final class Environs {
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             // Various event bus registrations
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupComplete);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
             MinecraftForge.EVENT_BUS.register(this);
 
@@ -84,18 +79,10 @@ public final class Environs {
         }
     }
 
-    private void commonSetup(@Nonnull final FMLCommonSetupEvent event) {
-
-    }
-
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
         // Disable Particles if configured to do so
         if (Config.CLIENT.effects.disableUnderwaterParticles.get())
             Minecraft.getInstance().particles.registerFactory(ParticleTypes.UNDERWATER, (IParticleFactory<BasicParticleType>) null);
-    }
-
-    private void setupComplete(@Nonnull final FMLLoadCompleteEvent event) {
-
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

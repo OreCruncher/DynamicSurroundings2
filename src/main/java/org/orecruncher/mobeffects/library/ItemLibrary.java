@@ -18,6 +18,7 @@
 
 package org.orecruncher.mobeffects.library;
 
+import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
@@ -37,7 +38,6 @@ import org.orecruncher.sndctrl.library.Primitives;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -204,6 +204,9 @@ public final class ItemLibrary {
 
     private static class ItemLibraryService implements IModuleService {
 
+        private static final Type itemConfigType = TypeToken.getParameterized(List.class, String.class).getType();
+        private static final Type entityConfigType = TypeToken.getParameterized(Map.class, String.class, itemConfigType).getType();
+
         @Override
         public String name() {
             return "ItemLibrary";
@@ -217,7 +220,7 @@ public final class ItemLibrary {
 
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "armor_accents.json");
 
-            IResourceAccessor.process(configs, accessor -> initFromConfig(accessor.as(ItemLibrary.entityConfigType)));
+            IResourceAccessor.process(configs, accessor -> initFromConfig(accessor.as(entityConfigType)));
 
             // Iterate through the list of registered Items to see if we know about them, or can infer based on class
             // matching.
@@ -234,41 +237,4 @@ public final class ItemLibrary {
             items.clear();
         }
     }
-
-    private static final ParameterizedType itemConfigType = new ParameterizedType() {
-        @Override
-        public Type[] getActualTypeArguments() {
-            return new Type[]{String.class};
-        }
-
-        @Override
-        public Type getRawType() {
-            return List.class;
-        }
-
-        @Override
-        @Nullable
-        public Type getOwnerType() {
-            return null;
-        }
-    };
-
-    private static final ParameterizedType entityConfigType = new ParameterizedType() {
-        @Override
-        public Type[] getActualTypeArguments() {
-            return new Type[]{String.class, itemConfigType};
-        }
-
-        @Override
-        public Type getRawType() {
-            return Map.class;
-        }
-
-        @Override
-        @Nullable
-        public Type getOwnerType() {
-            return null;
-        }
-    };
-
 }

@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 package org.orecruncher.environs.library;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,8 +26,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import com.google.gson.reflect.TypeToken;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -123,6 +122,8 @@ public final class DimensionLibrary {
 
 	private static class DimensionLibraryService implements IModuleService {
 
+		private static final Type dimensionType = TypeToken.getParameterized(List.class, DimensionConfig.class).getType();
+
 		@Override
 		public String name() {
 			return "DimensionLibrary";
@@ -134,7 +135,7 @@ public final class DimensionLibrary {
 			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "dimensions.json");
 
 			IResourceAccessor.process(configs, accessor -> {
-				initFromConfig(accessor.as(DimensionLibrary.dimensionType));
+				initFromConfig(accessor.as(dimensionType));
 			});
 		}
 
@@ -152,22 +153,4 @@ public final class DimensionLibrary {
 			configs.clear();
 		}
 	}
-
-	private static final ParameterizedType dimensionType = new ParameterizedType() {
-		@Override
-		public Type[] getActualTypeArguments() {
-			return new Type[]{DimensionConfig.class};
-		}
-
-		@Override
-		public Type getRawType() {
-			return List.class;
-		}
-
-		@Override
-		@Nullable
-		public Type getOwnerType() {
-			return null;
-		}
-	};
 }

@@ -30,6 +30,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.events.DiagnosticEvent;
 import org.orecruncher.lib.math.LoggingTimerEMA;
@@ -84,29 +85,33 @@ public final class EntityEffectHandler {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onLivingUpdate(@Nonnull final LivingEvent.LivingUpdateEvent event) {
-        final LivingEntity entity = event.getEntityLiving();
-        if (entity != null && entity.getEntityWorld().isRemote) {
+        try {
+            final LivingEntity entity = event.getEntityLiving();
+            if (entity != null && entity.getEntityWorld().isRemote) {
 
-            final IProfiler profiler = GameUtils.getMC().getProfiler();
-            profiler.startSection("MobEffects Living Update");
-            final long start = System.nanoTime();
+                final IProfiler profiler = GameUtils.getMC().getProfiler();
+                profiler.startSection("MobEffects Living Update");
+                final long start = System.nanoTime();
 
-            entity.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent(cap -> {
-                final int range = Config.CLIENT.effects.effectRange.get();
-                final int effectDistSq = range * range;
-                final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= effectDistSq;
-                final EntityEffectManager mgr = cap.get();
-                if (mgr != null && !inRange) {
-                    cap.clear();
-                } else if (mgr == null && inRange && entity.isAlive()) {
-                    cap.set(create(entity).get());
-                } else if (mgr != null) {
-                    mgr.update();
-                }
-            });
+                entity.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent(cap -> {
+                    final int range = Config.CLIENT.effects.effectRange.get();
+                    final int effectDistSq = range * range;
+                    final boolean inRange = entity.getDistanceSq(GameUtils.getPlayer()) <= effectDistSq;
+                    final EntityEffectManager mgr = cap.get();
+                    if (mgr != null && !inRange) {
+                        cap.clear();
+                    } else if (mgr == null && inRange && entity.isAlive()) {
+                        cap.set(create(entity).get());
+                    } else if (mgr != null) {
+                        mgr.update();
+                    }
+                });
 
-            nanos += System.nanoTime() - start;
-            profiler.endSection();
+                nanos += System.nanoTime() - start;
+                profiler.endSection();
+            }
+        } catch(@Nonnull final Throwable t) {
+            Lib.LOGGER.error(t, "Error ticking entity %s!");
         }
     }
 

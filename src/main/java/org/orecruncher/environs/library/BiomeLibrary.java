@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 package org.orecruncher.environs.library;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,8 +26,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import com.google.gson.reflect.TypeToken;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.biome.BiomeRegistry;
@@ -115,7 +114,7 @@ public final class BiomeLibrary {
 					if (evaluator.matches(c.conditions)) {
 						try {
 							bi.update(c);
-						} catch(@Nonnull final Throwable t) {
+						} catch (@Nonnull final Throwable t) {
 							LOGGER.warn("Unable to process biome sound configuration [%s]", c.toString());
 						}
 					}
@@ -161,8 +160,10 @@ public final class BiomeLibrary {
 		).collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	static class BiomeLibraryService implements IModuleService
-	{
+	static class BiomeLibraryService implements IModuleService {
+
+		private static final Type biomeType = TypeToken.getParameterized(List.class, BiomeConfig.class).getType();
+
 		@Override
 		public String name() {
 			return "BiomeLibrary";
@@ -183,7 +184,7 @@ public final class BiomeLibrary {
 			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "biomes.json");
 
 			IResourceAccessor.process(configs, accessor -> {
-				initFromConfig(accessor.as(BiomeLibrary.biomeType));
+				initFromConfig(accessor.as(biomeType));
 			});
 		}
 
@@ -205,21 +206,4 @@ public final class BiomeLibrary {
 		}
 	}
 
-	private static final ParameterizedType biomeType = new ParameterizedType() {
-		@Override
-		public Type[] getActualTypeArguments() {
-			return new Type[]{BiomeConfig.class};
-		}
-
-		@Override
-		public Type getRawType() {
-			return List.class;
-		}
-
-		@Override
-		@Nullable
-		public Type getOwnerType() {
-			return null;
-		}
-	};
 }

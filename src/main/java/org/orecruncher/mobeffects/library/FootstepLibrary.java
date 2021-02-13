@@ -18,6 +18,7 @@
 
 package org.orecruncher.mobeffects.library;
 
+import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.block.Block;
@@ -62,7 +63,6 @@ import org.orecruncher.sndctrl.library.Primitives;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Stream;
@@ -522,6 +522,8 @@ public final class FootstepLibrary {
 
     private static class FootstepLibraryService implements IModuleService {
 
+        private static final Type variatorType = TypeToken.getParameterized(Map.class, String.class, VariatorConfig.class).getType();
+
         @Override
         public String name() {
             return "FootstepLibrary";
@@ -533,7 +535,7 @@ public final class FootstepLibrary {
             Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "variators.json");
 
             IResourceAccessor.process(configs, accessor -> {
-                final Map<String, VariatorConfig> cfg = accessor.as(FootstepLibrary.variatorType);
+                final Map<String, VariatorConfig> cfg = accessor.as(variatorType);
                 for (final Map.Entry<String, VariatorConfig> kvp : cfg.entrySet()) {
                     variators.put(kvp.getKey(), new Variator(kvp.getValue()));
                 }
@@ -574,22 +576,4 @@ public final class FootstepLibrary {
             ForgeUtils.getBlockStates().forEach(state -> ((IMixinFootstepData) state).setAcoustics(null));
         }
     }
-
-    private static final ParameterizedType variatorType = new ParameterizedType() {
-        @Override
-        public Type[] getActualTypeArguments() {
-            return new Type[]{String.class, VariatorConfig.class};
-        }
-
-        @Override
-        public Type getRawType() {
-            return Map.class;
-        }
-
-        @Override
-        @Nullable
-        public Type getOwnerType() {
-            return null;
-        }
-    };
 }

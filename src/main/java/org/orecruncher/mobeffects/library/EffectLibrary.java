@@ -18,6 +18,7 @@
 
 package org.orecruncher.mobeffects.library;
 
+import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -48,8 +49,6 @@ import org.orecruncher.sndctrl.api.acoustics.Library;
 import org.orecruncher.sndctrl.api.sound.SoundBuilder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
@@ -119,6 +118,8 @@ public final class EffectLibrary {
 
     private static class EffectLibraryService implements IModuleService {
 
+        private static final Type entityConfigType = TypeToken.getParameterized(Map.class, String.class, EntityConfig.class).getType();
+
         @Override
         public String name() {
             return "MobEffectsLibrary";
@@ -137,7 +138,7 @@ public final class EffectLibrary {
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "mobeffects.json");
 
             IResourceAccessor.process(configs, accessor -> {
-                Map<String, EntityConfig> cfg = accessor.as(EffectLibrary.entityConfigType);
+                Map<String, EntityConfig> cfg = accessor.as(entityConfigType);
                 for (final Map.Entry<String, EntityConfig> kvp : cfg.entrySet()) {
                     final EntityEffectInfo eei = new EntityEffectInfo(kvp.getValue());
                     final ResourceLocation loc = Library.resolveResource(MobEffects.MOD_ID, kvp.getKey());
@@ -183,23 +184,4 @@ public final class EffectLibrary {
             soundReplace.clear();
         }
     }
-
-    private static final ParameterizedType entityConfigType = new ParameterizedType() {
-        @Override
-        public Type[] getActualTypeArguments() {
-            return new Type[]{String.class, EntityConfig.class};
-        }
-
-        @Override
-        public Type getRawType() {
-            return Map.class;
-        }
-
-        @Override
-        @Nullable
-        public Type getOwnerType() {
-            return null;
-        }
-    };
-
 }

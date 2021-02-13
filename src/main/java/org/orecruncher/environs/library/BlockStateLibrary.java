@@ -19,6 +19,7 @@
 package org.orecruncher.environs.library;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.reflect.TypeToken;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -44,8 +45,6 @@ import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
@@ -157,6 +156,8 @@ public final class BlockStateLibrary {
 
     private static class BlockStateLibraryService implements IModuleService
     {
+        private static final Type blockType = TypeToken.getParameterized(List.class, BlockConfig.class).getType();
+
         @Override
         public String name() {
             return "BlockStateLibrary";
@@ -166,9 +167,7 @@ public final class BlockStateLibrary {
         public void start() {
             final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "blocks.json");
 
-            IResourceAccessor.process(configs, accessor -> {
-                initFromConfig(accessor.as(BlockStateLibrary.blockType));
-            });
+            IResourceAccessor.process(configs, accessor -> initFromConfig(accessor.as(blockType)));
 
             ForgeUtils.getBlockStates().forEach(BlockStateUtil::getData);
             ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).forEach(BlockStateData::trim);
@@ -189,22 +188,4 @@ public final class BlockStateLibrary {
             ForgeUtils.getBlockStates().forEach(state -> BlockStateUtil.setData(state, null));
         }
     }
-
-    private static final ParameterizedType blockType = new ParameterizedType() {
-        @Override
-        public Type[] getActualTypeArguments() {
-            return new Type[]{BlockConfig.class};
-        }
-
-        @Override
-        public Type getRawType() {
-            return List.class;
-        }
-
-        @Override
-        @Nullable
-        public Type getOwnerType() {
-            return null;
-        }
-    };
 }

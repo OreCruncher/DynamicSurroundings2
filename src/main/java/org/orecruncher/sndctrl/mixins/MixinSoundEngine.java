@@ -24,6 +24,7 @@ import net.minecraft.client.audio.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.vector.Vector3d;
+import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 import org.orecruncher.sndctrl.audio.AudioEngine;
@@ -131,8 +132,12 @@ public class MixinSoundEngine {
      */
     @Inject(method = "play(Lnet/minecraft/client/audio/ISound;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/ChannelManager$Entry;runOnSoundExecutor(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     public void onSoundPlay(ISound p_sound, CallbackInfo ci, SoundEventAccessor soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f, float f1, SoundCategory soundcategory, float f2, float f3, ISound.AttenuationType attenuationtype, boolean flag, Vector3d vector3d, boolean flag2, boolean flag3, CompletableFuture completablefuture, ChannelManager.Entry entry) {
-        SoundFXProcessor.onSoundPlay(p_sound, entry);
-        AudioEngine.onPlaySound(p_sound);
+        try {
+            SoundFXProcessor.onSoundPlay(p_sound, entry);
+            AudioEngine.onPlaySound(p_sound);
+        } catch(@Nonnull final Throwable t) {
+            SoundControl.LOGGER.error(t, "Error in onSoundPlay()!");
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Dynamic Surroundings: Sound Control
+ * Dynamic Surroundings
  * Copyright (C) 2020 OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ package org.orecruncher.sndctrl.mixins;
 import net.minecraft.client.audio.AudioStreamBuffer;
 import net.minecraft.client.audio.SoundSource;
 import org.lwjgl.openal.AL10;
+import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 import org.orecruncher.sndctrl.audio.handlers.SourceContext;
 import org.orecruncher.sndctrl.misc.IMixinSoundContext;
@@ -31,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Mixin(SoundSource.class)
@@ -60,7 +62,11 @@ public class MixinSoundSource implements IMixinSoundContext {
      */
     @Inject(method = "play()V", at = @At("HEAD"))
     public void onPlay(CallbackInfo ci) {
-        SoundFXProcessor.tick((SoundSource) ((Object) this));
+        try {
+            SoundFXProcessor.tick((SoundSource) ((Object) this));
+        } catch(@Nonnull final Throwable t) {
+            SoundControl.LOGGER.error(t, "Error in onPlay()!");
+        }
     }
 
     /**
@@ -70,7 +76,11 @@ public class MixinSoundSource implements IMixinSoundContext {
      */
     @Inject(method = "tick()V", at = @At("HEAD"))
     public void onTick(CallbackInfo ci) {
-        SoundFXProcessor.tick((SoundSource) ((Object) this));
+        try {
+            SoundFXProcessor.tick((SoundSource) ((Object) this));
+        } catch(@Nonnull final Throwable t) {
+            SoundControl.LOGGER.error(t, "Error in onTick()!");
+        }
     }
 
     /**
@@ -79,7 +89,11 @@ public class MixinSoundSource implements IMixinSoundContext {
      */
     @Inject(method = "stop()V", at = @At("HEAD"))
     public void onStop(CallbackInfo ci) {
-        SoundFXProcessor.stopSoundPlay((SoundSource) ((Object) this));
+        try {
+            SoundFXProcessor.stopSoundPlay((SoundSource) ((Object) this));
+        } catch(@Nonnull final Throwable t) {
+            SoundControl.LOGGER.error(t, "Error in onStop()!");
+        }
     }
 
     /**
@@ -91,14 +105,18 @@ public class MixinSoundSource implements IMixinSoundContext {
      */
     @Inject(method = "bindBuffer(Lnet/minecraft/client/audio/AudioStreamBuffer;)V", at = @At("HEAD"), cancellable = true)
     public void onPlayBuffer(AudioStreamBuffer p_216429_1_, CallbackInfo ci) {
-        final SoundSource src = (SoundSource) ((Object) this);
+        try {
+            final SoundSource src = (SoundSource) ((Object) this);
 
-        p_216429_1_ = SoundFXProcessor.playBuffer(src, p_216429_1_);
+            p_216429_1_ = SoundFXProcessor.playBuffer(src, p_216429_1_);
 
-        p_216429_1_.getBuffer().ifPresent((p_216431_1_) -> {
-            AL10.alSourcei(src.id, 4105, p_216431_1_);
-        });
+            p_216429_1_.getBuffer().ifPresent((p_216431_1_) -> {
+                AL10.alSourcei(src.id, 4105, p_216431_1_);
+            });
 
-        ci.cancel();
+            ci.cancel();
+        } catch(@Nonnull final Throwable t) {
+            SoundControl.LOGGER.error(t, "Error in onPlayBuffer()!");
+        }
     }
 }

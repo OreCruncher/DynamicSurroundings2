@@ -33,6 +33,9 @@ import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ModuleServiceManager;
 import org.orecruncher.lib.service.IModuleService;
+import org.orecruncher.lib.validation.ListValidator;
+import org.orecruncher.lib.validation.MapValidator;
+import org.orecruncher.lib.validation.Validators;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.sndctrl.library.Primitives;
 
@@ -206,6 +209,10 @@ public final class ItemLibrary {
 
         private static final Type itemConfigType = TypeToken.getParameterized(List.class, String.class).getType();
         private static final Type entityConfigType = TypeToken.getParameterized(Map.class, String.class, itemConfigType).getType();
+
+        static {
+            // TODO: How do we do the validation?
+        }
 
         @Override
         public String name() {

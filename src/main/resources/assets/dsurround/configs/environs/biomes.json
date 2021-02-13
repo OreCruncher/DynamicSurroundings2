@@ -53,11 +53,11 @@
     "acoustics": [
       {
         "acoustic": "biome/savanna/day",
-        "conditions": "diurnal.isDay()"
+        "conditions": "weather.isNotRaining() && diurnal.isDay()"
       },
       {
         "acoustic": "biome/savanna/night",
-        "conditions": "diurnal.isNight()"
+        "conditions": "weather.isNotRaining() && diurnal.isNight()"
       }
     ]
   },

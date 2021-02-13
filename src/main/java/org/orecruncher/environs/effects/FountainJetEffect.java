@@ -21,7 +21,6 @@ package org.orecruncher.environs.effects;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.effects.emitters.FountainJet;
@@ -41,7 +40,7 @@ public class FountainJetEffect extends JetEffect {
     @Nonnull
     @Override
     public BlockEffectType getEffectType() {
-        return BlockEffectType.FOUNTAIN_JET;
+        return BlockEffectType.FOUNTAIN;
     }
 
     @Override

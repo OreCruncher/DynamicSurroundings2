@@ -22,7 +22,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.effects.emitters.BubbleJet;
@@ -41,7 +40,7 @@ public class BubbleJetEffect extends JetEffect {
     @Nonnull
     @Override
     public BlockEffectType getEffectType() {
-        return BlockEffectType.BUBBLE_JET;
+        return BlockEffectType.BUBBLE;
     }
 
     @Override

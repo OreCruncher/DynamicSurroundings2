@@ -41,6 +41,8 @@ import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ModuleServiceManager;
 import org.orecruncher.lib.service.IModuleService;
+import org.orecruncher.lib.validation.ListValidator;
+import org.orecruncher.lib.validation.Validators;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 
@@ -157,6 +159,10 @@ public final class BlockStateLibrary {
     private static class BlockStateLibraryService implements IModuleService
     {
         private static final Type blockType = TypeToken.getParameterized(List.class, BlockConfig.class).getType();
+
+        static {
+            Validators.registerValidator(blockType, new ListValidator<BlockConfig>());
+        }
 
         @Override
         public String name() {

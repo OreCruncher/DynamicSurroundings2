@@ -29,6 +29,8 @@ import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
+import org.orecruncher.lib.validation.MapValidator;
+import org.orecruncher.lib.validation.Validators;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
@@ -61,6 +63,8 @@ public final class SoundLibrary {
     static {
         myRegistry.defaultReturnValue(SoundLibrary.MISSING);
         soundMetadata.defaultReturnValue(new SoundMetadata());
+
+        Validators.registerValidator(SOUND_FILE_TYPE, new MapValidator<String, SoundMetadataConfig>());
     }
 
     private SoundLibrary() {

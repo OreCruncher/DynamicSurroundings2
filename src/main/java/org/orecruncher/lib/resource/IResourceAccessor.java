@@ -19,11 +19,14 @@
 package org.orecruncher.lib.resource;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Lib;
+import org.orecruncher.lib.validation.ValidationHelpers;
+import org.orecruncher.lib.validation.Validators;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -73,7 +76,10 @@ public interface IResourceAccessor {
         String content = this.asString();
         if (content != null) {
             try {
-                return new Gson().fromJson(content, clazz);
+                final Gson gson = new GsonBuilder().create();
+                final T obj = gson.fromJson(content, clazz);
+                Validators.validate(obj);
+                return obj;
             } catch (@Nonnull final Throwable t) {
                 Lib.LOGGER.error(t, "Unable to complete processing of %s", this.toString());
             }
@@ -99,7 +105,10 @@ public interface IResourceAccessor {
         String content = this.asString();
         if (content != null) {
             try {
-                return new Gson().fromJson(content, type);
+                final Gson gson = new GsonBuilder().create();
+                final T obj = gson.fromJson(content, type);
+                Validators.validate(obj, type);
+                return obj;
             } catch (@Nonnull final Throwable t) {
                 Lib.LOGGER.error(t, "Unable to complete processing of %s", this.toString());
             }

@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,14 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
+import org.orecruncher.lib.validation.IValidator;
+import org.orecruncher.lib.validation.ValidationException;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public class SoundMetadataConfig {
+public class SoundMetadataConfig implements IValidator<SoundMetadataConfig> {
 
     @SerializedName("category")
     public String category = null;
@@ -52,4 +55,8 @@ public class SoundMetadataConfig {
         //@formatter:on
     }
 
+    @Override
+    public void validate(@Nonnull final SoundMetadataConfig obj) throws ValidationException {
+
+    }
 }

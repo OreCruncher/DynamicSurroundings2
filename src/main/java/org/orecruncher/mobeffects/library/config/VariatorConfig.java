@@ -21,9 +21,13 @@ package org.orecruncher.mobeffects.library.config;
 import com.google.gson.annotations.SerializedName;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.validation.IValidator;
+import org.orecruncher.lib.validation.ValidationException;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class VariatorConfig {
+public class VariatorConfig implements IValidator<VariatorConfig> {
 
     @SerializedName("immobileDuration")
     public int immobileDuration = 4;
@@ -61,4 +65,9 @@ public class VariatorConfig {
     public float footprintScale = 1.0F;
     @SerializedName("volumeScale")
     public float volumeScale = 1.0F;
+
+    @Override
+    public void validate(@Nonnull final VariatorConfig obj) throws ValidationException {
+
+    }
 }

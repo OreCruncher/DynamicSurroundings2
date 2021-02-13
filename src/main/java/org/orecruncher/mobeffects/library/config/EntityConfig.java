@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,16 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
+import org.orecruncher.lib.validation.IValidator;
+import org.orecruncher.lib.validation.ValidationException;
+import org.orecruncher.lib.validation.ValidationHelpers;
+import org.orecruncher.mobeffects.MobEffects;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public class EntityConfig {
+public class EntityConfig implements IValidator<EntityConfig> {
 
 	@SerializedName("effects")
 	public String effects = StringUtils.EMPTY;
@@ -36,4 +41,11 @@ public class EntityConfig {
 	@SerializedName("blockedSounds")
 	public List<String> blockedSounds = ImmutableList.of();
 
+	@Override
+	public void validate(@Nonnull final EntityConfig obj) throws ValidationException {
+		ValidationHelpers.notNullOrWhitespace("effects", this.effects, MobEffects.LOGGER::warn);
+		ValidationHelpers.notNullOrWhitespace("variator", this.variator, MobEffects.LOGGER::warn);
+		for (final String s : this.blockedSounds)
+			ValidationHelpers.isProperResourceLocation("blockedSounds", s, MobEffects.LOGGER::warn);
+	}
 }

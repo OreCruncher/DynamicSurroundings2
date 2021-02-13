@@ -41,7 +41,7 @@ public class FireJetEffect extends JetEffect {
     @Nonnull
     @Override
     public BlockEffectType getEffectType() {
-        return BlockEffectType.FIRE_JET;
+        return BlockEffectType.FIRE;
     }
 
     @Override

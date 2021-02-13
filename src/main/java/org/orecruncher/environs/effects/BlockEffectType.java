@@ -37,12 +37,12 @@ public enum BlockEffectType {
 
     UNKNOWN("UNKNOWN", ignored -> null, () -> false),
     FIREFLY("firefly", FireFlyEffect::new, Config.CLIENT.effects.enableFireFlies::get),
-    STEAM_JET("steam", SteamJetEffect::new, Config.CLIENT.effects.enableSteamJets::get),
-    FIRE_JET("fire", FireJetEffect::new, Config.CLIENT.effects.enableFireJets::get),
-    BUBBLE_JET("bubble", BubbleJetEffect::new, Config.CLIENT.effects.enableBubbleJets::get),
-    DUST_JET("dust", DustJetEffect::new, Config.CLIENT.effects.enableDustJets::get),
-    FOUNTAIN_JET("fountain", FountainJetEffect::new, Config.CLIENT.effects.enableFountainJets::get),
-    WATERFALL("splash", WaterfallSplashEffect::new, Config.CLIENT.effects.enableWaterfalls::get);
+    STEAM("steam", SteamJetEffect::new, Config.CLIENT.effects.enableSteamJets::get),
+    FIRE("fire", FireJetEffect::new, Config.CLIENT.effects.enableFireJets::get),
+    BUBBLE("bubble", BubbleJetEffect::new, Config.CLIENT.effects.enableBubbleJets::get),
+    DUST("dust", DustJetEffect::new, Config.CLIENT.effects.enableDustJets::get),
+    FOUNTAIN("fountain", FountainJetEffect::new, Config.CLIENT.effects.enableFountainJets::get),
+    SPLASH("splash", WaterfallSplashEffect::new, Config.CLIENT.effects.enableWaterfalls::get);
 
     private static final Map<String, BlockEffectType> typeMap = new Object2ObjectOpenHashMap<>();
     static {

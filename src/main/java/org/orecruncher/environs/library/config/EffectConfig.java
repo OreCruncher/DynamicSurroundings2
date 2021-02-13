@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,9 +23,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.annotations.SerializedName;
+import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.effects.BlockEffectType;
+import org.orecruncher.lib.validation.IValidator;
+import org.orecruncher.lib.validation.ValidationException;
+import org.orecruncher.lib.validation.ValidationHelpers;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public final class EffectConfig {
+public final class EffectConfig implements IValidator<EffectConfig> {
 
 	@SerializedName("effect")
 	public String effect = null;
@@ -34,4 +41,11 @@ public final class EffectConfig {
 	@SerializedName("chance")
 	public Integer chance = null;
 
+	@Override
+	public void validate(@Nonnull final EffectConfig obj) throws ValidationException {
+		ValidationHelpers.isEnumValue("effect", this.effect, BlockEffectType.class, Environs.LOGGER::warn);
+		if (this.chance != null)
+			// Min value of 0 means always on
+			ValidationHelpers.inRange("chance", this.chance, 0, Integer.MAX_VALUE, Environs.LOGGER::warn);
+	}
 }

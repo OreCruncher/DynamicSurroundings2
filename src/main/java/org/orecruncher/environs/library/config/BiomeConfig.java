@@ -23,11 +23,16 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
+import org.orecruncher.environs.Environs;
+import org.orecruncher.lib.validation.IValidator;
+import org.orecruncher.lib.validation.ValidationException;
+import org.orecruncher.lib.validation.ValidationHelpers;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public final class BiomeConfig {
+public final class BiomeConfig implements IValidator<BiomeConfig> {
 	@SerializedName("conditions")
 	public String conditions = StringUtils.EMPTY;
 	@SerializedName("_comment")
@@ -50,4 +55,12 @@ public final class BiomeConfig {
 		return this.comment == null ? this.conditions : this.comment;
 	}
 
+	@Override
+	public void validate(@Nonnull final BiomeConfig obj) throws ValidationException {
+		if (this.visibility != null)
+			ValidationHelpers.inRange("visibility", this.visibility, 0F, 1F, Environs.LOGGER::warn);
+
+		for (final AcousticConfig ac : this.acoustics)
+			ac.validate(ac);
+	}
 }

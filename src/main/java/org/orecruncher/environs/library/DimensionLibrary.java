@@ -43,6 +43,8 @@ import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ModuleServiceManager;
 import org.orecruncher.lib.service.IModuleService;
+import org.orecruncher.lib.validation.ListValidator;
+import org.orecruncher.lib.validation.Validators;
 
 @OnlyIn(Dist.CLIENT)
 public final class DimensionLibrary {
@@ -123,6 +125,10 @@ public final class DimensionLibrary {
 	private static class DimensionLibraryService implements IModuleService {
 
 		private static final Type dimensionType = TypeToken.getParameterized(List.class, DimensionConfig.class).getType();
+
+		static {
+			Validators.registerValidator(dimensionType, new ListValidator<DimensionConfig>());
+		}
 
 		@Override
 		public String name() {

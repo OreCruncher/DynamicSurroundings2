@@ -40,7 +40,7 @@ public class DustJetEffect extends JetEffect {
     @Nonnull
     @Override
     public BlockEffectType getEffectType() {
-        return BlockEffectType.DUST_JET;
+        return BlockEffectType.DUST;
     }
 
     @Override

@@ -53,7 +53,7 @@ public class WaterfallSplashEffect extends JetEffect {
 	@Override
 	@Nonnull
 	public BlockEffectType getEffectType() {
-		return BlockEffectType.WATERFALL;
+		return BlockEffectType.SPLASH;
 	}
 
 	private static boolean isUnboundedLiquid(final IBlockReader provider, final BlockPos pos) {

@@ -46,6 +46,8 @@ import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ModuleServiceManager;
 import org.orecruncher.lib.service.IModuleService;
+import org.orecruncher.lib.validation.MapValidator;
+import org.orecruncher.lib.validation.Validators;
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.footsteps.Generator;
@@ -523,6 +525,10 @@ public final class FootstepLibrary {
     private static class FootstepLibraryService implements IModuleService {
 
         private static final Type variatorType = TypeToken.getParameterized(Map.class, String.class, VariatorConfig.class).getType();
+
+        static {
+            Validators.registerValidator(variatorType, new MapValidator<String, VariatorConfig>());
+        }
 
         @Override
         public String name() {

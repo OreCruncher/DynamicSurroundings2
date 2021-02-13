@@ -48,6 +48,8 @@ import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ModuleServiceManager;
 import org.orecruncher.lib.service.IModuleService;
+import org.orecruncher.lib.validation.ListValidator;
+import org.orecruncher.lib.validation.Validators;
 
 @OnlyIn(Dist.CLIENT)
 public final class BiomeLibrary {
@@ -164,6 +166,10 @@ public final class BiomeLibrary {
 
 		private static final Type biomeType = TypeToken.getParameterized(List.class, BiomeConfig.class).getType();
 
+		static {
+			Validators.registerValidator(biomeType, new ListValidator<BiomeConfig>());
+		}
+
 		@Override
 		public String name() {
 			return "BiomeLibrary";
@@ -183,9 +189,7 @@ public final class BiomeLibrary {
 
 			final Collection<IResourceAccessor> configs = ResourceUtils.findConfigs(DynamicSurroundings.MOD_ID, DynamicSurroundings.DATA_PATH, "biomes.json");
 
-			IResourceAccessor.process(configs, accessor -> {
-				initFromConfig(accessor.as(biomeType));
-			});
+			IResourceAccessor.process(configs, accessor -> initFromConfig(accessor.as(biomeType)));
 		}
 
 		@Override

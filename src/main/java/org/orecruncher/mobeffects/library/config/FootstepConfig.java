@@ -23,12 +23,17 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.SerializedName;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.lib.validation.IValidator;
+import org.orecruncher.lib.validation.ValidationException;
+import org.orecruncher.lib.validation.ValidationHelpers;
+import org.orecruncher.mobeffects.MobEffects;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public class FootstepConfig {
+public class FootstepConfig implements IValidator<FootstepConfig> {
     @SerializedName("primitives")
     public Map<String, String> primitives = ImmutableMap.of();
     @SerializedName("blockTags")
@@ -37,4 +42,12 @@ public class FootstepConfig {
     public Map<String, String> footsteps = ImmutableMap.of();
     @SerializedName("footprints")
     public List<String> footprints = ImmutableList.of();
+
+    @Override
+    public void validate(@Nonnull final FootstepConfig obj) throws ValidationException {
+        for (final String fp : this.footprints) {
+            ValidationHelpers.notNullOrWhitespace("footprints", fp, MobEffects.LOGGER::warn);
+            ValidationHelpers.mustBeLowerCase("footprints", fp, MobEffects.LOGGER::warn);
+        }
+    }
 }

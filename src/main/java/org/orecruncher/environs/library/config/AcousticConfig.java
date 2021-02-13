@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,16 +23,28 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.annotations.SerializedName;
+import org.orecruncher.environs.Environs;
+import org.orecruncher.lib.validation.IValidator;
+import org.orecruncher.lib.validation.ValidationException;
+import org.orecruncher.lib.validation.ValidationHelpers;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class AcousticConfig {
+public class AcousticConfig implements IValidator<AcousticConfig> {
 	@SerializedName("acoustic")
 	public String acoustic = null;
 	@SerializedName("conditions")
 	public String conditions = StringUtils.EMPTY;
 	@SerializedName("weight")
-	public Integer weight = 10;
+	public int weight = 10;
 	@SerializedName("type")
 	public String type = "background";
 
+	@Override
+	public void validate(@Nonnull final AcousticConfig obj) throws ValidationException {
+		ValidationHelpers.notNullOrWhitespace("acoustic", this.acoustic, Environs.LOGGER::warn);
+		ValidationHelpers.inRange("weight", this.weight, 1, Integer.MAX_VALUE, Environs.LOGGER::warn);
+		ValidationHelpers.isOneOf("type", this.type, false, new String[]{"spot", "background"}, Environs.LOGGER::warn);
+	}
 }

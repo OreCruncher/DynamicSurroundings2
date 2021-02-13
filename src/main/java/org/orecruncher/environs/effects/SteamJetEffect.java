@@ -50,7 +50,7 @@ public class SteamJetEffect extends JetEffect {
     @Override
     @Nonnull
     public BlockEffectType getEffectType() {
-        return BlockEffectType.STEAM_JET;
+        return BlockEffectType.STEAM;
     }
 
     @Override

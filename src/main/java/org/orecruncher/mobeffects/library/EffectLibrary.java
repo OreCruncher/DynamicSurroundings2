@@ -42,6 +42,8 @@ import org.orecruncher.lib.resource.IResourceAccessor;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.service.ModuleServiceManager;
 import org.orecruncher.lib.service.IModuleService;
+import org.orecruncher.lib.validation.MapValidator;
+import org.orecruncher.lib.validation.Validators;
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.library.config.EntityConfig;
@@ -119,6 +121,10 @@ public final class EffectLibrary {
     private static class EffectLibraryService implements IModuleService {
 
         private static final Type entityConfigType = TypeToken.getParameterized(Map.class, String.class, EntityConfig.class).getType();
+
+        static {
+            Validators.registerValidator(entityConfigType, new MapValidator<String, EntityConfig>());
+        }
 
         @Override
         public String name() {

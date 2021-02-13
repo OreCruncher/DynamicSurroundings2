@@ -23,9 +23,13 @@ import javax.annotation.Nonnull;
 import com.google.gson.annotations.SerializedName;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.orecruncher.environs.Environs;
+import org.orecruncher.lib.validation.IValidator;
+import org.orecruncher.lib.validation.ValidationException;
+import org.orecruncher.lib.validation.ValidationHelpers;
 
 @OnlyIn(Dist.CLIENT)
-public class DimensionConfig {
+public class DimensionConfig implements IValidator<DimensionConfig> {
 	@SerializedName("dimId")
 	public String dimensionId = null;
 	@SerializedName("seaLevel")
@@ -82,5 +86,10 @@ public class DimensionConfig {
 			return (this.dimensionId != null && this.dimensionId.equals(dc.dimensionId));
 		}
 		return false;
+	}
+
+	@Override
+	public void validate(@Nonnull final DimensionConfig obj) throws ValidationException {
+		ValidationHelpers.isProperResourceLocation("dimId", this.dimensionId, Environs.LOGGER::warn);
 	}
 }

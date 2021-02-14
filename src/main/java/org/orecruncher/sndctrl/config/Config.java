@@ -163,7 +163,7 @@ public final class Config {
                 this.cullInterval = builder
                         .comment("Ticks between culled sound events (0 to disable culling)")
                         .translation("sndctrl.cfg.sound.CullInterval")
-                        .defineInRange("Sound Culling Interval", 10, 0, 6000);
+                        .defineInRange("Sound Culling Interval", 20, 0, 6000);
 
                 this.backgroundThreadWorkers = builder
                         .worldRestart()

@@ -37,7 +37,7 @@ import java.io.File;
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class Config {
 
-    public static final int FOOTSTEP_VOLUME_DEFAULT = 75;
+    public static final int FOOTSTEP_VOLUME_DEFAULT = 40;
 
     public static final Client CLIENT;
     private static final String CLIENT_CONFIG = DynamicSurroundings.MOD_ID + File.separator + MobEffects.MOD_ID + "-client.toml";

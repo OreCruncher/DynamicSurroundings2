@@ -94,7 +94,7 @@ public abstract class MotionMote extends AgeableMote {
 		final FluidState fluid = state.getFluidState();
 		if (!fluid.isEmpty()) {
 			// Potential of collision with a liquid
-			final double height = fluid.getHeight() + this.position.getY();
+			final double height = fluid.getActualHeight(this.world, this.position) + this.position.getY();
 			if (height >= this.posY) {
 				// Hit the surface of liquid
 				return Optional.of(new ParticleCollisionResult(

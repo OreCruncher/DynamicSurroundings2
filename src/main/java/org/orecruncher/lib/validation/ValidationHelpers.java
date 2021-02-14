@@ -19,7 +19,7 @@
 package org.orecruncher.lib.validation;
 
 import net.minecraft.util.ResourceLocation;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

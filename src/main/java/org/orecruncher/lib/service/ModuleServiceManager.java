@@ -18,7 +18,6 @@
 
 package org.orecruncher.lib.service;
 
-import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,9 +25,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
@@ -61,17 +60,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
         MinecraftForge.EVENT_BUS.register(this);
         final IResourceManager resourceManager = GameUtils.getMC().getResourceManager();
         ((IReloadableResourceManager) resourceManager).addReloadListener(this);
-
-        for (final ServerType type : ServerType.values()) {
-            MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, true, type.listenerClass, event -> {
-                if (type.connected()) {
-                    Lib.LOGGER.info("Connection '%s' - configuring", type.name());
-                    TagUtils.setTagManager(event.getTagManager());
-                    this.reload();
-                }
-            });
-        }
-    }
+     }
 
     /**
      * Adds the service instance to the service manager.
@@ -87,9 +76,9 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
      */
     protected void reload() {
         ForgeUtils.getEnabledResourcePacks().forEach(p -> {
-            Lib.LOGGER.info("Resource pack '%s'", p.getName());
-            Lib.LOGGER.info("+  %s", p.getTitle().getString());
-            Lib.LOGGER.info("+  %s", p.getDescription().getString());
+            Lib.LOGGER.debug("Resource pack '%s'", p.getName());
+            Lib.LOGGER.debug("+  %s", p.getTitle().getString());
+            Lib.LOGGER.debug("+  %s", p.getDescription().getString());
         });
         performAction("reload", IModuleService::reload);
         this.services.forEach(IModuleService::log);
@@ -110,6 +99,38 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
             ResourceUtils.clearCache();
             reload();
         }
+    }
+
+    /**
+     * Do the configuration whenever the world is loaded.
+     *
+     * @param event Ignored
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onWorldLoad(@Nonnull final WorldEvent.Load event) {
+        if (event.getWorld().isRemote()) {
+            this.reload();
+        }
+    }
+
+    /**
+     * Capture the tag manager in the event for future use.
+     *
+     * @param event Tag event
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onLoad(@Nonnull final TagsUpdatedEvent.VanillaTagTypes event) {
+        TagUtils.setTagManager(event.getTagManager());
+    }
+
+    /**
+     * Capture the tag manager in the event for future use.
+     *
+     * @param event Tag event
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onLoad(@Nonnull final TagsUpdatedEvent.CustomTagTypes event) {
+        TagUtils.setTagManager(event.getTagManager());
     }
 
     /**
@@ -137,31 +158,8 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
         }).collect(Collectors.toList());
 
         long duration = System.nanoTime() - start;
-        results.forEach(Lib.LOGGER::info);
+        results.forEach(Lib.LOGGER::debug);
 
         Lib.LOGGER.info("Overall Action '%s' took %dmsecs", actionName, (long) (duration / 1000000D));
-    }
-
-    // Leverage the idea from JEI to handle the various connection types and when configs
-    // should be processed.
-    private enum ServerType {
-        VANILLA_REMOTE(true, false, TagsUpdatedEvent.VanillaTagTypes.class),
-        MODDED_REMOTE(false, false, TagsUpdatedEvent.CustomTagTypes.class);
-
-        public final boolean isVanilla, isIntegrated;
-        public final Class<? extends TagsUpdatedEvent> listenerClass;
-
-        ServerType(boolean isVanilla, boolean isIntegrated, Class<? extends TagsUpdatedEvent> listenerClass) {
-            this.isVanilla = isVanilla;
-            this.isIntegrated = isIntegrated;
-            this.listenerClass = listenerClass;
-        }
-
-        public boolean connected() {
-            final boolean isIntegrated = GameUtils.getMC().isIntegratedServerRunning();
-            final ClientPlayNetHandler connection = GameUtils.getMC().getConnection();
-            final boolean isVanilla = connection != null && NetworkHooks.isVanillaConnection(connection.getNetworkManager());
-            return isVanilla == this.isVanilla && isIntegrated == this.isIntegrated;
-        }
     }
 }

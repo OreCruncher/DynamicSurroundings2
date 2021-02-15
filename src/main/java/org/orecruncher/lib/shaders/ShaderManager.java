@@ -40,26 +40,21 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
-public final class ShaderManager<T extends Enum<T>> {
+public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 
 	private final Class<T> clazz;
 	private final EnumMap<T, ShaderProgram> programs;
 
 	public ShaderManager(@Nonnull final Class<T> clazz) {
 		Objects.requireNonNull(clazz);
-
-		if (!IShaderResourceProvider.class.isAssignableFrom(clazz))
-			throw new IllegalArgumentException(String.format("%s must implement IShaderResourceProvider", clazz.getName()));
-
 		this.clazz = clazz;
 		this.programs = new EnumMap<>(clazz);
 
 		// Validate the entries provide sane info
 		for (final T shader : clazz.getEnumConstants()) {
 			final String shaderName = shader.name();
-			final IShaderResourceProvider provider = (IShaderResourceProvider) shader;
-			Objects.requireNonNull(provider.getVertex(), String.format("%s provided null for vertex shader", shaderName));
-			Objects.requireNonNull(provider.getFragment(), String.format("%s provided null for fragment shader", shaderName));
+			Objects.requireNonNull(shader.getVertex(), String.format("%s provided null for vertex shader", shaderName));
+			Objects.requireNonNull(shader.getFragment(), String.format("%s provided null for fragment shader", shaderName));
 		}
 	}
 
@@ -121,17 +116,16 @@ public final class ShaderManager<T extends Enum<T>> {
 
 	@Nullable
 	private ShaderProgram createProgram(@Nonnull final IResourceManager manager, @Nonnull final T shader) {
-		final IShaderResourceProvider provider = (IShaderResourceProvider) shader;
 		try {
-			final ShaderLoader vert = createShader(manager, provider.getVertex(), ShaderLoader.ShaderType.VERTEX);
-			final ShaderLoader frag = createShader(manager, provider.getFragment(), ShaderLoader.ShaderType.FRAGMENT);
+			final ShaderLoader vert = createShader(manager, shader.getVertex(), ShaderLoader.ShaderType.VERTEX);
+			final ShaderLoader frag = createShader(manager, shader.getFragment(), ShaderLoader.ShaderType.FRAGMENT);
 			final int programId = ShaderLinkHelper.createProgram();
-			final ShaderProgram program = new ShaderProgram(provider.getShaderName(), programId, vert, frag);
+			final ShaderProgram program = new ShaderProgram(shader.getShaderName(), programId, vert, frag);
 			ShaderLinkHelper.linkProgram(program);
-			program.setUniforms(provider.getUniforms());
+			program.setUniforms(shader.getUniforms());
 			return program;
 		} catch (IOException ex) {
-			Lib.LOGGER.error(ex, "Failed to load program %s", provider.getShaderName());
+			Lib.LOGGER.error(ex, "Failed to load program %s", shader.getShaderName());
 		}
 		return null;
 	}

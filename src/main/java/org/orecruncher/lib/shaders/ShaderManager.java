@@ -18,8 +18,6 @@
 
 package org.orecruncher.lib.shaders;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.shader.IShaderManager;
 import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.client.shader.ShaderLoader;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -27,11 +25,9 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL20;
 import net.minecraft.util.ResourceLocation;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Lib;
-import org.orecruncher.lib.gui.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -86,10 +82,11 @@ public final class ShaderManager<T extends Enum<T>> {
 		ShaderLinkHelper.func_227804_a_(programId);
 
 		if (callback != null) {
-			callback.accept(new ShaderCallContext(programId));
+			callback.accept(new ShaderCallContext(program));
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void useShader(@Nonnull final T shader) {
 		useShader(shader, null);
 	}
@@ -97,74 +94,6 @@ public final class ShaderManager<T extends Enum<T>> {
 	public void releaseShader() {
 		if (supported())
 			ShaderLinkHelper.func_227804_a_(0);
-	}
-
-	public final static class ShaderCallContext {
-
-		private final int program;
-
-		ShaderCallContext(final int program) {
-			this.program = program;
-		}
-
-		public void set(@Nonnull final String uniform, final float value) {
-			GL20.glUniform1f(getUniform(uniform), value);
-		}
-
-		public void set(@Nonnull final String uniform, final float v1, final float v2) {
-			GL20.glUniform2f(getUniform(uniform), v1, v2);
-		}
-
-		public void set(@Nonnull final String uniform, @Nonnull final Color color) {
-			set(uniform, color, 1.0F);
-		}
-
-		public void set(@Nonnull final String uniform, @Nonnull final Color color, final float alpha) {
-			final float[] parms = new float[]{color.red(), color.green(), color.blue(), alpha};
-			GL20.glUniform4fv(getUniform(uniform), parms);
-		}
-
-		public void set(@Nonnull final String uniform, @Nonnull final int... values) {
-			GL20.glUniform1iv(getUniform(uniform), values);
-		}
-
-		private int getUniform(@Nonnull final String name) {
-			return GlStateManager.getUniformLocation(this.program, name);
-		}
-	}
-
-	private static class ShaderProgram implements IShaderManager {
-		private final int program;
-		private final ShaderLoader vert;
-		private final ShaderLoader frag;
-
-		private ShaderProgram(int program, @Nonnull final ShaderLoader vert, @Nonnull final ShaderLoader frag) {
-			this.program = program;
-			this.vert = vert;
-			this.frag = frag;
-		}
-
-		@Override
-		public int getProgram() {
-			return program;
-		}
-
-		@Override
-		public void markDirty() {
-
-		}
-
-		@Override
-		@Nonnull
-		public ShaderLoader getVertexShaderLoader() {
-			return vert;
-		}
-
-		@Override
-		@Nonnull
-		public ShaderLoader getFragmentShaderLoader() {
-			return frag;
-		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -183,22 +112,24 @@ public final class ShaderManager<T extends Enum<T>> {
 	}
 
 	private void loadShaders(@Nonnull final IResourceManager manager) {
-		for (final T shader : this.clazz.getEnumConstants())
-			this.programs.put(shader, createProgram(manager, shader));
+		for (final T shader : this.clazz.getEnumConstants()) {
+			final ShaderProgram program = createProgram(manager, shader);
+			if (program != null)
+				this.programs.put(shader, createProgram(manager, shader));
+		}
 	}
 
 	@Nullable
 	private ShaderProgram createProgram(@Nonnull final IResourceManager manager, @Nonnull final T shader) {
 		final IShaderResourceProvider provider = (IShaderResourceProvider) shader;
 		try {
-			final ResourceLocation vertex = Objects.requireNonNull(provider.getVertex());
-			final ResourceLocation fragment = Objects.requireNonNull(provider.getFragment());
-			final ShaderLoader vert = createShader(manager, vertex, ShaderLoader.ShaderType.VERTEX);
-			final ShaderLoader frag = createShader(manager, fragment, ShaderLoader.ShaderType.FRAGMENT);
-			final int progId = ShaderLinkHelper.createProgram();
-			final ShaderProgram prog = new ShaderProgram(progId, vert, frag);
-			ShaderLinkHelper.linkProgram(prog);
-			return prog;
+			final ShaderLoader vert = createShader(manager, provider.getVertex(), ShaderLoader.ShaderType.VERTEX);
+			final ShaderLoader frag = createShader(manager, provider.getFragment(), ShaderLoader.ShaderType.FRAGMENT);
+			final int programId = ShaderLinkHelper.createProgram();
+			final ShaderProgram program = new ShaderProgram(provider.getShaderName(), programId, vert, frag);
+			ShaderLinkHelper.linkProgram(program);
+			program.setUniforms(provider.getUniforms());
+			return program;
 		} catch (IOException ex) {
 			Lib.LOGGER.error(ex, "Failed to load program %s", provider.getShaderName());
 		}

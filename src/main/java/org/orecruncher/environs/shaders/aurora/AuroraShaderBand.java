@@ -28,7 +28,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.shaders.ShaderPrograms;
-import org.orecruncher.lib.shaders.ShaderManager;
+import org.orecruncher.lib.shaders.ShaderCallContext;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.math.MathStuff;
 
@@ -45,7 +45,7 @@ public class AuroraShaderBand extends AuroraBase {
 	private static final float V2 = 0.5F;
 	
 	protected ShaderPrograms program;
-	protected Consumer<ShaderManager.ShaderCallContext> callback;
+	protected Consumer<ShaderCallContext> callback;
 
 	protected final float auroraWidth;
 	protected final float panelTexWidth;

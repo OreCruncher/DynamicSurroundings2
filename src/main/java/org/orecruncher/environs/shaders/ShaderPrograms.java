@@ -18,6 +18,7 @@
 
 package org.orecruncher.environs.shaders;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,20 +26,33 @@ import org.orecruncher.lib.shaders.IShaderResourceProvider;
 import org.orecruncher.lib.shaders.ShaderManager;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 @OnlyIn(Dist.CLIENT)
 public enum ShaderPrograms implements IShaderResourceProvider {
 
-    AURORA("environs:shaders/aurora.vert", "environs:shaders/aurora.frag");
+    AURORA(
+            "environs:shaders/aurora.vert",
+            "environs:shaders/aurora.frag",
+            ImmutableList.of(
+                    "time",
+                    "resolution",
+                    "topColor",
+                    "middleColor",
+                    "bottomColor",
+                    "alpha"
+            ));
 
     private final ResourceLocation vertex;
     private final ResourceLocation fragment;
+    private final Collection<String> uniforms;
 
     public static final ShaderManager<ShaderPrograms> MANAGER = new ShaderManager<>(ShaderPrograms.class);
 
-    ShaderPrograms(@Nonnull final String vert, @Nonnull final String frag) {
+    ShaderPrograms(@Nonnull final String vert, @Nonnull final String frag, @Nonnull final Collection<String> uniforms) {
         this.vertex = new ResourceLocation(vert);
         this.fragment = new ResourceLocation(frag);
+        this.uniforms = uniforms;
     }
 
     @Nonnull
@@ -54,5 +68,10 @@ public enum ShaderPrograms implements IShaderResourceProvider {
     @Nonnull
     public String getShaderName() {
         return this.name();
+    }
+
+    @Nonnull
+    public Collection<String> getUniforms() {
+        return this.uniforms;
     }
 }

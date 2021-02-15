@@ -28,8 +28,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.shaders.ShaderPrograms;
 import org.orecruncher.lib.GameUtils;
-import org.orecruncher.lib.shaders.ShaderManager;
 import org.orecruncher.environs.shaders.aurora.AuroraFactory;
 import org.orecruncher.environs.shaders.aurora.AuroraUtils;
 import org.orecruncher.environs.shaders.aurora.IAurora;
@@ -141,11 +141,11 @@ public final class AuroraHandler extends HandlerBase {
 	@SubscribeEvent
 	public void diagnostic(@Nonnull final DiagnosticEvent event) {
 		if (Config.CLIENT.logging.enableLogging.get()) {
-			if (ShaderManager.supported()) {
+			if (ShaderPrograms.MANAGER.supported()) {
 				event.getLeft().add("Aurora: " + (this.current == null ? "NONE" : this.current.toString()));
 				event.getRenderTimers().add(this.render);
 			} else {
-				event.getLeft().add("Aurora: Shaders not supported by platform");
+				event.getLeft().add("Aurora: Disabled");
 			}
 		}
 	}

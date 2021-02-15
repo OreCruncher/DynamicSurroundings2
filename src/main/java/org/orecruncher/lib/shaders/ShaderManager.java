@@ -38,17 +38,24 @@ import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
 public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 
 	private final Class<T> clazz;
 	private final EnumMap<T, ShaderProgram> programs;
+	private final Supplier<Boolean> supportCheck;
 
 	public ShaderManager(@Nonnull final Class<T> clazz) {
+		this(clazz, () -> true);
+	}
+
+	public ShaderManager(@Nonnull final Class<T> clazz, @Nonnull final Supplier<Boolean> supportCheck) {
 		Objects.requireNonNull(clazz);
 		this.clazz = clazz;
 		this.programs = new EnumMap<>(clazz);
+		this.supportCheck = supportCheck;
 
 		// Validate the entries provide sane info
 		for (final T shader : clazz.getEnumConstants()) {
@@ -58,8 +65,8 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 		}
 	}
 
-	public static boolean supported() {
-		return true;
+	public boolean supported() {
+		return this.supportCheck.get();
 	}
 
 	public void useShader(@Nonnull final T shader, @Nullable final Consumer<ShaderCallContext> callback) {

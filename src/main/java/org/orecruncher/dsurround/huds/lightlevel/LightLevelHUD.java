@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -193,7 +194,7 @@ public final class LightLevelHUD {
                                 GameUtils.getWorld(),
                                 mutable,
                                 EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                                null);
+                                EntityType.ZOMBIE);
 
                         if (mobSpawn || !Config.CLIENT.lightLevel.hideSafe.get()) {
                             final int blockLight = world.getLightFor(LightType.BLOCK, mutable);

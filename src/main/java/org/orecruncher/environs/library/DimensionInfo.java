@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,25 +18,21 @@
 
 package org.orecruncher.environs.library;
 
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.IWorldInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.DimensionConfig;
-import org.orecruncher.lib.reflection.BooleanField;
+import org.orecruncher.lib.WorldUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class DimensionInfo {
-
-    private static final BooleanField<ClientWorld.ClientWorldInfo> flatWorld = new BooleanField<>(ClientWorld.ClientWorldInfo.class, false, "flatWorld", "");
 
     private static final int SPACE_HEIGHT_OFFSET = 32;
 
@@ -69,7 +65,7 @@ public class DimensionInfo {
         this.skyHeight = world.getHeight();
         this.cloudHeight = this.skyHeight;
         this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
-        this.isFlatWorld = isFlatWorld(world);
+        this.isFlatWorld = WorldUtils.isSuperFlat(world);
 
         if (dt.isNatural() && dt.hasSkyLight()) {
             this.hasAuroras = true;
@@ -106,11 +102,6 @@ public class DimensionInfo {
 
             this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
         }
-    }
-
-    private boolean isFlatWorld(@Nonnull final World world) {
-        final IWorldInfo info = world.getWorldInfo();
-        return info instanceof ClientWorld.ClientWorldInfo && flatWorld.get((ClientWorld.ClientWorldInfo) info);
     }
 
     @Nonnull

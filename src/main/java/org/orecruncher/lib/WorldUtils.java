@@ -1,5 +1,5 @@
 /*
- * Dynamic Surroundings: Sound Control
+ * Dynamic Surroundings
  * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ package org.orecruncher.lib;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -29,7 +30,11 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.storage.IWorldInfo;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.compat.ModEnvironment;
+import org.orecruncher.lib.reflection.BooleanField;
 //import sereneseasons.season.SeasonHooks;
 
 import javax.annotation.Nonnull;
@@ -37,6 +42,8 @@ import java.lang.reflect.Method;
 
 @SuppressWarnings("unused")
 public final class WorldUtils {
+
+    private static final BooleanField<ClientWorld.ClientWorldInfo> flatWorld = new BooleanField<>(ClientWorld.ClientWorldInfo.class, false, "flatWorld", "");
 
     /**
      * Temperatures LESS than this value are considered cold temperatures.
@@ -221,8 +228,14 @@ public final class WorldUtils {
         return world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
     }
 
-    public static boolean hasVoidPartiles(@Nonnull final World world) {
+    public static boolean hasVoidParticles(@Nonnull final World world) {
         return world.getDimensionType().hasSkyLight();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static boolean isSuperFlat(@Nonnull final World world) {
+        final IWorldInfo info = world.getWorldInfo();
+        return info instanceof ClientWorld.ClientWorldInfo && flatWorld.get((ClientWorld.ClientWorldInfo) info);
     }
 
 }

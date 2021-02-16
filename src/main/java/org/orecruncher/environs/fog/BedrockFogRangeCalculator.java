@@ -53,7 +53,7 @@ public class BedrockFogRangeCalculator extends VanillaFogRangeCalculator {
     public FogResult calculate(@Nonnull final EntityViewRenderEvent.RenderFogEvent event) {
 
         this.cached.set(event);
-        if (!CommonState.getDimensionInfo().isFlatWorld() && WorldUtils.hasVoidPartiles(GameUtils.getWorld())) {
+        if (!CommonState.getDimensionInfo().isFlatWorld() && WorldUtils.hasVoidParticles(GameUtils.getWorld())) {
             final PlayerEntity player = GameUtils.getPlayer();
             final double factor = (MathHelper.lerp(event.getRenderPartialTicks(), player.lastTickPosY, player.getPosY()) + 4.0D) / 32.0D;
             double d0 = (this.skyLight / 16.0D) + factor;

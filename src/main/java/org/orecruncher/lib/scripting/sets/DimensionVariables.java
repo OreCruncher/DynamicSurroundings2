@@ -23,6 +23,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
+import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
 import javax.annotation.Nonnull;
@@ -33,6 +34,7 @@ public class DimensionVariables extends VariableSet<IDimensionVariables> impleme
     private String id;
     private String name;
     private boolean hasSky;
+    private boolean isSuperFlat;
 
     public DimensionVariables() {
         super("dim");
@@ -47,15 +49,18 @@ public class DimensionVariables extends VariableSet<IDimensionVariables> impleme
     @Override
     public void update() {
         if (GameUtils.isInGame()) {
+            assert GameUtils.getWorld() != null;
             final DimensionType dim = GameUtils.getWorld().getDimensionType();
             final ResourceLocation location = GameUtils.getWorld().getDimensionKey().getLocation();
             this.id = location.toString();
             this.hasSky = dim.hasSkyLight();
             this.name = location.getPath();
+            this.isSuperFlat = WorldUtils.isSuperFlat(GameUtils.getWorld());
         } else {
             this.id = "UNKNOWN";
             this.hasSky = false;
             this.name = "UNKNOWN";
+            this.isSuperFlat = false;
         }
     }
 
@@ -72,5 +77,10 @@ public class DimensionVariables extends VariableSet<IDimensionVariables> impleme
     @Override
     public boolean hasSky() {
         return this.hasSky;
+    }
+
+    @Override
+    public boolean isSuperFlat() {
+        return this.isSuperFlat;
     }
 }

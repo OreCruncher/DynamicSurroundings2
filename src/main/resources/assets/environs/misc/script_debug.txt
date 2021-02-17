@@ -1,0 +1,9 @@
+// Script statements that are evaluated and displayed when debug is enabled and debug screen (F3) is active
+
+'Dim: ' + dim.getId() + '/' + dim.getDimName() + '; isSuperFlat: ' + dim.isSuperFlat()
+'Biome: ' + biome.getName() + '; Temp ' + biome.getTemperature() + '/' + state.getCurrentTemperature() + '; rainfall: ' + biome.getRainfall() + '; traits: ' + biome.getTraits()
+'Weather: ' + lib.iif(weather.isRaining(),'rain: ' + weather.getRainIntensity(),'not raining') + lib.iif(weather.isThundering(),' thundering','') + '; Temp: ' + weather.getTemperature() + '; ice: ' + lib.iif(weather.getTemperature() < 0.15, 'true', 'false') + ' ' + lib.iif(weather.getTemperature() < 0.2, '(breath)', '')
+'Diurnal: ' + lib.iif(diurnal.isNight(),' night,',' day,') + lib.iif(state.isInside(),' inside',' outside') + '; celestial angle: ' + diurnal.getCelestialAngle()
+'Season: ' + season.getSeason()
+'Player: health ' + player.getHealth() + '/' + player.getMaxHealth() + '; food ' + player.getFoodLevel() + '/' + player.getFoodSaturationLevel() + '; pos (' + player.getX() + ', ' + player.getY() + ', ' + player.getZ() + '); light ' + state.getLightLevel()
+'Village: ' + state.isInVillage()

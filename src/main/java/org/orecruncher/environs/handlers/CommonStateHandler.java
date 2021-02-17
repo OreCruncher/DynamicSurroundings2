@@ -1,5 +1,5 @@
 /*
- *  Dynamic Surroundings: Environs
+ *  Dynamic Surroundings
  *  Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.BellTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
@@ -31,6 +33,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.handlers.scripts.ConditionEvaluator;
 import org.orecruncher.environs.library.BiomeLibrary;
@@ -38,15 +41,31 @@ import org.orecruncher.environs.library.DimensionLibrary;
 import org.orecruncher.environs.scanner.CeilingCoverage;
 import org.orecruncher.lib.*;
 import org.orecruncher.lib.events.DiagnosticEvent;
+import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.seasons.Season;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 class CommonStateHandler extends HandlerBase {
 
     private static final double VILLAGE_RANGE = 64 * 64;
+
+    private final static List<String> scripts;
+
+    static {
+        final String script_lines = ResourceUtils.readResource(new ResourceLocation(Environs.MOD_ID, "misc/script_debug.txt"));
+        assert script_lines != null;
+        scripts = Pattern.compile("\\r?\\n")
+                .splitAsStream(script_lines)
+                .map(String::trim)
+                .filter(s -> !(StringUtils.isNullOrEmpty(s) || s.startsWith("//")))
+                .collect(Collectors.toList());
+    }
 
     protected final CeilingCoverage ceilingCoverage = new CeilingCoverage();
 
@@ -116,16 +135,6 @@ class CommonStateHandler extends HandlerBase {
     public void onDisconnect() {
         CommonState.reset();
     }
-
-    private final static String[] scripts = {
-            "'Dim: ' + dim.getId() + '/' + dim.getDimName() + '; isSuperFlat: ' + dim.isSuperFlat()",
-            "'Biome: ' + biome.getName() + '; Temp ' + biome.getTemperature() + '/' + state.getCurrentTemperature() + ' rainfall: ' + biome.getRainfall() + ' traits: ' + biome.getTraits()",
-            "'Weather: ' + lib.iif(weather.isRaining(),'rain: ' + weather.getRainIntensity(),'not raining') + lib.iif(weather.isThundering(),' thundering','') + ' Temp: ' + weather.getTemperature() + ' ice: ' + lib.iif(weather.getTemperature() < 0.15, 'true', 'false') + ' ' + lib.iif(weather.getTemperature() < 0.2, '(breath)', '')",
-            "'Diurnal: ' + lib.iif(diurnal.isNight(),' night,',' day,') + lib.iif(state.isInside(),' inside,',' outside,') + ' celestial angle: ' + diurnal.getCelestialAngle()",
-            "'Season: ' + season.getSeason()",
-            "'Player: health ' + player.getHealth() + '/' + player.getMaxHealth() + ' food ' + player.getFoodLevel() + '/' + player.getFoodSaturationLevel() + ' pos (' + player.getX() + ', ' + player.getY() + ', ' + player.getZ() + ') light ' + state.getLightLevel()",
-            "'Village: ' + state.isInVillage()"
-    };
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void diagnostics(@Nonnull final DiagnosticEvent event) {

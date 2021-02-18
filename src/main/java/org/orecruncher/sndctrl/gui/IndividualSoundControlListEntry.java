@@ -70,10 +70,10 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
     private static final ITextComponent SLIDER_SUFFIX = new StringTextComponent("%");
 
     private static final TextFormatting[] CODING = new TextFormatting[] {TextFormatting.ITALIC, TextFormatting.AQUA};
-    private static final Collection<ITextComponent> VOLUME_HELP = GuiHelpers.getTrimmedText("sndctrl.text.soundconfig.volume.help", TOOLTIP_WIDTH, CODING);
-    private static final Collection<ITextComponent> PLAY_HELP = GuiHelpers.getTrimmedText("sndctrl.text.soundconfig.play.help", TOOLTIP_WIDTH, CODING);
-    private static final Collection<ITextComponent> CULL_HELP = GuiHelpers.getTrimmedText("sndctrl.text.soundconfig.cull.help", TOOLTIP_WIDTH, CODING);
-    private static final Collection<ITextComponent> BLOCK_HELP = GuiHelpers.getTrimmedText("sndctrl.text.soundconfig.block.help", TOOLTIP_WIDTH, CODING);
+    private static final Collection<ITextComponent> VOLUME_HELP = GuiHelpers.getTrimmedTextCollection("sndctrl.text.soundconfig.volume.help", TOOLTIP_WIDTH, CODING);
+    private static final Collection<ITextComponent> PLAY_HELP = GuiHelpers.getTrimmedTextCollection("sndctrl.text.soundconfig.play.help", TOOLTIP_WIDTH, CODING);
+    private static final Collection<ITextComponent> CULL_HELP = GuiHelpers.getTrimmedTextCollection("sndctrl.text.soundconfig.cull.help", TOOLTIP_WIDTH, CODING);
+    private static final Collection<ITextComponent> BLOCK_HELP = GuiHelpers.getTrimmedTextCollection("sndctrl.text.soundconfig.block.help", TOOLTIP_WIDTH, CODING);
 
     private static final int CONTROL_SPACING = 3;
 

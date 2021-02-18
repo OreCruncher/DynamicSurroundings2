@@ -94,7 +94,7 @@ public final class ConfigProperty {
             } else {
                 final ITextComponent title = new StringTextComponent(TextFormatting.GOLD + new TranslationTextComponent(key).getString());
                 result.add(title);
-                result.addAll(GuiHelpers.getTrimmedText(key + ".tooltip", TOOLTIP_WIDTH));
+                result.addAll(GuiHelpers.getTrimmedTextCollection(key + ".tooltip", TOOLTIP_WIDTH));
             }
 
             final Object theDefault = getDefault();
@@ -105,7 +105,7 @@ public final class ConfigProperty {
                 else if (text.compareToIgnoreCase("false") == 0)
                     text = DialogTexts.OPTIONS_OFF.getString();
                 else
-                    text = trimDown(text);
+                    text = GuiHelpers.getTrimmedText(text, TOOLTIP_WIDTH).getString();
                 text = new TranslationTextComponent("dsurround.text.format.default", text).getString();
                 result.add(new StringTextComponent(text));
             }
@@ -125,13 +125,6 @@ public final class ConfigProperty {
         return this.toolTip;
     }
 
-    private static String trimDown(@Nonnull final String txt) {
-        final int maxLength = 48;
-        if (txt.length() < maxLength)
-            return txt;
-        return txt.substring(0, maxLength - 3) + "...";
-    }
-
     public boolean getNeedsWorldRestart() {
         return this.valueSpec.needsWorldRestart();
     }
@@ -141,10 +134,12 @@ public final class ConfigProperty {
         return (T) this.valueSpec.getDefault();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getMinValue() {
         return (T) minAccessor.get(this.valueSpec.getRange());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getMaxValue() {
         return (T) maxAccessor.get(this.valueSpec.getRange());
     }

@@ -1,4 +1,31 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.10
+**Requirements**
+* JAVA 8 w/Forge 1.16.4-35.1.10+
+  * Compatible with 1.16.5-36.0.0+, and JAVA 15
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**Fixes**
+* Do not provide fog color for a biome if biome/fog processing is disabled
+* Hopefully fixed Paper server connection, again.
+* Speculative fix/logging for when the mod crashes during load due to shader compile issue.
+* NPE in light level debug HUD
+
+**Changes**
+* Improved rendering performance of Aurora shader.  YMMV.
+* Changing fog options no longer require a client restart
+* Weeping and Twisted vines have a different acoustic.  Based on the weeping vine step sound.  It sounds a bit "ropier" and not like straw.  Let me know what you think.
+* Additional context help in the Individual Sound Configuration dialog (CTRL+i while in game).
+* Hide debugging HUDs behind flags.
+* Re-enabled occlusion of WATERFALL by default
+* Normalized the sound volume of waterfall effects
+* No biome sounds in Savanna when raining
+* Config default changes:
+  * Culling interval to 20 from 10
+  * Footstep volume scale 40 from 75
+
 > ### DynamicSurroundings-1.16.4-4.0.3.9
+**Requirements**
 * JAVA 8 w/Forge 1.16.4-35.1.10+
   * Compatible with 1.16.5-36.0.0+, and JAVA 15
 * 100% client side; no server side deployment needed
@@ -25,6 +52,7 @@
 * Some translations for fr_fr from Mazdallier!  Thanks!
 
 > ### DynamicSurroundings-1.16.4-4.0.3.8
+**Requirements**
 * JAVA 8 w/Forge 1.16.4-35.1.10+
   * Compatible with 1.16.5-36.0.0+, and JAVA 15
 * 100% client side; no server side deployment needed
@@ -37,6 +65,7 @@
 * Sounds not playing when connecting to a Paper server.
 
 > ### DynamicSurroundings-1.16.4-4.0.3.7
+**Requirements**
 * JAVA 8 w/Forge 1.16.4-35.1.10+
   * Compatible with 1.16.5-36.0.0+, and JAVA 15
 * 100% client side; no server side deployment needed

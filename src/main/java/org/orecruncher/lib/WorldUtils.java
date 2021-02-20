@@ -43,7 +43,7 @@ import java.lang.reflect.Method;
 @SuppressWarnings("unused")
 public final class WorldUtils {
 
-    private static final BooleanField<ClientWorld.ClientWorldInfo> flatWorld = new BooleanField<>(ClientWorld.ClientWorldInfo.class, false, "flatWorld", "");
+    private static final BooleanField<ClientWorld.ClientWorldInfo> flatWorld = new BooleanField<>(ClientWorld.ClientWorldInfo.class, false, "flatWorld", "field_239146_c_");
 
     /**
      * Temperatures LESS than this value are considered cold temperatures.

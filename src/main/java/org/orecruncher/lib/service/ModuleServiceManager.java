@@ -25,18 +25,18 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
+import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.GameUtils;
-import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.Singleton;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.lib.fml.ForgeUtils;
+import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.ResourceUtils;
 import org.orecruncher.lib.tags.TagUtils;
 
@@ -49,6 +49,8 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class ModuleServiceManager implements ISelectiveResourceReloadListener {
 
+    private static final IModLog LOGGER = DynamicSurroundings.LOGGER.createChild(ModuleServiceManager.class);
+
     private static final Singleton<ModuleServiceManager> instance = new Singleton<>(ModuleServiceManager::new);
 
     private final ObjectArray<IModuleService> services = new ObjectArray<>();
@@ -56,8 +58,9 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     private boolean isVanillaConnection = false;
     private boolean customTagsEventFired = false;
     private boolean vanillaTagsEventFired = false;
-    private boolean worldLoadFired = false;
+    //private boolean worldLoadFired = false;
     private boolean reloadFired = false;
+
     private ModuleServiceManager() {
         MinecraftForge.EVENT_BUS.register(this);
         final IResourceManager resourceManager = GameUtils.getMC().getResourceManager();
@@ -81,11 +84,10 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
      * Instructs configured services to reload configuration
      */
     protected void reload() {
-        this.reloadFired = true;
         ForgeUtils.getEnabledResourcePacks().forEach(p -> {
-            Lib.LOGGER.debug("Resource pack '%s'", p.getName());
-            Lib.LOGGER.debug("+  %s", p.getTitle().getString());
-            Lib.LOGGER.debug("+  %s", p.getDescription().getString());
+            LOGGER.debug("Resource pack '%s'", p.getName());
+            LOGGER.debug("+  %s", p.getTitle().getString());
+            LOGGER.debug("+  %s", p.getDescription().getString());
         });
         performAction("reload", IModuleService::reload);
         this.services.forEach(IModuleService::log);
@@ -102,14 +104,25 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     public void onResourceManagerReload(@Nonnull final IResourceManager resourceManager, @Nonnull final Predicate<IResourceType> resourcePredicate) {
         // Reload based on sounds
         if (resourcePredicate.test(VanillaResourceType.SOUNDS)) {
-            Lib.LOGGER.info("Received Resource reload callback");
+            reportStatus("Received Resource reload callback");
             ResourceUtils.clearCache();
             this.reload();
         }
     }
 
     private boolean readyForReload() {
-        return this.playerLoggedInEventFired && this.worldLoadFired && ((this.isVanillaConnection && this.vanillaTagsEventFired) || (!this.isVanillaConnection && this.customTagsEventFired));
+        return this.playerLoggedInEventFired && ((this.isVanillaConnection && this.vanillaTagsEventFired) || (!this.isVanillaConnection && this.customTagsEventFired));
+    }
+
+    private void reportStatus(@Nonnull final String msg) {
+        final String txt = String.format("%s (p:%b c:%b v:%b i:%b r:%b)",
+                msg,
+                this.playerLoggedInEventFired,
+                this.customTagsEventFired,
+                this.vanillaTagsEventFired,
+                this.isVanillaConnection,
+                this.reloadFired);
+        LOGGER.info(txt);
     }
 
     private void reloadIfReady() {
@@ -120,10 +133,10 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     }
 
     private void clearReloadState() {
+        reportStatus("Clearing reload state");
         this.playerLoggedInEventFired = false;
         this.customTagsEventFired = false;
         this.vanillaTagsEventFired = false;
-        this.worldLoadFired = false;
         this.isVanillaConnection = false;
         this.reloadFired = false;
     }
@@ -133,20 +146,8 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
         if (event.getNetworkManager() != null) {
             this.playerLoggedInEventFired = true;
             this.isVanillaConnection = NetworkHooks.isVanillaConnection(event.getNetworkManager());
-            Lib.LOGGER.info("Connection to server established: %s", this.isVanillaConnection ? "VANILLA" : "MODDED");
-            this.reloadIfReady();
-        }
-    }
-
-    /**
-     * Do the configuration whenever the world is loaded.
-     *
-     * @param event Ignored
-     */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onWorldLoad(@Nonnull final WorldEvent.Load event) {
-        if (event.getWorld().isRemote()) {
-            this.worldLoadFired = true;
+            final String msg = String.format("Connection to server established: %s", this.isVanillaConnection ? "VANILLA" : "MODDED");
+            reportStatus(msg);
             this.reloadIfReady();
         }
     }
@@ -160,6 +161,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     public void onLoad(@Nonnull final TagsUpdatedEvent.VanillaTagTypes event) {
         this.vanillaTagsEventFired = true;
         TagUtils.setTagManager(event.getTagManager());
+        reportStatus("TagsUpdatedEvent.VanillaTagTypes fired");
         this.reloadIfReady();
     }
 
@@ -172,6 +174,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     public void onLoad(@Nonnull final TagsUpdatedEvent.CustomTagTypes event) {
         this.customTagsEventFired = true;
         TagUtils.setTagManager(event.getTagManager());
+        reportStatus("TagsUpdatedEvent.CustomTagTypes fired");
         this.reloadIfReady();
     }
 
@@ -189,7 +192,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
 
     private void performAction(@Nonnull final String actionName, @Nonnull final Consumer<IModuleService> action) {
 
-        Lib.LOGGER.info("Starting action '%s'", actionName);
+        LOGGER.info("Starting action '%s'", actionName);
 
         long start = System.nanoTime();
 
@@ -201,8 +204,8 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
         }).collect(Collectors.toList());
 
         long duration = System.nanoTime() - start;
-        results.forEach(Lib.LOGGER::debug);
+        results.forEach(LOGGER::debug);
 
-        Lib.LOGGER.info("Overall Action '%s' took %dmsecs", actionName, (long) (duration / 1000000D));
+        LOGGER.info("Overall Action '%s' took %dmsecs", actionName, (long) (duration / 1000000D));
     }
 }

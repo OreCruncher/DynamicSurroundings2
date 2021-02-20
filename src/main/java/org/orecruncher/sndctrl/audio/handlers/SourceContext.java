@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,7 @@ import org.orecruncher.sndctrl.audio.handlers.effects.SourcePropertyFloat;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ForkJoinTask;
 
 /**
  * Used to track and apply sound effects for a given sound instance in the sound engine.  It is also a task to
@@ -131,13 +129,9 @@ public final class SourceContext implements Callable<Void> {
         return this.category;
     }
 
-    public int getAttenuationDistance() {
-        return this.sound != null ? this.sound.getSound().getAttenuationDistance() : -1;
-    }
-
     public void attachSound(@Nonnull final ISound sound) {
         this.sound = sound;
-        Category.getCategory(sound).map(iSoundCategory -> this.category = iSoundCategory).orElse(Category.MASTER);
+        this.category = Category.getCategory(sound).orElse(Category.MASTER);
         captureState();
     }
 
@@ -181,11 +175,6 @@ public final class SourceContext implements Callable<Void> {
         return (this.updateCount++ % UPDATE_FEQUENCY_TICKS) == 0;
     }
 
-    // Ignored
-    public final Void getRawResult() { return null; }
-    // Ignored
-    public final void setRawResult(Void x) {}
-
     @Override
     public Void call() throws Exception {
         captureState();
@@ -196,13 +185,10 @@ public final class SourceContext implements Callable<Void> {
     /**
      * Called by the thread pool when executing the task
      *
-     * @return Will always return true
      */
-    //@Override
-    public final boolean exec() {
+    public final void exec() {
         captureState();
         updateImpl();
-        return true;
     }
 
     private void updateImpl() {

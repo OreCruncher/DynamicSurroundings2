@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2020  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,46 +32,36 @@ import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.sndctrl.library.AudioEffectLibrary;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 @OnlyIn(Dist.CLIENT)
 public final class WorldContext {
 
     /**
      * Quick Minecraft reference
      */
-    @Nullable
     public final Minecraft mc;
     /**
      * Reference to the client side PlayerEntity
      */
-    @Nullable
     public final PlayerEntity player;
     /**
      * Reference to the player's world
      */
-    @Nullable
     public final IWorldReader world;
     /**
      * Position of the player.
      */
-    @Nonnull
     public final Vector3d playerPosition;
     /**
      * Position of the player's eyes.
      */
-    @Nonnull
     public final Vector3d playerEyePosition;
     /**
      * Block position of the player.
      */
-    @Nonnull
     public final BlockPos playerPos;
     /**
      * Block position of the player's eyes.
      */
-    @Nonnull
     public final BlockPos playerEyePos;
     /**
      * Flag indicating if it is precipitating

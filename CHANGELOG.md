@@ -1,3 +1,14 @@
+> ### DynamicSurroundings-1.16.4-4.0.3.11
+**Requirements**
+* JAVA 8 w/Forge 1.16.4-35.1.10+
+  * Compatible with 1.16.5-36.0.0+, and JAVA 15
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**Fixes**
+* Mod would not initialize on connect because world load event isn't received
+* Derp in detecting super flat worlds
+
 > ### DynamicSurroundings-1.16.4-4.0.3.10
 **Requirements**
 * JAVA 8 w/Forge 1.16.4-35.1.10+

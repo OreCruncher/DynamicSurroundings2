@@ -18,16 +18,14 @@
 
 package org.orecruncher.lib.service;
 
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
@@ -46,8 +44,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
-public class ModuleServiceManager implements ISelectiveResourceReloadListener {
+@Mod.EventBusSubscriber(modid = DynamicSurroundings.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+public final class ModuleServiceManager implements ISelectiveResourceReloadListener {
 
     private static final IModLog LOGGER = DynamicSurroundings.LOGGER.createChild(ModuleServiceManager.class);
 
@@ -58,11 +56,9 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     private boolean isVanillaConnection = false;
     private boolean customTagsEventFired = false;
     private boolean vanillaTagsEventFired = false;
-    //private boolean worldLoadFired = false;
     private boolean reloadFired = false;
 
     private ModuleServiceManager() {
-        MinecraftForge.EVENT_BUS.register(this);
         final IResourceManager resourceManager = GameUtils.getMC().getResourceManager();
         ((IReloadableResourceManager) resourceManager).addReloadListener(this);
     }
@@ -83,7 +79,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     /**
      * Instructs configured services to reload configuration
      */
-    protected void reload() {
+    private void reload() {
         ForgeUtils.getEnabledResourcePacks().forEach(p -> {
             LOGGER.debug("Resource pack '%s'", p.getName());
             LOGGER.debug("+  %s", p.getTitle().getString());
@@ -115,7 +111,7 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
     }
 
     private void reportStatus(@Nonnull final String msg) {
-        final String txt = String.format("%s (p:%b c:%b v:%b i:%b r:%b)",
+        final String txt = String.format("%s (playerLoggedIn:%b customTags:%b vanillaTags:%b isVanilla:%b reloadFired:%b)",
                 msg,
                 this.playerLoggedInEventFired,
                 this.customTagsEventFired,
@@ -141,37 +137,44 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
         this.reloadFired = false;
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onPlayerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
+    @SubscribeEvent
+    public static void onPlayerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
+        instance().playerLogin(event);
+    }
+
+    private void playerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
         if (event.getNetworkManager() != null) {
             this.playerLoggedInEventFired = true;
-            this.isVanillaConnection = NetworkHooks.isVanillaConnection(event.getNetworkManager());
+            if (!GameUtils.getMC().isIntegratedServerRunning()) {
+                final ServerData data = GameUtils.getMC().getCurrentServerData();
+                if (data != null) {
+                    this.isVanillaConnection = !data.forgeData.type.equals("FML");
+                }
+            }
             final String msg = String.format("Connection to server established: %s", this.isVanillaConnection ? "VANILLA" : "MODDED");
             reportStatus(msg);
             this.reloadIfReady();
         }
     }
 
-    /**
-     * Capture the tag manager in the event for future use.
-     *
-     * @param event Tag event
-     */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onLoad(@Nonnull final TagsUpdatedEvent.VanillaTagTypes event) {
+    @SubscribeEvent
+    public static void onLoad(@Nonnull final TagsUpdatedEvent.VanillaTagTypes event) {
+        instance().load(event);
+    }
+
+    private void load(@Nonnull final TagsUpdatedEvent.VanillaTagTypes event) {
         this.vanillaTagsEventFired = true;
         TagUtils.setTagManager(event.getTagManager());
         reportStatus("TagsUpdatedEvent.VanillaTagTypes fired");
         this.reloadIfReady();
     }
 
-    /**
-     * Capture the tag manager in the event for future use.
-     *
-     * @param event Tag event
-     */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onLoad(@Nonnull final TagsUpdatedEvent.CustomTagTypes event) {
+    @SubscribeEvent
+    public static void load(@Nonnull final TagsUpdatedEvent.CustomTagTypes event) {
+        instance().onLoad(event);
+    }
+
+    private void onLoad(@Nonnull final TagsUpdatedEvent.CustomTagTypes event) {
         this.customTagsEventFired = true;
         TagUtils.setTagManager(event.getTagManager());
         reportStatus("TagsUpdatedEvent.CustomTagTypes fired");
@@ -183,8 +186,12 @@ public class ModuleServiceManager implements ISelectiveResourceReloadListener {
      *
      * @param event Event that is raised
      */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
+    @SubscribeEvent
+    public static void onStop(@Nonnull final ClientPlayerNetworkEvent.LoggedOutEvent event) {
+        instance().stop();
+    }
+
+    private void stop() {
         performAction("stop", IModuleService::stop);
         TagUtils.clearTagManager();
         this.clearReloadState();

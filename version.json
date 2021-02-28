@@ -19,10 +19,11 @@
 		"4.0.3.8": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md",
 		"4.0.3.9": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md",
 		"4.0.3.10": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md",
-		"4.0.3.11": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md"
+		"4.0.3.11": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md",
+		"4.0.3.12": "See https://github.com/OreCruncher/DynamicSurroundings2/blob/master/CHANGELOG.md"
 	},
 	"promos": {
-		"1.16.4-latest": "1.16.4-4.0.3.11",
-		"1.16.4-recommended": "1.16.4-4.0.3.11"
+		"1.16.4-latest": "1.16.4-4.0.3.12",
+		"1.16.4-recommended": "1.16.4-4.0.3.12"
 	}
 }

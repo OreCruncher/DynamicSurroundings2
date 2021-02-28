@@ -1,7 +1,7 @@
 //  Basics defined up here to make life easier
 //  Tweak the defs, not the others!
 def mcVersion    	= '1.16.4'
-def modVersion   	= '4.0.3.11'
+def modVersion   	= '4.0.3.12'
 def modDesignator	= ''
 def forgeVersion 	= '35.1.37'
 def snapshot     	= '20201028-1.16.3'

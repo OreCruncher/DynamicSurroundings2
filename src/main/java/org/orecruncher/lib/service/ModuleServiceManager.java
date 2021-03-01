@@ -18,6 +18,7 @@
 
 package org.orecruncher.lib.service;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
@@ -145,15 +146,42 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
     private void playerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
         if (event.getNetworkManager() != null) {
             this.playerLoggedInEventFired = true;
-            if (!GameUtils.getMC().isIntegratedServerRunning()) {
-                final ServerData data = GameUtils.getMC().getCurrentServerData();
-                if (data != null) {
-                    this.isVanillaConnection = !data.forgeData.type.equals("FML");
+            final Minecraft mc = GameUtils.getMC();
+            String serverName = "Not Present";
+            // Integrated server is always Forge
+            if (mc.isIntegratedServerRunning()) {
+                LOGGER.info("Running integrated server");
+                serverName = "Integrated";
+            } else {
+                final ServerData data = mc.getCurrentServerData();
+                if (data != null && data.serverName != null) {
+                    serverName = data.serverName;
+                }
+                // Realms is a Vanilla server
+                if (mc.isConnectedToRealms()) {
+                    LOGGER.info("Connected to Realms server");
+                    this.isVanillaConnection = true;
+                } else {
+                    // Check the forge data.  If there isn't any, or the type is not FML consider
+                    // it Vanilla.
+                    if (data != null) {
+                        if (data.isOnLAN()) {
+                            LOGGER.info("Connected to LAN server");
+                            this.isVanillaConnection = false;
+                        } else {
+                            this.isVanillaConnection = !data.forgeData.type.equals("FML");
+                        }
+                    } else {
+                        LOGGER.info("No ServerData - assuming Vanilla");
+                        this.isVanillaConnection = true;
+                    }
                 }
             }
-            final String msg = String.format("Connection to server established: %s", this.isVanillaConnection ? "VANILLA" : "MODDED");
+            final String msg = String.format("Connection to server '%s' established: %s", serverName, this.isVanillaConnection ? "VANILLA" : "MODDED");
             reportStatus(msg);
             this.reloadIfReady();
+        } else {
+            LOGGER.warn("LoggedInEvent without network manager!?!");
         }
     }
 

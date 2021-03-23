@@ -197,6 +197,7 @@ processResources {
     from (sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
         expand 'version': project.version
+        expand 'fingerprint': project.ext.fingerprint
     }
 }
 

@@ -1,7 +1,7 @@
 //  Basics defined up here to make life easier
 //  Tweak the defs, not the others!
 def mcVersion    	= '1.16.4'
-def modVersion   	= '4.0.3.12'
+def modVersion   	= '4.0.4.1'
 def modDesignator	= ''
 def forgeVersion 	= '35.1.37'
 def snapshot     	= '20201028-1.16.3'
@@ -21,7 +21,7 @@ project.ext.mcVersion    	= mcVersion
 project.ext.modVersion   	= modVersion
 project.ext.forgeVersion	= forgeVersion
 project.ext.modDesignator	= modDesignator
-project.ext.fingerprint  	= '7a2128d395ad96ceb9d9030fbd41d035b435753a'
+project.ext.fingerprint  	= 'B4:98:14:B9:76:55:25:4F:E5:5F:4D:71:90:87:43:5B:F9:D5:3A:02:60:42:5E:DA:1F:15:9C:FF:BE:A9:7C:77'
 project.ext.updateurl    	= 'https://raw.githubusercontent.com/OreCruncher/DynamicSurroundings2/master/version.json'
 
 // Build Stuff

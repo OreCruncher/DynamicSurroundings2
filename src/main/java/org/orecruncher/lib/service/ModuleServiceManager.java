@@ -18,13 +18,13 @@
 
 package org.orecruncher.lib.service;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.resource.IResourceType;
@@ -53,8 +53,7 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
     private static final Singleton<ModuleServiceManager> instance = new Singleton<>(ModuleServiceManager::new);
 
     private final ObjectArray<IModuleService> services = new ObjectArray<>();
-    private boolean playerLoggedInEventFired = false;
-    private boolean isVanillaConnection = false;
+    private boolean playerJoined = false;
     private boolean customTagsEventFired = false;
     private boolean vanillaTagsEventFired = false;
     private boolean reloadFired = false;
@@ -108,17 +107,16 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
     }
 
     private boolean readyForReload() {
-        return this.playerLoggedInEventFired && ((this.isVanillaConnection && this.vanillaTagsEventFired) || (!this.isVanillaConnection && this.customTagsEventFired));
+        return this.playerJoined && (this.vanillaTagsEventFired || this.customTagsEventFired);
     }
 
     private void reportStatus(@Nonnull final String msg) {
-        final String txt = String.format("%s (playerLoggedIn:%b customTags:%b vanillaTags:%b isVanilla:%b reloadFired:%b)",
+        final String txt = String.format("%s (playerJoined: %b, reloadFired: %b, customTagsEventFired: %b, vanillaTagsEventFired: %b)",
                 msg,
-                this.playerLoggedInEventFired,
+                this.playerJoined,
+                this.reloadFired,
                 this.customTagsEventFired,
-                this.vanillaTagsEventFired,
-                this.isVanillaConnection,
-                this.reloadFired);
+                this.vanillaTagsEventFired);
         LOGGER.info(txt);
     }
 
@@ -131,58 +129,24 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
 
     private void clearReloadState() {
         reportStatus("Clearing reload state");
-        this.playerLoggedInEventFired = false;
+        this.playerJoined = false;
+        this.reloadFired = false;
         this.customTagsEventFired = false;
         this.vanillaTagsEventFired = false;
-        this.isVanillaConnection = false;
-        this.reloadFired = false;
     }
 
     @SubscribeEvent
-    public static void onPlayerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
-        instance().playerLogin(event);
+    public static void entityJoinWorld(@Nonnull final EntityJoinWorldEvent event) {
+        final PlayerEntity player = GameUtils.getPlayer();
+        if (player != null && player.getEntityWorld().isRemote() && player.getEntityId() == event.getEntity().getEntityId()) {
+            instance().joinWorld(event);
+        }
     }
 
-    private void playerLogin(@Nonnull final ClientPlayerNetworkEvent.LoggedInEvent event) {
-        if (event.getNetworkManager() != null) {
-            this.playerLoggedInEventFired = true;
-            final Minecraft mc = GameUtils.getMC();
-            String serverName = "Not Present";
-            // Integrated server is always Forge
-            if (mc.isIntegratedServerRunning()) {
-                LOGGER.info("Running integrated server");
-                serverName = "Integrated";
-            } else {
-                final ServerData data = mc.getCurrentServerData();
-                if (data != null && data.serverName != null) {
-                    serverName = data.serverName;
-                }
-                // Realms is a Vanilla server
-                if (mc.isConnectedToRealms()) {
-                    LOGGER.info("Connected to Realms server");
-                    this.isVanillaConnection = true;
-                } else {
-                    // Check the forge data.  If there isn't any, or the type is not FML consider
-                    // it Vanilla.
-                    if (data != null) {
-                        if (data.isOnLAN()) {
-                            LOGGER.info("Connected to LAN server");
-                            this.isVanillaConnection = false;
-                        } else {
-                            this.isVanillaConnection = !data.forgeData.type.equals("FML");
-                        }
-                    } else {
-                        LOGGER.info("No ServerData - assuming Vanilla");
-                        this.isVanillaConnection = true;
-                    }
-                }
-            }
-            final String msg = String.format("Connection to server '%s' established: %s", serverName, this.isVanillaConnection ? "VANILLA" : "MODDED");
-            reportStatus(msg);
-            this.reloadIfReady();
-        } else {
-            LOGGER.warn("LoggedInEvent without network manager!?!");
-        }
+    private void joinWorld(@Nonnull final EntityJoinWorldEvent ignore) {
+        this.playerJoined = true;
+        reportStatus("EntityJoinWorldEvent fired");
+        this.reloadIfReady();
     }
 
     @SubscribeEvent

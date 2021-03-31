@@ -19,6 +19,7 @@
 package org.orecruncher.sndctrl.mixins;
 
 import net.minecraft.client.audio.SoundSystem;
+import org.orecruncher.sndctrl.config.Config;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
@@ -34,6 +35,6 @@ public class MixinSoundSystem {
      */
     @ModifyConstant(method = "init()V", constant = @Constant(intValue = 8))
     private int initialize(int v) {
-        return 10;
+        return Config.CLIENT.sound.streamingSoundCount.get();
     }
 }

@@ -115,6 +115,7 @@ public final class Config {
             public final BooleanValue enableMonoConversion;
             public final IntValue cullInterval;
             public final IntValue backgroundThreadWorkers;
+            public final IntValue streamingSoundCount;
             public final BooleanValue occludeWeather;
             public final BooleanValue occludeRecords;
             public final ConfigValue<List<? extends String>> individualSounds;
@@ -139,6 +140,12 @@ public final class Config {
                         .comment("Enable sound occlusion calculations (sound muffling when positioned behind blocks)")
                         .translation("sndctrl.cfg.sound.Occlusion")
                         .define("Enable Sound Occlusion Calculations", true);
+
+                this.streamingSoundCount = builder
+                        .worldRestart()
+                        .comment("Number of streaming sound channels to configure")
+                        .translation("sndctrl.cfg.sound.StreamingSoundCount")
+                        .defineInRange("Streaming Sound Count", 10, 8, 16);
 
                 this.occludeWeather = builder
                         .comment("Occlude WEATHER sounds")

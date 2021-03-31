@@ -64,6 +64,11 @@ public class ConfigGenerator {
                         Config.CLIENT.sound.enableMonoConversion));
 
         subCategory.add(
+                ClothAPIFactory.createIntegerSlider(
+                        builder,
+                        Config.CLIENT.sound.streamingSoundCount));
+
+        subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
                         Config.CLIENT.sound.enableOcclusionCalcs));

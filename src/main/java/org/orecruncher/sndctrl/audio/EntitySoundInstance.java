@@ -111,6 +111,7 @@ public class EntitySoundInstance extends WrappedSoundInstance {
                 .addValue(getAttenuationType().toString())
                 .addValue(getState().toString())
                 .add("v", getVolume())
+                .add("ev", SoundInstance.getEffectiveVolume(this))
                 .add("p", getPitch())
                 .add("x", getX())
                 .add("y", getY())

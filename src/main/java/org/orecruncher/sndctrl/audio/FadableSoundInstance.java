@@ -131,6 +131,7 @@ public class FadableSoundInstance extends WrappedSoundInstance implements IFadab
                 .addValue(getSoundCategory().toString())
                 .addValue(getState().toString())
                 .add("v", getVolume())
+                .add("ev", SoundInstance.getEffectiveVolume(this))
                 .add("p", getPitch())
                 .add("f", this.fadeScale)
                 .toString();

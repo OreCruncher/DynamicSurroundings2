@@ -65,6 +65,7 @@ public class PlayerCenteredSoundInstance extends WrappedSoundInstance {
                 .addValue(getSoundCategory().toString())
                 .addValue(getState().toString())
                 .add("v", getVolume())
+                .add("ev", SoundInstance.getEffectiveVolume(this))
                 .add("p", getPitch())
                 .toString();
     }

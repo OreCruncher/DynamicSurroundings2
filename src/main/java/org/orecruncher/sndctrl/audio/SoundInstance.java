@@ -1,6 +1,6 @@
 /*
- * Dynamic Surroundings: Sound Control
- * Copyright (C) 2019  OreCruncher
+ * Dynamic Surroundings
+ * Copyright (C) 2021  OreCruncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,15 +31,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
+import org.orecruncher.sndctrl.audio.handlers.SoundVolumeEvaluator;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class SoundInstance extends LocatableSound implements ISoundInstance {
 
-    @Nonnull
     private SoundState state;
-    @Nonnull
     private final ISoundCategory category;
 
     private int playDelay;
@@ -149,11 +148,20 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
                 .addValue(getAttenuationType().toString())
                 .addValue(getState().toString())
                 .add("v", getVolume())
+                .add("ev", getEffectiveVolume(this))
                 .add("p", getPitch())
                 .add("x", getX())
                 .add("y", getY())
                 .add("z", getZ())
                 .toString();
+    }
+
+    static float getEffectiveVolume(@Nonnull final ISound sound) {
+        try {
+            return SoundVolumeEvaluator.getClampedVolume(sound);
+        } catch(@Nonnull final Throwable ignored) {
+        }
+        return -1;
     }
 
 }

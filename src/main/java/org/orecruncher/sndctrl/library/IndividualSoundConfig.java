@@ -19,12 +19,14 @@
 package org.orecruncher.sndctrl.library;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public final class IndividualSoundConfig {
@@ -42,15 +44,11 @@ public final class IndividualSoundConfig {
     private boolean isCulled;
     private int volumeScale;
 
-    public IndividualSoundConfig(@Nonnull final ResourceLocation location) {
-        this(location, false, false, DEFAULT_VOLUME_SCALE);
-    }
-
-    public IndividualSoundConfig(@Nonnull final ResourceLocation location, final boolean isBlocked, final boolean isCulled, final int volumeScale) {
-        this.location = location;
-        this.isBocked = isBlocked;
-        this.isCulled = isCulled;
-        this.volumeScale = MathStuff.clamp(volumeScale, VOLUME_SCALE_MIN, VOLUME_SCALE_MAX);
+    public IndividualSoundConfig(@Nonnull final SoundEvent soundEvent) {
+        this.location = soundEvent.getName();
+        this.isBocked = false;
+        this.isCulled = false;
+        this.volumeScale = DEFAULT_VOLUME_SCALE;
     }
 
     public IndividualSoundConfig(@Nonnull final IndividualSoundConfig source) {
@@ -84,26 +82,32 @@ public final class IndividualSoundConfig {
         } else {
             if (isResourceNameValid(parts[0])) {
                 final ResourceLocation res = new ResourceLocation(parts[0]);
-                boolean isCulled = false;
-                boolean isBlocked = false;
-                int volumeControl = DEFAULT_VOLUME_SCALE;
+                final Optional<SoundEvent> event = SoundLibrary.getSound(res);
+                if (event.isPresent()) {
+                    boolean isCulled = false;
+                    boolean isBlocked = false;
+                    int volumeControl = DEFAULT_VOLUME_SCALE;
 
-                for (int i = 1; i < parts.length; i++) {
-                    if (CULL_TOKEN.compareToIgnoreCase(parts[i]) == 0) {
-                        isCulled = true;
-                    } else if (BLOCK_TOKEN.compareToIgnoreCase(parts[i]) == 0) {
-                        isBlocked = true;
-                    } else {
-                        try {
-                            volumeControl = MathStuff.clamp(Integer.parseInt(parts[i]), VOLUME_SCALE_MIN, VOLUME_SCALE_MAX);
-                        } catch (final Throwable t) {
-                            // Can't parse the token - bad entry
-                            return null;
+                    for (int i = 1; i < parts.length; i++) {
+                        if (CULL_TOKEN.compareToIgnoreCase(parts[i]) == 0) {
+                            isCulled = true;
+                        } else if (BLOCK_TOKEN.compareToIgnoreCase(parts[i]) == 0) {
+                            isBlocked = true;
+                        } else {
+                            try {
+                                volumeControl = Integer.parseInt(parts[i]);
+                            } catch (final Throwable t) {
+                                // Can't parse the token - bad entry
+                                return null;
+                            }
                         }
                     }
-                }
 
-                result = new IndividualSoundConfig(res, isBlocked, isCulled, volumeControl);
+                    result = new IndividualSoundConfig(event.get());
+                    result.isBocked = isBlocked;
+                    result.isCulled = isCulled;
+                    result.volumeScale = MathStuff.clamp(volumeControl, VOLUME_SCALE_MIN, VOLUME_SCALE_MAX);
+                }
             }
         }
 

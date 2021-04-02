@@ -89,14 +89,11 @@ public final class SoundLibrary {
 
         LOGGER.info("Individual Sound Configurations");
         LOGGER.info("===============================");
-        getIndividualSoundConfig()
-                .forEach(cfg -> LOGGER.info(cfg.toString()));
+        getIndividualSoundConfig().forEach(cfg -> LOGGER.info(cfg.toString()));
 
         LOGGER.info("Category Occlusion");
         LOGGER.info("==================");
-        Category.getCategories().forEach(c -> {
-            LOGGER.info("%s -> %s", c.getName(), c.doOcclusion());
-        });
+        Category.getCategories().forEach(c -> LOGGER.info("%s -> %s", c.getName(), c.doOcclusion()));
     }
 
     static List<IndividualSoundConfig> getIndividualSoundConfig() {
@@ -116,7 +113,7 @@ public final class SoundLibrary {
         // Get a list of all the sounds and set to defaults.  Each gets it's own state in case caller
         // wants to manipulate.
         for (final Map.Entry<ResourceLocation, SoundEvent> kvp : myRegistry.entrySet()) {
-            map.put(kvp.getKey(), new IndividualSoundConfig(kvp.getKey()));
+            map.put(kvp.getKey(), new IndividualSoundConfig(kvp.getValue()));
         }
 
         // Override with the defaults from configuration.  Make a copy of the original so it doesn't change.

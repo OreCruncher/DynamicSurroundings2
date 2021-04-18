@@ -55,7 +55,7 @@ repositories {
         url = "https://modmaven.k-4u.nl"
     }
     maven {
-        url  "https://dl.bintray.com/shedaniel/cloth-config-2"
+        url  "https://maven.shedaniel.me/"
     }
     maven {
         name = "Modmaven"
@@ -186,7 +186,7 @@ dependencies {
 
     //compile fg.deobf("com.github.glitchfiend.biomesoplenty:BiomesOPlenty:${mcVersion}-${project.bopVersion}:universal")
     compile fg.deobf("com.github.glitchfiend.biomesoplenty:SereneSeasons:${mcVersion}-${project.ssVersion}:api")
-    compile fg.deobf("me.shedaniel.cloth:cloth-config-forge:4.1.3")
+    compile fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.clothVersion}")
     //compile fg.deobf("team.chisel.ctm:CTM:MC1.16.1-${project.ctmVersion}")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mcVersion}:${project.jeiVersion}")

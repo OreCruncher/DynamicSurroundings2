@@ -31,6 +31,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.client.gui.widget.Slider;
 import org.orecruncher.lib.gui.ColorPalette;
+import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.config.Config;
@@ -52,6 +53,7 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
     private static final ITextComponent OCCLUSION = new TranslationTextComponent("sndctrl.text.quickvolumemenu.occlusion");
 
     private final List<ISoundCategory> categories = new ArrayList<>();
+    private final List<Float> categoryValues = new ArrayList<>();
     private final List<Slider> sliders = new ArrayList<>();
 
     private Button occlusionToggle;
@@ -71,6 +73,8 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
 
         // Collect the widgets into a list
         this.categories.addAll(Category.getCategoriesForMenu());
+        for (final ISoundCategory cat : this.categories)
+            this.categoryValues.add(cat.getVolumeScale());
 
         // Get base positioning information for display.  This should be roughly center of the screen.
         final int leftSide = (this.width - CONTROL_WIDTH) / 2;
@@ -174,9 +178,9 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
         if (idx >= this.sliders.size())
             return;
 
-        // Set the value
-        final ISoundCategory category = this.categories.get(idx);
-        category.setVolumeScale(slider.getValueInt() / 100F);
+        // Cache the value so we can set all at once
+        float v = slider.getValueInt() / 100F;
+        this.categoryValues.set(idx, v);
     }
 
     @Override
@@ -185,6 +189,20 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
 
         // Render our text footer
         drawCenteredString(stack, this.font, FOOTER, this.width / 2, this.footerY, ColorPalette.WHITE.rgb());
+    }
+
+    @Override
+    public void closeScreen() {
+        for (int i = 0; i < this.categories.size(); i++) {
+            final ISoundCategory cat = this.categories.get(i);
+            // Setting the value will trigger autosave of the config
+            try {
+                cat.setVolumeScale(this.categoryValues.get(i));
+            } catch(@Nonnull final Throwable t) {
+                SoundControl.LOGGER.error(t, "Error saving value for Sound Category %s", cat.getName());
+            }
+        }
+        super.closeScreen();
     }
 
 }

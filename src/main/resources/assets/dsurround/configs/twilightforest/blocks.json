@@ -1,0 +1,17 @@
+[
+  {
+    "blocks": [
+      "twilightforest:firefly",
+      "twilightforest:mayapple",
+      "twilightforest:fiddlehead",
+      "twilightforest:forestgrass"
+    ],
+    "effects": [
+      {
+        "effect": "firefly",
+        "conditions": "dim.name() == 'twilight_forest' && (weather.isNotRaining() && (diurnal.isNight() || diurnal.isSunset()) && !(biome.is('hot') || weather.canWaterFreeze()))",
+        "chance": 30
+      }
+    ]
+  }
+]

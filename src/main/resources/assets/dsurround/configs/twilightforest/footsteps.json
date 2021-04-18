@@ -1,0 +1,22 @@
+{
+  "footsteps": {
+    "twilightforest:root": "log",
+    "twilightforest:moss_patch": "NOT_EMITTER",
+    "twilightforest:moss_patch+messy": "MESSY_GROUND",
+    "twilightforest:moss_patch+foliage": "brush",
+    "twilightforest:moss_patch+carpet": "rug",
+    "twilightforest:root_strand": "NOT_EMITTER",
+    "twilightforest:root_strand+messy": "MESSY_GROUND",
+    "twilightforest:root_strand+foliage": "straw",
+    "twilightforest:fiddlehead": "NOT_EMITTER",
+    "twilightforest:fiddlehead+messy": "MESSY_GROUND",
+    "twilightforest:fiddlehead+foliage": "brush",
+    "twilightforest:huge_lilypad": "waterfine",
+    "twilightforest:huge_lilypad+carpet": "waterfine",
+    "twilightforest:huge_waterlily": "brush_straw_transition",
+    "twilightforest:huge_waterlily+messy": "MESSY_GROUND",
+    "twilightforest:huge_waterlily+foliage": "brush_straw_transition",
+    "twilightforest:firefly_jar": "woodutility",
+    "twilightforest:firefly": "NOT_EMITTER"
+  }
+}

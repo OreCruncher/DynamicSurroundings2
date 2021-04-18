@@ -1,0 +1,29 @@
+{
+  "twilightforest:kobold": {
+    "stride": 0.375,
+    "strideStair": 0.24375,
+    "distanceToCenter": 0.1
+  },
+  "twilightforest:blockchain": {
+    "distanceToCenter": 0.1
+  },
+  "twilightforest:redcap": {
+    "distanceToCenter": 0.1,
+    "footprintScale": 0.75
+  },
+  "twilightforest:alphayeti": {
+    "distanceToCenter": 1.25,
+    "footprintScale": 10,
+    "volumeScale": 3
+  },
+  "twilightforest:yeti": {
+    "distanceToCenter": 0.35,
+    "footprintScale": 2,
+    "volumeScale": 3
+  },
+  "twilightforest:giant": {
+    "distanceToCenter": 0.8,
+    "footprintScale": 5,
+    "volumeScale": 10
+  }
+}

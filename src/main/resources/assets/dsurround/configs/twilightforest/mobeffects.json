@@ -1,0 +1,54 @@
+{
+  "twilightforest:kobold": {
+    "effects": "footprint,breath,swing,bow",
+    "variator": "twilightforest:kobold"
+  },
+  "twilightforest:redcap": {
+    "effects": "footprint,breath,swing,bow",
+    "variator": "twilightforest:redcap"
+  },
+  "twilightforest:redcap_sapper": {
+    "effects": "footprint,breath,swing,bow",
+    "variator": "twilightforest:redcap"
+  },
+  "twilightforest:goblin_knight_upper": {
+    "effects": "footprint,swing,bow"
+  },
+  "twilightforest:goblin_knight_lower": {
+    "effects": "footprint,swing,bow"
+  },
+  "twilightforest:blockchain_goblin": {
+    "effects": "footprint,swing,bow",
+    "variator": "twilightforest:blockchain"
+  },
+  "twilightforest:minoshroom": {
+    "effects": "bow,swing"
+  },
+  "twilightforest:minotaur": {
+    "effects": "bow,swing,footprint"
+  },
+  "twilightforest:lich": {
+    "effects": "bow,swing,footprint",
+    "variator": "minecraft:skeleton"
+  },
+  "twilightforest:yeti_alpha": {
+    "effects": "footprint",
+    "variator": "twilightforest:alphayeti"
+  },
+  "twilightforest:yeti": {
+    "effects": "footprint",
+    "variator": "twilightforest:yeti"
+  },
+  "twilightforest:troll": {
+    "effects": "footprint",
+    "variator": "twilightforest:yeti"
+  },
+  "twilightforest:giant_miner": {
+    "effects": "footprint,bow,swing",
+    "variator": "twilightforest:giant"
+  },
+  "twilightforest:armored_giant": {
+    "effects": "footprint,bow,swing",
+    "variator": "twilightforest:giant"
+  }
+}

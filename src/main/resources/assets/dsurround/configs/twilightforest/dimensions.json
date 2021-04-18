@@ -1,0 +1,9 @@
+[
+  {
+    "dimId": "twilightforest:twilightforest",
+    "fog": true,
+    "haze": true,
+    "aurora": false,
+    "sealevel": 31
+  }
+]

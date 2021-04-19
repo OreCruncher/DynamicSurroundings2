@@ -134,7 +134,7 @@ public final class SoundLibrary {
 
     private static void registerSoundFile(@Nonnull final IResourceAccessor soundFile) {
         final Map<String, SoundMetadataConfig> result = soundFile.as(SOUND_FILE_TYPE);
-        if (result.size() > 0) {
+        if (result != null && result.size() > 0) {
             ResourceLocation resource = soundFile.location();
             LOGGER.debug("Processing %s", resource);
             result.forEach((key, value) -> {
@@ -148,6 +148,8 @@ public final class SoundLibrary {
                     soundMetadata.put(loc, data);
                 }
             });
+        } else {
+            LOGGER.debug("Skipping %s - unable to parse sound file or there are no sounds declared", soundFile.location());
         }
     }
 

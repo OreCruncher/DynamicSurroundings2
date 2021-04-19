@@ -88,8 +88,7 @@ public final class Config {
                 .add("minecraft:entity.llama.ambient cull")
                 .add("minecraft:entity.wither.spawn cull 10")
                 .add("minecraft:entity.wither.death cull 10")
-                .add("minecraft:entity.dragon.spawn cull 10")
-                .add("minecraft:entity.dragon.death cull 10")
+                .add("minecraft:entity.ender_dragon.death cull 10")
                 .build();
 
         public static final List<String> defaultStartupSounds = ImmutableList.<String>builder()

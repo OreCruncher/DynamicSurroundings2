@@ -116,4 +116,7 @@ public final class ForgeUtils {
                 .collect(Collectors.toList());
     }
 
+    public static boolean isModLoaded(@Nonnull final String mod) {
+        return ModList.get().isLoaded(mod.toLowerCase());
+    }
 }

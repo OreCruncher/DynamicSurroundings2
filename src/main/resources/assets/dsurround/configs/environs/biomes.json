@@ -406,8 +406,8 @@
     ]
   },
   {
-    "conditions": "biome.name == 'Player'",
-    "_comment": "Player explicit set",
+    "conditions": "biome.name == 'Player' && !lib.isModLoaded('betterendforge')",
+    "_comment": "Player explicit set for The End",
     "acoustics": [
       {
         "acoustic": "dimension/theend",

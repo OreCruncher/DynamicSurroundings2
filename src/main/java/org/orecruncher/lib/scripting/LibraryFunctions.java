@@ -18,6 +18,8 @@
 
 package org.orecruncher.lib.scripting;
 
+import org.orecruncher.lib.fml.ForgeUtils;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -49,5 +51,9 @@ public final class LibraryFunctions {
 
     public boolean isBetween(final double value, final double min, final double max) {
         return value >= min && value <= max;
+    }
+
+    public boolean isModLoaded(@Nonnull final String mod) {
+        return ForgeUtils.isModLoaded(mod);
     }
 }

@@ -1,3 +1,21 @@
+> ### DynamicSurroundings-1.16.4-4.0.4.2
+**Requirements**
+* JAVA 8 w/Forge 1.16.4-35.1.10+
+  * Compatible with 1.16.5-36.0.0+, and JAVA 15
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**What's New**
+* Option to configure the number of streaming sound channels.  Defaults to 10.  If a modpack has additional streaming sounds you may want to bump this value a little.
+* [WIP] Twilight Forest support.  There are several known outstanding issues.  See issue tracker.
+
+**Fixes**
+* Crash in quick volume dialog due to conflicts between config auto save (Forge/TOML Library) and config file watcher (Forge)
+* Crash due to malformed sounds.json files present in other mod folders.
+
+**Changes**
+* Auto-disable dimension sound for The End if Better End is installed. 
+
 > ### DynamicSurroundings-1.16.4-4.0.4.1
 **Requirements**
 * JAVA 8 w/Forge 1.16.4-35.1.10+

@@ -110,6 +110,7 @@ public final class Config {
         public static class Sound {
 
             public final BooleanValue enableEnhancedSounds;
+            public final BooleanValue enableHRTF;
             public final BooleanValue enableOcclusionCalcs;
             public final BooleanValue enableMonoConversion;
             public final IntValue cullInterval;
@@ -129,6 +130,12 @@ public final class Config {
                         .comment("Enable sound reverb and filtering")
                         .translation("sndctrl.cfg.sound.EnhancedSounds")
                         .define("Enable Enhanced Sounds", true);
+
+                this.enableHRTF = builder
+                        .worldRestart()
+                        .comment("Enable HRTF processing in OpenAL")
+                        .translation("sndctrl.cfg.sound.EnhancedHRTF")
+                        .define("Enable HRTF Processing", false);
 
                 this.enableMonoConversion = builder
                         .comment("Enable conversion of stereo sounds to mono format for spacial play")

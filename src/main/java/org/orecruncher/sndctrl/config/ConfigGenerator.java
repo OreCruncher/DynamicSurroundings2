@@ -61,6 +61,11 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
+                        Config.CLIENT.sound.enableHRTF));
+
+        subCategory.add(
+                ClothAPIFactory.createBoolean(
+                        builder,
                         Config.CLIENT.sound.enableMonoConversion));
 
         subCategory.add(

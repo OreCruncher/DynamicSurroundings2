@@ -47,6 +47,15 @@ import java.util.Objects;
 public final class SoundUtils {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundUtils.class);
 
+    private static final String[] HRTF_STATUS = {
+            "ALC_HRTF_DISABLED_SOFT",
+            "ALC_HRTF_ENABLED_SOFT",
+            "ALC_HRTF_DENIED_SOFT",
+            "ALC_HRTF_REQUIRED_SOFT",
+            "ALC_HRTF_HEADPHONES_DETECTED_SOFT",
+            "ALC_HRTF_UNSUPPORTED_FORMAT_SOFT"
+    };
+
     private static int MAX_SOUNDS = 0;
     private static int SOUND_LIMIT = 255; // 0;
     private static final Map<String, SoundCategory> categoryMapper;
@@ -187,12 +196,29 @@ public final class SoundUtils {
                     LOGGER.warn("EFX audio extensions not available for the current sound device!");
                 } else {
                     // Using 4 aux slots instead of the default 2
-                    final int[] attribs = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
-                    final long ctx = ALC10.alcCreateContext(device, attribs);
+                    final int[] attributes = new int[]{EXTEfx.ALC_MAX_AUXILIARY_SENDS, 4, 0};
+                    final long ctx = ALC10.alcCreateContext(device, attributes);
                     ALC10.alcMakeContextCurrent(ctx);
 
                     // Have to re-enable since we reset the context
                     AL10.alEnable(EXTSourceDistanceModel.AL_SOURCE_DISTANCE_MODEL);
+
+                    // If HRTF is available enable if configured to do so
+                    if (deviceCaps.ALC_SOFT_HRTF) {
+                        int status = ALC10.alcGetInteger(device, SOFTHRTF.ALC_HRTF_STATUS_SOFT);
+                        LOGGER.info("HRTF status report before configuration: %s", HRTF_STATUS[status]);
+                        if (status == SOFTHRTF.ALC_HRTF_DISABLED_SOFT && Config.CLIENT.sound.enableHRTF.get()) {
+                            final boolean result = SOFTHRTF.alcResetDeviceSOFT(device, new int[] {SOFTHRTF.ALC_HRTF_SOFT, ALC10.ALC_TRUE, 0});
+                            if (result) {
+                                status = ALC10.alcGetInteger(device, SOFTHRTF.ALC_HRTF_STATUS_SOFT);
+                                LOGGER.warn("After configuration OpenAL reports HRTF status %s", HRTF_STATUS[status]);
+                            } else {
+                                LOGGER.warn("Unable to set HRTF feature in OpenAL");
+                            }
+                        } else {
+                            LOGGER.info("HRTF is already configured or Dynamic Surroundings is not configured to enable");
+                        }
+                    }
                 }
             }
 

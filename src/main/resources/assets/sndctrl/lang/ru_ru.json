@@ -9,6 +9,8 @@
 	"sndctrl.cfg.sound.tooltip": "Основные настройки звуковых эффектов",
 	"sndctrl.cfg.sound.EnhancedSounds": "Включить улучшенные звуки",
 	"sndctrl.cfg.sound.EnhancedSounds.tooltip": "Включение реверберации и фильтрации звука",
+	"sndctrl.cfg.sound.EnhancedHRTF": "Enable HRTF Processing",
+	"sndctrl.cfg.sound.EnhancedHRTF.tooltip": "Enable HRTF processing in OpenAL",
 	"sndctrl.cfg.sound.Occlusion": "Включить вычисления звуковой окклюзии",
 	"sndctrl.cfg.sound.Occlusion.tooltip": "Включение вычисления звуковой окклюзии (приглушение звука при расположении за блоками)",
 	"sndctrl.cfg.sound.StreamingSoundCount": "Streaming Sound Count",

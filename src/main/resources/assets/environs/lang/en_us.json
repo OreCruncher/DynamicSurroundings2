@@ -29,6 +29,8 @@
 	"environs.cfg.effects.Fireflies.tooltip": "Enable/disable Firefly effect around plants",
 	"environs.cfg.effects.Splash": "Waterfall Splash",
 	"environs.cfg.effects.Splash.tooltip": "Enable/disable Waterfall Splash effects when water spills down",
+	"environs.cfg.effects.WaterfallCutoff": "Waterfall Strength Cutoff",
+	"environs.cfg.effects.WaterfallCutoff.tooltip": "Limit sounds to waterfall strengths above this value",
 	"environs.cfg.effects.WaterRipple": "Water Ripples",
 	"environs.cfg.effects.WaterRipple.tooltip": "Enable/disable Water Ripple effects for rain and water splash",
 	"environs.cfg.effects.WaterRippleStyle": "Water Ripple Style",

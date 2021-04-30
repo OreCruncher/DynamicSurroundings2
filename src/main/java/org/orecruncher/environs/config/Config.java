@@ -29,6 +29,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.effects.JetEffect;
 import org.orecruncher.environs.effects.particles.RippleStyle;
 
 import javax.annotation.Nonnull;
@@ -145,8 +146,9 @@ public final class Config {
             public final BooleanValue enableBubbleJets;
             public final BooleanValue enableDustJets;
             public final BooleanValue enableFountainJets;
-            public final BooleanValue enableWaterfalls;
             public final BooleanValue disableUnderwaterParticles;
+            public final BooleanValue enableWaterfalls;
+            public final IntValue waterfallCutoff;
             public final BooleanValue enableWaterRipples;
             public final ForgeConfigSpec.EnumValue<RippleStyle> waterRippleStyle;
 
@@ -195,6 +197,12 @@ public final class Config {
                         .comment("Enable/disable Water Splash effects when water spills down")
                         .translation("environs.cfg.effects.Splash")
                         .define("Waterfall Splash", true);
+
+                this.waterfallCutoff = builder
+                        .comment("Limit sounds to waterfall strengths above this value")
+                        .translation("environs.cfg.effects.WaterfallCutoff")
+                        .defineInRange("Waterfall Strength Cutoff", 0, 0, JetEffect.MAX_STRENGTH);
+
 
                 this.disableUnderwaterParticles = builder
                         .worldRestart()

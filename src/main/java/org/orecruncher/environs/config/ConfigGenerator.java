@@ -98,12 +98,18 @@ public class ConfigGenerator {
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.effects.enableWaterfalls));
+                        Config.CLIENT.effects.disableUnderwaterParticles));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(
                         builder,
-                        Config.CLIENT.effects.disableUnderwaterParticles));
+                        Config.CLIENT.effects.enableWaterfalls));
+
+        subCategory.add(
+                ClothAPIFactory.createIntegerSlider(
+                        builder,
+                        Config.CLIENT.effects.waterfallCutoff
+                ));
 
         subCategory.add(
                 ClothAPIFactory.createBoolean(

@@ -24,6 +24,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
+import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.effects.JetEffect;
 import org.orecruncher.environs.effects.WaterfallSplashEffect;
 import org.orecruncher.environs.effects.particles.Collections;
@@ -92,6 +93,9 @@ public class WaterSplashJet extends Jet {
 	@Override
 	protected void soundUpdate() {
 		if (!isAlive())
+			return;
+
+		if (this.jetStrength <= Config.CLIENT.effects.waterfallCutoff.get())
 			return;
 
 		if (this.sound == null) {

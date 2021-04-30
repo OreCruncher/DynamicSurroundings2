@@ -291,9 +291,9 @@ public final class Config {
                         .define("Weather Fog", true);
 
                 this.morningFogChance = builder
-                        .comment("Chance morning fog will occurs expressed as 1 in N")
+                        .comment("Percentage chance morning fog will occur")
                         .translation("environs.cfg.fog.MorningChance")
-                        .defineInRange("Morning Fog Chance", 1, 0, Integer.MAX_VALUE);
+                        .defineInRange("Morning Fog Chance Percentage", 80, 1, 100);
 
                 builder.pop();
             }

@@ -98,7 +98,7 @@ public class MorningFogRangeCalculator extends VanillaFogRangeCalculator {
             final int dim = CommonState.getDimensionId();
             final int morningFogChance = Config.CLIENT.fog.morningFogChance.get();
             this.fogDay = day;
-            final boolean doFog = (dim != -1 && dim != 1) && (morningFogChance < 2 || XorShiftRandom.current().nextInt(morningFogChance) == 0);
+            final boolean doFog = (dim != -1 && dim != 1) && (morningFogChance == 100 || XorShiftRandom.current().nextInt(100) <= morningFogChance);
             this.type = doFog ? getFogType() : FogType.NONE;
         }
     }

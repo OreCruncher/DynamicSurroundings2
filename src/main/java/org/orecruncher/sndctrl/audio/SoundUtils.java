@@ -126,8 +126,8 @@ public final class SoundUtils {
      * Determines if a sound is in range of a listener based on the sounds attenuation distance.
      *
      * @param listener Location of the listener
-     * @param sound The sound that is to be evaluated
-     * @param pad Additional distance to add when evaluating
+     * @param sound    The sound that is to be evaluated
+     * @param pad      Additional distance to add when evaluating
      * @return true if the sound is within the attenuation distance; false otherwise
      */
     public static boolean inRange(@Nonnull final Vector3d listener, @Nonnull final ISound sound, final int pad) {
@@ -208,7 +208,7 @@ public final class SoundUtils {
                         int status = ALC10.alcGetInteger(device, SOFTHRTF.ALC_HRTF_STATUS_SOFT);
                         LOGGER.info("HRTF status report before configuration: %s", HRTF_STATUS[status]);
                         if (status == SOFTHRTF.ALC_HRTF_DISABLED_SOFT && Config.CLIENT.sound.enableHRTF.get()) {
-                            final boolean result = SOFTHRTF.alcResetDeviceSOFT(device, new int[] {SOFTHRTF.ALC_HRTF_SOFT, ALC10.ALC_TRUE, 0});
+                            final boolean result = SOFTHRTF.alcResetDeviceSOFT(device, new int[]{SOFTHRTF.ALC_HRTF_SOFT, ALC10.ALC_TRUE, 0});
                             if (result) {
                                 status = ALC10.alcGetInteger(device, SOFTHRTF.ALC_HRTF_STATUS_SOFT);
                                 LOGGER.warn("After configuration OpenAL reports HRTF status %s", HRTF_STATUS[status]);
@@ -247,12 +247,17 @@ public final class SoundUtils {
 
     }
 
+    private static final String COMPAT_FAILURE_MESSAGE = "===============================================================================================\n" +
+            "%s is installed and can cause conflicts with Dynamic Surroundings.\n" +
+            "Dynamic Surroundings enhanced sound processing will be disabled.\n" +
+            "===============================================================================================";
+
     private static boolean doEnhancedSounds() {
         if (ModEnvironment.SoundFilters.isLoaded()) {
-            LOGGER.warn("===============================================================================================");
-            LOGGER.warn("Sound Filters is installed and can cause conflicts with Dynamic Surroundings.");
-            LOGGER.warn("Dynamic Surroundings enhanced sound processing will be disabled.");
-            LOGGER.warn("===============================================================================================");
+            LOGGER.warn(COMPAT_FAILURE_MESSAGE, "Sound Filters");
+            return false;
+        } else if (ModEnvironment.SoundPhysics.isLoaded()) {
+            LOGGER.warn(COMPAT_FAILURE_MESSAGE, "SoundPhysics");
             return false;
         } else if (!Config.CLIENT.sound.enableEnhancedSounds.get()) {
             LOGGER.warn("Enhanced sounds are not enabled.  No fancy sounds for you!");

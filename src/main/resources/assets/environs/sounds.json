@@ -744,7 +744,7 @@
 		"sounds": [
 			{
 				"name": "environs:ambient/stream/waterfall2",
-				"attenuation_distance": 22,
+				"attenuation_distance": 24,
 				"preload": true
 			}
 		]
@@ -759,7 +759,7 @@
 		"sounds": [
 			{
 				"name": "environs:ambient/stream/waterfall3",
-				"attenuation_distance": 22,
+				"attenuation_distance": 28,
 				"preload": true
 			}
 		]
@@ -774,7 +774,7 @@
 		"sounds": [
 			{
 				"name": "environs:ambient/stream/waterfall4",
-				"attenuation_distance": 22,
+				"attenuation_distance": 30,
 				"preload": true
 			}
 		]
@@ -789,7 +789,7 @@
 		"sounds": [
 			{
 				"name": "environs:ambient/stream/waterfall5",
-				"attenuation_distance": 22,
+				"attenuation_distance": 32,
 				"preload": true
 			}
 		]

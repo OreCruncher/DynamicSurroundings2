@@ -3,17 +3,16 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url = 'https://plugins.gradle.org/m2/' }
         maven { url = 'https://repo.spongepowered.org/maven' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
-		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        	classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
 		classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
 
-import net.minecraftforge.gradle.common.task.SignJar
+//import net.minecraftforge.gradle.common.task.SignJar
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -65,6 +64,9 @@ repositories {
           //  includeGroup 'appeng'
         //}
     }
+    maven {
+        url "https://cursemaven.com"
+    }
     mavenLocal()
 }
 
@@ -96,6 +98,7 @@ minecraft {
             args '--mixin', 'mixins.mobeffects.json'
             args '--mixin', 'mixins.environs.json'
 
+            /*
 			if (project.ext.has('secrets')) {
 				if (secrets.uuid != null)
 					args '--uuid', secrets.uuid
@@ -104,7 +107,7 @@ minecraft {
 				if (secrets.password != null)
 					args '--password', secrets.password
 			}
-
+*/
             mods {
                 dsurround {
                     source sourceSets.main
@@ -185,17 +188,17 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     //compile fg.deobf("com.github.glitchfiend.biomesoplenty:BiomesOPlenty:${mcVersion}-${project.bopVersion}:universal")
-    compile fg.deobf("com.github.glitchfiend.biomesoplenty:SereneSeasons:${mcVersion}-${project.ssVersion}:api")
-    compile fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.clothVersion}")
+    implementation fg.deobf("curse.maven:SereneSeasons-291874:3429973")
+    implementation fg.deobf("curse.maven:clothAPI-348521:3311352")
     //compile fg.deobf("team.chisel.ctm:CTM:MC1.16.1-${project.ctmVersion}")
 
-    runtimeOnly fg.deobf("mezz.jei:jei-${mcVersion}:${project.jeiVersion}")
-    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.0.6-8")
+    runtimeOnly fg.deobf("curse.maven:jei-238222:3488178")
+    runtimeOnly fg.deobf("curse.maven:TheOneProbe-245211:3319255")
 }
 
 processResources {
-    from (sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    filesMatching("META-INF/mods.toml") {
         expand 'version': project.version
         expand 'fingerprint': project.ext.fingerprint
     }
@@ -249,6 +252,7 @@ publishing {
     }
 }
 
+/*
 task signJar(type: SignJar) {
     onlyIf { // Skip the task if our secret data isn't available
         project.hasProperty('keyStore')
@@ -261,5 +265,5 @@ task signJar(type: SignJar) {
     inputFile = jar.archivePath
     outputFile = jar.archivePath
 }
-
-signJar.dependsOn build
+*/
+//signJar.dependsOn build

@@ -18,14 +18,14 @@ showAsResourcePack=false
 	[[dependencies.dsurround]]
 		modId="forge"
 		mandatory=true
-		versionRange="[35.1.10,)"
+		versionRange="[36.2.0,)"
 		ordering="NONE"
 		side="CLIENT"
 
 	[[dependencies.dsurround]]
 		modId="minecraft"
 		mandatory=true
-		versionRange="[1.16.4,1.17)"
+		versionRange="[1.16.5,)"
 		ordering="NONE"
 		side="CLIENT"
 
@@ -39,8 +39,8 @@ showAsResourcePack=false
 
 	[[dependencies.sndctrl]]
 		modId="dsurround"
-		mandatory=true
-		versionRange="[1.16.4,)"
+		mandatory=false
+		versionRange="[1.16.5,)"
 		ordering="AFTER"
 		side="CLIENT"
 	
@@ -54,8 +54,8 @@ showAsResourcePack=false
 	
 	[[dependencies.environs]]
 		modId="sndctrl"
-		mandatory=true
-		versionRange="[1.16.4,)"
+		mandatory=false
+		versionRange="[1.16.5,)"
 		ordering="AFTER"
 		side="CLIENT"
 
@@ -69,7 +69,7 @@ showAsResourcePack=false
 	
 	[[dependencies.mobeffects]]
 		modId="sndctrl"
-		mandatory=true
-		versionRange="[1.16.4,)"
+		mandatory=false
+		versionRange="[1.16.5,)"
 		ordering="AFTER"
 		side="CLIENT"

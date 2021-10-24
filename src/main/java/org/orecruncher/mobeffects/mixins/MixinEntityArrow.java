@@ -23,7 +23,6 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.world.World;
 import org.orecruncher.mobeffects.config.Config;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -32,11 +31,6 @@ public abstract class MixinEntityArrow extends Entity {
 
     public MixinEntityArrow(EntityType<? extends AbstractArrowEntity> type, World worldIn) {
         super(type, worldIn);
-    }
-
-    @Shadow
-    public boolean getIsCritical() {
-        return false;
     }
 
     @Redirect(method = "tick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/AbstractArrowEntity;getIsCritical()Z"))

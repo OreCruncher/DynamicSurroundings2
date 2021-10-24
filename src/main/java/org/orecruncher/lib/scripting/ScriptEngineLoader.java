@@ -24,7 +24,8 @@ import javax.script.ScriptEngineManager;
 class ScriptEngineLoader {
     public static ScriptEngine getEngine() {
         try {
-            return NashornScriptEngineLoader.getEngine();
+            return new ScriptEngineManager().getEngineByName("JavaScript");
+            //return NashornScriptEngineLoader.getEngine();
         } catch (@Nonnull final Throwable ignore) {
         }
         return new ScriptEngineManager().getEngineByName("JavaScript");

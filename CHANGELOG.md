@@ -1,3 +1,17 @@
+> ### DynamicSurroundings-1.16.5-4.0.5.0
+**Requirements**
+* JAVA 8 w/Forge 1.16.5-36.2.0+
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**What's New**
+* Update to 1.16.5-36.2.0+ baseline
+  * Recommend Java 8.
+  * Dynamic Surroundings uses JavaScript, and some mods include older script engines that are not compatible with Java versions newer than 8.  You can try using a newer version of Java, but if you see things related to Java security in the logs then downgrade back to 8.  In game this problem would show itself as biome sounds not playing.  (Enigmatica 6 is an example of this condition.)
+
+**Notes**
+* Started playing Enigmatica 6 recently.  I had to adjust the sea level override in the config to 57 because the Y value for sea level of the map is 57.
+
 > ### DynamicSurroundings-1.16.4-4.0.4.2
 **Requirements**
 * JAVA 8 w/Forge 1.16.4-35.1.10+

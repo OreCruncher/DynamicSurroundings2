@@ -85,8 +85,8 @@ public final class EntityEffectHandler {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onLivingUpdate(@Nonnull final LivingEvent.LivingUpdateEvent event) {
+        final LivingEntity entity = event.getEntityLiving();
         try {
-            final LivingEntity entity = event.getEntityLiving();
             if (entity != null && entity.getEntityWorld().isRemote) {
 
                 final IProfiler profiler = GameUtils.getMC().getProfiler();
@@ -111,7 +111,7 @@ public final class EntityEffectHandler {
                 profiler.endSection();
             }
         } catch(@Nonnull final Throwable t) {
-            Lib.LOGGER.error(t, "Error ticking entity %s!");
+            Lib.LOGGER.error(t, "Error ticking entity %s!", entity);
         }
     }
 

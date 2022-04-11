@@ -18,10 +18,7 @@
 
 package org.orecruncher.mobeffects.footsteps.facade;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 final class ChiselFacadeAccessor extends FacadeAccessor {
 
 	private static final String CLASS = "team.chisel.ctm.api.IFacade";

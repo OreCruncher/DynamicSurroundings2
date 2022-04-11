@@ -21,14 +21,11 @@ package org.orecruncher.mobeffects.footsteps.accents;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class FootstepAccents {
 
     private FootstepAccents() {

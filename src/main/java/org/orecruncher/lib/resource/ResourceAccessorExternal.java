@@ -19,8 +19,6 @@
 package org.orecruncher.lib.resource;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@OnlyIn(Dist.CLIENT)
 final class ResourceAccessorExternal extends ResourceAccessorBase {
 
     final Path filePath;

@@ -19,15 +19,12 @@
 package org.orecruncher.environs.library;
 
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.misc.IMixinBiomeData;
 import org.orecruncher.lib.biomes.BiomeUtilities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public final class BiomeUtil {
 
     @Nonnull

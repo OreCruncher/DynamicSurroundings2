@@ -22,8 +22,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * For 2 Cuboid objects of equal dimensions displaced in space (c1,c2) that
@@ -34,7 +32,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  *
  * Updated to use "peeking" iterator pattern.
  */
-@OnlyIn(Dist.CLIENT)
 public class ComplementsPointIterator implements IPointIterator {
 
 	protected CuboidPointIterator[] segments = new CuboidPointIterator[3];

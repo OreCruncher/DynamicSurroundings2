@@ -21,8 +21,6 @@ package org.orecruncher.environs.library;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.DimensionConfig;
@@ -31,7 +29,6 @@ import org.orecruncher.lib.WorldUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class DimensionInfo {
 
     private static final int SPACE_HEIGHT_OFFSET = 32;

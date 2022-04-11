@@ -21,8 +21,6 @@ package org.orecruncher.lib.config;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.orecruncher.lib.gui.GuiHelpers;
 import org.orecruncher.lib.reflection.ObjectField;
@@ -32,7 +30,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public final class ConfigProperty {
 
     public static final int TOOLTIP_WIDTH = 300;

@@ -20,15 +20,12 @@ package org.orecruncher.sndctrl.library;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-@OnlyIn(Dist.CLIENT)
 public final class IndividualSoundConfig {
 
     private static final String BLOCK_TOKEN = "block";

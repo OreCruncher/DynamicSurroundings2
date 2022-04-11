@@ -26,8 +26,6 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.client.gui.widget.Slider;
 import org.orecruncher.lib.gui.ColorPalette;
@@ -40,7 +38,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public class QuickVolumeScreen extends Screen implements Slider.ISlider {
 
     private static final int CONTROL_WIDTH = 160;

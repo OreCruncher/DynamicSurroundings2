@@ -25,8 +25,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import org.orecruncher.sndctrl.api.acoustics.Library;
@@ -39,7 +37,6 @@ import org.orecruncher.sndctrl.library.Primitives;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class ItemData {
 
     private static final int ACOUSTIC_TYPE_SWING = 0;

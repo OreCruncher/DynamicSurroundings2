@@ -18,14 +18,11 @@
 
 package org.orecruncher.sndctrl.audio.handlers.effects;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class LowPassFilterSlot extends Slot {
 
     public LowPassFilterSlot() {

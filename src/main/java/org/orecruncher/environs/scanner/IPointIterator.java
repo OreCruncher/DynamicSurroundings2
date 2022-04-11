@@ -19,13 +19,10 @@
 package org.orecruncher.environs.scanner;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Interface for a "peeking" iterator.
  */
-@OnlyIn(Dist.CLIENT)
 public interface IPointIterator {
 	BlockPos next();
 

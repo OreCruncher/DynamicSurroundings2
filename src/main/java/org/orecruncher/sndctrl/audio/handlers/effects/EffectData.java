@@ -18,13 +18,10 @@
 
 package org.orecruncher.sndctrl.audio.handlers.effects;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * The state context for a given effect.
  */
-@OnlyIn(Dist.CLIENT)
 public abstract class EffectData {
 
     protected boolean process;

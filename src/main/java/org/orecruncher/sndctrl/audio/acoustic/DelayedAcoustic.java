@@ -20,8 +20,6 @@ package org.orecruncher.sndctrl.audio.acoustic;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
@@ -32,7 +30,6 @@ import java.util.Random;
  * An acoustic that will delay play for a random period of ticks.  The sound instance will be held in the sound engine
  * until the delay threshold is hit.
  */
-@OnlyIn(Dist.CLIENT)
 public class DelayedAcoustic extends SimpleAcoustic {
 
     private static final Random RANDOM = XorShiftRandom.current();

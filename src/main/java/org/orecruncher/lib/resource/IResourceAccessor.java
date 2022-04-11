@@ -22,8 +22,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.validation.ValidationHelpers;
 import org.orecruncher.lib.validation.Validators;
@@ -39,7 +37,6 @@ import java.util.function.Consumer;
 /**
  * A resource accessor is used to obtain the content of a resource from within the JAR or from an external disk source.
  */
-@OnlyIn(Dist.CLIENT)
 public interface IResourceAccessor {
 
     /**

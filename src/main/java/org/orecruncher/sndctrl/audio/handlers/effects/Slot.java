@@ -18,8 +18,6 @@
 
 package org.orecruncher.sndctrl.audio.handlers.effects;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.EXTEfx;
@@ -30,7 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class Slot {
 
     private final Supplier<Integer> factory;

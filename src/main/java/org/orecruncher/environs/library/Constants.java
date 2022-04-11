@@ -18,13 +18,10 @@
 
 package org.orecruncher.environs.library;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 
-@OnlyIn(Dist.CLIENT)
 public final class Constants {
     private Constants() {
 

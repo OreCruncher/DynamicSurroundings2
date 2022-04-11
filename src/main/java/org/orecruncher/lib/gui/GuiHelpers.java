@@ -20,8 +20,6 @@ package org.orecruncher.lib.gui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 
 import javax.annotation.Nonnull;
@@ -29,7 +27,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
 public class GuiHelpers {
 
     private final static String ELLIPSES =  "...";

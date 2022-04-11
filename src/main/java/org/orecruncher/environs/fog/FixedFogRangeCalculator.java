@@ -18,13 +18,10 @@
 
 package org.orecruncher.environs.fog;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class FixedFogRangeCalculator extends VanillaFogRangeCalculator {
 
     protected final FogResult cached;

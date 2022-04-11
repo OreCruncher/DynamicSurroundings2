@@ -23,8 +23,6 @@ import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -88,13 +86,11 @@ public final class ForgeUtils {
         return result;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Nonnull
     public static Collection<ResourcePackInfo> getEnabledResourcePacks() {
         return GameUtils.getMC().getResourcePackList().getEnabledPacks();
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Nonnull
     public static List<String> getResourcePackIdList() {
         return getEnabledResourcePacks()

@@ -1,3 +1,18 @@
+> ### DynamicSurroundings-1.16.5-4.0.5.1
+**Requirements**
+* JAVA 8 w/Forge 1.16.5-36.2.26+
+* 100% client side; no server side deployment needed
+* Cloth Config API (Forge) is optional
+
+**What's New**
+* Update to 1.16.5-36.2.26+ baseline
+  * This is the minimum Forge version needed to work with Java 8u321+
+
+**Fixes**
+* Removed all usages of `@OnlyIn` to help avoid potential issues in the future.
+  * It's an internal annotation used by the Forge installer and dev environment. It has no effect in production, leading to issues where it might sometimes work as intended when testing in development but fail with the built jar in production. Therefore its usage is not recommended in order to avoid hard to reproduce issues like this.
+* Gradle build using the default Java version and possibly causing incorrect builds depending on the version
+
 > ### DynamicSurroundings-1.16.5-4.0.5.0
 **Requirements**
 * JAVA 8 w/Forge 1.16.5-36.2.0+

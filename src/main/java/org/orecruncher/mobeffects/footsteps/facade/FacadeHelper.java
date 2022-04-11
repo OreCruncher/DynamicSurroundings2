@@ -31,8 +31,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.block.Block;
@@ -40,7 +38,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.Lib;
 import org.orecruncher.mobeffects.MobEffects;
 
-@OnlyIn(Dist.CLIENT)
 public final class FacadeHelper {
 
 	private static final Map<Block, IFacadeAccessor> crackers = new Reference2ObjectOpenHashMap<>();

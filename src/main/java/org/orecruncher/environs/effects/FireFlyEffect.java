@@ -22,14 +22,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.effects.particles.Collections;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-@OnlyIn(Dist.CLIENT)
 public class FireFlyEffect extends BlockEffect {
 
     public FireFlyEffect(final int chance) {

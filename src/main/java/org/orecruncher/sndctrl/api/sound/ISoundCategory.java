@@ -20,12 +20,9 @@ package org.orecruncher.sndctrl.api.sound;
 
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public interface ISoundCategory {
 
     /**

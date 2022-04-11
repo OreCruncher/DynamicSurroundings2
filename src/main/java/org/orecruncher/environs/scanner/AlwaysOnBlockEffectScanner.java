@@ -25,8 +25,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.util.math.BlockPos;
 import org.orecruncher.environs.effects.BlockEffect;
 import org.orecruncher.environs.library.BlockStateUtil;
@@ -39,7 +37,6 @@ import org.orecruncher.environs.library.BlockStateUtil;
  * player moves. Once all the blocks are scanned in the region (cuboid) it will
  * stop. It will start again once the player moves location.
  */
-@OnlyIn(Dist.CLIENT)
 public class AlwaysOnBlockEffectScanner extends CuboidScanner {
 
 	public AlwaysOnBlockEffectScanner(@Nonnull final ScanContext locus, final int range) {

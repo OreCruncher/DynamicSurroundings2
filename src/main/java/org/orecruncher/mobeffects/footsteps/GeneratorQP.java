@@ -21,12 +21,9 @@ package org.orecruncher.mobeffects.footsteps;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.mobeffects.library.Constants;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 
-@OnlyIn(Dist.CLIENT)
 public class GeneratorQP extends Generator {
 
 	private static final int USE_FUNCTION = 2;

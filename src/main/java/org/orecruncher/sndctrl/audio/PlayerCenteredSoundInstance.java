@@ -19,14 +19,11 @@
 package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class PlayerCenteredSoundInstance extends WrappedSoundInstance {
     public PlayerCenteredSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final ISoundCategory category) {
         super(sound, category);

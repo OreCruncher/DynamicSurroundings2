@@ -21,8 +21,6 @@ package org.orecruncher.sndctrl.audio.handlers;
 import com.google.common.base.MoreObjects;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.EXTEfx;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.random.LCGRandom;
@@ -41,7 +39,6 @@ import java.util.concurrent.Callable;
  * Used to track and apply sound effects for a given sound instance in the sound engine.  It is also a task to
  * facilitate queuing to background processing.
  */
-@OnlyIn(Dist.CLIENT)
 public final class SourceContext implements Callable<Void> {
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SourceContext.class);

@@ -20,8 +20,6 @@ package org.orecruncher.sndctrl.api.acoustics;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
@@ -33,7 +31,6 @@ import java.util.function.Function;
 /**
  * API Interface to the Acoustic Library that maintains a list of all acoustics.
  */
-@OnlyIn(Dist.CLIENT)
 public final class Library {
     private Library() {
 

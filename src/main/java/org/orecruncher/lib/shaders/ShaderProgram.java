@@ -21,14 +21,11 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.shader.IShaderManager;
 import net.minecraft.client.shader.ShaderLoader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Lib;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-@OnlyIn(Dist.CLIENT)
 final class ShaderProgram implements IShaderManager {
 
     private final String name;

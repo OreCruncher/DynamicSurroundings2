@@ -21,15 +21,12 @@ package org.orecruncher.sndctrl.library;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.sndctrl.api.effects.AbstractEntityEffect;
 import org.orecruncher.sndctrl.config.Config;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
 
-@OnlyIn(Dist.CLIENT)
 public final class EntityEffectLibrary {
 
 	private static final ObjectArray<IEntityEffectFactoryHandler> entityEffectfactoryHandlers = new ObjectArray<>();

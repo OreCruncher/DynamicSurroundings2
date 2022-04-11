@@ -29,8 +29,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.tags.BlockTags;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
@@ -52,7 +50,6 @@ import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.audio.acoustic.AcousticCompiler;
 
-@OnlyIn(Dist.CLIENT)
 public class Generator {
 
 	protected static final IModLog LOGGER = MobEffects.LOGGER.createChild(Generator.class);

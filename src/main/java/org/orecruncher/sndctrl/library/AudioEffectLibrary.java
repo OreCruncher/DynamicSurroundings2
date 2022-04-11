@@ -27,8 +27,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.MaterialUtils;
 import org.orecruncher.lib.tags.TagUtils;
@@ -47,7 +45,6 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 
-@OnlyIn(Dist.CLIENT)
 public final class AudioEffectLibrary {
 
     private static final String MATERIAL_PREFIX = "+";

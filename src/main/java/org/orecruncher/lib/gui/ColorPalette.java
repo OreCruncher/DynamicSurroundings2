@@ -19,11 +19,8 @@
 package org.orecruncher.lib.gui;
 
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 @SuppressWarnings("unused")
-@OnlyIn(Dist.CLIENT)
 public final class ColorPalette {
     // Minecraft colors mapped to codes
     public static final Color MC_BLACK = new Color(TextFormatting.BLACK);

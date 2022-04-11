@@ -23,8 +23,6 @@ import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.library.FootstepLibrary;
@@ -32,7 +30,6 @@ import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 class WaterLoggedAccent implements IFootstepAccentProvider {
 
     @Override

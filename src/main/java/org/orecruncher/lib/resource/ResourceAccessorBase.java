@@ -19,14 +19,11 @@
 package org.orecruncher.lib.resource;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Singleton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 abstract class ResourceAccessorBase implements IResourceAccessor {
 
     private final ResourceLocation location;

@@ -21,8 +21,6 @@ package org.orecruncher.lib.fml;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.VersionChecker.CheckResult;
 import net.minecraftforge.fml.VersionChecker.Status;
@@ -36,7 +34,6 @@ import java.util.Optional;
  * Simple update checker that can be registered with the ClientLoginChecks manager to provide feedback to the player
  * in the chat window if a newer version of a mod is available.
  */
-@OnlyIn(Dist.CLIENT)
 public class UpdateChecker extends Checker {
 
     protected final String messageId;

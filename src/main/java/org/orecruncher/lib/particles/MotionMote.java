@@ -30,15 +30,12 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Optional;
 
 /**
  * A particle that is capable of moving it's position in the world.
  */
-@OnlyIn(Dist.CLIENT)
 public abstract class MotionMote extends AgeableMote {
 
 	protected double motionX;

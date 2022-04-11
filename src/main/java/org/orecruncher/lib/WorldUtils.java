@@ -31,8 +31,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.storage.IWorldInfo;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.compat.ModEnvironment;
 import org.orecruncher.lib.reflection.BooleanField;
 //import sereneseasons.season.SeasonHooks;
@@ -232,7 +230,6 @@ public final class WorldUtils {
         return world.getDimensionType().hasSkyLight();
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static boolean isSuperFlat(@Nonnull final World world) {
         final IWorldInfo info = world.getWorldInfo();
         return info instanceof ClientWorld.ClientWorldInfo && flatWorld.get((ClientWorld.ClientWorldInfo) info);

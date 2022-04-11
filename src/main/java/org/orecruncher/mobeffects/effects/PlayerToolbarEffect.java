@@ -23,8 +23,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.library.ItemData;
 import org.orecruncher.mobeffects.library.ItemLibrary;
@@ -33,7 +31,6 @@ import org.orecruncher.sndctrl.api.effects.IEntityEffectManager;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class PlayerToolbarEffect extends AbstractEntityEffect {
 
     private static final ResourceLocation NAME = new ResourceLocation(MobEffects.MOD_ID, "toolbar");

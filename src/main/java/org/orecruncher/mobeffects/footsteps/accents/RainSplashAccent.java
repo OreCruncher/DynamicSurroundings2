@@ -23,8 +23,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WorldUtils;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.mobeffects.config.Config;
@@ -33,7 +31,6 @@ import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 class RainSplashAccent implements IFootstepAccentProvider {
 
     @Override

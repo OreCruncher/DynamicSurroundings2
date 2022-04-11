@@ -19,8 +19,6 @@
 package org.orecruncher.environs.effects;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.config.Config;
 
 import javax.annotation.Nonnull;
@@ -32,7 +30,6 @@ import java.util.function.Supplier;
 /**
  * Describes the various types of block effects that can be generated.
  */
-@OnlyIn(Dist.CLIENT)
 public enum BlockEffectType {
 
     UNKNOWN("UNKNOWN", ignored -> null, () -> false),

@@ -18,8 +18,6 @@
 
 package org.orecruncher.environs.fog;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.lib.GameUtils;
@@ -31,7 +29,6 @@ import javax.annotation.Nonnull;
  * Calculates the fog ranges based on current weather. The stronger the
  * intensity of the storm the foggier it gets.
  */
-@OnlyIn(Dist.CLIENT)
 public class WeatherFogRangeCalculator extends VanillaFogRangeCalculator {
 
     protected static final float START_IMPACT = 0.9F;

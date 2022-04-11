@@ -22,8 +22,6 @@ import java.util.Random;
 
 import javax.annotation.Nonnull;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.LCGRandom;
 
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
  * Serves up random blocks in an area around the player. Concentration of block
  * selections are closer to the player.
  */
-@OnlyIn(Dist.CLIENT)
 public abstract class RandomScanner extends Scanner {
 
 	private final LCGRandom lcg = new LCGRandom();

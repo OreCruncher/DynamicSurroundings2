@@ -23,8 +23,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
@@ -35,7 +33,6 @@ import javax.annotation.Nonnull;
 /**
  * Simple acoustic that has no sound.
  */
-@OnlyIn(Dist.CLIENT)
 public final class NullAcoustic implements IAcoustic {
 
     public static final IAcoustic INSTANCE = new NullAcoustic(new ResourceLocation(SoundControl.MOD_ID, "null_acoustic"));

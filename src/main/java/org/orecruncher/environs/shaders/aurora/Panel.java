@@ -18,11 +18,8 @@
 
 package org.orecruncher.environs.shaders.aurora;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 
-@OnlyIn(Dist.CLIENT)
 final class Panel {
 
 	private static final float COS_DEG90_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F);

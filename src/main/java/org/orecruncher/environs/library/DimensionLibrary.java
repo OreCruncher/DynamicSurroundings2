@@ -31,8 +31,6 @@ import com.google.gson.reflect.TypeToken;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
@@ -46,7 +44,6 @@ import org.orecruncher.lib.service.IModuleService;
 import org.orecruncher.lib.validation.ListValidator;
 import org.orecruncher.lib.validation.Validators;
 
-@OnlyIn(Dist.CLIENT)
 public final class DimensionLibrary {
 
 	private static final IModLog LOGGER = Environs.LOGGER.createChild(DimensionLibrary.class);

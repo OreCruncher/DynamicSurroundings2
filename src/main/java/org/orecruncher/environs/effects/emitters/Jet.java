@@ -19,15 +19,12 @@
 package org.orecruncher.environs.effects.emitters;
 
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /*
  * Base for particle entities that are long lived and generate
  * other particles as a jet.  This entity does not render - just
  * serves as a particle factory.
  */
-@OnlyIn(Dist.CLIENT)
 public abstract class Jet extends ParticleEmitter {
 
 	protected final int jetStrength;

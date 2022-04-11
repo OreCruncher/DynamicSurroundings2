@@ -17,14 +17,11 @@
  */
 package org.orecruncher.lib.shaders;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL20;
 import org.orecruncher.lib.gui.Color;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public final class ShaderCallContext {
 
     private final ShaderProgram program;

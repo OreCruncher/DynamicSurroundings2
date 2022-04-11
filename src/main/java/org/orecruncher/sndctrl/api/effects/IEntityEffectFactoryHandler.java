@@ -20,12 +20,9 @@ package org.orecruncher.sndctrl.api.effects;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public interface IEntityEffectFactoryHandler {
 
     /**

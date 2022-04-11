@@ -18,8 +18,6 @@
 
 package org.orecruncher.sndctrl.audio;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Used by sounds that have long term state that gets manipulated
@@ -28,7 +26,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * with a sound.
  */
 
-@OnlyIn(Dist.CLIENT)
 public enum SoundState {
     /**
      * The sound was just created.

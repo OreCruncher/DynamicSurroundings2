@@ -18,8 +18,6 @@
 
 package org.orecruncher.lib.scripting.sets;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 import org.orecruncher.lib.seasons.Season;
@@ -27,7 +25,6 @@ import org.orecruncher.lib.seasons.SeasonType;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class SeasonVariables  extends VariableSet<ISeasonVariables> implements ISeasonVariables {
 
     private final LazyVariable<Season> season = new LazyVariable<>(() -> Season.getSeason(GameUtils.getWorld()));

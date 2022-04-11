@@ -22,8 +22,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.util.math.BlockPos;
 import org.orecruncher.lib.collections.ObjectArray;
@@ -33,7 +31,6 @@ import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
  * Interface for objects that provide additional accents to acoustics when
  * producing step sounds.
  */
-@OnlyIn(Dist.CLIENT)
 interface IFootstepAccentProvider {
 
 	void provide(@Nonnull final LivingEntity entity, @Nonnull final BlockPos pos, @Nonnull final BlockState posState, @Nonnull final ObjectArray<IAcoustic> acoustics);

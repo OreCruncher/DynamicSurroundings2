@@ -23,8 +23,6 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.profiler.IProfiler;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -36,7 +34,6 @@ import org.orecruncher.lib.math.LoggingTimerEMA;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class FogHandler extends HandlerBase {
 
     protected final LoggingTimerEMA render = new LoggingTimerEMA("Render Fog");

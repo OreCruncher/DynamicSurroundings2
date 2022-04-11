@@ -18,15 +18,12 @@
 
 package org.orecruncher.lib.scripting.sets;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.DayCycle;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.scripting.VariableSet;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class DiurnalCycleVariables extends VariableSet<IDiurnalCycle> implements IDiurnalCycle {
 
     private final LazyVariable<Float> moonPhaseFactor = new LazyVariable<>(() -> GameUtils.isInGame() ? DayCycle.getMoonPhaseFactor(GameUtils.getWorld()) : 0F);

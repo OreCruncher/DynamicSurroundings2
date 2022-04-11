@@ -24,11 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 
-@OnlyIn(Dist.CLIENT)
 public class AuroraBand {
 
 	protected static final float AURORA_SPEED = 0.75F;

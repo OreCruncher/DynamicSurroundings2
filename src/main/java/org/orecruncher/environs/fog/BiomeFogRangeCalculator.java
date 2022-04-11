@@ -23,8 +23,6 @@ import net.minecraft.util.CubicSampler;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.library.BiomeInfo;
@@ -36,7 +34,6 @@ import javax.annotation.Nonnull;
 /**
  * Scans the biome area around the player to determine the fog parameters.
  */
-@OnlyIn(Dist.CLIENT)
 public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
 
     protected final FogResult cached = new FogResult();

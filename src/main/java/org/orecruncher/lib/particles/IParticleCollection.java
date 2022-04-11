@@ -18,12 +18,9 @@
 
 package org.orecruncher.lib.particles;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public interface IParticleCollection {
 
     String name();

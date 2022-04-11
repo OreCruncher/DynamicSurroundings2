@@ -22,8 +22,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.list.AbstractOptionList;
 import net.minecraft.util.StringUtils;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.library.IndividualSoundConfig;
 import org.orecruncher.sndctrl.library.SoundLibrary;
 
@@ -35,7 +33,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@OnlyIn(Dist.CLIENT)
 public class IndividualSoundControlList extends AbstractOptionList<IndividualSoundControlListEntry> {
 
     private final Screen parent;

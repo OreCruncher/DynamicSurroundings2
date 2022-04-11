@@ -24,8 +24,6 @@ import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
@@ -36,7 +34,6 @@ import java.util.Objects;
 /**
  * Base class for special sounds that aggregate the true sound being played.
  */
-@OnlyIn(Dist.CLIENT)
 public class WrappedSoundInstance implements ISoundInstance, ITickableSound {
 
     @Nonnull

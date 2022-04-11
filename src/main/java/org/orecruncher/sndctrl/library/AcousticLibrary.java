@@ -22,8 +22,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.StringUtils;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.resource.IResourceAccessor;
@@ -39,7 +37,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@OnlyIn(Dist.CLIENT)
 public final class AcousticLibrary {
 
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(AudioEffectLibrary.class);

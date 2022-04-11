@@ -25,14 +25,11 @@ import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.huds.lightlevel.LightLevelHUD;
 import org.orecruncher.lib.config.ClothAPIFactory;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class ConfigMenuBuilder extends ClothAPIFactory {
 
     public ConfigMenuBuilder() {

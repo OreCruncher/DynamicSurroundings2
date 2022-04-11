@@ -21,14 +21,11 @@ package org.orecruncher.lib.resource;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
 
-@OnlyIn(Dist.CLIENT)
 final class ResourceAccessorPack extends ResourceAccessorBase {
 
     private final IResourcePack pack;

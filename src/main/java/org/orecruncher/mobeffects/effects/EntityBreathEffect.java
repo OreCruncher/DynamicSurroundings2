@@ -25,8 +25,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.WorldUtils;
@@ -39,7 +37,6 @@ import org.orecruncher.sndctrl.api.effects.IEntityEffectManager;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class EntityBreathEffect extends AbstractEntityEffect {
 
     private static final ResourceLocation NAME = new ResourceLocation(MobEffects.MOD_ID, "breath");

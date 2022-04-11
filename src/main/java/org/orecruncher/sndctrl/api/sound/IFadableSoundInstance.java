@@ -19,10 +19,7 @@
 package org.orecruncher.sndctrl.api.sound;
 
 import net.minecraft.client.audio.ITickableSound;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public interface IFadableSoundInstance extends ISoundInstance, ITickableSound {
 
     void noFade();

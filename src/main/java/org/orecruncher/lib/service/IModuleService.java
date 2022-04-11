@@ -18,10 +18,7 @@
 
 package org.orecruncher.lib.service;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public interface IModuleService {
 
     String name();

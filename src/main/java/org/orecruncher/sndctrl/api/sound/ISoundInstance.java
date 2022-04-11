@@ -19,8 +19,6 @@
 package org.orecruncher.sndctrl.api.sound;
 
 import net.minecraft.client.audio.ISound;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.audio.SoundState;
 
 import javax.annotation.Nonnull;
@@ -28,7 +26,6 @@ import javax.annotation.Nonnull;
 /**
  * Additional state information associated with a sound instance.
  */
-@OnlyIn(Dist.CLIENT)
 public interface ISoundInstance extends ISound {
 
     /**

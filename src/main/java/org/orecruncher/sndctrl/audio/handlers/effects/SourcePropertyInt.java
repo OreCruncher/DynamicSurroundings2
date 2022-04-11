@@ -18,14 +18,11 @@
 
 package org.orecruncher.sndctrl.audio.handlers.effects;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.AL11;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.audio.handlers.SoundFXProcessor;
 
 @SuppressWarnings("unused")
-@OnlyIn(Dist.CLIENT)
 public final class SourcePropertyInt {
 
     private final int property;

@@ -19,15 +19,12 @@
 package org.orecruncher.sndctrl.events;
 
 import net.minecraft.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public class EntityInspectionEvent extends Event {
 
     public final List<String> data = new ArrayList<>();

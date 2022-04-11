@@ -22,8 +22,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
 import org.orecruncher.sndctrl.api.sound.IFadableSoundInstance;
@@ -41,7 +39,6 @@ import java.util.Random;
 /**
  * Helper that creates sound instances using a SoundBuilder, but tweaks based on the circumstances requested.
  */
-@OnlyIn(Dist.CLIENT)
 public class AcousticFactory extends SoundBuilder implements IAcousticFactory {
 
     public static final int SOUND_RANGE = 16;

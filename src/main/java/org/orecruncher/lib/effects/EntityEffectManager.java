@@ -28,8 +28,6 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.collections.ObjectArray;
 
@@ -42,7 +40,6 @@ import org.orecruncher.sndctrl.api.effects.IEntityEffectManager;
  * An EntityEffectManager is responsible for managing the effects that are
  * attached to an entity.
  */
-@OnlyIn(Dist.CLIENT)
 public class EntityEffectManager implements IEntityEffectManager {
 
 	private static final List<String> DUMMY_EFFECTS = ImmutableList.of("Dummy EffectHandler");

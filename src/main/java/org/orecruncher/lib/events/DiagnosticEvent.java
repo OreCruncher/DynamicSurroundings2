@@ -18,8 +18,6 @@
 
 package org.orecruncher.lib.events;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.Event;
 import org.orecruncher.lib.math.TimerEMA;
 
@@ -29,7 +27,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public class DiagnosticEvent extends Event {
 
     private final List<String> left = new ArrayList<>();

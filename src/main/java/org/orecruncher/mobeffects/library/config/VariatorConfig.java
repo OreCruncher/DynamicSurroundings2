@@ -19,14 +19,11 @@
 package org.orecruncher.mobeffects.library.config;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.validation.IValidator;
 import org.orecruncher.lib.validation.ValidationException;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class VariatorConfig implements IValidator<VariatorConfig> {
 
     @SerializedName("immobileDuration")

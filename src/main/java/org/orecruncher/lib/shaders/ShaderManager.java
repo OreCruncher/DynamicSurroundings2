@@ -23,8 +23,6 @@ import net.minecraft.client.shader.ShaderLoader;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.util.ResourceLocation;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Lib;
@@ -40,7 +38,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@OnlyIn(Dist.CLIENT)
 public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 
 	private final Class<T> clazz;

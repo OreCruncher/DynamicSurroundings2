@@ -22,8 +22,6 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -34,7 +32,6 @@ import net.minecraftforge.common.BiomeDictionary.Type;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.lib.GameUtils;
 
-@OnlyIn(Dist.CLIENT)
 public class FakeBiomeAdapter implements IBiome {
 
 	protected final String name;

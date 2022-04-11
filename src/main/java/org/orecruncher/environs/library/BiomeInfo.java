@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.library.config.BiomeConfig;
@@ -42,7 +40,6 @@ import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.Library;
 
-@OnlyIn(Dist.CLIENT)
 public final class BiomeInfo implements Comparable<BiomeInfo> {
 
 	private final static float DEFAULT_VISIBILITY = 1F;

@@ -28,8 +28,6 @@ import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.orecruncher.lib.GameUtils;
 
@@ -42,7 +40,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, Screen> {
 
     private final ITextComponent title;

@@ -20,15 +20,12 @@ package org.orecruncher.environs.shaders;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.shaders.IShaderResourceProvider;
 import org.orecruncher.lib.shaders.ShaderManager;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-@OnlyIn(Dist.CLIENT)
 public enum ShaderPrograms implements IShaderResourceProvider {
 
     AURORA(

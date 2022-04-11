@@ -18,11 +18,8 @@
 
 package org.orecruncher.lib.scripting.sets;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WorldUtils;
 
-@OnlyIn(Dist.CLIENT)
 public interface IWeatherVariables {
 
     /**

@@ -20,13 +20,10 @@ package org.orecruncher.lib;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.LanguageMap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public final class Localization {
 
     private Localization() {

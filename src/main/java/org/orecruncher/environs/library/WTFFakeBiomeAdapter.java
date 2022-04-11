@@ -22,10 +22,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class WTFFakeBiomeAdapter extends FakeBiomeAdapter {
 
 	public WTFFakeBiomeAdapter() {

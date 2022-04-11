@@ -24,8 +24,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
 import org.orecruncher.sndctrl.audio.SoundInstance;
@@ -39,7 +37,6 @@ import java.util.Random;
  * SoundBuilder is a factory object that produces ISoundInstances within the specified parameters.
  */
 @SuppressWarnings("unused")
-@OnlyIn(Dist.CLIENT)
 public class SoundBuilder {
 
     private static final Random RANDOM = XorShiftRandom.current();

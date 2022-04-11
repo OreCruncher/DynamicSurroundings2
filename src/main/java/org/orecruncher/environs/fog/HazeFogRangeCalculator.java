@@ -19,8 +19,6 @@
 package org.orecruncher.environs.fog;
 
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.handlers.CommonState;
@@ -33,7 +31,6 @@ import javax.annotation.Nonnull;
  * Calculates the fog ranges based on player elevation as compared to the
  * dimensions cloud height.
  */
-@OnlyIn(Dist.CLIENT)
 public class HazeFogRangeCalculator extends VanillaFogRangeCalculator {
 
     protected static final int BAND_OFFSETS = 15;

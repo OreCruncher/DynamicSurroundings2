@@ -18,8 +18,6 @@
 
 package org.orecruncher.sndctrl.audio;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
@@ -30,7 +28,6 @@ import javax.annotation.Nonnull;
  * of Minecraft.  The difference here is that the volume can fade in and out.  Used by Dynamic Surroundings
  * to scale background sound volumes based on biome distribution.
  */
-@OnlyIn(Dist.CLIENT)
 public class BackgroundSoundInstance extends FadableSoundInstance {
 
     public BackgroundSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final ISoundCategory category) {

@@ -18,10 +18,7 @@
 
 package org.orecruncher.environs.handlers.scripts;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public interface IStateVariables {
 
     boolean isInside();

@@ -22,8 +22,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.TickCounter;
 import org.orecruncher.lib.collections.ObjectArray;
@@ -33,7 +31,6 @@ import org.orecruncher.lib.math.TimerEMA;
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
-@OnlyIn(Dist.CLIENT)
 final class ParticleCollection extends BaseParticle {
 
     public static final ICollectionFactory FACTORY = ParticleCollection::new;

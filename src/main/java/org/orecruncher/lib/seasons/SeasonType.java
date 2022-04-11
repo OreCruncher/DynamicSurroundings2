@@ -18,8 +18,6 @@
 
 package org.orecruncher.lib.seasons;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Localization;
 import org.orecruncher.sndctrl.SoundControl;
 
@@ -42,7 +40,6 @@ public enum SeasonType {
         return this.xlateKey;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public String getFormattedText() {
         return Localization.load(this.xlateKey);
     }

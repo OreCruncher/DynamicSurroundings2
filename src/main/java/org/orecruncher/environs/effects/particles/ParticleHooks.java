@@ -30,8 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.effects.JetEffect;
@@ -41,7 +39,6 @@ import org.orecruncher.sndctrl.api.acoustics.Library;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public final class ParticleHooks {
 
     private static final ResourceLocation STEAM_HISS_ACOUSTIC = new ResourceLocation(Environs.MOD_ID, "steam.hiss");

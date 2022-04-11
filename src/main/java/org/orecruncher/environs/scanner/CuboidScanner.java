@@ -25,14 +25,11 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.util.math.BlockPos;
 
 /**
  * Scans the area around the player in a continuous pattern.
  */
-@OnlyIn(Dist.CLIENT)
 public abstract class CuboidScanner extends Scanner {
 
 	// Iteration variables

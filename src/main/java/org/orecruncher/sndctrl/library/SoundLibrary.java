@@ -22,8 +22,6 @@ import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.logging.IModLog;
@@ -50,7 +48,6 @@ import java.util.stream.Collectors;
  * side mods that add their own sounds.  Also, extended data about sounds is maintained, like ownership and
  * attribution, that can be used when rendering tooltips and the like in a GUI.
  */
-@OnlyIn(Dist.CLIENT)
 public final class SoundLibrary {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundLibrary.class);
     private static final ResourceLocation MISSING_RESOURCE = new ResourceLocation(SoundControl.MOD_ID, "missing_sound");

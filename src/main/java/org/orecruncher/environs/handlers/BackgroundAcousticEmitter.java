@@ -20,8 +20,6 @@ package org.orecruncher.environs.handlers;
 
 import javax.annotation.Nonnull;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
@@ -35,7 +33,6 @@ import org.orecruncher.sndctrl.audio.SoundState;
  * in the sound system even if the underlying sound system
  * cancels the sound.
  */
-@OnlyIn(Dist.CLIENT)
 public final class BackgroundAcousticEmitter {
 
 	// Number of ticks to standoff requing a sound if for some reason it is replaced

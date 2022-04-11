@@ -23,8 +23,6 @@ import com.google.gson.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.StringUtils;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.JsonUtils;
 import org.orecruncher.lib.collections.ObjectArray;
 import org.orecruncher.sndctrl.SoundControl;
@@ -39,7 +37,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@OnlyIn(Dist.CLIENT)
 public final class AcousticCompiler {
 
     // Defaults for the SoundBuilders that are created.  There will be slight variation to avoid repeated sound

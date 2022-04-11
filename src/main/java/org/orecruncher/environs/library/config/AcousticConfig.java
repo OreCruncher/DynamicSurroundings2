@@ -18,8 +18,6 @@
 
 package org.orecruncher.environs.library.config;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.annotations.SerializedName;
@@ -30,7 +28,6 @@ import org.orecruncher.lib.validation.ValidationHelpers;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class AcousticConfig implements IValidator<AcousticConfig> {
 	@SerializedName("acoustic")
 	public String acoustic = null;

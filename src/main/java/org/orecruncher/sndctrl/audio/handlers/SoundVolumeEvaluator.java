@@ -21,8 +21,6 @@ package org.orecruncher.sndctrl.audio.handlers;
 import com.google.common.base.Preconditions;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.util.SoundCategory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.collections.ObjectArray;
@@ -39,7 +37,6 @@ import java.util.function.Function;
  * Handler that calculates an effective volume for a given sound based on
  * various factors, including any user configured sound scaling.
  */
-@OnlyIn(Dist.CLIENT)
 public final class SoundVolumeEvaluator {
 
     // Callbacks from other mods where volume can be scaled.  Goal is to get mods to use this callback rather than

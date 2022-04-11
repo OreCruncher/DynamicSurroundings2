@@ -20,8 +20,6 @@ package org.orecruncher.environs.fog;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.handlers.CommonState;
@@ -33,7 +31,6 @@ import javax.annotation.Nonnull;
 /**
  * Implements the void fog (the fog at bedrock) of older versions of Minecraft.
  */
-@OnlyIn(Dist.CLIENT)
 public class BedrockFogRangeCalculator extends VanillaFogRangeCalculator {
 
     protected final FogResult cached = new FogResult();

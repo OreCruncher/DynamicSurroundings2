@@ -20,8 +20,6 @@ package org.orecruncher.sndctrl.api.acoustics;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
@@ -29,7 +27,6 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@OnlyIn(Dist.CLIENT)
 public final class AcousticEvent {
 
     private static final Map<ResourceLocation, AcousticEvent> mapping = new HashMap<>();

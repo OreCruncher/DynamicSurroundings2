@@ -25,8 +25,6 @@ import net.minecraft.client.audio.*;
 import net.minecraft.client.audio.ChannelManager.Entry;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -53,7 +51,6 @@ import java.util.stream.Collectors;
 /**
  * Handles the life cycle of sounds submitted to the Minecraft sound engine.
  */
-@OnlyIn(Dist.CLIENT)
 public final class AudioEngine {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(AudioEngine.class);
     private static final String FMT_DBG_SOUND_SYSTEM = TextFormatting.AQUA + "SoundSystem: %d/%d";

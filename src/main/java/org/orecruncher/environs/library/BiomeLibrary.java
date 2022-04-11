@@ -31,8 +31,6 @@ import com.google.gson.reflect.TypeToken;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.biome.BiomeRegistry;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
@@ -51,7 +49,6 @@ import org.orecruncher.lib.service.IModuleService;
 import org.orecruncher.lib.validation.ListValidator;
 import org.orecruncher.lib.validation.Validators;
 
-@OnlyIn(Dist.CLIENT)
 public final class BiomeLibrary {
 
 	private static final IModLog LOGGER = Environs.LOGGER.createChild(BiomeLibrary.class);

@@ -20,14 +20,11 @@ package org.orecruncher.environs.effects.particles;
 
 import javax.annotation.Nonnull;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.lib.random.XorShiftRandom;
 
 import net.minecraft.util.ResourceLocation;
 
-@OnlyIn(Dist.CLIENT)
 public enum RippleStyle {
 
 	CIRCLE("textures/particles/ripple.png"),

@@ -19,8 +19,6 @@
 package org.orecruncher.mobeffects.library;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.library.config.EntityConfig;
 import org.orecruncher.sndctrl.api.acoustics.Library;
@@ -29,7 +27,6 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
-@OnlyIn(Dist.CLIENT)
 public class EntityEffectInfo {
 
 	public final Set<ResourceLocation> effects = new HashSet<>(6);

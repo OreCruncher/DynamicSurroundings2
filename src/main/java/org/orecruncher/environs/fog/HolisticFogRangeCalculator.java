@@ -18,8 +18,6 @@
 
 package org.orecruncher.environs.fog;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.config.Config;
@@ -32,7 +30,6 @@ import javax.annotation.Nonnull;
  * Consults various different fog calculators and aggregates the results into a
  * single set.
  */
-@OnlyIn(Dist.CLIENT)
 public class HolisticFogRangeCalculator implements IFogRangeCalculator {
 
     private static final IModLog LOGGER = Environs.LOGGER.createChild(HolisticFogRangeCalculator.class);

@@ -19,13 +19,10 @@
 package org.orecruncher.lib.shaders;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-@OnlyIn(Dist.CLIENT)
 public interface IShaderResourceProvider {
     @Nonnull
     ResourceLocation getVertex();

@@ -19,15 +19,12 @@
 package org.orecruncher.environs.handlers.scripts;
 
 import net.minecraft.util.StringUtils;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.scripting.ExecutionContext;
 import org.orecruncher.lib.scripting.sets.*;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-@OnlyIn(Dist.CLIENT)
 public final class ConditionEvaluator {
 
     public static final ConditionEvaluator INSTANCE = new ConditionEvaluator();

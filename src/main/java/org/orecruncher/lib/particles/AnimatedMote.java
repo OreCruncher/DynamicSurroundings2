@@ -28,14 +28,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.gui.Color;
 import org.orecruncher.lib.random.XorShiftRandom;
 
 import java.util.Random;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class AnimatedMote extends MotionMote {
 
 	protected static final Random RANDOM = XorShiftRandom.current();

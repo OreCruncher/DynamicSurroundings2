@@ -23,8 +23,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WeightTable;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
@@ -37,7 +35,6 @@ import java.util.Optional;
 /**
  * Plays a random acoustic from a weighted list of selections.
  */
-@OnlyIn(Dist.CLIENT)
 public class ProbabilityAcoustic implements IAcoustic {
 
     protected final ResourceLocation name;

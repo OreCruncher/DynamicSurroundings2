@@ -20,8 +20,6 @@ package org.orecruncher.mobeffects.library;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
@@ -30,7 +28,6 @@ import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.audio.acoustic.NullAcoustic;
 
-@OnlyIn(Dist.CLIENT)
 public final class Constants {
     private Constants() {
 

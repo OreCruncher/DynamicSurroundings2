@@ -26,8 +26,6 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.BlockState;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.util.math.BlockPos;
 import org.orecruncher.environs.effects.BlockEffect;
@@ -45,7 +43,6 @@ import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
  * since the iteration has been reduce to 667 (from 1000 in MC 1.7.10) it should
  * compensate.
  */
-@OnlyIn(Dist.CLIENT)
 public class RandomBlockEffectScanner extends RandomScanner {
 
 	private static final int ITERATION_COUNT = 667;

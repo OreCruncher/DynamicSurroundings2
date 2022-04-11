@@ -22,8 +22,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -38,7 +36,6 @@ import org.orecruncher.lib.capability.NullStorage;
 import org.orecruncher.lib.capability.SimpleProvider;
 import org.orecruncher.sndctrl.SoundControl;
 
-@OnlyIn(Dist.CLIENT)
 public class CapabilityEntityFXData {
 
 	@SuppressWarnings("ConstantConditions")
@@ -47,12 +44,10 @@ public class CapabilityEntityFXData {
 	public static final Capability<IEntityFX> FX_INFO = null;
 	public static final ResourceLocation CAPABILITY_ID = new ResourceLocation(SoundControl.MOD_ID, "entityfx");
 
-	@OnlyIn(Dist.CLIENT)
 	public static void register() {
 		CapabilityManager.INSTANCE.register(IEntityFX.class, new NullStorage<>(), EntityFXData::new);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	@Nonnull
 	public static ICapabilityProvider createProvider(final IEntityFX data) {
 		return new SimpleProvider<>(FX_INFO, null, data);

@@ -26,8 +26,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags;
 import org.orecruncher.environs.handlers.CommonState;
 import org.orecruncher.environs.library.DimensionInfo;
@@ -46,7 +44,6 @@ import net.minecraft.world.World;
  * Performs area scanning around the player to determine area ceiling coverage.
  * Used to determine if the player is "inside" or "outside".
  */
-@OnlyIn(Dist.CLIENT)
 public final class CeilingCoverage {
 
 	private static final int SURVEY_INTERVAL = 4;

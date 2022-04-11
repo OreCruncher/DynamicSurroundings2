@@ -25,14 +25,11 @@
 
 package org.orecruncher.sndctrl.audio.handlers;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.audio.handlers.effects.AuxSlot;
 import org.orecruncher.sndctrl.audio.handlers.effects.LowPassFilterSlot;
 import org.orecruncher.sndctrl.audio.handlers.effects.ReverbData;
 import org.orecruncher.sndctrl.audio.handlers.effects.ReverbEffectSlot;
 
-@OnlyIn(Dist.CLIENT)
 public final class Effects {
     // General config settings that need to make their way somewhere
     private static final float ROLLOFF_FACTOR = 1F;

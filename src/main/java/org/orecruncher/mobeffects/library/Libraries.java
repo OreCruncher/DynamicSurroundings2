@@ -18,10 +18,7 @@
 
 package org.orecruncher.mobeffects.library;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public final class Libraries {
     private Libraries() {
     }

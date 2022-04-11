@@ -26,8 +26,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.effects.emitters.Jet;
 import org.orecruncher.environs.effects.emitters.WaterSplashJet;
 import org.orecruncher.lib.WorldUtils;
@@ -36,7 +34,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3i;
 
-@OnlyIn(Dist.CLIENT)
 public class WaterfallSplashEffect extends JetEffect {
 
 	private final static Vector3i[] cardinal_offsets = {

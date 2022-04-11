@@ -20,8 +20,6 @@ package org.orecruncher.mobeffects.effects;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.mobeffects.library.EffectLibrary;
 import org.orecruncher.sndctrl.api.effects.AbstractEntityEffect;
 import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
@@ -29,7 +27,6 @@ import org.orecruncher.sndctrl.api.effects.IEntityEffectFactoryHandler;
 import javax.annotation.Nonnull;
 import java.util.function.Function;
 
-@OnlyIn(Dist.CLIENT)
 public class FactoryHandler implements IEntityEffectFactoryHandler {
 
     private final ResourceLocation name;

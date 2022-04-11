@@ -19,8 +19,6 @@
 package org.orecruncher.environs.library;
 
 import net.minecraft.util.StringUtils;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import org.orecruncher.lib.biomes.BiomeUtilities;
 import org.orecruncher.lib.scripting.ExecutionContext;
@@ -28,7 +26,6 @@ import org.orecruncher.lib.scripting.ExecutionContext;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-@OnlyIn(Dist.CLIENT)
 public class BiomeEvaluator {
 
     private final ExecutionContext context = new ExecutionContext("Biomes");

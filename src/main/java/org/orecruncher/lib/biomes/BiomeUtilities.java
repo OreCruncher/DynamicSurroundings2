@@ -31,8 +31,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeRegistry;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.environs.Environs;
@@ -45,7 +43,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
-@OnlyIn(Dist.CLIENT)
 public class BiomeUtilities {
     private BiomeUtilities() {
 

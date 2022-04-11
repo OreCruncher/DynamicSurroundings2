@@ -24,8 +24,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.effects.emitters.Jet;
 import org.orecruncher.environs.handlers.ParticleSystems;
 import org.orecruncher.environs.handlers.scripts.ConditionEvaluator;
@@ -35,7 +33,6 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 import java.util.function.Predicate;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class JetEffect extends BlockEffect {
 
     public static final int MAX_STRENGTH = 10;

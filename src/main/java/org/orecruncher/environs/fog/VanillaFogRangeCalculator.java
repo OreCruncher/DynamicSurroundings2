@@ -18,8 +18,6 @@
 
 package org.orecruncher.environs.fog;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 
 import javax.annotation.Nonnull;
@@ -28,7 +26,6 @@ import javax.annotation.Nonnull;
  * Vanilla calculator that reflects whatever is in the event in terms of
  * start/end points for fog.
  */
-@OnlyIn(Dist.CLIENT)
 public class VanillaFogRangeCalculator implements IFogRangeCalculator {
 
     private final String name;

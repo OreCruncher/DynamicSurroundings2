@@ -18,13 +18,10 @@
 
 package org.orecruncher.sndctrl.events;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 @SuppressWarnings("unused")
-@OnlyIn(Dist.CLIENT)
 public class AudioEvent extends Event {
     public AudioEvent() {
     }

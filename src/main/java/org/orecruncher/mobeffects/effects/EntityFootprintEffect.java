@@ -22,8 +22,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.MobEffects;
@@ -33,7 +31,6 @@ import org.orecruncher.mobeffects.library.FootstepLibrary;
 import org.orecruncher.sndctrl.api.effects.AbstractEntityEffect;
 import org.orecruncher.sndctrl.api.effects.IEntityEffectManager;
 
-@OnlyIn(Dist.CLIENT)
 public class EntityFootprintEffect extends AbstractEntityEffect {
 
 	private static final ResourceLocation NAME = new ResourceLocation(MobEffects.MOD_ID, "footprint");
@@ -63,7 +60,6 @@ public class EntityFootprintEffect extends AbstractEntityEffect {
 		return super.toString() + ": " + this.generator.getPedometer();
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	private static class PlayerFootprintEffect extends EntityFootprintEffect {
 
 		protected FootprintStyle lastStyle;

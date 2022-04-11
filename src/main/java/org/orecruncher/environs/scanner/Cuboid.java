@@ -19,14 +19,11 @@
 package org.orecruncher.environs.scanner;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.BlockPosUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class Cuboid {
 
     protected final BlockPos[] vertices = new BlockPos[8];

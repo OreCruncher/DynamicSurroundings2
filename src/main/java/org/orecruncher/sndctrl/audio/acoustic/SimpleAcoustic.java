@@ -24,8 +24,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
@@ -39,7 +37,6 @@ import java.util.Objects;
 /**
  * A simple acoustic that uses an AcousticFactory to produce sound instances for playing.
  */
-@OnlyIn(Dist.CLIENT)
 public class SimpleAcoustic implements IAcoustic {
 
     private final AcousticFactory factory;

@@ -27,13 +27,10 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class BubbleBreathParticle  extends SpriteTexturedParticle {
     public BubbleBreathParticle(@Nonnull final LivingEntity entity, final boolean isDrowning) {
         super((ClientWorld) entity.getEntityWorld(), 0, 0, 0);

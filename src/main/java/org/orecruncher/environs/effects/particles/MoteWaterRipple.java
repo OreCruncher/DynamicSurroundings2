@@ -21,8 +21,6 @@ package org.orecruncher.environs.effects.particles;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.lib.biomes.BiomeUtilities;
@@ -31,7 +29,6 @@ import org.orecruncher.lib.particles.AgeableMote;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class MoteWaterRipple extends AgeableMote {
 
 	private static final float TEX_SIZE_HALF = 0.5F;

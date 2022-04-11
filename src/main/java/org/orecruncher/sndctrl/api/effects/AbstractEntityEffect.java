@@ -25,15 +25,12 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.library.AcousticLibrary;
 
 /**
  * Interface for an effect.
  */
-@OnlyIn(Dist.CLIENT)
 public abstract class AbstractEntityEffect {
 
 	private IEntityEffectManager manager;

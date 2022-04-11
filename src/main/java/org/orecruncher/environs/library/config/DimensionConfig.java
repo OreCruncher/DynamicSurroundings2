@@ -21,14 +21,11 @@ package org.orecruncher.environs.library.config;
 import javax.annotation.Nonnull;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.lib.validation.IValidator;
 import org.orecruncher.lib.validation.ValidationException;
 import org.orecruncher.lib.validation.ValidationHelpers;
 
-@OnlyIn(Dist.CLIENT)
 public class DimensionConfig implements IValidator<DimensionConfig> {
 	@SerializedName("dimId")
 	public String dimensionId = null;

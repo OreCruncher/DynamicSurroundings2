@@ -20,8 +20,6 @@ package org.orecruncher.environs.handlers;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import org.orecruncher.lib.math.TimerEMA;
 import org.orecruncher.lib.random.XorShiftRandom;
@@ -29,7 +27,6 @@ import org.orecruncher.lib.random.XorShiftRandom;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-@OnlyIn(Dist.CLIENT)
 public class HandlerBase {
 
     protected static final Random RANDOM = XorShiftRandom.current();

@@ -18,12 +18,9 @@
 
 package org.orecruncher.lib.scripting.sets;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public interface IBiomeVariables {
 
     String getName();

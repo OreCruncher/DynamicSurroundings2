@@ -19,8 +19,6 @@
 package org.orecruncher.lib;
 
 import net.minecraft.world.IWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.SoundControl;
 
 import javax.annotation.Nonnull;
@@ -96,7 +94,6 @@ public enum DayCycle {
         return this.auroraVisible;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Nonnull
     public String getFormattedName() {
         return Localization.load(this.localizeString);

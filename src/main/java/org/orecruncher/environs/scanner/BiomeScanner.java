@@ -22,8 +22,6 @@ import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IWorldReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
@@ -41,7 +39,6 @@ import java.util.Set;
  * Performs an area scan around the to calculate the relative weights of the
  * biomes in the local area.
  */
-@OnlyIn(Dist.CLIENT)
 public final class BiomeScanner {
 
 	private static final int BIOME_SURVEY_RANGE = 18;

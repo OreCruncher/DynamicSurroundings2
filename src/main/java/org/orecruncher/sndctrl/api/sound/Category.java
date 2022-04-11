@@ -23,8 +23,6 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.sndctrl.audio.handlers.MusicFader;
 import org.orecruncher.sndctrl.config.Config;
@@ -34,7 +32,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@OnlyIn(Dist.CLIENT)
 public class Category implements ISoundCategory {
     // Mappings for easy searching
     private static final Map<String, ISoundCategory> nameToCategory = new HashMap<>();

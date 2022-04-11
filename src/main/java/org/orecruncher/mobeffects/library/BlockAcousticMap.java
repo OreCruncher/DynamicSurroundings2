@@ -22,8 +22,6 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.blockstate.BlockStateMatcher;
@@ -35,7 +33,6 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.Function;
 
-@OnlyIn(Dist.CLIENT)
 public final class BlockAcousticMap {
 
 	protected final Map<Block, ObjectArray<Pair<BlockStateMatcher, IAcoustic>>> data = new Reference2ObjectOpenHashMap<>();

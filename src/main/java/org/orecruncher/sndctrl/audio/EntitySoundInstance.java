@@ -21,8 +21,6 @@ package org.orecruncher.sndctrl.audio;
 import com.google.common.base.MoreObjects;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
@@ -33,7 +31,6 @@ import java.util.Objects;
  * every tick.  If the sound is a global sound (like music), it will stay around as long as it is repeatable
  * and the entity is alive.
  */
-@OnlyIn(Dist.CLIENT)
 public class EntitySoundInstance extends WrappedSoundInstance {
 
     @Nonnull

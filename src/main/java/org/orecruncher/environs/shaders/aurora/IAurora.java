@@ -19,15 +19,12 @@
 package org.orecruncher.environs.shaders.aurora;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 /*
  * Implemented by an aurora so that it can go through it's life cycle.
  */
-@OnlyIn(Dist.CLIENT)
 public interface IAurora {
 
 	/*

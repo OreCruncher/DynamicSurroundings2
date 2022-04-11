@@ -23,8 +23,6 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.profiler.IProfiler;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.Environs;
@@ -38,7 +36,6 @@ import org.orecruncher.lib.logging.IModLog;
 
 import org.orecruncher.lib.math.LoggingTimerEMA;
 
-@OnlyIn(Dist.CLIENT)
 public final class AuroraHandler extends HandlerBase {
 
 	private static final IModLog LOGGER = Environs.LOGGER.createChild(AuroraHandler.class);

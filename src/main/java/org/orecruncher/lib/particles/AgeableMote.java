@@ -19,12 +19,9 @@
 package org.orecruncher.lib.particles;
 
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class AgeableMote extends Mote {
 
     protected int age;

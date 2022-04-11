@@ -20,14 +20,11 @@ package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class LoopingSoundInstance extends WrappedSoundInstance {
 
     private final Vector3d position;

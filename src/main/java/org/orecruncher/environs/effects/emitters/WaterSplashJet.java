@@ -21,8 +21,6 @@ package org.orecruncher.environs.effects.emitters;
 import net.minecraft.client.settings.ParticleStatus;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.effects.JetEffect;
@@ -43,7 +41,6 @@ import org.orecruncher.sndctrl.audio.SoundUtils;
 
 import java.util.Arrays;
 
-@OnlyIn(Dist.CLIENT)
 public class WaterSplashJet extends Jet {
 
 	private static final ResourceLocation[] waterfallAcoustics = new ResourceLocation[JetEffect.MAX_STRENGTH + 1];

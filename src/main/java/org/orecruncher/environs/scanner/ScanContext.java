@@ -21,15 +21,12 @@ package org.orecruncher.environs.scanner;
 import javax.annotation.Nonnull;
 
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.util.math.BlockPos;
 import org.orecruncher.lib.logging.IModLog;
 
 import java.util.function.Supplier;
 
-@OnlyIn(Dist.CLIENT)
 public class ScanContext {
 
 	private final Supplier<IBlockReader> worldReader;

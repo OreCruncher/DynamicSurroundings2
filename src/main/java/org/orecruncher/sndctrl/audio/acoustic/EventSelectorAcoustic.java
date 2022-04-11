@@ -23,8 +23,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.api.acoustics.IAcousticFactory;
@@ -39,7 +37,6 @@ import java.util.Optional;
  * An acoustic that will play different sounds based on the AcousticEvent provided.  For example, for a given
  * EventSelectorAcoustic, an acoustic could be selected if a mob is walking vs. running.
  */
-@OnlyIn(Dist.CLIENT)
 public class EventSelectorAcoustic implements IAcoustic {
 
     private final Map<AcousticEvent, IAcoustic> mapping = new IdentityHashMap<>(4);

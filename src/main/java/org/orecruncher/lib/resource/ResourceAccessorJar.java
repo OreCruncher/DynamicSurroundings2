@@ -19,14 +19,11 @@
 package org.orecruncher.lib.resource;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
 
-@OnlyIn(Dist.CLIENT)
 final class ResourceAccessorJar extends ResourceAccessorBase {
 
     // Used to find assets within the current jar

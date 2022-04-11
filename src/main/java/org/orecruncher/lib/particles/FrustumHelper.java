@@ -21,13 +21,10 @@ package org.orecruncher.lib.particles;
 import net.minecraft.client.renderer.culling.ClippingHelper;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class FrustumHelper {
     private FrustumHelper() {
 

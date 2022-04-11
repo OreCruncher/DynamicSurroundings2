@@ -25,8 +25,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.particles.CollectionManager;
 import org.orecruncher.lib.particles.IParticleCollection;
 import org.orecruncher.lib.particles.IParticleMote;
@@ -36,7 +34,6 @@ import org.orecruncher.mobeffects.footsteps.FootprintStyle;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public final class Collections {
 
     private static final ParticleRenderType FOOTPRINT_RENDER =

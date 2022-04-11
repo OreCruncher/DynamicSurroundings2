@@ -21,8 +21,6 @@ package org.orecruncher.lib.gui;
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Utilities;
 import org.orecruncher.lib.math.MathStuff;
 
@@ -32,7 +30,6 @@ import javax.annotation.Nonnull;
  * Holds an RGB triple. See: http://www.rapidtables.com/web/color/RGB_Color.htm
  */
 @SuppressWarnings("unused")
-@OnlyIn(Dist.CLIENT)
 public class Color {
 
     protected float red;

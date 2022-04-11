@@ -23,8 +23,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.audio.*;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.openal.*;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.compat.ModEnvironment;
@@ -43,7 +41,6 @@ import java.util.Objects;
  * Helper class that obtains information about the current sound processing environment
  * from sources that are not directly obtainable.
  */
-@OnlyIn(Dist.CLIENT)
 public final class SoundUtils {
     private static final IModLog LOGGER = SoundControl.LOGGER.createChild(SoundUtils.class);
 

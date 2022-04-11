@@ -20,12 +20,9 @@ package org.orecruncher.lib.effects.entity;
 
 import javax.annotation.Nullable;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.effects.EntityEffectManager;
 
 
-@OnlyIn(Dist.CLIENT)
 public class EntityFXData implements IEntityFX {
 
 	protected EntityEffectManager handler;

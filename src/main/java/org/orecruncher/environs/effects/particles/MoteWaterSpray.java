@@ -24,8 +24,6 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.orecruncher.lib.biomes.BiomeUtilities;
 import org.orecruncher.lib.gui.Color;
@@ -37,7 +35,6 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 // TODO: Should this be animated?  Seems to overlap.
-@OnlyIn(Dist.CLIENT)
 public class MoteWaterSpray extends MotionMote {
 
 	protected static final Random RANDOM = XorShiftRandom.current();

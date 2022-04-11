@@ -22,8 +22,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.effects.emitters.Jet;
 import org.orecruncher.environs.effects.emitters.SteamJet;
 import org.orecruncher.lib.WorldUtils;
@@ -31,7 +29,6 @@ import org.orecruncher.lib.WorldUtils;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-@OnlyIn(Dist.CLIENT)
 public class SteamJetEffect extends JetEffect {
 
     public SteamJetEffect(final int chance) {

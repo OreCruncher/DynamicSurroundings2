@@ -25,8 +25,6 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.shaders.ShaderPrograms;
 import org.orecruncher.lib.shaders.ShaderCallContext;
 import org.orecruncher.lib.GameUtils;
@@ -38,7 +36,6 @@ import java.util.function.Consumer;
 /*
  * Renders a shader generated aurora along a curved path.  Makes it ribbon like.
  */
-@OnlyIn(Dist.CLIENT)
 public class AuroraShaderBand extends AuroraBase {
 
 	private static final float V1 = 0;

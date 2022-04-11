@@ -19,15 +19,12 @@
 package org.orecruncher.environs.library;
 
 import com.google.common.base.MoreObjects;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WeightTable;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class WeightedAcousticEntry extends AcousticEntry implements WeightTable.IItem<IAcoustic> {
 
     private final int weight;

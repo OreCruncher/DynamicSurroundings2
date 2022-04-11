@@ -21,14 +21,11 @@ package org.orecruncher.environs.effects.particles;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.DiggingParticle;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WorldUtils;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-@OnlyIn(Dist.CLIENT)
 public class DustParticle extends DiggingParticle {
 
 	private final BlockPos.Mutable pos = new BlockPos.Mutable();

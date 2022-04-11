@@ -18,13 +18,10 @@
 
 package org.orecruncher.environs.fog;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public final class FogResult {
 
     public static final float DEFAULT_PLANE_SCALE = 0.75F;

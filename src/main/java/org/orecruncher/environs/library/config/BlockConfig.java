@@ -22,8 +22,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.lib.validation.IValidator;
 import org.orecruncher.lib.validation.ValidationException;
@@ -31,7 +29,6 @@ import org.orecruncher.lib.validation.ValidationHelpers;
 
 import javax.annotation.Nonnull;
 
-@OnlyIn(Dist.CLIENT)
 public class BlockConfig implements IValidator<BlockConfig> {
 	@SerializedName("blocks")
 	public List<String> blocks = ImmutableList.of();

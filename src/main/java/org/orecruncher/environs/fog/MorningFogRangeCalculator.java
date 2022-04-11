@@ -19,8 +19,6 @@
 package org.orecruncher.environs.fog;
 
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import org.orecruncher.environs.config.Config;
 import org.orecruncher.environs.handlers.CommonState;
@@ -32,7 +30,6 @@ import org.orecruncher.lib.seasons.Season;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-@OnlyIn(Dist.CLIENT)
 public class MorningFogRangeCalculator extends VanillaFogRangeCalculator {
 
     private static final float START = 0.630F;
